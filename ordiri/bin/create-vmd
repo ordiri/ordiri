@@ -1,0 +1,23 @@
+#!/usr/bin/env  bash
+
+echo "apiVersion: compute.ordiri.com/v1alpha1
+kind: VirtualMachineDeployment
+metadata:
+  name: testovs$1
+spec:
+  replicas: 1
+  template:
+    metadata: {}
+    spec:
+      bootDevices:
+      - hd
+      - network
+      disks:
+      - name: foobar
+        size: 10G
+      networkInterfaces:
+      - network: kubevms
+        subnet: kubevms-$2
+      role: physical
+      state: Running
+" | kubectl apply  -f-

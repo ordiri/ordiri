@@ -1,0 +1,257 @@
+# The configurations that used for the recording, feel free to edit them
+config:
+
+  # Specify a command to be executed
+  # like `/bin/bash -l`, `ls`, or any other commands
+  # the default is bash for Linux
+  # or powershell.exe for Windows
+  command: bash -l
+  
+  # Specify the current working directory path
+  # the default is the current working directory path
+  cwd: /Users/davidmann/www/ordiri/ordiri
+  
+  # Export additional ENV variables
+  env:
+    recording: true
+  
+  # Explicitly set the number of columns
+  # or use `auto` to take the current
+  # number of columns of your shell
+  cols: 204
+  
+  # Explicitly set the number of rows
+  # or use `auto` to take the current
+  # number of rows of your shell
+  rows: 48
+  
+  # Amount of times to repeat GIF
+  # If value is -1, play once
+  # If value is 0, loop indefinitely
+  # If value is a positive number, loop n times
+  repeat: 0
+  
+  # Quality
+  # 1 - 100
+  quality: 100
+  
+  # Delay between frames in ms
+  # If the value is `auto` use the actual recording delays
+  frameDelay: auto
+  
+  # Maximum delay between frames in ms
+  # Ignored if the `frameDelay` isn't set to `auto`
+  # Set to `auto` to prevent limiting the max idle time
+  maxIdleTime: 2000
+  
+  # The surrounding frame box
+  # The `type` can be null, window, floating, or solid`
+  # To hide the title use the value null
+  # Don't forget to add a backgroundColor style with a null as type
+  frameBox:
+    type: floating
+    title: Terminalizer
+    style:
+      border: 0px black solid
+      # boxShadow: none
+      # margin: 0px
+  
+  # Add a watermark image to the rendered gif
+  # You need to specify an absolute path for
+  # the image on your machine or a URL, and you can also
+  # add your own CSS styles
+  watermark:
+    imagePath: null
+    style:
+      position: absolute
+      right: 15px
+      bottom: 15px
+      width: 100px
+      opacity: 0.9
+  
+  # Cursor style can be one of
+  # `block`, `underline`, or `bar`
+  cursorStyle: block
+  
+  # Font family
+  # You can use any font that is installed on your machine
+  # in CSS-like syntax
+  fontFamily: "Monaco, Lucida Console, Ubuntu Mono, Monospace"
+  
+  # The size of the font
+  fontSize: 12
+  
+  # The height of lines
+  lineHeight: 1
+  
+  # The spacing between letters
+  letterSpacing: 0
+  
+  # Theme
+  theme:
+    background: "transparent"
+    foreground: "#afafaf"
+    cursor: "#c7c7c7"
+    black: "#232628"
+    red: "#fc4384"
+    green: "#b3e33b"
+    yellow: "#ffa727"
+    blue: "#75dff2"
+    magenta: "#ae89fe"
+    cyan: "#708387"
+    white: "#d5d5d0"
+    brightBlack: "#626566"
+    brightRed: "#ff7fac"
+    brightGreen: "#c8ed71"
+    brightYellow: "#ebdf86"
+    brightBlue: "#75dff2"
+    brightMagenta: "#ae89fe"
+    brightCyan: "#b1c6ca"
+    brightWhite: "#f9f9f4"
+  
+# Records, feel free to edit them
+records:
+  - delay: 866
+    content: "Restored session: Wed 27 Jul 2022 22:11:39 AEST\r\n"
+  - delay: 292
+    content: "\e(B\e[m"
+  - delay: 334
+    content: "\e]7;file://Davids-MacBook-Pro-3113.local/Users/davidmann/www/ordiri/ordiri\a"
+  - delay: 64
+    content: "\e]0;~/www/ordiri/ordiri\a\e[1m\r\r\n\e[38;5;166mdavidmann\e[97m at \e[38;5;136mDavids-MacBook-Pro-3113\e[97m in \e[38;5;64m~/www/ordiri/ordiri\e[97m on \e[38;5;61mmaster\e[38;5;33m [!?]\r\r\n\e[97m$ \e(B\e[m"
+  - delay: 607
+    content: >-
+      ./bin/ordctl get network,subnet,virtualmachine -o
+      custom-columns=KIND:kind,NAME:metadata.name,UID:metadata.uid,CIDR:spec.cidr,NETWORK:spec.networkInterfaces[]
+  - delay: 331
+    content: "\r\n"
+  - delay: 247
+    content: "KIND             NAME                    UID                                    CIDR            NETWORK\r\nNetwork          kubevms                 0058e1bc-05a6-4727-8df1-0b4f94a855bc   10.0.200.0/24   <none>\r\nSubnet           kubevms-etcd            d8325221-728d-4b6c-a51b-ad75950ec966   10.0.200.0/24   <none>\r\nSubnet           kubevms-workers         8f2cf904-2803-47ba-957a-8271407cb848   10.0.250.0/24   <none>\r\nVirtualMachine   ordiri-test-0           d749442e-944b-442b-89b1-c0a0c69c13d5   <none>          map[network:kubevms subnet:kubevms-etcd]\r\nVirtualMachine   ordiri-test-1           9b47a0a7-74a2-4e45-b36b-ee1fecf433be   <none>          map[network:kubevms subnet:kubevms-etcd]\r\nVirtualMachine   ordiri-test-workers-0   1509943f-7fc0-4d21-80db-af0e1fe2e6e7   <none>          map[network:kubevms subnet:kubevms-workers]\r\n\e]7;file://Davids-MacBook-Pro-3113.local/Users/davidmann/www/ordiri/ordiri\a"
+  - delay: 64
+    content: "\e]0;~/www/ordiri/ordiri\a\e[1m\r\r\n\e[38;5;166mdavidmann\e[97m at \e[38;5;136mDavids-MacBook-Pro-3113\e[97m in \e[38;5;64m~/www/ordiri/ordiri\e[97m on \e[38;5;61mmaster\e[38;5;33m [!?]\r\r\n\e[97m$ \e(B\e[m"
+  - delay: 2168
+    content: ssh mothership
+  - delay: 475
+    content: "\r\n"
+  - delay: 142
+    content: "Linux mothership 5.10.0-9-amd64 #1 SMP Debian 5.10.70-1 (2021-09-30) x86_64\r\n\r\nThe programs included with the Debian GNU/Linux system are free software;\r\nthe exact distribution terms for each program are described in the\r\nindividual files in /usr/share/doc/*/copyright.\r\n\r\nDebian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent\r\npermitted by applicable law.\r\nLast login: Wed Jul 27 22:10:16 2022 from 10.0.2.102\r\r\n"
+  - delay: 17
+    content: "\e[?2004hroot@mothership:~# "
+  - delay: 3606
+    content: "\e[7mvirsh list --all\e[27m"
+  - delay: 608
+    content: "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bvirsh list --all\r\n\e[?2004l\r"
+  - delay: 34
+    content: " Id   Name                    State\r\n---------------------------------------\r\n 4    ordiri-test-0           running\r\n 5    ordiri-test-1           running\r\n 7    ordiri-test-workers-0   running\r\n\r\n\e[?2004hroot@mothership:~# "
+  - delay: 2612
+    content: "\e[7mvirsh console ordiri-test-0\e[27m"
+  - delay: 1272
+    content: "\r\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[Cvirsh console ordiri-test-0\r\n\e[?2004l\r"
+  - delay: 19
+    content: "Connected to domain 'ordiri-test-0'\r\nEscape character is ^] (Ctrl + ])\r\n"
+  - delay: 2056
+    content: "\r\n\e[?2004l\r\e[?2004huser@debian:~$ "
+  - delay: 417
+    content: i
+  - delay: 82
+    content: p
+  - delay: 92
+    content: ' '
+  - delay: 78
+    content: a
+  - delay: 137
+    content: d
+  - delay: 122
+    content: d
+  - delay: 169
+    content: r
+  - delay: 1086
+    content: "\e[H\e[Juser@debian:~$ ip addr"
+  - delay: 1194
+    content: "\r\n\e[?2004l\r1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000\r\n    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00\r\n    inet 127.0.0.1/8 scope host lo\r\n       valid_lft forever preferred_lft forever\r\n    inet6 ::1/128 scope host \r\n       valid_lft forever preferred_lft forever\r\n2: ens3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000\r\n    link/ether b6:4a:86:40:93:9a brd ff:ff:ff:ff:ff:ff\r\n    altname enp0s3\r\n    inet 10.0.200.176/24 brd 10.0.200.255 scope global dynamic ens3\r\n       valid_lft 74435sec preferred_lft 74435sec\r\n    inet6 fe80::b44a:86ff:fe40:939a/64 scope link \r\n       valid_lft forever preferred_lft forever\r\n\e[?2004huser@debian:~$ "
+  - delay: 2296
+    content: "\r\n\e[?2004hroot@mothership:~# "
+  - delay: 1757
+    content: "\e[H\e[2Jroot@mothership:~# "
+  - delay: 2662
+    content: "\e[7mvirsh console ordiri-test-1\e[27m"
+  - delay: 243
+    content: "\r\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[Cvirsh console ordiri-test-1\r\n\e[?2004l\r"
+  - delay: 21
+    content: "Connected to domain 'ordiri-test-1'\r\nEscape character is ^] (Ctrl + ])\r\n"
+  - delay: 595
+    content: i
+  - delay: 114
+    content: p
+  - delay: 136
+    content: ' '
+  - delay: 153
+    content: a
+  - delay: 130
+    content: d
+  - delay: 128
+    content: d
+  - delay: 118
+    content: r
+  - delay: 502
+    content: "\r\n\e[?2004l\r1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000\r\n    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00\r\n    inet 127.0.0.1/8 scope host lo\r\n       valid_lft forever preferred_lft forever\r\n    inet6 ::1/128 scope host \r\n       valid_lft forever preferred_lft forever\r\n2: ens3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000\r\n    link/ether de:9f:fb:d1:f5:0b brd ff:ff:ff:ff:ff:ff\r\n    altname enp0s3\r\n    inet 10.0.200.105/24 brd 10.0.200.255 scope global dynamic ens3\r\n       valid_lft 74426sec preferred_lft 74426sec\r\n    inet6 fe80::dc9f:fbff:fed1:f50b/64 scope link \r\n       valid_lft forever preferred_lft forever\r\n\e[?2004huser@debian:~$ "
+  - delay: 2900
+    content: "\r\n\e[?2004hroot@mothership:~# "
+  - delay: 696
+    content: "\e[H\e[2Jroot@mothership:~# "
+  - delay: 2325
+    content: "\e[7mvirsh console ordiri-test-\e[27m"
+  - delay: 295
+    content: "\a\r\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[Cvirsh console ordiri-test-"
+  - delay: 574
+    content: w
+  - delay: 184
+    content: 'orkers-0 '
+  - delay: 1282
+    content: "\a"
+  - delay: 979
+    content: "\r\n\e[?2004l\r"
+  - delay: 19
+    content: "Connected to domain 'ordiri-test-workers-0'\r\nEscape character is ^] (Ctrl + ])\r\n"
+  - delay: 1794
+    content: "\e[H\e[Juser@debian:~$ "
+  - delay: 711
+    content: i
+  - delay: 66
+    content: p
+  - delay: 99
+    content: ' '
+  - delay: 68
+    content: a
+  - delay: 105
+    content: d
+  - delay: 168
+    content: d
+  - delay: 84
+    content: r
+  - delay: 265
+    content: "\r\n\e[?2004l\r"
+  - delay: 5
+    content: "1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000\r\n    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00\r\n    inet 127.0.0.1/8 scope host lo\r\n       valid_lft forever preferred_lft forever\r\n    inet6 ::1/128 scope host \r\n       valid_lft forever preferred_lft forever\r\n2: ens3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000\r\n    link/ether de:04:7d:25:ad:82 brd ff:ff:ff:ff:ff:ff\r\n    altname enp0s3\r\n    inet 10.0.250.98/24 brd 10.0.250.255 scope global dynamic ens3\r\n       valid_lft 84251sec preferred_lft 84251sec\r\n    inet6 fe80::dc04:7dff:fe25:ad82/64 scope link \r\n       valid_lft forever preferred_lft forever\r\n\e[?2004huser@debian:~$ "
+  - delay: 2849
+    content: "\r\n\e[?2004hroot@mothership:~# "
+  - delay: 4235
+    content: "\e[7mip netns exec service-kubevms-workers ip addr\e[27m"
+  - delay: 1675
+    content: "\r\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[Cip netns exec service-kubevms-workers ip addr\r\n\e[?2004l\r1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000\r\n    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00\r\n    inet 127.0.0.1/8 scope host lo\r\n       valid_lft forever preferred_lft forever\r\n    inet6 ::1/128 scope host \r\n       valid_lft forever preferred_lft forever\r\n2: dhcp-8f2-in@if61: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000\r\n    link/ether a2:0f:24:54:78:ec brd ff:ff:ff:ff:ff:ff link-netnsid 0\r\n    inet 10.0.250.2/24 scope global dhcp-8f2-in\r\n       valid_lft forever preferred_lft forever\r\n    inet6 fe80::a00f:24ff:fe54:78ec/64 scope link \r\n       valid_lft forever preferred_lft forever\r\n\e[?2004hroot@mothership:~# "
+  - delay: 2651
+    content: "\e[7mip netns exec service-kubevms-etcd ip addr\e[27m"
+  - delay: 264
+    content: "\r\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[Cip netns exec service-kubevms-etcd ip addr\r\n\e[?2004l\r1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000\r\n    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00\r\n    inet 127.0.0.1/8 scope host lo\r\n       valid_lft forever preferred_lft forever\r\n    inet6 ::1/128 scope host \r\n       valid_lft forever preferred_lft forever\r\n2: dhcp-d83-in@if38: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000\r\n    link/ether 0e:d7:fa:88:49:d2 brd ff:ff:ff:ff:ff:ff link-netnsid 0\r\n    inet 10.0.200.2/24 scope global dhcp-d83-in\r\n       valid_lft forever preferred_lft forever\r\n    inet6 fe80::cd7:faff:fe88:49d2/64 scope link \r\n       valid_lft forever preferred_lft forever\r\n\e[?2004hroot@mothership:~# "
+  - delay: 3227
+    content: "\e[7mip netns exec router-kubevms ip addr\e[27m"
+  - delay: 483
+    content: "\r\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[C\e[Cip netns exec router-kubevms ip addr\r\n\e[?2004l\r1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000\r\n    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00\r\n    inet 127.0.0.1/8 scope host lo\r\n       valid_lft forever preferred_lft forever\r\n    inet6 ::1/128 scope host \r\n       valid_lft forever preferred_lft forever\r\n2: irtr-d83-in@if36: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000\r\n    link/ether 86:42:85:e2:a2:9a brd ff:ff:ff:ff:ff:ff link-netnsid 0\r\n    inet 10.0.200.1/24 scope global irtr-d83-in\r\n       valid_lft forever preferred_lft forever\r\n    inet6 fe80::8442:85ff:fee2:a29a/64 scope link \r\n       valid_lft forever preferred_lft forever\r\n3: prtr-d83-in@if37: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000\r\n    link/ether b2:ce:6a:5a:27:3d brd ff:ff:ff:ff:ff:ff link-netnsid 0\r\n    inet 10.0.2.154/24 brd 10.0.2.255 scope global dynamic prtr-d83-in\r\n       valid_lft 60400sec preferred_lft 60400sec\r\n    inet6 2403:5806:97ec:2:b0ce:6aff:fe5a:273d/64 scope global dynamic mngtmpaddr \r\n       valid_lft 2591746sec preferred_lft 14146sec\r\n    inet6 fe80::b0ce:6aff:fe5a:273d/64 scope link \r\n       valid_lft forever preferred_lft forever\r\n4: irtr-8f2-in@if56: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000\r\n    link/ether 26:53:7e:31:51:f3 brd ff:ff:ff:ff:ff:ff link-netnsid 0\r\n    inet 10.0.250.1/24 scope global irtr-8f2-in\r\n       valid_lft forever preferred_lft forever\r\n    inet6 fe80::2453:7eff:fe31:51f3/64 scope link \r\n       valid_lft forever preferred_lft forever\r\n\e[?2004hroot@mothership:~# "
+  - delay: 1544
+    content: "\e[?2004l\r\r\nlogout\r\nConnection to 10.0.2.118 closed.\r\r\n\e]7;file://Davids-MacBook-Pro-3113.local/Users/davidmann/www/ordiri/ordiri\a"
+  - delay: 100
+    content: "\e]0;~/www/ordiri/ordiri\a\e[1m\r\r\n\e[38;5;166mdavidmann\e[97m at \e[38;5;136mDavids-MacBook-Pro-3113\e[97m in \e[38;5;64m~/www/ordiri/ordiri\e[97m on \e[38;5;61mmaster\e[38;5;33m [!?]\r\r\n\e[97m$ \e(B\e[m"
+  - delay: 764
+    content: "logout\r\n\r\nSaving session..."
+  - delay: 9
+    content: "completed.\r\n"
