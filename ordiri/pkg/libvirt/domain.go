@@ -123,27 +123,71 @@ func WithBiosOemString(entries ...string) DomainOption {
 	}
 }
 
-func WithPoolVolume(pool, volume string) DomainOption {
-	return func(domain *libvirtxml.Domain) error {
-		domain.Devices.Disks = []libvirtxml.DomainDisk{
-			{
-				Device: "disk",
-				Source: &libvirtxml.DomainDiskSource{
-					Volume: &libvirtxml.DomainDiskSourceVolume{
-						Pool:   pool,
-						Volume: volume,
+func WithCephVolume() DomainOption {
+	return func(d *libvirtxml.Domain) error {
+		return WithDisk(libvirtxml.DomainDisk{
+			/**<disk type='network' device='disk'>
+			        <source protocol='rbd' name='libvirt-pool/clusteredrbdtest'>
+			                <host name='{monitor-host}' port='6789'/>
+			        </source>
+			        <target dev='vdb' bus='virtio'/>
+			</disk>
+			**/
+			Device: "disk",
+
+			Source: &libvirtxml.DomainDiskSource{
+				Network: &libvirtxml.DomainDiskSourceNetwork{
+					Protocol: "rbd",
+					Name:     "tenant1/clusteredrbdtest",
+					Hosts: []libvirtxml.DomainDiskSourceHost{
+						{
+							Name: "mothership",
+							Port: "6789",
+						},
 					},
 				},
-				Target: &libvirtxml.DomainDiskTarget{
-					Dev: "vd" + diskLetterForIndex(len(domain.Devices.Disks)),
-					Bus: "virtio",
-				},
-				Driver: &libvirtxml.DomainDiskDriver{
-					Name: "qemu",
-					Type: "qcow2",
+			},
+			Auth: &libvirtxml.DomainDiskAuth{
+				Username: "libvirt",
+				Secret: &libvirtxml.DomainDiskSecret{
+					Type: "ceph",
+					UUID: "4eadcf35-dc7d-4d80-a7fe-5f599d1ec49f",
 				},
 			},
-		}
+			Target: &libvirtxml.DomainDiskTarget{
+				Dev: "vd" + diskLetterForIndex(len(d.Devices.Disks)),
+				Bus: "virtio",
+			},
+		})(d)
+	}
+}
+
+func WithPoolVolume(pool, volume string) DomainOption {
+	return func(domain *libvirtxml.Domain) error {
+		// domain.Devices.Disks = append(domain.Devices.Disks, )
+		return WithDisk(libvirtxml.DomainDisk{
+			Device: "disk",
+			Source: &libvirtxml.DomainDiskSource{
+				Volume: &libvirtxml.DomainDiskSourceVolume{
+					Pool:   pool,
+					Volume: volume,
+				},
+			},
+			Target: &libvirtxml.DomainDiskTarget{
+				Dev: "vd" + diskLetterForIndex(len(domain.Devices.Disks)),
+				Bus: "virtio",
+			},
+			Driver: &libvirtxml.DomainDiskDriver{
+				Name: "qemu",
+				Type: "qcow2",
+			},
+		})(domain)
+	}
+}
+
+func WithDisk(disks ...libvirtxml.DomainDisk) DomainOption {
+	return func(domain *libvirtxml.Domain) error {
+		domain.Devices.Disks = append(domain.Devices.Disks, disks...)
 		return nil
 	}
 }

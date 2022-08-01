@@ -75,7 +75,7 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 		startAt := int64(4096)
 		vni := r1.Int63n(16777215 - startAt)
 		vni = vni + startAt
-		nw.Status.Vni = uint64(vni)
+		nw.Status.Vni = vni
 		changed = true
 	}
 

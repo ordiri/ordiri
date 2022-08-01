@@ -16,14 +16,14 @@ NodeSubnetIngress := newFlow([]&ovs.Flow{
 type NodeSubnetIngress struct {
 	Switch        string
 	NodeLocalVlan int
-	TunnelId      uint64
+	TunnelId      int64
 }
 
 func (sti *NodeSubnetIngress) Install(client *ovs.Client) error {
 
 	return client.OpenFlow.AddFlow(sti.Switch, &ovs.Flow{
 		Matches: []ovs.Match{
-			ovs.TunnelID(sti.TunnelId),
+			ovs.TunnelID(uint64(sti.TunnelId)),
 		},
 		Actions: []ovs.Action{
 			ovs.ModVLANVID(sti.NodeLocalVlan),
@@ -36,7 +36,7 @@ func (sti *NodeSubnetIngress) Install(client *ovs.Client) error {
 func (sti *NodeSubnetIngress) Remove(client *ovs.Client) error {
 	return client.OpenFlow.DelFlows(sti.Switch, &ovs.MatchFlow{
 		Matches: []ovs.Match{
-			ovs.TunnelID(sti.TunnelId),
+			ovs.TunnelID(uint64(sti.TunnelId)),
 		},
 	})
 }

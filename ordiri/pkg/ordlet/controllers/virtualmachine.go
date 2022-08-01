@@ -158,6 +158,7 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 				Size:       disk.Size,
 			})
 		}
+		domainOptions = append(domainOptions, internallibvirt.WithCephVolume())
 
 		vm.Status.NetworkInterfaces = []computev1alpha1.VirtualMachineNetworkInterfaceStatus{}
 		if len(vm.Spec.NetworkInterfaces) > 0 {
@@ -299,7 +300,7 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	return ctrl.Result{}, nil
 }
 
-func (r *VirtualMachineReconciler) flows(ctx context.Context, vm *computev1alpha1.VirtualMachine, subnet *networkv1alpha1.Subnet, subnetBridge string, vlan int, vni uint64) []sdn.FlowRule {
+func (r *VirtualMachineReconciler) flows(ctx context.Context, vm *computev1alpha1.VirtualMachine, subnet *networkv1alpha1.Subnet, subnetBridge string, vlan int, vni int64) []sdn.FlowRule {
 	return []sdn.FlowRule{
 		&sdn.WorkloadEgress{
 			Switch:        sdn.WorkloadSwitchName,
@@ -309,7 +310,7 @@ func (r *VirtualMachineReconciler) flows(ctx context.Context, vm *computev1alpha
 	}
 }
 
-func (r *VirtualMachineReconciler) installFlows(ctx context.Context, vm *computev1alpha1.VirtualMachine, subnet *networkv1alpha1.Subnet, subnetBridge string, vlan int, vni uint64) error {
+func (r *VirtualMachineReconciler) installFlows(ctx context.Context, vm *computev1alpha1.VirtualMachine, subnet *networkv1alpha1.Subnet, subnetBridge string, vlan int, vni int64) error {
 	ovsClient := sdn.Ovs()
 	for _, flow := range r.flows(ctx, vm, subnet, subnetBridge, vlan, vni) {
 
@@ -593,14 +594,15 @@ func (r *VirtualMachineReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		For(&computev1alpha1.VirtualMachine{}).
 		Owns(&corev1alpha1.Machine{}).
 		WithEventFilter(predicate.And(predicate.NewPredicateFuncs(func(object client.Object) bool {
-			if r.Node.GetNode().UID == "" {
+			node := r.Node.GetNode()
+			if node.UID == "" {
 				return true
 			}
 
 			switch obj := object.(type) {
 			case *computev1alpha1.VirtualMachine:
 				scheduledOn, scheduled := obj.ScheduledNode()
-				return scheduled && scheduledOn == r.Node.GetNode().Name
+				return scheduled && scheduledOn == node.Name
 			}
 
 			return false

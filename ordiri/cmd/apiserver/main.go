@@ -27,6 +27,7 @@ import (
 	computev1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
+	storagev1alpha1 "github.com/ordiri/ordiri/pkg/apis/storage/v1alpha1"
 	"github.com/ordiri/ordiri/pkg/generated/openapi"
 )
 
@@ -39,14 +40,7 @@ type extraColumnStrategy struct {
 func main() {
 	apiBuilder := builder.APIServer.
 		// +kubebuilder:scaffold:resource-register
-		// WithResourceAndStrategy(&corev1alpha1.Node{}, extraColumnStrategy{
-		// 	DefaultStrategy: builder.DefaultStrategy{
-
-		// 		Object:         &corev1alpha1.Node{},
-		// 		ObjectTyper:    builder.APIServer.,
-		// 		TableConvertor: rest.NewDefaultTableConvertor((&corev1alpha1.Node{}).GetGroupVersionResource().GroupResource()),
-		// 	},
-		// }).
+		WithResource(&storagev1alpha1.Volume{}).
 		WithResource(&corev1alpha1.Node{}).
 		WithResource(&computev1alpha1.VirtualMachineDeployment{}).
 		WithResource(&computev1alpha1.VirtualMachineReplicaSet{}).

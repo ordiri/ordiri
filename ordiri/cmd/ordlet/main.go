@@ -36,6 +36,7 @@ import (
 	computev1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
+	storagev1alpha1 "github.com/ordiri/ordiri/pkg/apis/storage/v1alpha1"
 	"github.com/ordiri/ordiri/pkg/ordlet"
 	"github.com/ordiri/ordiri/pkg/ordlet/controllers"
 	//+kubebuilder:scaffold:imports
@@ -51,6 +52,7 @@ func init() {
 	utilruntime.Must(corev1alpha1.AddToScheme(scheme))
 	utilruntime.Must(networkv1alpha1.AddToScheme(scheme))
 	utilruntime.Must(computev1alpha1.AddToScheme(scheme))
+	utilruntime.Must(storagev1alpha1.AddToScheme(scheme))
 
 	//+kubebuilder:scaffold:scheme
 }
@@ -133,6 +135,14 @@ func main() {
 		Node:   nodeRunner,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "VirtualMachine")
+		os.Exit(1)
+	}
+	if err = (&controllers.VolumeReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+		Node:   nodeRunner,
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "Volume")
 		os.Exit(1)
 	}
 

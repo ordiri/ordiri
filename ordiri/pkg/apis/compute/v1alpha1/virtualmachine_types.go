@@ -75,6 +75,7 @@ type VirtualMachineSpec struct {
 type VirtualMachineNetworkInterface struct {
 	Network string `json:"network"`
 	Subnet  string `json:"subnet"`
+	Mac     string `json:"mac"`
 }
 
 func (in *VirtualMachineNetworkInterface) Key() string {
@@ -189,6 +190,7 @@ type VirtualMachineNetworkInterfaceStatus struct {
 	Name string `json:"name"`
 	Mac  string `json:"mac"`
 }
+
 type VirtualMachineDiskStatus struct {
 	Name       string         `json:"name"`
 	VolumeName string         `json:"volumeName"`

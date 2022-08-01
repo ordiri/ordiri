@@ -8,9 +8,10 @@ import (
 )
 
 func RandomScheduler() Scheduler {
+	src := rand.NewSource(time.Now().UnixNano())
+	rnd := rand.New(src)
 	return func(nodes []v1alpha1.Node) *v1alpha1.Node {
-
-		randomNode := rand.New(rand.NewSource(time.Now().Unix())).Intn(len(nodes))
+		randomNode := rnd.Intn(len(nodes))
 		return &nodes[randomNode]
 	}
 }

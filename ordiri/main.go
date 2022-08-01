@@ -35,6 +35,7 @@ import (
 	computecontrollers "github.com/ordiri/ordiri/controllers/compute"
 	corecontrollers "github.com/ordiri/ordiri/controllers/core"
 	networkcontrollers "github.com/ordiri/ordiri/controllers/network"
+	storagecontrollers "github.com/ordiri/ordiri/controllers/storage"
 	computev1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
@@ -147,6 +148,13 @@ func main() {
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Node")
+		os.Exit(1)
+	}
+	if err = (&storagecontrollers.VolumeReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "Volume")
 		os.Exit(1)
 	}
 	//+kubebuilder:scaffold:builder

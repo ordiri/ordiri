@@ -57,10 +57,14 @@ type NetworkSpec struct {
 	// Cidr address to represent this network
 	Cidr string `json:"cidr"`
 
-	// +kubebuilder:default=host
-	Mode NetworkMode `json:"mode"`
+	// Cidr address to represent this network
+	Nat NetworkNatSpec `json:"nat"`
 
-	RouteTables []RouteTableSelector `json:"routeTables"`
+	RouteTables []RouteTableSelector `json:"routeTables,omitempty"`
+}
+
+type NetworkNatSpec struct {
+	Enabled bool `json:"nat"`
 }
 
 // +kubebuilder:validation:Enum=host
@@ -122,7 +126,7 @@ func (in *NetworkList) GetListMeta() *metav1.ListMeta {
 
 // NetworkStatus defines the observed state of Network
 type NetworkStatus struct {
-	Vni   uint64              `json:"vni"`
+	Vni   int64               `json:"vni"`
 	Hosts []HostNetworkStatus `json:"hosts"`
 }
 

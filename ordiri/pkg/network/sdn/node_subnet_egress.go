@@ -16,7 +16,7 @@ NodeSubnetEgress := newFlow([]&ovs.Flow{
 type NodeSubnetEgress struct {
 	Switch        string
 	NodeLocalVlan int
-	TunnelId      uint64
+	TunnelId      int64
 }
 
 func (ste *NodeSubnetEgress) Install(client *ovs.Client) error {
@@ -26,7 +26,7 @@ func (ste *NodeSubnetEgress) Install(client *ovs.Client) error {
 		},
 		Actions: []ovs.Action{
 			ovs.StripVLAN(),
-			ovs.SetTunnel(ste.TunnelId),
+			ovs.SetTunnel(uint64(ste.TunnelId)),
 			ovs.Normal(),
 		},
 		Priority: 1,

@@ -19,6 +19,7 @@ package controllers
 import (
 	"context"
 	"fmt"
+	"os/exec"
 	"time"
 
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -36,6 +37,7 @@ import (
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
 	"github.com/ordiri/ordiri/pkg/network/sdn"
 	"github.com/ordiri/ordiri/pkg/ordlet"
+	"github.com/vishvananda/netns"
 )
 
 // NetworkReconciler reconciles a Network object
@@ -191,13 +193,16 @@ func (r *NetworkReconciler) removeNat(ctx context.Context, network *networkv1alp
 		return fmt.Errorf("unable to delete public gateway cable - %w", err)
 	}
 
-	log.Info("removing masquerade rulesets", "cableName", gatewayCableName)
-	ruleSets := r.rulesets(network.Spec.Cidr, gatewayCableName+"-in")
-	for _, ruleSet := range ruleSets {
-		for _, rule := range ruleSet.Rules {
-			err := ipt.DeleteIfExists(ruleSet.Table, ruleSet.Chain, rule...)
-			if err != nil {
-				return err
+	if handle, err := netns.GetFromName(network.RouterNetworkNamespace()); err == nil {
+		defer handle.Close()
+		log.Info("removing masquerade rulesets", "cableName", gatewayCableName)
+		ruleSets := r.rulesets(network.Spec.Cidr, gatewayCableName+"-in")
+		for _, ruleSet := range ruleSets {
+			for _, rule := range ruleSet.Rules {
+				err := ipt.DeleteIfExists(ruleSet.Table, ruleSet.Chain, rule...)
+				if err != nil {
+					return err
+				}
 			}
 		}
 	}
@@ -231,6 +236,14 @@ func (r *NetworkReconciler) installNat(ctx context.Context, network *networkv1al
 		return fmt.Errorf("unable to create internal router veth cable - %w", err)
 	}
 
+	cmd := exec.Command("ip", "netns", "exec", network.RouterNetworkNamespace(), "dhclient", "-r", gatewayCableName+"-in")
+	go func() {
+		// fire and forget for now
+		// todo: create a netlink device and actually set this properly
+		cmd.Start()
+		cmd.Wait()
+	}()
+
 	if err := sdn.Ovs().VSwitch.AddPort(sdn.ExternalSwitchName, gatewayCableName+"-out"); err != nil {
 		return err
 	}
@@ -249,7 +262,7 @@ func (r *NetworkReconciler) installNat(ctx context.Context, network *networkv1al
 	return nil
 }
 
-func (nw *NetworkReconciler) rulesets(cidr string, cableName string) []iptRule {
+func (nw *NetworkReconciler) rulesets(cidr string, publicInterface string) []iptRule {
 	return []iptRule{
 		{
 			Table: "raw",
@@ -261,7 +274,7 @@ func (nw *NetworkReconciler) rulesets(cidr string, cableName string) []iptRule {
 			Table: "nat",
 			Chain: "POSTROUTING",
 			Rules: [][]string{
-				{"-o", cableName, "-j", "MASQUERADE"},
+				{"-o", publicInterface, "-j", "MASQUERADE"},
 			},
 		},
 	}

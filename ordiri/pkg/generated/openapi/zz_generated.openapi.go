@@ -73,6 +73,7 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.HostSubnetStatus":                     schema_pkg_apis_network_v1alpha1_HostSubnetStatus(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.Network":                              schema_pkg_apis_network_v1alpha1_Network(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkList":                          schema_pkg_apis_network_v1alpha1_NetworkList(ref),
+		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkNatSpec":                       schema_pkg_apis_network_v1alpha1_NetworkNatSpec(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkSelector":                      schema_pkg_apis_network_v1alpha1_NetworkSelector(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkSpec":                          schema_pkg_apis_network_v1alpha1_NetworkSpec(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkStatus":                        schema_pkg_apis_network_v1alpha1_NetworkStatus(ref),
@@ -89,6 +90,10 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.SubnetList":                           schema_pkg_apis_network_v1alpha1_SubnetList(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.SubnetSpec":                           schema_pkg_apis_network_v1alpha1_SubnetSpec(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.SubnetStatus":                         schema_pkg_apis_network_v1alpha1_SubnetStatus(ref),
+		"github.com/ordiri/ordiri/pkg/apis/storage/v1alpha1.Volume":                               schema_pkg_apis_storage_v1alpha1_Volume(ref),
+		"github.com/ordiri/ordiri/pkg/apis/storage/v1alpha1.VolumeList":                           schema_pkg_apis_storage_v1alpha1_VolumeList(ref),
+		"github.com/ordiri/ordiri/pkg/apis/storage/v1alpha1.VolumeSpec":                           schema_pkg_apis_storage_v1alpha1_VolumeSpec(ref),
+		"github.com/ordiri/ordiri/pkg/apis/storage/v1alpha1.VolumeStatus":                         schema_pkg_apis_storage_v1alpha1_VolumeStatus(ref),
 		"k8s.io/apimachinery/pkg/api/resource.Quantity":                                           schema_apimachinery_pkg_api_resource_Quantity(ref),
 		"k8s.io/apimachinery/pkg/api/resource.int64Amount":                                        schema_apimachinery_pkg_api_resource_int64Amount(ref),
 		"k8s.io/apimachinery/pkg/apis/meta/v1.APIGroup":                                           schema_pkg_apis_meta_v1_APIGroup(ref),
@@ -461,8 +466,15 @@ func schema_pkg_apis_compute_v1alpha1_VirtualMachineNetworkInterface(ref common.
 							Format:  "",
 						},
 					},
+					"mac": {
+						SchemaProps: spec.SchemaProps{
+							Default: "",
+							Type:    []string{"string"},
+							Format:  "",
+						},
+					},
 				},
-				Required: []string{"network", "subnet"},
+				Required: []string{"network", "subnet", "mac"},
 			},
 		},
 	}
@@ -1869,6 +1881,26 @@ func schema_pkg_apis_network_v1alpha1_NetworkList(ref common.ReferenceCallback) 
 	}
 }
 
+func schema_pkg_apis_network_v1alpha1_NetworkNatSpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"nat": {
+						SchemaProps: spec.SchemaProps{
+							Default: false,
+							Type:    []string{"boolean"},
+							Format:  "",
+						},
+					},
+				},
+				Required: []string{"nat"},
+			},
+		},
+	}
+}
+
 func schema_pkg_apis_network_v1alpha1_NetworkSelector(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
@@ -1904,11 +1936,11 @@ func schema_pkg_apis_network_v1alpha1_NetworkSpec(ref common.ReferenceCallback) 
 							Format:      "",
 						},
 					},
-					"mode": {
+					"nat": {
 						SchemaProps: spec.SchemaProps{
-							Default: "",
-							Type:    []string{"string"},
-							Format:  "",
+							Description: "Cidr address to represent this network",
+							Default:     map[string]interface{}{},
+							Ref:         ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkNatSpec"),
 						},
 					},
 					"routeTables": {
@@ -1925,11 +1957,11 @@ func schema_pkg_apis_network_v1alpha1_NetworkSpec(ref common.ReferenceCallback) 
 						},
 					},
 				},
-				Required: []string{"cidr", "mode", "routeTables"},
+				Required: []string{"cidr", "nat"},
 			},
 		},
 		Dependencies: []string{
-			"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.RouteTableSelector"},
+			"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkNatSpec", "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.RouteTableSelector"},
 	}
 }
 
@@ -2423,6 +2455,124 @@ func schema_pkg_apis_network_v1alpha1_SubnetStatus(ref common.ReferenceCallback)
 		},
 		Dependencies: []string{
 			"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.HostSubnetStatus"},
+	}
+}
+
+func schema_pkg_apis_storage_v1alpha1_Volume(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "Volume",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"kind": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"apiVersion": {
+						SchemaProps: spec.SchemaProps{
+							Description: "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"metadata": {
+						SchemaProps: spec.SchemaProps{
+							Default: map[string]interface{}{},
+							Ref:     ref("k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"),
+						},
+					},
+					"spec": {
+						SchemaProps: spec.SchemaProps{
+							Default: map[string]interface{}{},
+							Ref:     ref("github.com/ordiri/ordiri/pkg/apis/storage/v1alpha1.VolumeSpec"),
+						},
+					},
+					"status": {
+						SchemaProps: spec.SchemaProps{
+							Default: map[string]interface{}{},
+							Ref:     ref("github.com/ordiri/ordiri/pkg/apis/storage/v1alpha1.VolumeStatus"),
+						},
+					},
+				},
+			},
+		},
+		Dependencies: []string{
+			"github.com/ordiri/ordiri/pkg/apis/storage/v1alpha1.VolumeSpec", "github.com/ordiri/ordiri/pkg/apis/storage/v1alpha1.VolumeStatus", "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"},
+	}
+}
+
+func schema_pkg_apis_storage_v1alpha1_VolumeList(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "VolumeList",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"kind": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"apiVersion": {
+						SchemaProps: spec.SchemaProps{
+							Description: "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"metadata": {
+						SchemaProps: spec.SchemaProps{
+							Default: map[string]interface{}{},
+							Ref:     ref("k8s.io/apimachinery/pkg/apis/meta/v1.ListMeta"),
+						},
+					},
+					"items": {
+						SchemaProps: spec.SchemaProps{
+							Type: []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: map[string]interface{}{},
+										Ref:     ref("github.com/ordiri/ordiri/pkg/apis/storage/v1alpha1.Volume"),
+									},
+								},
+							},
+						},
+					},
+				},
+				Required: []string{"items"},
+			},
+		},
+		Dependencies: []string{
+			"github.com/ordiri/ordiri/pkg/apis/storage/v1alpha1.Volume", "k8s.io/apimachinery/pkg/apis/meta/v1.ListMeta"},
+	}
+}
+
+func schema_pkg_apis_storage_v1alpha1_VolumeSpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "VolumeSpec defines the desired state of Volume",
+				Type:        []string{"object"},
+			},
+		},
+	}
+}
+
+func schema_pkg_apis_storage_v1alpha1_VolumeStatus(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "VolumeStatus defines the observed state of Volume",
+				Type:        []string{"object"},
+			},
+		},
 	}
 }
 
