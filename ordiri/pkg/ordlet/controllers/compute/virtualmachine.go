@@ -102,23 +102,16 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		}
 	}
 
-	domain, dom := r.GetDomain(ctx, vm)
+	_, domain := r.GetDomain(ctx, vm)
 	// r.LibvirtClient.attach
 
 	needsCreate := domain == nil
 	needsUpdate = needsUpdate || needsCreate
-	unseenDisks := map[string]libvirtxml.DomainDisk{}
-	for _, disk := range dom.Devices.Disks {
-		unseenDisks[disk.Device] = disk
-	}
-
-	unseenNetworks := map[string]libvirtxml.DomainInterface{}
-	for _, iface := range dom.Devices.Interfaces {
-		unseenNetworks[iface.MAC.Address] = iface
-	}
 
 	log.V(5).Info("creating new virtual machine")
 	domainOptions := []internallibvirt.DomainOption{
+		internallibvirt.WithBasicDefaults(),
+		internallibvirt.WithUuid(string(vm.UID)),
 		internallibvirt.WithBootDevice(vm.Spec.BootDevices...),
 		internallibvirt.WithConsole(0, "serial"),
 		internallibvirt.WithCpu(2),
@@ -128,10 +121,6 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 
 	// vm.Status.Volumes = []computev1alpha1.VirtualMachineVolumeStatus{}
 	for _, disk := range vm.Spec.Volumes {
-		if _, seen := unseenDisks[disk.Device]; seen {
-			needsUpdate = true
-		}
-		delete(unseenDisks, disk.Device)
 		volumeStatus, domainOption, err := r.getVolume(ctx, vm, disk)
 		if err != nil {
 			return ctrl.Result{}, err
@@ -142,10 +131,6 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	}
 
 	for _, iface := range vm.Spec.NetworkInterfaces {
-		if _, seen := unseenNetworks[iface.Mac]; seen {
-			needsUpdate = true
-		}
-		delete(unseenNetworks, iface.Mac)
 		ifaceStatus, ifaceOption, err := r.getNetworkInterface(ctx, vm, iface)
 		if err != nil {
 			return ctrl.Result{}, err
@@ -154,47 +139,19 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		vm.Status.NetworkInterfaces = append(vm.Status.NetworkInterfaces, ifaceStatus)
 	}
 
-	if len(unseenNetworks) > 0 {
-		needsUpdate = true
-		// teardown network interface
+	domain, dom, result, err := internallibvirt.Ensure(r.LibvirtClient, vm.Name, domainOptions...)
+	if err != nil {
+		return ctrl.Result{}, err
 	}
 
-	if len(unseenDisks) > 0 {
-		needsUpdate = true
-		// teardown disks
-	}
-
-	if needsUpdate {
-
-		domain, err := internallibvirt.NewDomain(vm.Name, domainOptions...)
-		if err != nil {
-			return ctrl.Result{}, err
-		}
-		domain.Description = "Created by the golang scheduler"
-		domain.Clock = &libvirtxml.DomainClock{
-			Offset: "utc",
-		}
-
-		if err != nil {
-			return ctrl.Result{}, err
-		}
-
-		domain.UUID = string(vm.UID)
-		domainStr, err := domain.Marshal()
-		if err != nil {
-			return ctrl.Result{}, err
-		}
-
-		dom, err := r.LibvirtClient.DomainDefineXMLFlags(domainStr, 0)
-		if err != nil {
-			return ctrl.Result{}, err
-		}
+	if result == internallibvirt.EnsureResultDomainCreated {
 		log.V(5).Info("created virtual machine")
-		dom, err = r.LibvirtClient.DomainCreateWithFlags(dom, uint32(libvirt.DomainStartPaused))
-		if err != nil {
-			return ctrl.Result{}, err
-		}
-		log = log.WithValues("domain", uuid.Must(uuid.FromBytes([]byte(dom.UUID[:]))).String())
+		needsUpdate = true
+	} else if result == internallibvirt.EnsureResultDomainUpdated {
+		log.V(5).Info("created virtual machine")
+		needsUpdate = true
+	}
+	if needsUpdate {
 
 	} else {
 		log.V(5).Info("found existing virtual machine")
@@ -205,25 +162,28 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		return ctrl.Result{}, fmt.Errorf("unable to finhd provisioned vm")
 	}
 
-	state, reason, err := r.LibvirtClient.DomainGetState(*domain, 0)
-	if err != nil {
-		return ctrl.Result{}, err
-	}
 	log.Info("got the virtual machine state", "state", state, "reason", reason)
 
-	if vm.Spec.State == computev1alpha1.VirtualMachineStatePaused && state != int32(libvirt.DomainPaused) {
-		if err := r.LibvirtClient.DomainSuspend(*domain); err != nil {
-			return ctrl.Result{}, fmt.Errorf("unable to suspend domain - %w", err)
-		}
-	} else if vm.Spec.State == computev1alpha1.VirtualMachineStateRunning && state != int32(libvirt.DomainRunning) {
-		if err := r.LibvirtClient.DomainResume(*domain); err != nil {
-			return ctrl.Result{}, fmt.Errorf("unable to resume domain - %w", err)
+	r.createOrUpdateMachine(ctx, vm, domain)
+	if vm.Status.ObservedGeneration != vm.Generation {
+		vm.Status.ObservedGeneration = vm.Generation
+		needsUpdate = true
+	}
+
+	if needsUpdate {
+		err = r.Client.Status().Update(ctx, vm)
+		if err != nil {
+			return ctrl.Result{}, err
 		}
 	}
 
+	return ctrl.Result{}, nil
+}
+
+func (r *VirtualMachineReconciler) createOrUpdateMachine(ctx context.Context, vm *computev1alpha1.VirtualMachine, domain *libvirtxml.Domain) (controllerutil.OperationResult, error) {
 	machine := &corev1alpha1.Machine{}
 	machine.Name = string(vm.UID)
-	_, err = ctrl.CreateOrUpdate(ctx, r.Client, machine, func() error {
+	return ctrl.CreateOrUpdate(ctx, r.Client, machine, func() error {
 		if machine.Spec.Properties == nil {
 			machine.Spec.Properties = []corev1alpha1.MachineProperty{}
 		}
@@ -244,27 +204,8 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		}
 		return ctrl.SetControllerReference(vm, machine, r.Scheme)
 	})
-	if err != nil {
-		return ctrl.Result{}, err
-	}
 
-	log = log.WithValues("machine", machine.Name)
-	log.V(5).Info("found the machine")
-	if vm.Status.ObservedGeneration != vm.Generation {
-		vm.Status.ObservedGeneration = vm.Generation
-		needsUpdate = true
-	}
-
-	if needsUpdate {
-		err = r.Client.Status().Update(ctx, vm)
-		if err != nil {
-			return ctrl.Result{}, err
-		}
-	}
-
-	return ctrl.Result{}, nil
 }
-
 func (r *VirtualMachineReconciler) ReconcileDeletion(ctx context.Context, vm *computev1alpha1.VirtualMachine) (ctrl.Result, error) {
 	log := k8log.FromContext(ctx)
 

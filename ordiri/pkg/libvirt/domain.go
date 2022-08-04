@@ -5,188 +5,153 @@ package libvirt
 import (
 	"fmt"
 
+	"github.com/digitalocean/go-libvirt"
 	"libvirt.org/go/libvirtxml"
 )
 
-type DomainOption func(*libvirtxml.Domain) error
+type EnsureResult string
 
-func WithBootDevice(bootDevice ...string) DomainOption {
-	return func(domain *libvirtxml.Domain) error {
-		if domain.OS == nil {
-			domain.OS = &libvirtxml.DomainOS{}
-		}
-		if domain.OS.BootDevices == nil {
-			domain.OS.BootDevices = []libvirtxml.DomainBootDevice{}
-		}
+const (
+	EnsureResultDomainUnknown = "unknown"
+	EnsureResultDomainCreated = "created"
+	EnsureResultDomainUpdated = "updated"
+	EnsureResultDomainNone    = "none"
+	EnsureResultDomainDeleted = "deleted"
+)
 
-		for _, dev := range bootDevice {
-			domain.OS.BootDevices = append(domain.OS.BootDevices, libvirtxml.DomainBootDevice{
-				Dev: dev,
-			})
-		}
-		return nil
+func doLiveUpdates(client *Libvirt, dom libvirt.Domain, old, new *libvirtxml.Domain) error {
+	disks := map[string]libvirtxml.DomainDisk{}
+	for _, disk := range old.Devices.Disks {
+		disks[disk.Device] = disk
 	}
-}
 
-func WithConsole(targetPort uint, targetType string) DomainOption {
-	return func(domain *libvirtxml.Domain) error {
-
-		if domain.Devices == nil {
-			domain.Devices = &libvirtxml.DomainDeviceList{}
-		}
-		domain.Devices.Consoles = append(domain.Devices.Consoles, libvirtxml.DomainConsole{
-			Target: &libvirtxml.DomainConsoleTarget{
-				Port: &targetPort,
-				Type: targetType,
-			},
-		})
-		return nil
+	ifaces := map[string]libvirtxml.DomainInterface{}
+	for _, iface := range old.Devices.Interfaces {
+		ifaces[iface.MAC.Address] = iface
 	}
-}
 
-func WithCpu(cpus uint) DomainOption {
-	return func(domain *libvirtxml.Domain) error {
-		domain.VCPU = &libvirtxml.DomainVCPU{
-			Placement: "static",
-			Value:     cpus,
-		}
-		domain.CPU = &libvirtxml.DomainCPU{
-			Mode:  "custom",
-			Match: "exact",
-			Check: "full",
-		}
-		return nil
-	}
-}
+	// Call the attach device for all the devices not yet seen
+	for _, disk := range new.Devices.Disks {
+		if _, ok := disks[disk.Device]; !ok {
+			delete(disks, disk.Device)
+			xml, err := disk.Marshal()
+			if err != nil {
+				return err
+			}
 
-func WithMemory(size uint) DomainOption {
-	return func(domain *libvirtxml.Domain) error {
-		domain.CurrentMemory = &libvirtxml.DomainCurrentMemory{
-			Value: size,
-			Unit:  "KiB",
-		}
-		domain.Memory = &libvirtxml.DomainMemory{
-			Value: size,
-			Unit:  "KiB",
-		}
-		return nil
-	}
-}
-
-func WithBridge(bridge ...string) DomainOption {
-	interfaces := []libvirtxml.DomainInterface{}
-	for _, bridgeName := range bridge {
-		interfaces = append(interfaces, libvirtxml.DomainInterface{
-			Source: &libvirtxml.DomainInterfaceSource{
-				Bridge: &libvirtxml.DomainInterfaceSourceBridge{
-					Bridge: bridgeName,
-				},
-			},
-			Model: &libvirtxml.DomainInterfaceModel{
-				Type: "virtio",
-			},
-		})
-	}
-	return WithNetworkInterfaces(interfaces...)
-}
-
-func WithNetworkInterfaces(interfaces ...libvirtxml.DomainInterface) DomainOption {
-	return func(domain *libvirtxml.Domain) error {
-		if domain.Devices == nil {
-			domain.Devices = &libvirtxml.DomainDeviceList{}
-		}
-
-		domain.Devices.Interfaces = append(domain.Devices.Interfaces, interfaces...)
-		return nil
-	}
-}
-func WithBiosOemString(entries ...string) DomainOption {
-	return func(domain *libvirtxml.Domain) error {
-		if domain.OS == nil {
-			domain.OS = &libvirtxml.DomainOS{}
-		}
-		domain.OS.SMBios = &libvirtxml.DomainSMBios{
-			Mode: "sysinfo",
-		}
-		domainSysInfo := &libvirtxml.DomainSysInfo{}
-		for _, dsi := range domain.SysInfo {
-			if dsi.SMBIOS != nil {
-				domainSysInfo = &dsi
+			if err := client.DomainUpdateDeviceFlags(dom, xml, libvirt.DomainDeviceModifyLive); err != nil {
+				return err
 			}
 		}
-		if domainSysInfo.SMBIOS == nil {
-			domainSysInfo.SMBIOS = &libvirtxml.DomainSysInfoSMBIOS{}
+	}
+
+	// Call the attach device for all the devices not yet seen
+	for _, iface := range new.Devices.Interfaces {
+		if _, ok := ifaces[iface.MAC.Address]; !ok {
+			delete(ifaces, iface.MAC.Address)
+			xml, err := iface.Marshal()
+			if err != nil {
+				return err
+			}
+
+			if err := client.DomainUpdateDeviceFlags(dom, xml, libvirt.DomainDeviceModifyLive); err != nil {
+				return err
+			}
+		}
+	}
+
+	for _, iface := range ifaces {
+		xml, err := iface.Marshal()
+		if err != nil {
+			return err
 		}
 
-		if domainSysInfo.SMBIOS.OEMStrings == nil {
-			domainSysInfo.SMBIOS.OEMStrings = &libvirtxml.DomainSysInfoOEMStrings{}
+		if err := client.DomainDetachDeviceFlags(dom, xml, uint32(libvirt.DomainDeviceModifyLive)); err != nil {
+			return err
+		}
+	}
+
+	for _, disk := range disks {
+		xml, err := disk.Marshal()
+		if err != nil {
+			return err
 		}
 
-		domainSysInfo.SMBIOS.OEMStrings.Entry = append(domainSysInfo.SMBIOS.OEMStrings.Entry, entries...)
-		return nil
+		if err := client.DomainDetachDeviceFlags(dom, xml, uint32(libvirt.DomainDeviceModifyLive)); err != nil {
+			return err
+		}
 	}
+
+	return nil
 }
 
-func WithCephVolume(name, device string) DomainOption {
-	return func(d *libvirtxml.Domain) error {
-		return WithDisk(libvirtxml.DomainDisk{
-			Device: "disk",
-
-			Source: &libvirtxml.DomainDiskSource{
-				Network: &libvirtxml.DomainDiskSourceNetwork{
-					Protocol: "rbd",
-					Name:     fmt.Sprintf("tenant1/%s", name),
-					Hosts: []libvirtxml.DomainDiskSourceHost{
-						{
-							Name: "mothership",
-							Port: "6789",
-						},
-					},
-				},
-			},
-			Auth: &libvirtxml.DomainDiskAuth{
-				Username: "libvirt",
-				Secret: &libvirtxml.DomainDiskSecret{
-					Type: "ceph",
-					UUID: "4eadcf35-dc7d-4d80-a7fe-5f599d1ec49f",
-				},
-			},
-			Target: &libvirtxml.DomainDiskTarget{
-				Dev: device,
-				Bus: "virtio",
-			},
-		})(d)
+func EnsureExisting(client *Libvirt, dom libvirt.Domain, domain *libvirtxml.Domain) (EnsureResult, error) {
+	existingXml, err := client.DomainGetXMLDesc(dom, 0)
+	if err != nil {
+		return EnsureResultDomainUnknown, err
 	}
+
+	existing := &libvirtxml.Domain{}
+	if err := existing.Unmarshal(existingXml); err != nil {
+		return EnsureResultDomainUnknown, err
+	}
+
+	domainStr, err := domain.Marshal()
+	if err != nil {
+		return EnsureResultDomainUnknown, err
+	}
+
+	dom, err = client.DomainDefineXMLFlags(domainStr, 0)
+	if err != nil {
+		return EnsureResultDomainUnknown, err
+	}
+
+	if err := doLiveUpdates(client, dom, existing, domain); err != nil {
+		return EnsureResultDomainUnknown, err
+	}
+
+	return EnsureResultDomainUpdated, nil
 }
 
-func WithPoolVolume(pool, volume, device string) DomainOption {
-	return func(domain *libvirtxml.Domain) error {
-		// domain.Devices.Disks = append(domain.Devices.Disks, )
-		return WithDisk(libvirtxml.DomainDisk{
-			Device: "disk",
-			Source: &libvirtxml.DomainDiskSource{
-				Volume: &libvirtxml.DomainDiskSourceVolume{
-					Pool:   pool,
-					Volume: volume,
-				},
-			},
-			Target: &libvirtxml.DomainDiskTarget{
-				Dev: device,
-				Bus: "virtio",
-			},
-			Driver: &libvirtxml.DomainDiskDriver{
-				Name: "qemu",
-				Type: "qcow2",
-			},
-		})(domain)
+func EnsureNew(client *Libvirt, domain *libvirtxml.Domain) (*libvirt.Domain, EnsureResult, error) {
+	domainStr, err := domain.Marshal()
+	if err != nil {
+		return nil, EnsureResultDomainUnknown, err
 	}
+
+	dom, err := client.DomainDefineXMLFlags(domainStr, 0)
+	if err != nil {
+		return nil, EnsureResultDomainUnknown, err
+	}
+
+	return &dom, EnsureResultDomainCreated, nil
 }
 
-func WithDisk(disks ...libvirtxml.DomainDisk) DomainOption {
-	return func(domain *libvirtxml.Domain) error {
-		domain.Devices.Disks = append(domain.Devices.Disks, disks...)
-		return nil
+func Ensure(client *Libvirt, name string, opts ...DomainOption) (*libvirtxml.Domain, *libvirt.Domain, EnsureResult, error) {
+	domain, err := NewDomain(name, opts...)
+	if err != nil {
+		return nil, nil, EnsureResultDomainUnknown, err
 	}
+
+	if domain.UUID == "" {
+		return nil, nil, EnsureResultDomainUnknown, fmt.Errorf("missing domain uuid")
+	}
+
+	dom, err := client.DomainLookupByUUID(uuidFromString(domain.UUID))
+	if err != nil {
+		dom, res, err := EnsureNew(client, domain)
+		if err != nil {
+			return domain, nil, res, err
+		}
+
+		return domain, dom, res, nil
+	}
+
+	res, err := EnsureExisting(client, dom, domain)
+	if err != nil {
+		return domain, nil, res, err
+	}
+	return domain, &dom, res, nil
 }
 
 func NewDomain(name string, opts ...DomainOption) (*libvirtxml.Domain, error) {
