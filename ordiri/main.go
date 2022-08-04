@@ -36,9 +36,7 @@ import (
 	corecontrollers "github.com/ordiri/ordiri/controllers/core"
 	networkcontrollers "github.com/ordiri/ordiri/controllers/network"
 	storagecontrollers "github.com/ordiri/ordiri/controllers/storage"
-	computev1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
-	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
-	networkv1alpha1 "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
+	"github.com/ordiri/ordiri/pkg/apis"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -49,9 +47,8 @@ var (
 
 func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
-	utilruntime.Must(corev1alpha1.AddToScheme(scheme))
-	utilruntime.Must(networkv1alpha1.AddToScheme(scheme))
-	utilruntime.Must(computev1alpha1.AddToScheme(scheme))
+	utilruntime.Must(apis.AddToScheme(scheme))
+	utilruntime.Must(apis.RegisterDefaults(scheme))
 
 	//+kubebuilder:scaffold:scheme
 }
@@ -122,6 +119,14 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "Subnet")
 		os.Exit(1)
 	}
+	if err = (&networkcontrollers.RouterReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "Router")
+		os.Exit(1)
+	}
+
 	if err = (&computecontrollers.VirtualMachineReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
@@ -155,6 +160,13 @@ func main() {
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Volume")
+		os.Exit(1)
+	}
+	if err = (&storagecontrollers.VolumeClaimReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "VolumeClaim")
 		os.Exit(1)
 	}
 	//+kubebuilder:scaffold:builder

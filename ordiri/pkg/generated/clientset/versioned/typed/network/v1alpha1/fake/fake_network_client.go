@@ -39,6 +39,10 @@ func (c *FakeNetworkV1alpha1) RouteTables() v1alpha1.RouteTableInterface {
 	return &FakeRouteTables{c}
 }
 
+func (c *FakeNetworkV1alpha1) Routers() v1alpha1.RouterInterface {
+	return &FakeRouters{c}
+}
+
 func (c *FakeNetworkV1alpha1) Subnets() v1alpha1.SubnetInterface {
 	return &FakeSubnets{c}
 }

@@ -28,5 +28,63 @@ import (
 // Public to allow building arbitrary schemes.
 // All generated defaulters are covering - they call all nested defaulters.
 func RegisterDefaults(scheme *runtime.Scheme) error {
+	scheme.AddTypeDefaultingFunc(&VirtualMachine{}, func(obj interface{}) { SetObjectDefaults_VirtualMachine(obj.(*VirtualMachine)) })
+	scheme.AddTypeDefaultingFunc(&VirtualMachineDeployment{}, func(obj interface{}) { SetObjectDefaults_VirtualMachineDeployment(obj.(*VirtualMachineDeployment)) })
+	scheme.AddTypeDefaultingFunc(&VirtualMachineDeploymentList{}, func(obj interface{}) {
+		SetObjectDefaults_VirtualMachineDeploymentList(obj.(*VirtualMachineDeploymentList))
+	})
+	scheme.AddTypeDefaultingFunc(&VirtualMachineList{}, func(obj interface{}) { SetObjectDefaults_VirtualMachineList(obj.(*VirtualMachineList)) })
+	scheme.AddTypeDefaultingFunc(&VirtualMachineReplicaSet{}, func(obj interface{}) { SetObjectDefaults_VirtualMachineReplicaSet(obj.(*VirtualMachineReplicaSet)) })
+	scheme.AddTypeDefaultingFunc(&VirtualMachineReplicaSetList{}, func(obj interface{}) {
+		SetObjectDefaults_VirtualMachineReplicaSetList(obj.(*VirtualMachineReplicaSetList))
+	})
 	return nil
+}
+
+func SetObjectDefaults_VirtualMachine(in *VirtualMachine) {
+	for i := range in.Spec.NetworkInterfaces {
+		a := in.Spec.NetworkInterfaces[i]
+		if a != nil {
+			SetDefaults_VirtualMachineNetworkInterface(a)
+		}
+	}
+}
+
+func SetObjectDefaults_VirtualMachineDeployment(in *VirtualMachineDeployment) {
+	for i := range in.Spec.Template.Spec.NetworkInterfaces {
+		a := in.Spec.Template.Spec.NetworkInterfaces[i]
+		if a != nil {
+			SetDefaults_VirtualMachineNetworkInterface(a)
+		}
+	}
+}
+
+func SetObjectDefaults_VirtualMachineDeploymentList(in *VirtualMachineDeploymentList) {
+	for i := range in.Items {
+		a := &in.Items[i]
+		SetObjectDefaults_VirtualMachineDeployment(a)
+	}
+}
+
+func SetObjectDefaults_VirtualMachineList(in *VirtualMachineList) {
+	for i := range in.Items {
+		a := &in.Items[i]
+		SetObjectDefaults_VirtualMachine(a)
+	}
+}
+
+func SetObjectDefaults_VirtualMachineReplicaSet(in *VirtualMachineReplicaSet) {
+	for i := range in.Spec.Template.Spec.NetworkInterfaces {
+		a := in.Spec.Template.Spec.NetworkInterfaces[i]
+		if a != nil {
+			SetDefaults_VirtualMachineNetworkInterface(a)
+		}
+	}
+}
+
+func SetObjectDefaults_VirtualMachineReplicaSetList(in *VirtualMachineReplicaSetList) {
+	for i := range in.Items {
+		a := &in.Items[i]
+		SetObjectDefaults_VirtualMachineReplicaSet(a)
+	}
 }

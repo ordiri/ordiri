@@ -28,9 +28,19 @@ const Version = "v1alpha1"
 var SchemeGroupVersion = schema.GroupVersion{Group: GroupName, Version: Version}
 
 var AddToScheme = func(scheme *runtime.Scheme) error {
-	metav1.AddToGroupVersion(SchemeGroupVersion)
+	metav1.AddToGroupVersion(scheme, SchemeGroupVersion)
 	// +kubebuilder:scaffold:install
+
+	scheme.AddKnownTypes(schema.GroupVersion{
+		Group:   "storage.ordiri.com",
+		Version: "v1alpha1",
+	}, &VolumeClaim{}, &VolumeClaimList{})
 
 	scheme.AddKnownTypes(SchemeGroupVersion, &Volume{}, &VolumeList{})
 	return nil
+}
+
+// Resource takes an unqualified resource and returns a Group qualified GroupResource
+func Resource(resource string) schema.GroupResource {
+	return SchemeGroupVersion.WithResource(resource).GroupResource()
 }

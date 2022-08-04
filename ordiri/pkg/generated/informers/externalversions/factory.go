@@ -27,6 +27,7 @@ import (
 	core "github.com/ordiri/ordiri/pkg/generated/informers/externalversions/core"
 	internalinterfaces "github.com/ordiri/ordiri/pkg/generated/informers/externalversions/internalinterfaces"
 	network "github.com/ordiri/ordiri/pkg/generated/informers/externalversions/network"
+	storage "github.com/ordiri/ordiri/pkg/generated/informers/externalversions/storage"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	schema "k8s.io/apimachinery/pkg/runtime/schema"
@@ -176,6 +177,7 @@ type SharedInformerFactory interface {
 	Compute() compute.Interface
 	Core() core.Interface
 	Network() network.Interface
+	Storage() storage.Interface
 }
 
 func (f *sharedInformerFactory) Compute() compute.Interface {
@@ -188,4 +190,8 @@ func (f *sharedInformerFactory) Core() core.Interface {
 
 func (f *sharedInformerFactory) Network() network.Interface {
 	return network.New(f, f.namespace, f.tweakListOptions)
+}
+
+func (f *sharedInformerFactory) Storage() storage.Interface {
+	return storage.New(f, f.namespace, f.tweakListOptions)
 }

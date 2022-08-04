@@ -77,6 +77,9 @@ const (
 var _ resource.Object = &Network{}
 var _ resourcestrategy.Validater = &Network{}
 
+func (nw *Network) DefaultRouterName() string {
+	return fmt.Sprintf("router-%s", nw.Name)
+}
 func (nw *Network) RouterNetworkNamespace() string {
 	return fmt.Sprintf("router-%s", nw.Name)
 }

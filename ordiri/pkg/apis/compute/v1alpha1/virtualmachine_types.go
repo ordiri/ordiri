@@ -64,15 +64,26 @@ const (
 // VirtualMachineSpec defines the desired state of VirtualMachine
 type VirtualMachineSpec struct {
 	Role string `json:"role"`
-	// +kubebuilder:default=Unknown
+
+	ScheduledNode string `json:"node"`
+
 	State VirtualMachineState `json:"state"`
-	// +kubebuilder:default=[hd,network]
-	BootDevices       []string                          `json:"bootDevices"`
-	Disks             []*VirtualMachineDisk             `json:"disks"`
+
+	// +optional
+	UserData string `jsonn:"userData,omitempty"`
+
+	// +optional
+	BootDevices []string `json:"bootDevices"`
+
+	// +optional
+	Volumes []*VirtualMachineVolume `json:"disks"`
+
+	// +optional
 	NetworkInterfaces []*VirtualMachineNetworkInterface `json:"networkInterfaces"`
 }
 
 type VirtualMachineNetworkInterface struct {
+	// +optional
 	Network string `json:"network"`
 	Subnet  string `json:"subnet"`
 	Mac     string `json:"mac"`
@@ -82,9 +93,17 @@ func (in *VirtualMachineNetworkInterface) Key() string {
 	return fmt.Sprintf("%s:%s", in.Network, in.Subnet)
 }
 
-type VirtualMachineDisk struct {
-	Name string         `json:"name"`
-	Size k8res.Quantity `json:"size"`
+type VirtualMachineVolume struct {
+	Name string `json:"name"`
+	// The device that the volume is bound too
+	// for example, /dev/vda
+	Device string `json:"device"`
+
+	VolumeClaim *VirtualMachineVolumeClaim `json:"volumeClaim,omitempty"`
+}
+
+type VirtualMachineVolumeClaim struct {
+	ClaimName string `json:"claimName"`
 }
 
 var _ resource.Object = &VirtualMachine{}
@@ -99,6 +118,10 @@ func (vm *VirtualMachine) DeviceHash() string {
 }
 
 func (in *VirtualMachine) ScheduledNode() (string, bool) {
+	if in.Spec.ScheduledNode != "" {
+		return in.Spec.ScheduledNode, true
+	}
+
 	annot := in.GetAnnotations()
 	if annot == nil {
 		return "", false
@@ -115,14 +138,7 @@ func (in *VirtualMachine) Schedule(nodeName string) error {
 		return fmt.Errorf("virtual machine already scheduled on " + existing)
 	}
 
-	annots := in.GetAnnotations()
-	if annots == nil {
-		annots = map[string]string{}
-	}
-
-	annots[VirtualMachineScheduledAnnotation] = nodeName
-	in.SetAnnotations(annots)
-
+	in.Spec.ScheduledNode = nodeName
 	return nil
 }
 
@@ -175,7 +191,7 @@ type VirtualMachineStatus struct {
 	// +optional
 	ObservedGeneration int64                                  `json:"observedGeneration"`
 	NetworkInterfaces  []VirtualMachineNetworkInterfaceStatus `json:"networkInterfaces,omitempty"`
-	Disks              []VirtualMachineDiskStatus             `json:"disks,omitempty"`
+	Volumes            []VirtualMachineVolumeStatus           `json:"disks,omitempty"`
 
 	// Represents the observations of a foo's current state.
 	// Known .status.conditions.type are: "AssignedRole", "Progressing", and "Degraded"
@@ -191,10 +207,11 @@ type VirtualMachineNetworkInterfaceStatus struct {
 	Mac  string `json:"mac"`
 }
 
-type VirtualMachineDiskStatus struct {
-	Name       string         `json:"name"`
-	VolumeName string         `json:"volumeName"`
-	Size       k8res.Quantity `json:"size"`
+type VirtualMachineVolumeStatus struct {
+	Bound  bool           `json:"bound"`
+	Name   string         `json:"name"`
+	Size   k8res.Quantity `json:"size"`
+	Device string         `json:"device"`
 }
 
 func (in VirtualMachineStatus) SubResourceName() string {

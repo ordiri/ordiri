@@ -23,4 +23,6 @@ type RouteExpansion interface{}
 
 type RouteTableExpansion interface{}
 
+type RouterExpansion interface{}
+
 type SubnetExpansion interface{}

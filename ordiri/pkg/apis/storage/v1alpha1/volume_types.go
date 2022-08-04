@@ -1,4 +1,3 @@
-
 /*
 Copyright 2022.
 
@@ -20,8 +19,10 @@ package v1alpha1
 import (
 	"context"
 
+	v1 "k8s.io/api/core/v1"
+	resourcev1 "k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/util/validation/field"
 	"sigs.k8s.io/apiserver-runtime/pkg/builder/resource"
@@ -44,7 +45,7 @@ type Volume struct {
 // VolumeList
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 type VolumeList struct {
-	metav1.TypeMeta   `json:",inline"`
+	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
 
 	Items []Volume `json:"items"`
@@ -52,6 +53,11 @@ type VolumeList struct {
 
 // VolumeSpec defines the desired state of Volume
 type VolumeSpec struct {
+	// +optional
+	StorageClassName string              `json:"storageClassName"`
+	Size             resourcev1.Quantity `json:"size"`
+	// +optional
+	ClaimRef *v1.ObjectReference
 }
 
 var _ resource.Object = &Volume{}
@@ -95,6 +101,7 @@ var _ resource.ObjectList = &VolumeList{}
 func (in *VolumeList) GetListMeta() *metav1.ListMeta {
 	return &in.ListMeta
 }
+
 // VolumeStatus defines the observed state of Volume
 type VolumeStatus struct {
 }

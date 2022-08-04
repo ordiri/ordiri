@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.aoeaoeaoeao
 */
 
-package controllers
+package network
 
 import (
 	"context"
@@ -41,9 +41,7 @@ import (
 	"github.com/c-robinson/iplib"
 	"github.com/digitalocean/go-openvswitch/ovs"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
-	"github.com/vishvananda/netns"
 
-	network "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
 	"github.com/ordiri/ordiri/pkg/network/dhcp"
 	"github.com/ordiri/ordiri/pkg/network/sdn"
@@ -185,9 +183,6 @@ func (r *SubnetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 }
 
 func (r *SubnetReconciler) unconfigure(ctx context.Context, nw *networkv1alpha1.Network, subnet *networkv1alpha1.Subnet) error {
-	if err := r.removeRouter(ctx, nw, subnet); err != nil {
-		return fmt.Errorf("unable to unconfigure router - %w", err)
-	}
 	// Create the DHCP service for this subnet
 	if err := r.removeDhcp(ctx, nw, subnet); err != nil {
 		return fmt.Errorf("unable to unconfigure dhcp - %w", err)
@@ -245,10 +240,7 @@ func (r *SubnetReconciler) configure(ctx context.Context, nw *networkv1alpha1.Ne
 		return err
 	}
 	if r.Node.GetNode().HasRole(corev1alpha1.NodeRoleNetwork) {
-		log.Info("installing router on node")
-		if err := r.installRouter(ctx, nw, subnet); err != nil {
-			return err
-		}
+
 		log.Info("installing NAT on node")
 		if err := r.installNat(ctx, subnet); err != nil {
 			return err
@@ -274,41 +266,7 @@ func (r *SubnetReconciler) configure(ctx context.Context, nw *networkv1alpha1.Ne
 	}
 	return nil
 }
-func (r *SubnetReconciler) removeRouter(ctx context.Context, nw *networkv1alpha1.Network, subnet *networkv1alpha1.Subnet) error {
-	log := log.FromContext(ctx)
-	internalCableName := subnet.RouterNetworkInternalCableName()
-	log.Info("Deleting port for router ", "cableName", internalCableName)
-	// need to create flow rules taking this to the vxlan?
-	if err := sdn.Ovs().VSwitch.DeletePort(sdn.WorkloadSwitchName, internalCableName+"-out"); err != nil && !isPortNotExist(err) {
-		return fmt.Errorf("unable to remove ovs port - %w", err)
-	}
 
-	log.Info("Deleting veth cable for router ", "cableName", internalCableName)
-	if err := removeVeth(internalCableName); err != nil {
-		return fmt.Errorf("unable to remove ethernet cable - %w", err)
-	}
-	ruleSets := r.rulesets(nw.RouterNetworkPublicGatewayCableName()+"-in", internalCableName+"-in")
-	if handle, err := netns.GetFromName(subnet.RouterNetworkNamespace()); err == nil {
-		log.Info("removing ip table rules ", "ns", subnet.RouterNetworkNamespace(), "rule_count", len(ruleSets))
-		defer handle.Close()
-		ipt, err := sdn.Iptables(subnet.RouterNetworkNamespace())
-		if err != nil {
-			return fmt.Errorf("create iptables - %w", err)
-		}
-		for _, ruleSet := range ruleSets {
-			for _, rule := range ruleSet.Rules {
-				err := ipt.DeleteIfExists(ruleSet.Table, ruleSet.Chain, rule...)
-				if err != nil {
-					return err
-				}
-			}
-		}
-	} else {
-		log.Info("router network namespace does not exist, skipping ", "ns", subnet.RouterNetworkNamespace(), "rule_count", len(ruleSets))
-	}
-	log.Info("router has been removed from node")
-	return nil
-}
 func (r *SubnetReconciler) removeDhcp(ctx context.Context, nw *networkv1alpha1.Network, subnet *networkv1alpha1.Subnet) error {
 	cableName := subnet.ServiceNetworkCableName()
 	log := log.FromContext(ctx)
@@ -318,7 +276,7 @@ func (r *SubnetReconciler) removeDhcp(ctx context.Context, nw *networkv1alpha1.N
 	if err := sdn.Ovs().VSwitch.DeletePort(sdn.WorkloadSwitchName, cableName+"-out"); err != nil && !isPortNotExist(err) {
 		return fmt.Errorf("unable to remove dhcp port - %w", err)
 	}
-	log.Info("Deleting veth cable for router ", "cableName", cableName)
+	log.Info("Deleting veth cable for dhcp ", "cableName", cableName)
 	if err := removeVeth(cableName); err != nil {
 		return fmt.Errorf("unable to delete veth cable %s - %w", cableName, err)
 	}
@@ -358,78 +316,6 @@ func (r *SubnetReconciler) removeDhcp(ctx context.Context, nw *networkv1alpha1.N
 	}
 
 	return nil
-}
-
-func (r *SubnetReconciler) installRouter(ctx context.Context, nw *networkv1alpha1.Network, subnet *networkv1alpha1.Subnet) error {
-	err := createNetworkNs(subnet.RouterNetworkNamespace())
-	if err != nil {
-		return fmt.Errorf("unable to create router network namespace - %w", err)
-	}
-
-	internetNetworkRouterCable := subnet.RouterNetworkInternalCableName()
-	if err := createVeth(internetNetworkRouterCable, subnet.RouterNetworkNamespace()); err != nil {
-		return fmt.Errorf("unable to create internal veth cable - %w", err)
-	}
-
-	vlan, err := r.Node.GetNode().SubnetVlanId(subnet.Name)
-	if err != nil {
-		return fmt.Errorf("unable to get subnet vladi id for router - %w", err)
-	}
-
-	// need to create flow rules taking this to the vxlan?
-	if err := sdn.Ovs().VSwitch.AddPort(sdn.WorkloadSwitchName, internetNetworkRouterCable+"-out"); err != nil {
-		return err
-	}
-
-	if err := sdn.Ovs().VSwitch.Set.Port(internetNetworkRouterCable+"-out", ovs.PortOptions{
-		Tag: vlan,
-	}); err != nil {
-		return err
-	}
-
-	_, dhcpNet, err := iplib.ParseCIDR(subnet.Spec.Cidr)
-	if err != nil {
-		return fmt.Errorf("unable to parse router cidr - %w", err)
-	}
-
-	dhcpAddr := dhcpNet.FirstAddress()
-
-	ones, _ := dhcpNet.Mask().Size()
-
-	if err := setNsVethIp(subnet.RouterNetworkNamespace(), fmt.Sprintf("%s/%d", dhcpAddr.String(), ones), internetNetworkRouterCable); err != nil {
-		return fmt.Errorf("unable to set router ip on internal cable %s - %W", internetNetworkRouterCable, err)
-	}
-
-	ipt, err := sdn.Iptables(subnet.RouterNetworkNamespace())
-	if err != nil {
-		return err
-	}
-
-	ruleSets := r.rulesets(nw.RouterNetworkPublicGatewayCableName()+"-in", internetNetworkRouterCable+"-in")
-
-	for _, ruleSet := range ruleSets {
-		for _, rule := range ruleSet.Rules {
-			err := ipt.AppendUnique(ruleSet.Table, ruleSet.Chain, rule...)
-			if err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-	// return fmt.Errorf("not uimplemented")
-}
-
-func (nw *SubnetReconciler) rulesets(externalCablename string, internalCableName string) []iptRule {
-	return []iptRule{{
-		Table: "filter",
-		Chain: "FORWARD",
-		Rules: [][]string{
-			{"-i", externalCablename, "-o", internalCableName, "-j", "ACCEPT"},
-			{"-i", internalCableName, "-o", externalCablename, "-j", "ACCEPT"},
-		},
-	},
-	}
 }
 
 func (r *SubnetReconciler) installNat(ctx context.Context, subnet *networkv1alpha1.Subnet) error {
@@ -585,7 +471,7 @@ func (r *SubnetReconciler) flows(ctx context.Context, nw *networkv1alpha1.Networ
 }
 
 func (r *SubnetReconciler) installFlows(ctx context.Context, subnet *networkv1alpha1.Subnet) error {
-	nw := &network.Network{}
+	nw := &networkv1alpha1.Network{}
 	nw.Name = subnet.Spec.Network.Name
 	if err := r.Client.Get(ctx, client.ObjectKeyFromObject(nw), nw); err != nil {
 		return err

@@ -1,11 +1,11 @@
-package libvirt
+package volume
 
 import "fmt"
 
 var diskLetters = []rune("abcdefghijklmnopqrstuvwxyz")
 
 // diskLetterForIndex return diskLetters for index
-func diskLetterForIndex(i int) string {
+func DiskLetterForIndex(i int) string {
 
 	q := i / len(diskLetters)
 	r := i % len(diskLetters)
@@ -15,5 +15,5 @@ func diskLetterForIndex(i int) string {
 		return fmt.Sprintf("%c", letter)
 	}
 
-	return fmt.Sprintf("%s%c", diskLetterForIndex(q-1), letter)
+	return fmt.Sprintf("%s%c", DiskLetterForIndex(q-1), letter)
 }

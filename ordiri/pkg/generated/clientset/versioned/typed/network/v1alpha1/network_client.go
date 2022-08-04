@@ -30,6 +30,7 @@ type NetworkV1alpha1Interface interface {
 	NetworksGetter
 	RoutesGetter
 	RouteTablesGetter
+	RoutersGetter
 	SubnetsGetter
 }
 
@@ -48,6 +49,10 @@ func (c *NetworkV1alpha1Client) Routes() RouteInterface {
 
 func (c *NetworkV1alpha1Client) RouteTables() RouteTableInterface {
 	return newRouteTables(c)
+}
+
+func (c *NetworkV1alpha1Client) Routers() RouterInterface {
+	return newRouters(c)
 }
 
 func (c *NetworkV1alpha1Client) Subnets() SubnetInterface {

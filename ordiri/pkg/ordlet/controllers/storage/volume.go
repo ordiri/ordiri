@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.aoeaoeaoeao
 */
 
-package controllers
+package storage
 
 import (
 	"context"
@@ -25,12 +25,15 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	storagev1alpha1 "github.com/ordiri/ordiri/pkg/apis/storage/v1alpha1"
+	"github.com/ordiri/ordiri/pkg/ordlet"
 )
 
 // VolumeReconciler reconciles a Volume object
 type VolumeReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
+
+	Node ordlet.NodeProvider
 }
 
 //+kubebuilder:rbac:groups=storage,resources=volumes,verbs=get;list;watch;create;update;patch;delete

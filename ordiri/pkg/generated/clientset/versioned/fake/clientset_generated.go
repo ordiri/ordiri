@@ -25,6 +25,8 @@ import (
 	fakecorev1alpha1 "github.com/ordiri/ordiri/pkg/generated/clientset/versioned/typed/core/v1alpha1/fake"
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/generated/clientset/versioned/typed/network/v1alpha1"
 	fakenetworkv1alpha1 "github.com/ordiri/ordiri/pkg/generated/clientset/versioned/typed/network/v1alpha1/fake"
+	storagev1alpha1 "github.com/ordiri/ordiri/pkg/generated/clientset/versioned/typed/storage/v1alpha1"
+	fakestoragev1alpha1 "github.com/ordiri/ordiri/pkg/generated/clientset/versioned/typed/storage/v1alpha1/fake"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/watch"
 	"k8s.io/client-go/discovery"
@@ -95,4 +97,9 @@ func (c *Clientset) CoreV1alpha1() corev1alpha1.CoreV1alpha1Interface {
 // NetworkV1alpha1 retrieves the NetworkV1alpha1Client
 func (c *Clientset) NetworkV1alpha1() networkv1alpha1.NetworkV1alpha1Interface {
 	return &fakenetworkv1alpha1.FakeNetworkV1alpha1{Fake: &c.Fake}
+}
+
+// StorageV1alpha1 retrieves the StorageV1alpha1Client
+func (c *Clientset) StorageV1alpha1() storagev1alpha1.StorageV1alpha1Interface {
+	return &fakestoragev1alpha1.FakeStorageV1alpha1{Fake: &c.Fake}
 }

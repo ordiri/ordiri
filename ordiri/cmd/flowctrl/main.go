@@ -31,10 +31,9 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	computev1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
-	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
-	networkv1alpha1 "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
-	"github.com/ordiri/ordiri/pkg/ordlet/controllers"
+	"github.com/ordiri/ordiri/controllers/compute"
+	"github.com/ordiri/ordiri/pkg/apis"
+	"github.com/ordiri/ordiri/pkg/ordlet/controllers/network"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -45,9 +44,8 @@ var (
 
 func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
-	utilruntime.Must(corev1alpha1.AddToScheme(scheme))
-	utilruntime.Must(networkv1alpha1.AddToScheme(scheme))
-	utilruntime.Must(computev1alpha1.AddToScheme(scheme))
+	utilruntime.Must(apis.AddToScheme(scheme))
+	utilruntime.Must(apis.RegisterDefaults(scheme))
 
 	//+kubebuilder:scaffold:scheme
 }
@@ -79,7 +77,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err = (&controllers.SubnetReconciler{
+	if err = (&network.SubnetReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
@@ -87,7 +85,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err = (&controllers.VirtualMachineReconciler{
+	if err = (&compute.VirtualMachineReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {

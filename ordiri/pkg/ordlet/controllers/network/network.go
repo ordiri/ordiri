@@ -14,15 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.aoeaoeaoeao
 */
 
-package controllers
+package network
 
 import (
 	"context"
 	"fmt"
 	"os/exec"
-	"time"
 
-	"k8s.io/apimachinery/pkg/api/errors"
 	k8err "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/util/retry"
@@ -37,7 +35,6 @@ import (
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
 	"github.com/ordiri/ordiri/pkg/network/sdn"
 	"github.com/ordiri/ordiri/pkg/ordlet"
-	"github.com/vishvananda/netns"
 )
 
 // NetworkReconciler reconciles a Network object
@@ -48,21 +45,19 @@ type NetworkReconciler struct {
 	Node ordlet.NodeProvider
 }
 
+// Controls internet gateway & floating ip etc ona node
 func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := log.FromContext(ctx)
 	log.V(5).Info("Starting to reconcile", "request", req)
-	if r.Node.GetNode().UID == "" {
-		log.V(5).Info("requeueing, no node set yet")
-		return ctrl.Result{RequeueAfter: time.Second * 1}, nil
-	}
 
 	network := &networkv1alpha1.Network{}
 	if err := r.Client.Get(ctx, req.NamespacedName, network); err != nil {
-		if errors.IsNotFound(err) {
+		if k8err.IsNotFound(err) {
 			return ctrl.Result{}, nil
 		}
 		return ctrl.Result{}, err
 	}
+
 	node := r.Node.GetNode()
 	nodeWantsNetwork := false
 	networkReferencesNode := false
@@ -75,17 +70,27 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 	if nodeWantsNetwork && !r.Node.GetNode().HasRole(corev1alpha1.NodeRoleNetwork) {
 		nodeWantsNetwork = false
 	}
+
 	for _, host := range network.Status.Hosts {
 		if host.Node == node.Name {
 			networkReferencesNode = true
 		}
 	}
 
+	// here we need to be setting the status on a per-host level as to how each thing is
+	// with conditions as well
+	// network:
+	// 	status:
+	// 		hosts:
+	// 		- name: foo
+	// 		  routers: // common routerstatusref ?
+	// 		  - name: default
+	//          mac: 00:00:00:00:00
+	//          ip: 10.1.1.1
+	// 		  - name: custom
+
 	if networkReferencesNode && !nodeWantsNetwork {
 		log.Info("network references the node but the node doesn't want it, removing")
-		if err := r.removeRouter(ctx, network); err != nil {
-			return ctrl.Result{}, err
-		}
 
 		// We wan to ensure we remove this node if weneed
 		err := retry.RetryOnConflict(retry.DefaultBackoff, func() error {
@@ -119,6 +124,10 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 		}
 	} else if nodeWantsNetwork {
 		log.Info("node wants the network")
+
+		if err := r.installNat(ctx, network); err != nil {
+			return ctrl.Result{}, err
+		}
 		if !networkReferencesNode {
 			log.Info("a link from the node to the network")
 			// ensure we are referencing the node we are running on in the subnets status so we can decommission the node
@@ -132,6 +141,7 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 					}
 					return err
 				}
+
 				networkContainsNode := false
 				for _, hostBinding := range network.Status.Hosts {
 					if hostBinding.Node == node.Name {
@@ -155,73 +165,9 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 				return ctrl.Result{}, err
 			}
 		}
-		if err := r.installRouter(ctx, network); err != nil {
-			return ctrl.Result{}, err
-		}
 	}
 
 	return ctrl.Result{}, nil
-}
-func (r *NetworkReconciler) removeRouter(ctx context.Context, network *networkv1alpha1.Network) error {
-	// Even better, migrate to eBPF... :rocket:
-	if err := r.removeNat(ctx, network); err != nil {
-		return err
-	}
-
-	if err := deleteNetworkNs(network.RouterNetworkNamespace()); err != nil {
-		return err
-	}
-
-	return nil
-}
-func (r *NetworkReconciler) removeNat(ctx context.Context, network *networkv1alpha1.Network) error {
-	log := log.FromContext(ctx)
-	ipt, err := sdn.Iptables(network.RouterNetworkNamespace())
-
-	if err != nil {
-		return err
-	}
-
-	gatewayCableName := network.RouterNetworkPublicGatewayCableName()
-	log.Info("removing veth cable ", "cableName", gatewayCableName)
-	if err := removeVeth(gatewayCableName); err != nil {
-		return fmt.Errorf("unable to delete internal router veth cable - %w", err)
-	}
-
-	log.Info("deleting ovs nat port ", "cableName", gatewayCableName)
-	if err := sdn.Ovs().VSwitch.DeletePort(sdn.ExternalSwitchName, gatewayCableName+"-out"); err != nil && !isPortNotExist(err) {
-		return fmt.Errorf("unable to delete public gateway cable - %w", err)
-	}
-
-	if handle, err := netns.GetFromName(network.RouterNetworkNamespace()); err == nil {
-		defer handle.Close()
-		log.Info("removing masquerade rulesets", "cableName", gatewayCableName)
-		ruleSets := r.rulesets(network.Spec.Cidr, gatewayCableName+"-in")
-		for _, ruleSet := range ruleSets {
-			for _, rule := range ruleSet.Rules {
-				err := ipt.DeleteIfExists(ruleSet.Table, ruleSet.Chain, rule...)
-				if err != nil {
-					return err
-				}
-			}
-		}
-	}
-
-	return nil
-}
-func (r *NetworkReconciler) installRouter(ctx context.Context, network *networkv1alpha1.Network) error {
-	if err := createNetworkNs(network.RouterNetworkNamespace()); err != nil {
-		return fmt.Errorf("unable to create network ns - %s - %w", string(network.RouterNetworkNamespace()), err)
-	}
-
-	// Even better, migrate to eBPF... :rocket:
-	if network.NatEnabled() {
-		if err := r.installNat(ctx, network); err != nil {
-			return err
-		}
-	}
-
-	return nil
 }
 
 func (r *NetworkReconciler) installNat(ctx context.Context, network *networkv1alpha1.Network) error {
@@ -236,12 +182,15 @@ func (r *NetworkReconciler) installNat(ctx context.Context, network *networkv1al
 		return fmt.Errorf("unable to create internal router veth cable - %w", err)
 	}
 
-	cmd := exec.Command("ip", "netns", "exec", network.RouterNetworkNamespace(), "dhclient", "-r", gatewayCableName+"-in")
+	renewDhclientCmd := exec.Command("ip", "netns", "exec", network.RouterNetworkNamespace(), "dhclient", "-r", gatewayCableName+"-in")
 	go func() {
 		// fire and forget for now
 		// todo: create a netlink device and actually set this properly
-		cmd.Start()
-		cmd.Wait()
+		// by using some allocator in the manager to pre-allocate the ip's
+		renewDhclientCmd.Run()
+
+		cmd := exec.Command("ip", "netns", "exec", network.RouterNetworkNamespace(), "dhclient", "-r", gatewayCableName+"-in")
+		cmd.Run()
 	}()
 
 	if err := sdn.Ovs().VSwitch.AddPort(sdn.ExternalSwitchName, gatewayCableName+"-out"); err != nil {

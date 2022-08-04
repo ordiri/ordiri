@@ -29,6 +29,10 @@ type RouteListerExpansion interface{}
 // RouteTableLister.
 type RouteTableListerExpansion interface{}
 
+// RouterListerExpansion allows custom methods to be added to
+// RouterLister.
+type RouterListerExpansion interface{}
+
 // SubnetListerExpansion allows custom methods to be added to
 // SubnetLister.
 type SubnetListerExpansion interface{}

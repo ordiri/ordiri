@@ -79,8 +79,9 @@ to quickly create a Cobra application.`,
 			internallibvirt.WithConsole(0, "serial"),
 			internallibvirt.WithBridge("vmmgmt", "vmwan"),
 			internallibvirt.WithBiosOemString("oemstr1", "oemstr2"),
-			internallibvirt.WithPoolVolume(vol.Pool, vol.Name),
+			internallibvirt.WithPoolVolume(vol.Pool, vol.Name, "vda1"),
 		)
+
 		domain.Description = "Created by the golang scheduler"
 
 		if err != nil {

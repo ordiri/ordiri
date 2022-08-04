@@ -28,5 +28,18 @@ import (
 // Public to allow building arbitrary schemes.
 // All generated defaulters are covering - they call all nested defaulters.
 func RegisterDefaults(scheme *runtime.Scheme) error {
+	scheme.AddTypeDefaultingFunc(&Router{}, func(obj interface{}) { SetObjectDefaults_Router(obj.(*Router)) })
+	scheme.AddTypeDefaultingFunc(&RouterList{}, func(obj interface{}) { SetObjectDefaults_RouterList(obj.(*RouterList)) })
 	return nil
+}
+
+func SetObjectDefaults_Router(in *Router) {
+	SetDefaults_RouterSpec(&in.Spec)
+}
+
+func SetObjectDefaults_RouterList(in *RouterList) {
+	for i := range in.Items {
+		a := &in.Items[i]
+		SetObjectDefaults_Router(a)
+	}
 }

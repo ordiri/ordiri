@@ -29,6 +29,8 @@ type Interface interface {
 	Routes() RouteInformer
 	// RouteTables returns a RouteTableInformer.
 	RouteTables() RouteTableInformer
+	// Routers returns a RouterInformer.
+	Routers() RouterInformer
 	// Subnets returns a SubnetInformer.
 	Subnets() SubnetInformer
 }
@@ -57,6 +59,11 @@ func (v *version) Routes() RouteInformer {
 // RouteTables returns a RouteTableInformer.
 func (v *version) RouteTables() RouteTableInformer {
 	return &routeTableInformer{factory: v.factory, tweakListOptions: v.tweakListOptions}
+}
+
+// Routers returns a RouterInformer.
+func (v *version) Routers() RouterInformer {
+	return &routerInformer{factory: v.factory, tweakListOptions: v.tweakListOptions}
 }
 
 // Subnets returns a SubnetInformer.

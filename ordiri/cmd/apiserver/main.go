@@ -20,10 +20,12 @@ import (
 	"net"
 
 	"github.com/spf13/pflag"
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/klog"
 	"sigs.k8s.io/apiserver-runtime/pkg/builder"
 
 	// +kubebuilder:scaffold:resource-imports
+	"github.com/ordiri/ordiri/pkg/apis"
 	computev1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
@@ -33,13 +35,16 @@ import (
 
 var enablesLocalStandaloneDebugging bool
 
-type extraColumnStrategy struct {
-	builder.DefaultStrategy
-}
-
 func main() {
+	// builder.APIServer.
 	apiBuilder := builder.APIServer.
+		WithAdditionalSchemeInstallers(func(s *runtime.Scheme) error {
+			return apis.RegisterDefaults(s)
+		}).
+
 		// +kubebuilder:scaffold:resource-register
+		WithResource(&storagev1alpha1.VolumeClaim{}).
+		WithResource(&networkv1alpha1.Router{}).
 		WithResource(&storagev1alpha1.Volume{}).
 		WithResource(&corev1alpha1.Node{}).
 		WithResource(&computev1alpha1.VirtualMachineDeployment{}).

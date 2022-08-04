@@ -53,7 +53,7 @@ help: ## Display this help.
 
 .PHONY: openapi
 openapi: openapi-gen ## Generate WebhookConfiguration, ClusterRole and CustomResourceDefinition objects.
-	$(OPENAPI_GEN) -v10 --input-dirs k8s.io/apimachinery/pkg/api/resource,k8s.io/apimachinery/pkg/apis/meta/v1,k8s.io/apimachinery/pkg/runtime,k8s.io/apimachinery/pkg/version,github.com/ordiri/ordiri/pkg/apis/core/... --output-package pkg/generated/openapi -O zz_generated.openapi --output-base . --go-header-file ./hack/boilerplate.go.txt
+	$(OPENAPI_GEN) -v10 --input-dirs k8s.io/apimachinery/pkg/api/resource,k8s.io/apimachinery/pkg/apis/meta/v1,k8s.io/apimachinery/pkg/runtime,k8s.io/apimachinery/pkg/version,github.com/ordiri/ordiri/pkg/apis/... --output-package pkg/generated/openapi -O zz_generated.openapi --output-base . --go-header-file ./hack/boilerplate.go.txt
 
 
 .PHONY: manifests
@@ -65,20 +65,25 @@ generate: generate-controller generate-openapi generate-client generate-lister g
 
 clientset_name = versioned
 gendir = pkg/generated
-INPUT_DIRS = "$(PACKAGE_NAME)/pkg/apis/core/v1alpha1,$(PACKAGE_NAME)/pkg/apis/network/v1alpha1,$(PACKAGE_NAME)/pkg/apis/compute/v1alpha1"
-CLIENT_INPUTS = "pkg/apis/core/v1alpha1,pkg/apis/network/v1alpha1,pkg/apis/compute/v1alpha1"
+INPUT_DIRS = "$(PACKAGE_NAME)/pkg/apis/core/v1alpha1,$(PACKAGE_NAME)/pkg/apis/network/v1alpha1,$(PACKAGE_NAME)/pkg/apis/compute/v1alpha1,$(PACKAGE_NAME)/pkg/apis/storage/v1alpha1"
+CLIENT_INPUTS = "pkg/apis/core/v1alpha1,pkg/apis/network/v1alpha1,pkg/apis/compute/v1alpha1,pkg/apis/storage/v1alpha1"
 generate-controller: $(CONTROLLER_GEN)
 	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./pkg/apis/..."
+
 generate-client: $(CLIENT_GEN)
 	$(CLIENT_GEN)  --clientset-name $(clientset_name) --input-base $(PACKAGE_NAME) --input $(CLIENT_INPUTS) --trim-path-prefix $(PACKAGE_NAME) --output-package $(PACKAGE_NAME)/$(gendir)/clientset --go-header-file ./hack/boilerplate.go.txt
+
 generate-lister: $(LISTER_GEN)
 	$(LISTER_GEN)  --input-dirs $(INPUT_DIRS) --trim-path-prefix $(PACKAGE_NAME) --output-package $(PACKAGE_NAME)/$(gendir)/listers --go-header-file ./hack/boilerplate.go.txt
+
 generate-informer: $(INFORMER_GEN)
 	$(INFORMER_GEN)  --input-dirs $(INPUT_DIRS) --versioned-clientset-package $(PACKAGE_NAME)/$(gendir)/clientset/$(clientset_name) --listers-package $(PACKAGE_NAME)/$(gendir)/listers --output-base=. --trim-path-prefix $(PACKAGE_NAME) --output-package $(PACKAGE_NAME)/$(gendir)/informers --go-header-file ./hack/boilerplate.go.txt
+
 generate-defaulter: $(DEFAULTER_GEN)
 	$(DEFAULTER_GEN)  --input-dirs $(INPUT_DIRS) --output-base=. --trim-path-prefix $(PACKAGE_NAME) --output-package $(PACKAGE_NAME)/$(gendir)/defaulters --go-header-file ./hack/boilerplate.go.txt
+	
 generate-openapi:
-	$(OPENAPI_GEN) -v10 --input-dirs k8s.io/apimachinery/pkg/api/resource,k8s.io/apimachinery/pkg/apis/meta/v1,k8s.io/apimachinery/pkg/runtime,k8s.io/apimachinery/pkg/version,$(PACKAGE_NAME)/pkg/apis/... --output-package $(gendir)/openapi -O zz_generated.openapi --go-header-file ./hack/boilerplate.go.txt
+	$(OPENAPI_GEN) -v10 --input-dirs k8s.io/apimachinery/pkg/api/resource,k8s.io/api/core,k8s.io/apimachinery/pkg/apis/meta/v1,k8s.io/apimachinery/pkg/runtime,k8s.io/apimachinery/pkg/version,$(PACKAGE_NAME)/pkg/apis/... --output-package $(gendir)/openapi -O zz_generated.openapi --go-header-file ./hack/boilerplate.go.txt
 
 .PHONY: fmt
 fmt: ## Run go fmt against code.

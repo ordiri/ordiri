@@ -23,6 +23,7 @@ import (
 	v1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
+	storagev1alpha1 "github.com/ordiri/ordiri/pkg/apis/storage/v1alpha1"
 	schema "k8s.io/apimachinery/pkg/runtime/schema"
 	cache "k8s.io/client-go/tools/cache"
 )
@@ -76,8 +77,16 @@ func (f *sharedInformerFactory) ForResource(resource schema.GroupVersionResource
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Network().V1alpha1().Routes().Informer()}, nil
 	case networkv1alpha1.SchemeGroupVersion.WithResource("routetables"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Network().V1alpha1().RouteTables().Informer()}, nil
+	case networkv1alpha1.SchemeGroupVersion.WithResource("routers"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Network().V1alpha1().Routers().Informer()}, nil
 	case networkv1alpha1.SchemeGroupVersion.WithResource("subnets"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Network().V1alpha1().Subnets().Informer()}, nil
+
+		// Group=storage.ordiri.com, Version=v1alpha1
+	case storagev1alpha1.SchemeGroupVersion.WithResource("volumes"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Storage().V1alpha1().Volumes().Informer()}, nil
+	case storagev1alpha1.SchemeGroupVersion.WithResource("volumeclaims"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Storage().V1alpha1().VolumeClaims().Informer()}, nil
 
 	}
 

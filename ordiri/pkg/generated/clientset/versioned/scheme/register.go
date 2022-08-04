@@ -21,6 +21,7 @@ import (
 	computev1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
+	storagev1alpha1 "github.com/ordiri/ordiri/pkg/apis/storage/v1alpha1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	schema "k8s.io/apimachinery/pkg/runtime/schema"
@@ -35,6 +36,7 @@ var localSchemeBuilder = runtime.SchemeBuilder{
 	computev1alpha1.AddToScheme,
 	corev1alpha1.AddToScheme,
 	networkv1alpha1.AddToScheme,
+	storagev1alpha1.AddToScheme,
 }
 
 // AddToScheme adds all types of this clientset into the given scheme. This allows composition

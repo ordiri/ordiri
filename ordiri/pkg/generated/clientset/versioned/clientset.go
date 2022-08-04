@@ -24,6 +24,7 @@ import (
 	computev1alpha1 "github.com/ordiri/ordiri/pkg/generated/clientset/versioned/typed/compute/v1alpha1"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/generated/clientset/versioned/typed/core/v1alpha1"
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/generated/clientset/versioned/typed/network/v1alpha1"
+	storagev1alpha1 "github.com/ordiri/ordiri/pkg/generated/clientset/versioned/typed/storage/v1alpha1"
 	discovery "k8s.io/client-go/discovery"
 	rest "k8s.io/client-go/rest"
 	flowcontrol "k8s.io/client-go/util/flowcontrol"
@@ -34,6 +35,7 @@ type Interface interface {
 	ComputeV1alpha1() computev1alpha1.ComputeV1alpha1Interface
 	CoreV1alpha1() corev1alpha1.CoreV1alpha1Interface
 	NetworkV1alpha1() networkv1alpha1.NetworkV1alpha1Interface
+	StorageV1alpha1() storagev1alpha1.StorageV1alpha1Interface
 }
 
 // Clientset contains the clients for groups. Each group has exactly one
@@ -43,6 +45,7 @@ type Clientset struct {
 	computeV1alpha1 *computev1alpha1.ComputeV1alpha1Client
 	coreV1alpha1    *corev1alpha1.CoreV1alpha1Client
 	networkV1alpha1 *networkv1alpha1.NetworkV1alpha1Client
+	storageV1alpha1 *storagev1alpha1.StorageV1alpha1Client
 }
 
 // ComputeV1alpha1 retrieves the ComputeV1alpha1Client
@@ -58,6 +61,11 @@ func (c *Clientset) CoreV1alpha1() corev1alpha1.CoreV1alpha1Interface {
 // NetworkV1alpha1 retrieves the NetworkV1alpha1Client
 func (c *Clientset) NetworkV1alpha1() networkv1alpha1.NetworkV1alpha1Interface {
 	return c.networkV1alpha1
+}
+
+// StorageV1alpha1 retrieves the StorageV1alpha1Client
+func (c *Clientset) StorageV1alpha1() storagev1alpha1.StorageV1alpha1Interface {
+	return c.storageV1alpha1
 }
 
 // Discovery retrieves the DiscoveryClient
@@ -116,6 +124,10 @@ func NewForConfigAndClient(c *rest.Config, httpClient *http.Client) (*Clientset,
 	if err != nil {
 		return nil, err
 	}
+	cs.storageV1alpha1, err = storagev1alpha1.NewForConfigAndClient(&configShallowCopy, httpClient)
+	if err != nil {
+		return nil, err
+	}
 
 	cs.DiscoveryClient, err = discovery.NewDiscoveryClientForConfigAndClient(&configShallowCopy, httpClient)
 	if err != nil {
@@ -140,6 +152,7 @@ func New(c rest.Interface) *Clientset {
 	cs.computeV1alpha1 = computev1alpha1.New(c)
 	cs.coreV1alpha1 = corev1alpha1.New(c)
 	cs.networkV1alpha1 = networkv1alpha1.New(c)
+	cs.storageV1alpha1 = storagev1alpha1.New(c)
 
 	cs.DiscoveryClient = discovery.NewDiscoveryClient(c)
 	return &cs

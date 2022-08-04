@@ -36,8 +36,6 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineDeploymentList":         schema_pkg_apis_compute_v1alpha1_VirtualMachineDeploymentList(ref),
 		"github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineDeploymentSpec":         schema_pkg_apis_compute_v1alpha1_VirtualMachineDeploymentSpec(ref),
 		"github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineDeploymentStatus":       schema_pkg_apis_compute_v1alpha1_VirtualMachineDeploymentStatus(ref),
-		"github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineDisk":                   schema_pkg_apis_compute_v1alpha1_VirtualMachineDisk(ref),
-		"github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineDiskStatus":             schema_pkg_apis_compute_v1alpha1_VirtualMachineDiskStatus(ref),
 		"github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineList":                   schema_pkg_apis_compute_v1alpha1_VirtualMachineList(ref),
 		"github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineNetworkInterface":       schema_pkg_apis_compute_v1alpha1_VirtualMachineNetworkInterface(ref),
 		"github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineNetworkInterfaceStatus": schema_pkg_apis_compute_v1alpha1_VirtualMachineNetworkInterfaceStatus(ref),
@@ -48,6 +46,8 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineSpec":                   schema_pkg_apis_compute_v1alpha1_VirtualMachineSpec(ref),
 		"github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineStatus":                 schema_pkg_apis_compute_v1alpha1_VirtualMachineStatus(ref),
 		"github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineTemplate":               schema_pkg_apis_compute_v1alpha1_VirtualMachineTemplate(ref),
+		"github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineVolume":                 schema_pkg_apis_compute_v1alpha1_VirtualMachineVolume(ref),
+		"github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineVolumeStatus":           schema_pkg_apis_compute_v1alpha1_VirtualMachineVolumeStatus(ref),
 		"github.com/ordiri/ordiri/pkg/apis/core/v1alpha1.IpxeConfiguration":                       schema_pkg_apis_core_v1alpha1_IpxeConfiguration(ref),
 		"github.com/ordiri/ordiri/pkg/apis/core/v1alpha1.Machine":                                 schema_pkg_apis_core_v1alpha1_Machine(ref),
 		"github.com/ordiri/ordiri/pkg/apis/core/v1alpha1.MachineList":                             schema_pkg_apis_core_v1alpha1_MachineList(ref),
@@ -86,11 +86,20 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.RouteTableSelector":                   schema_pkg_apis_network_v1alpha1_RouteTableSelector(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.RouteTableSpec":                       schema_pkg_apis_network_v1alpha1_RouteTableSpec(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.RouteTableStatus":                     schema_pkg_apis_network_v1alpha1_RouteTableStatus(ref),
+		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.Router":                               schema_pkg_apis_network_v1alpha1_Router(ref),
+		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.RouterList":                           schema_pkg_apis_network_v1alpha1_RouterList(ref),
+		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.RouterSpec":                           schema_pkg_apis_network_v1alpha1_RouterSpec(ref),
+		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.RouterStatus":                         schema_pkg_apis_network_v1alpha1_RouterStatus(ref),
+		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.RouterSubnetReference":                schema_pkg_apis_network_v1alpha1_RouterSubnetReference(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.Subnet":                               schema_pkg_apis_network_v1alpha1_Subnet(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.SubnetList":                           schema_pkg_apis_network_v1alpha1_SubnetList(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.SubnetSpec":                           schema_pkg_apis_network_v1alpha1_SubnetSpec(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.SubnetStatus":                         schema_pkg_apis_network_v1alpha1_SubnetStatus(ref),
 		"github.com/ordiri/ordiri/pkg/apis/storage/v1alpha1.Volume":                               schema_pkg_apis_storage_v1alpha1_Volume(ref),
+		"github.com/ordiri/ordiri/pkg/apis/storage/v1alpha1.VolumeClaim":                          schema_pkg_apis_storage_v1alpha1_VolumeClaim(ref),
+		"github.com/ordiri/ordiri/pkg/apis/storage/v1alpha1.VolumeClaimList":                      schema_pkg_apis_storage_v1alpha1_VolumeClaimList(ref),
+		"github.com/ordiri/ordiri/pkg/apis/storage/v1alpha1.VolumeClaimSpec":                      schema_pkg_apis_storage_v1alpha1_VolumeClaimSpec(ref),
+		"github.com/ordiri/ordiri/pkg/apis/storage/v1alpha1.VolumeClaimStatus":                    schema_pkg_apis_storage_v1alpha1_VolumeClaimStatus(ref),
 		"github.com/ordiri/ordiri/pkg/apis/storage/v1alpha1.VolumeList":                           schema_pkg_apis_storage_v1alpha1_VolumeList(ref),
 		"github.com/ordiri/ordiri/pkg/apis/storage/v1alpha1.VolumeSpec":                           schema_pkg_apis_storage_v1alpha1_VolumeSpec(ref),
 		"github.com/ordiri/ordiri/pkg/apis/storage/v1alpha1.VolumeStatus":                         schema_pkg_apis_storage_v1alpha1_VolumeStatus(ref),
@@ -334,69 +343,6 @@ func schema_pkg_apis_compute_v1alpha1_VirtualMachineDeploymentStatus(ref common.
 	}
 }
 
-func schema_pkg_apis_compute_v1alpha1_VirtualMachineDisk(ref common.ReferenceCallback) common.OpenAPIDefinition {
-	return common.OpenAPIDefinition{
-		Schema: spec.Schema{
-			SchemaProps: spec.SchemaProps{
-				Type: []string{"object"},
-				Properties: map[string]spec.Schema{
-					"name": {
-						SchemaProps: spec.SchemaProps{
-							Default: "",
-							Type:    []string{"string"},
-							Format:  "",
-						},
-					},
-					"size": {
-						SchemaProps: spec.SchemaProps{
-							Default: map[string]interface{}{},
-							Ref:     ref("k8s.io/apimachinery/pkg/api/resource.Quantity"),
-						},
-					},
-				},
-				Required: []string{"name", "size"},
-			},
-		},
-		Dependencies: []string{
-			"k8s.io/apimachinery/pkg/api/resource.Quantity"},
-	}
-}
-
-func schema_pkg_apis_compute_v1alpha1_VirtualMachineDiskStatus(ref common.ReferenceCallback) common.OpenAPIDefinition {
-	return common.OpenAPIDefinition{
-		Schema: spec.Schema{
-			SchemaProps: spec.SchemaProps{
-				Type: []string{"object"},
-				Properties: map[string]spec.Schema{
-					"name": {
-						SchemaProps: spec.SchemaProps{
-							Default: "",
-							Type:    []string{"string"},
-							Format:  "",
-						},
-					},
-					"volumeName": {
-						SchemaProps: spec.SchemaProps{
-							Default: "",
-							Type:    []string{"string"},
-							Format:  "",
-						},
-					},
-					"size": {
-						SchemaProps: spec.SchemaProps{
-							Default: map[string]interface{}{},
-							Ref:     ref("k8s.io/apimachinery/pkg/api/resource.Quantity"),
-						},
-					},
-				},
-				Required: []string{"name", "volumeName", "size"},
-			},
-		},
-		Dependencies: []string{
-			"k8s.io/apimachinery/pkg/api/resource.Quantity"},
-	}
-}
-
 func schema_pkg_apis_compute_v1alpha1_VirtualMachineList(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
@@ -474,7 +420,7 @@ func schema_pkg_apis_compute_v1alpha1_VirtualMachineNetworkInterface(ref common.
 						},
 					},
 				},
-				Required: []string{"network", "subnet", "mac"},
+				Required: []string{"subnet", "mac"},
 			},
 		},
 	}
@@ -664,6 +610,13 @@ func schema_pkg_apis_compute_v1alpha1_VirtualMachineSpec(ref common.ReferenceCal
 							Format:  "",
 						},
 					},
+					"UserData": {
+						SchemaProps: spec.SchemaProps{
+							Default: "",
+							Type:    []string{"string"},
+							Format:  "",
+						},
+					},
 					"bootDevices": {
 						SchemaProps: spec.SchemaProps{
 							Type: []string{"array"},
@@ -684,7 +637,7 @@ func schema_pkg_apis_compute_v1alpha1_VirtualMachineSpec(ref common.ReferenceCal
 							Items: &spec.SchemaOrArray{
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
-										Ref: ref("github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineDisk"),
+										Ref: ref("github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineVolume"),
 									},
 								},
 							},
@@ -703,11 +656,11 @@ func schema_pkg_apis_compute_v1alpha1_VirtualMachineSpec(ref common.ReferenceCal
 						},
 					},
 				},
-				Required: []string{"role", "state", "bootDevices", "disks", "networkInterfaces"},
+				Required: []string{"role", "state"},
 			},
 		},
 		Dependencies: []string{
-			"github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineDisk", "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineNetworkInterface"},
+			"github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineNetworkInterface", "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineVolume"},
 	}
 }
 
@@ -746,7 +699,7 @@ func schema_pkg_apis_compute_v1alpha1_VirtualMachineStatus(ref common.ReferenceC
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
 										Default: map[string]interface{}{},
-										Ref:     ref("github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineDiskStatus"),
+										Ref:     ref("github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineVolumeStatus"),
 									},
 								},
 							},
@@ -780,7 +733,7 @@ func schema_pkg_apis_compute_v1alpha1_VirtualMachineStatus(ref common.ReferenceC
 			},
 		},
 		Dependencies: []string{
-			"github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineDiskStatus", "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineNetworkInterfaceStatus", "k8s.io/apimachinery/pkg/apis/meta/v1.Condition"},
+			"github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineNetworkInterfaceStatus", "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineVolumeStatus", "k8s.io/apimachinery/pkg/apis/meta/v1.Condition"},
 	}
 }
 
@@ -808,6 +761,69 @@ func schema_pkg_apis_compute_v1alpha1_VirtualMachineTemplate(ref common.Referenc
 		},
 		Dependencies: []string{
 			"github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineSpec", "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"},
+	}
+}
+
+func schema_pkg_apis_compute_v1alpha1_VirtualMachineVolume(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"name": {
+						SchemaProps: spec.SchemaProps{
+							Default: "",
+							Type:    []string{"string"},
+							Format:  "",
+						},
+					},
+					"device": {
+						SchemaProps: spec.SchemaProps{
+							Description: "The device that the volume is bound too for example, /dev/vda",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+				},
+				Required: []string{"name", "device"},
+			},
+		},
+	}
+}
+
+func schema_pkg_apis_compute_v1alpha1_VirtualMachineVolumeStatus(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"name": {
+						SchemaProps: spec.SchemaProps{
+							Default: "",
+							Type:    []string{"string"},
+							Format:  "",
+						},
+					},
+					"volumeName": {
+						SchemaProps: spec.SchemaProps{
+							Default: "",
+							Type:    []string{"string"},
+							Format:  "",
+						},
+					},
+					"size": {
+						SchemaProps: spec.SchemaProps{
+							Default: map[string]interface{}{},
+							Ref:     ref("k8s.io/apimachinery/pkg/api/resource.Quantity"),
+						},
+					},
+				},
+				Required: []string{"name", "volumeName", "size"},
+			},
+		},
+		Dependencies: []string{
+			"k8s.io/apimachinery/pkg/api/resource.Quantity"},
 	}
 }
 
@@ -2285,6 +2301,217 @@ func schema_pkg_apis_network_v1alpha1_RouteTableStatus(ref common.ReferenceCallb
 	}
 }
 
+func schema_pkg_apis_network_v1alpha1_Router(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "Router",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"kind": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"apiVersion": {
+						SchemaProps: spec.SchemaProps{
+							Description: "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"metadata": {
+						SchemaProps: spec.SchemaProps{
+							Default: map[string]interface{}{},
+							Ref:     ref("k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"),
+						},
+					},
+					"spec": {
+						SchemaProps: spec.SchemaProps{
+							Default: map[string]interface{}{},
+							Ref:     ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.RouterSpec"),
+						},
+					},
+					"status": {
+						SchemaProps: spec.SchemaProps{
+							Default: map[string]interface{}{},
+							Ref:     ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.RouterStatus"),
+						},
+					},
+				},
+			},
+		},
+		Dependencies: []string{
+			"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.RouterSpec", "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.RouterStatus", "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"},
+	}
+}
+
+func schema_pkg_apis_network_v1alpha1_RouterList(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "RouterList",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"kind": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"apiVersion": {
+						SchemaProps: spec.SchemaProps{
+							Description: "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"metadata": {
+						SchemaProps: spec.SchemaProps{
+							Default: map[string]interface{}{},
+							Ref:     ref("k8s.io/apimachinery/pkg/apis/meta/v1.ListMeta"),
+						},
+					},
+					"items": {
+						SchemaProps: spec.SchemaProps{
+							Type: []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: map[string]interface{}{},
+										Ref:     ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.Router"),
+									},
+								},
+							},
+						},
+					},
+				},
+				Required: []string{"items"},
+			},
+		},
+		Dependencies: []string{
+			"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.Router", "k8s.io/apimachinery/pkg/apis/meta/v1.ListMeta"},
+	}
+}
+
+func schema_pkg_apis_network_v1alpha1_RouterSpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "RouterSpec defines the desired state of Router",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"mac": {
+						SchemaProps: spec.SchemaProps{
+							Default: "",
+							Type:    []string{"string"},
+							Format:  "",
+						},
+					},
+					"subnets": {
+						SchemaProps: spec.SchemaProps{
+							Type: []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: map[string]interface{}{},
+										Ref:     ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.RouterSubnetReference"),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		Dependencies: []string{
+			"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.RouterSubnetReference"},
+	}
+}
+
+func schema_pkg_apis_network_v1alpha1_RouterStatus(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "RouterStatus defines the observed state of Router",
+				Type:        []string{"object"},
+			},
+		},
+	}
+}
+
+func schema_pkg_apis_network_v1alpha1_RouterSubnetReference(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"kind": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"namespace": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"name": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"uid": {
+						SchemaProps: spec.SchemaProps{
+							Description: "UID of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"apiVersion": {
+						SchemaProps: spec.SchemaProps{
+							Description: "API version of the referent.",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"resourceVersion": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Specific resourceVersion to which this reference is made, if any. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"fieldPath": {
+						SchemaProps: spec.SchemaProps{
+							Description: "If referring to a piece of an object instead of an entire object, this string should contain a valid JSON/Go field access statement, such as desiredState.manifest.containers[2]. For example, if the object reference is to a container within a pod, this would take on a value like: \"spec.containers{name}\" (where \"name\" refers to the name of the container that triggered the event) or if no container name is specified \"spec.containers[2]\" (container with index 2 in this pod). This syntax is chosen only to have some well-defined way of referencing a part of an object.",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"ipAddr": {
+						SchemaProps: spec.SchemaProps{
+							Default: "",
+							Type:    []string{"string"},
+							Format:  "",
+						},
+					},
+				},
+				Required: []string{"ipAddr"},
+			},
+		},
+	}
+}
+
 func schema_pkg_apis_network_v1alpha1_Subnet(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
@@ -2505,6 +2732,124 @@ func schema_pkg_apis_storage_v1alpha1_Volume(ref common.ReferenceCallback) commo
 	}
 }
 
+func schema_pkg_apis_storage_v1alpha1_VolumeClaim(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "VolumeClaim",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"kind": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"apiVersion": {
+						SchemaProps: spec.SchemaProps{
+							Description: "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"metadata": {
+						SchemaProps: spec.SchemaProps{
+							Default: map[string]interface{}{},
+							Ref:     ref("k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"),
+						},
+					},
+					"spec": {
+						SchemaProps: spec.SchemaProps{
+							Default: map[string]interface{}{},
+							Ref:     ref("github.com/ordiri/ordiri/pkg/apis/storage/v1alpha1.VolumeClaimSpec"),
+						},
+					},
+					"status": {
+						SchemaProps: spec.SchemaProps{
+							Default: map[string]interface{}{},
+							Ref:     ref("github.com/ordiri/ordiri/pkg/apis/storage/v1alpha1.VolumeClaimStatus"),
+						},
+					},
+				},
+			},
+		},
+		Dependencies: []string{
+			"github.com/ordiri/ordiri/pkg/apis/storage/v1alpha1.VolumeClaimSpec", "github.com/ordiri/ordiri/pkg/apis/storage/v1alpha1.VolumeClaimStatus", "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"},
+	}
+}
+
+func schema_pkg_apis_storage_v1alpha1_VolumeClaimList(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "VolumeClaimList",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"kind": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"apiVersion": {
+						SchemaProps: spec.SchemaProps{
+							Description: "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"metadata": {
+						SchemaProps: spec.SchemaProps{
+							Default: map[string]interface{}{},
+							Ref:     ref("k8s.io/apimachinery/pkg/apis/meta/v1.ListMeta"),
+						},
+					},
+					"items": {
+						SchemaProps: spec.SchemaProps{
+							Type: []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: map[string]interface{}{},
+										Ref:     ref("github.com/ordiri/ordiri/pkg/apis/storage/v1alpha1.VolumeClaim"),
+									},
+								},
+							},
+						},
+					},
+				},
+				Required: []string{"items"},
+			},
+		},
+		Dependencies: []string{
+			"github.com/ordiri/ordiri/pkg/apis/storage/v1alpha1.VolumeClaim", "k8s.io/apimachinery/pkg/apis/meta/v1.ListMeta"},
+	}
+}
+
+func schema_pkg_apis_storage_v1alpha1_VolumeClaimSpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "VolumeClaimSpec defines the desired state of VolumeClaim",
+				Type:        []string{"object"},
+			},
+		},
+	}
+}
+
+func schema_pkg_apis_storage_v1alpha1_VolumeClaimStatus(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "VolumeClaimStatus defines the observed state of VolumeClaim",
+				Type:        []string{"object"},
+			},
+		},
+	}
+}
+
 func schema_pkg_apis_storage_v1alpha1_VolumeList(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
@@ -2560,8 +2905,26 @@ func schema_pkg_apis_storage_v1alpha1_VolumeSpec(ref common.ReferenceCallback) c
 			SchemaProps: spec.SchemaProps{
 				Description: "VolumeSpec defines the desired state of Volume",
 				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"storageClassName": {
+						SchemaProps: spec.SchemaProps{
+							Default: "",
+							Type:    []string{"string"},
+							Format:  "",
+						},
+					},
+					"size": {
+						SchemaProps: spec.SchemaProps{
+							Default: map[string]interface{}{},
+							Ref:     ref("k8s.io/apimachinery/pkg/api/resource.Quantity"),
+						},
+					},
+				},
+				Required: []string{"storageClassName", "size"},
 			},
 		},
+		Dependencies: []string{
+			"k8s.io/apimachinery/pkg/api/resource.Quantity"},
 	}
 }
 

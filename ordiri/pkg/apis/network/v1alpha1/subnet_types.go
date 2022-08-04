@@ -18,9 +18,7 @@ package v1alpha1
 
 import (
 	"context"
-	"fmt"
 
-	"github.com/ordiri/ordiri/pkg/apis/common"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -73,53 +71,6 @@ type NetworkSelector struct {
 
 var _ resource.Object = &Subnet{}
 var _ resourcestrategy.Validater = &Subnet{}
-
-func (subnet *Subnet) DeviceHash() string {
-	return string(subnet.GetUID())[0:3]
-}
-
-func (subnet *Subnet) DhcpUnitName() string {
-	return fmt.Sprintf("dhcp-%s.service", subnet.Name)
-}
-func (subnet *Subnet) ServiceNetworkNamespacePath() string {
-	return fmt.Sprintf("/var/run/netns/%s", subnet.ServiceNetworkNamespace())
-}
-func (subnet *Subnet) ServiceNetworkNamespace() string {
-	return fmt.Sprintf("service-%s", subnet.Name)
-}
-func (subnet *Subnet) ServiceNetworkCableName() string {
-	return fmt.Sprintf("dhcp-%s", subnet.DeviceHash())
-}
-func (subnet *Subnet) RouterNetworkNamespacePath() string {
-	return fmt.Sprintf("/var/run/netns/%s", subnet.RouterNetworkNamespace())
-}
-func (subnet *Subnet) RouterNetworkNamespace() string {
-	return fmt.Sprintf("router-%s", subnet.Spec.Network.Name)
-}
-func (subnet *Subnet) RouterNetworkInternalCableName() string {
-	return fmt.Sprintf("irtr-%s", subnet.DeviceHash())
-}
-func (subnet *Subnet) VMTap(vmName common.DeviceHashProvider) string {
-	return "ovm-" + subnet.DeviceHash() + vmName.DeviceHash()
-}
-
-func (subnet *Subnet) VMBridge(vmName common.DeviceHashProvider) string {
-	return "obr-" + subnet.DeviceHash() + vmName.DeviceHash()
-}
-
-func (subnet *Subnet) TunnelName() string {
-	return "otn-" + subnet.DeviceHash()
-}
-
-// func (subnet *Subnet) HostVlanId(hostname string) int {
-// 	for _, networkStatus := range subnet.Status.Hosts {
-// 		if networkStatus.Node == hostname {
-// 			return networkStatus.VlanId
-// 		}
-// 	}
-
-// 	return 0
-// }
 
 func (in *Subnet) GetObjectMeta() *metav1.ObjectMeta {
 	return &in.ObjectMeta

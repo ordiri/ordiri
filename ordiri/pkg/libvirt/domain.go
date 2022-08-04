@@ -2,7 +2,11 @@
 
 package libvirt
 
-import "libvirt.org/go/libvirtxml"
+import (
+	"fmt"
+
+	"libvirt.org/go/libvirtxml"
+)
 
 type DomainOption func(*libvirtxml.Domain) error
 
@@ -123,22 +127,15 @@ func WithBiosOemString(entries ...string) DomainOption {
 	}
 }
 
-func WithCephVolume() DomainOption {
+func WithCephVolume(name, device string) DomainOption {
 	return func(d *libvirtxml.Domain) error {
 		return WithDisk(libvirtxml.DomainDisk{
-			/**<disk type='network' device='disk'>
-			        <source protocol='rbd' name='libvirt-pool/clusteredrbdtest'>
-			                <host name='{monitor-host}' port='6789'/>
-			        </source>
-			        <target dev='vdb' bus='virtio'/>
-			</disk>
-			**/
 			Device: "disk",
 
 			Source: &libvirtxml.DomainDiskSource{
 				Network: &libvirtxml.DomainDiskSourceNetwork{
 					Protocol: "rbd",
-					Name:     "tenant1/clusteredrbdtest",
+					Name:     fmt.Sprintf("tenant1/%s", name),
 					Hosts: []libvirtxml.DomainDiskSourceHost{
 						{
 							Name: "mothership",
@@ -155,14 +152,14 @@ func WithCephVolume() DomainOption {
 				},
 			},
 			Target: &libvirtxml.DomainDiskTarget{
-				Dev: "vd" + diskLetterForIndex(len(d.Devices.Disks)),
+				Dev: device,
 				Bus: "virtio",
 			},
 		})(d)
 	}
 }
 
-func WithPoolVolume(pool, volume string) DomainOption {
+func WithPoolVolume(pool, volume, device string) DomainOption {
 	return func(domain *libvirtxml.Domain) error {
 		// domain.Devices.Disks = append(domain.Devices.Disks, )
 		return WithDisk(libvirtxml.DomainDisk{
@@ -174,7 +171,7 @@ func WithPoolVolume(pool, volume string) DomainOption {
 				},
 			},
 			Target: &libvirtxml.DomainDiskTarget{
-				Dev: "vd" + diskLetterForIndex(len(domain.Devices.Disks)),
+				Dev: device,
 				Bus: "virtio",
 			},
 			Driver: &libvirtxml.DomainDiskDriver{

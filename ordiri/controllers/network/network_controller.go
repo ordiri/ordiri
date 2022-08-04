@@ -19,13 +19,16 @@ package network
 import (
 	"context"
 	"math/rand"
+	"sort"
 	"time"
 
+	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
@@ -42,6 +45,10 @@ type NetworkReconciler struct {
 
 	Node ordlet.NodeProvider
 }
+
+const (
+	NetworkCreatedFinalizer = "network.ordiri.com/network-manager"
+)
 
 //+kubebuilder:rbac:groups=network,resources=networks,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=network,resources=networks/status,verbs=get;update;patch
@@ -67,6 +74,27 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 		return ctrl.Result{}, err
 	}
 
+	if !nw.DeletionTimestamp.IsZero() {
+		err := r.removeDefaultRouter(ctx, nw)
+		if err != nil {
+			return ctrl.Result{}, err
+		}
+
+		if controllerutil.RemoveFinalizer(nw, NetworkCreatedFinalizer) {
+			if err := r.Client.Update(ctx, nw); err != nil {
+				return ctrl.Result{}, err
+			}
+		}
+
+		return ctrl.Result{}, nil
+	}
+
+	if controllerutil.AddFinalizer(nw, NetworkCreatedFinalizer) {
+		if err := r.Client.Update(ctx, nw); err != nil {
+			return ctrl.Result{}, err
+		}
+	}
+
 	changed := false
 	if nw.Status.Vni == 0 {
 		s1 := rand.NewSource(time.Now().UnixNano())
@@ -78,6 +106,13 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 		nw.Status.Vni = vni
 		changed = true
 	}
+
+	routerChanged, _, err := r.ensureDefaultRouter(ctx, nw)
+	if err != nil {
+		return ctrl.Result{}, err
+	}
+
+	changed = changed || routerChanged != controllerutil.OperationResultNone
 
 	if changed {
 		err := r.Status().Update(ctx, nw)
@@ -91,10 +126,83 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 	return ctrl.Result{}, nil
 }
 
+func (r *NetworkReconciler) removeDefaultRouter(ctx context.Context, network *networkv1alpha1.Network) error {
+	router := &networkv1alpha1.Router{}
+	router.Name = network.DefaultRouterName()
+	if err := r.Client.Get(ctx, client.ObjectKeyFromObject(router), router); err != nil {
+		if errors.IsNotFound(err) {
+			return nil
+		}
+		return err
+	}
+
+	return r.Client.Delete(ctx, router)
+}
+
+// ensure the default network router exists and is bound to all the subnets in the network
+func (r *NetworkReconciler) ensureDefaultRouter(ctx context.Context, network *networkv1alpha1.Network) (controllerutil.OperationResult, *networkv1alpha1.Router, error) {
+	router := &networkv1alpha1.Router{}
+	router.Name = network.DefaultRouterName()
+	result, err := ctrl.CreateOrUpdate(ctx, r.Client, router, func() error {
+		subnets := &networkv1alpha1.SubnetList{}
+		if err := r.Client.List(ctx, subnets, client.MatchingFields{SubnetByNetworkKey: network.Name}); err != nil {
+			return err
+		}
+
+		existingSubnetSpec := map[string]networkv1alpha1.RouterSubnetReference{}
+		for _, subnet := range router.Spec.Subnets {
+			existingSubnetSpec[subnet.Name] = subnet
+		}
+
+		routerSubnets := []networkv1alpha1.RouterSubnetReference{}
+		for _, subnet := range subnets.Items {
+			if existing, ok := existingSubnetSpec[subnet.Name]; ok {
+				routerSubnets = append(routerSubnets, existing)
+			} else {
+				routerSubnets = append(routerSubnets, networkv1alpha1.RouterSubnetReference{
+					ObjectReference: v1.ObjectReference{
+						Kind:       subnet.Kind,
+						APIVersion: subnet.APIVersion,
+						Name:       subnet.Name,
+						UID:        subnet.UID,
+					},
+				})
+			}
+		}
+
+		// sort them so we get a consistent list and don't issue un-needed patches
+		sort.SliceStable(routerSubnets, func(i, j int) bool {
+			return routerSubnets[i].ObjectReference.Name < routerSubnets[j].ObjectReference.Name
+		})
+
+		router.Spec.Subnets = routerSubnets
+
+		return ctrl.SetControllerReference(network, router, r.Scheme)
+	})
+
+	if err != nil {
+		return result, nil, err
+	}
+
+	return result, router, nil
+}
+
+const SubnetByNetworkKey = ".internal.network"
+
 // SetupWithManager sets up the controller with the Manager.
 func (r *NetworkReconciler) SetupWithManager(mgr ctrl.Manager) error {
+	// Store machines by their role in the cache so we can efficently retrieve all machines for a role later
+	err := mgr.GetCache().IndexField(context.Background(), &networkv1alpha1.Subnet{}, SubnetByNetworkKey, func(o client.Object) []string {
+		obj := o.(*networkv1alpha1.Subnet)
+
+		return []string{obj.Spec.Network.Name}
+	})
+	if err != nil {
+		return err
+	}
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&networkv1alpha1.Network{}).
+		Owns(&networkv1alpha1.Router{}).
 		Watches(&source.Kind{Type: &networkv1alpha1.Subnet{}}, handler.EnqueueRequestsFromMapFunc(func(o client.Object) []reconcile.Request {
 			switch subnet := o.(type) {
 			case *networkv1alpha1.Subnet:
