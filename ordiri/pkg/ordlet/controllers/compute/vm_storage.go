@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	k8err "k8s.io/apimachinery/pkg/api/errors"
 	"libvirt.org/go/libvirtxml"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	"github.com/digitalocean/go-libvirt"
 	internallibvirt "github.com/ordiri/ordiri/pkg/libvirt"
@@ -17,7 +17,7 @@ import (
 
 func (r *VirtualMachineReconciler) getClaim(ctx context.Context, vm *computev1alpha1.VirtualMachine, disk *computev1alpha1.VirtualMachineVolume) (*storagev1alpha1.VolumeClaim, error) {
 	claim, err := r.volumeClaim(ctx, vm, disk)
-	if err != nil && !k8err.IsNotFound(err) {
+	if err != nil {
 		return nil, err
 	}
 
@@ -25,6 +25,7 @@ func (r *VirtualMachineReconciler) getClaim(ctx context.Context, vm *computev1al
 }
 
 func (r *VirtualMachineReconciler) getVolume(ctx context.Context, vm *computev1alpha1.VirtualMachine, disk *computev1alpha1.VirtualMachineVolume) (computev1alpha1.VirtualMachineVolumeStatus, internallibvirt.DomainOption, error) {
+	log := log.FromContext(ctx)
 	status := computev1alpha1.VirtualMachineVolumeStatus{
 		Name:   disk.Name,
 		Bound:  false,
@@ -32,10 +33,13 @@ func (r *VirtualMachineReconciler) getVolume(ctx context.Context, vm *computev1a
 	}
 
 	if disk.VolumeClaim != nil {
+		log.V(5).Info("getting volume claim", "disk", disk)
 		claim, err := r.getClaim(ctx, vm, disk)
 		if err != nil {
 			return status, nil, err
 		}
+
+		log.V(5).Info("got claim", "disk", disk, "claim", claim)
 		if claim.Spec.VolumeName == "" {
 			return status, nil, fmt.Errorf("claim has no bound volume")
 		}

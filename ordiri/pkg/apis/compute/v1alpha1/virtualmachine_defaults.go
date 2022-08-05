@@ -21,7 +21,7 @@ import (
 	"github.com/ordiri/ordiri/pkg/volume"
 )
 
-func SetDefault_VirtualMachineSpec(obj *VirtualMachineSpec) {
+func SetDefaults_VirtualMachineSpec(obj *VirtualMachineSpec) {
 	if obj.State == "" {
 		obj.State = VirtualMachineStateRunning
 	}
@@ -36,24 +36,22 @@ func SetDefault_VirtualMachineSpec(obj *VirtualMachineSpec) {
 		seen[vol.Device] = vol.Name
 	}
 
-	if len(obj.Volumes) > 0 {
-		for _, vol := range obj.Volumes {
-			if vol.Device != "" {
-				continue
-			}
+	for _, vol := range obj.Volumes {
+		if vol.Device != "" {
+			continue
+		}
 
-			letter := volume.DiskLetterForIndex(diskIdx)
-			for ; diskIdx <= 100; diskIdx++ {
-				if _, ok := seen[letter]; !ok {
-					seen[letter] = vol.Name
-					vol.Device = letter
-					break
-				}
+		for ; diskIdx <= 100; diskIdx++ {
+			letter := volume.DiskNameForIndex(diskIdx)
+			if _, ok := seen[letter]; !ok {
+				seen[letter] = vol.Name
+				vol.Device = letter
+				break
 			}
+		}
 
-			if diskIdx == 100 {
-				panic("unable to allocate disk inedx")
-			}
+		if diskIdx == 100 {
+			panic("unable to allocate disk inedx")
 		}
 	}
 }

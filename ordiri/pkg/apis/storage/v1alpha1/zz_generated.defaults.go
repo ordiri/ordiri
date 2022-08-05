@@ -28,5 +28,18 @@ import (
 // Public to allow building arbitrary schemes.
 // All generated defaulters are covering - they call all nested defaulters.
 func RegisterDefaults(scheme *runtime.Scheme) error {
+	scheme.AddTypeDefaultingFunc(&VolumeClaim{}, func(obj interface{}) { SetObjectDefaults_VolumeClaim(obj.(*VolumeClaim)) })
+	scheme.AddTypeDefaultingFunc(&VolumeClaimList{}, func(obj interface{}) { SetObjectDefaults_VolumeClaimList(obj.(*VolumeClaimList)) })
 	return nil
+}
+
+func SetObjectDefaults_VolumeClaim(in *VolumeClaim) {
+	SetDefaults_VolumeClaimSpec(&in.Spec)
+}
+
+func SetObjectDefaults_VolumeClaimList(in *VolumeClaimList) {
+	for i := range in.Items {
+		a := &in.Items[i]
+		SetObjectDefaults_VolumeClaim(a)
+	}
 }

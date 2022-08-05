@@ -42,6 +42,7 @@ func RegisterDefaults(scheme *runtime.Scheme) error {
 }
 
 func SetObjectDefaults_VirtualMachine(in *VirtualMachine) {
+	SetDefaults_VirtualMachineSpec(&in.Spec)
 	for i := range in.Spec.NetworkInterfaces {
 		a := in.Spec.NetworkInterfaces[i]
 		if a != nil {
@@ -51,6 +52,7 @@ func SetObjectDefaults_VirtualMachine(in *VirtualMachine) {
 }
 
 func SetObjectDefaults_VirtualMachineDeployment(in *VirtualMachineDeployment) {
+	SetDefaults_VirtualMachineSpec(&in.Spec.Template.Spec)
 	for i := range in.Spec.Template.Spec.NetworkInterfaces {
 		a := in.Spec.Template.Spec.NetworkInterfaces[i]
 		if a != nil {
@@ -74,6 +76,7 @@ func SetObjectDefaults_VirtualMachineList(in *VirtualMachineList) {
 }
 
 func SetObjectDefaults_VirtualMachineReplicaSet(in *VirtualMachineReplicaSet) {
+	SetDefaults_VirtualMachineSpec(&in.Spec.Template.Spec)
 	for i := range in.Spec.Template.Spec.NetworkInterfaces {
 		a := in.Spec.Template.Spec.NetworkInterfaces[i]
 		if a != nil {

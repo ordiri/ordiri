@@ -2,9 +2,15 @@ package volume
 
 import "fmt"
 
+const DiskPrefix = "vd"
+
 var diskLetters = []rune("abcdefghijklmnopqrstuvwxyz")
 
 // diskLetterForIndex return diskLetters for index
+func DiskNameForIndex(i int) string {
+	return fmt.Sprintf("%s%s", DiskPrefix, DiskLetterForIndex(i))
+}
+
 func DiskLetterForIndex(i int) string {
 
 	q := i / len(diskLetters)

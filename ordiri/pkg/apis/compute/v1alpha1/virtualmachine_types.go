@@ -65,6 +65,7 @@ const (
 type VirtualMachineSpec struct {
 	Role string `json:"role"`
 
+	// +optional
 	ScheduledNode string `json:"node"`
 
 	State VirtualMachineState `json:"state"`
@@ -76,17 +77,17 @@ type VirtualMachineSpec struct {
 	BootDevices []string `json:"bootDevices"`
 
 	// +optional
-	Volumes []*VirtualMachineVolume `json:"disks"`
+	Volumes []*VirtualMachineVolume `json:"volumes"`
 
 	// +optional
 	NetworkInterfaces []*VirtualMachineNetworkInterface `json:"networkInterfaces"`
 }
 
 type VirtualMachineNetworkInterface struct {
-	// +optional
 	Network string `json:"network"`
 	Subnet  string `json:"subnet"`
-	Mac     string `json:"mac"`
+	// +optional
+	Mac string `json:"mac"`
 }
 
 func (in *VirtualMachineNetworkInterface) Key() string {
@@ -97,8 +98,8 @@ type VirtualMachineVolume struct {
 	Name string `json:"name"`
 	// The device that the volume is bound too
 	// for example, /dev/vda
-	Device string `json:"device"`
-
+	// +optional
+	Device      string                     `json:"device"`
 	VolumeClaim *VirtualMachineVolumeClaim `json:"volumeClaim,omitempty"`
 }
 

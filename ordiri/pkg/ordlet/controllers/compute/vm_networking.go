@@ -57,6 +57,7 @@ func (r *VirtualMachineReconciler) getNetworkInterface(ctx context.Context, vm *
 
 	return status, opt, nil
 }
+
 func (r *VirtualMachineReconciler) interfaceSubnet(ctx context.Context, vm *computev1alpha1.VirtualMachine, iface *computev1alpha1.VirtualMachineNetworkInterface) (*networkv1alpha1.Network, *networkv1alpha1.Subnet, error) {
 	subnet := &networkv1alpha1.Subnet{}
 	subnet.Name = iface.Subnet

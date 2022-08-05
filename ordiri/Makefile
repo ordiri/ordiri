@@ -83,7 +83,7 @@ generate-defaulter: $(DEFAULTER_GEN)
 	$(DEFAULTER_GEN)  --input-dirs $(INPUT_DIRS) --output-base=. --trim-path-prefix $(PACKAGE_NAME) --output-package $(PACKAGE_NAME)/$(gendir)/defaulters --go-header-file ./hack/boilerplate.go.txt
 	
 generate-openapi:
-	$(OPENAPI_GEN) -v10 --input-dirs k8s.io/apimachinery/pkg/api/resource,k8s.io/api/core,k8s.io/apimachinery/pkg/apis/meta/v1,k8s.io/apimachinery/pkg/runtime,k8s.io/apimachinery/pkg/version,$(PACKAGE_NAME)/pkg/apis/... --output-package $(gendir)/openapi -O zz_generated.openapi --go-header-file ./hack/boilerplate.go.txt
+	$(OPENAPI_GEN) -v10 --input-dirs k8s.io/apimachinery/pkg/api/resource,k8s.io/api/core/v1,k8s.io/apimachinery/pkg/apis/meta/v1,k8s.io/apimachinery/pkg/runtime,k8s.io/apimachinery/pkg/version,$(PACKAGE_NAME)/pkg/apis/... --output-package $(gendir)/openapi -O zz_generated.openapi --go-header-file ./hack/boilerplate.go.txt
 
 .PHONY: fmt
 fmt: ## Run go fmt against code.
@@ -126,21 +126,23 @@ linux-ordlet:
 	GOOS=linux GOARCH=amd64 go build -o bin/ordlet-amd64-linux ./cmd/ordlet
 	chmod +x bin/ordlet-amd64-linux
 
-.PHONY: deploy-ordlet
-deploy-ordlet: linux-ordlet
+.PHONY: deploy-debian-ordlet deploy-mothership-ordlet
+deploy-debian-ordlet: linux-ordlet
 	scp bin/ordlet-amd64-linux root@10.0.1.109:/usr/local/bin/ordlet
 	scp kubeconfig root@10.0.1.109:/etc/ordiri.conf
+
+deploy-mothership-ordlet:
 	scp bin/ordlet-amd64-linux mothership:/usr/local/bin/ordlet
 	scp kubeconfig mothership:/etc/ordiri.conf
 
 .PHONY: run-remote
-run-remote: stop-debian stop-mothership run-mothership-ordlet run-debian-ordlet
+run-remote: run-debian-remote run-mothership-remote
 	@echo "starting"
 
-run-mothership-ordlet: deploy-ordlet
+run-mothership-remote: stop-mothership deploy-mothership-ordlet
 	ssh mothership 'modprobe nf_nat_tftp nf_conntrack && KUBECONFIG=/etc/ordiri.conf /usr/local/bin/ordlet | tee /var/log/ordlet.conf' &
 
-run-debian-ordlet: deploy-ordlet
+run-debian-remote:  stop-debian deploy-debian-ordlet
 	ssh root@10.0.1.109 'modprobe nf_nat_tftp nf_conntrack && KUBECONFIG=/etc/ordiri.conf /usr/local/bin/ordlet | tee /var/log/ordlet.conf' &
 
 .PHONY: stop-mothership

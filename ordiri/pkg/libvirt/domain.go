@@ -32,53 +32,61 @@ func doLiveUpdates(client *Libvirt, dom libvirt.Domain, old, new *libvirtxml.Dom
 
 	// Call the attach device for all the devices not yet seen
 	for _, disk := range new.Devices.Disks {
+		xml, err := disk.Marshal()
+		if err != nil {
+			return fmt.Errorf("unable to marshal disk to remove - %w", err)
+		}
 		if _, ok := disks[disk.Device]; !ok {
-			delete(disks, disk.Device)
-			xml, err := disk.Marshal()
-			if err != nil {
-				return err
+			if err := client.DomainAttachDeviceFlags(dom, xml, 0); err != nil {
+				return fmt.Errorf("error updating disk %s - %w", disk.Device, err)
+			}
+		} else {
+			if err := client.DomainUpdateDeviceFlags(dom, xml, libvirt.DomainDeviceModifyLive); err != nil {
+				return fmt.Errorf("error updating disk %s - %w", disk.Device, err)
 			}
 
-			if err := client.DomainUpdateDeviceFlags(dom, xml, libvirt.DomainDeviceModifyLive); err != nil {
-				return err
-			}
 		}
+		delete(disks, disk.Device)
 	}
 
 	// Call the attach device for all the devices not yet seen
 	for _, iface := range new.Devices.Interfaces {
+		xml, err := iface.Marshal()
+		if err != nil {
+			return fmt.Errorf("unable to marshal iface to remove - %w", err)
+		}
 		if _, ok := ifaces[iface.MAC.Address]; !ok {
-			delete(ifaces, iface.MAC.Address)
-			xml, err := iface.Marshal()
-			if err != nil {
-				return err
+			if err := client.DomainAttachDeviceFlags(dom, xml, 0); err != nil {
+				return fmt.Errorf("error updating network interface %s - %w", iface.MAC.Address, err)
+			}
+		} else {
+			if err := client.DomainUpdateDeviceFlags(dom, xml, libvirt.DomainDeviceModifyLive); err != nil {
+				return fmt.Errorf("error updating network interface %s - %w", iface.MAC.Address, err)
 			}
 
-			if err := client.DomainUpdateDeviceFlags(dom, xml, libvirt.DomainDeviceModifyLive); err != nil {
-				return err
-			}
 		}
+		delete(ifaces, iface.MAC.Address)
 	}
 
 	for _, iface := range ifaces {
 		xml, err := iface.Marshal()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to marshal iface to remove - %w", err)
 		}
 
 		if err := client.DomainDetachDeviceFlags(dom, xml, uint32(libvirt.DomainDeviceModifyLive)); err != nil {
-			return err
+			return fmt.Errorf("unable to remove ifac %s - %w", iface.MAC.Address, err)
 		}
 	}
 
 	for _, disk := range disks {
 		xml, err := disk.Marshal()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to marshal iface to remove - %w", err)
 		}
 
 		if err := client.DomainDetachDeviceFlags(dom, xml, uint32(libvirt.DomainDeviceModifyLive)); err != nil {
-			return err
+			return fmt.Errorf("unable to remove ifac %s - %w", disk.Device, err)
 		}
 	}
 
@@ -103,11 +111,11 @@ func EnsureExisting(client *Libvirt, dom libvirt.Domain, domain *libvirtxml.Doma
 
 	dom, err = client.DomainDefineXMLFlags(domainStr, 0)
 	if err != nil {
-		return EnsureResultDomainUnknown, err
+		return EnsureResultDomainUnknown, fmt.Errorf("unable to update xml definition - %w", err)
 	}
 
 	if err := doLiveUpdates(client, dom, existing, domain); err != nil {
-		return EnsureResultDomainUnknown, err
+		return EnsureResultDomainUnknown, fmt.Errorf("error applying live updates - %w", err)
 	}
 
 	return EnsureResultDomainUpdated, nil
@@ -141,7 +149,7 @@ func Ensure(client *Libvirt, name string, opts ...DomainOption) (*libvirtxml.Dom
 	if err != nil {
 		dom, res, err := EnsureNew(client, domain)
 		if err != nil {
-			return domain, nil, res, err
+			return domain, nil, res, fmt.Errorf("error creating new domain - %w", err)
 		}
 
 		return domain, dom, res, nil
@@ -149,7 +157,7 @@ func Ensure(client *Libvirt, name string, opts ...DomainOption) (*libvirtxml.Dom
 
 	res, err := EnsureExisting(client, dom, domain)
 	if err != nil {
-		return domain, nil, res, err
+		return domain, nil, res, fmt.Errorf("error updating existing domain - %w", err)
 	}
 	return domain, &dom, res, nil
 }

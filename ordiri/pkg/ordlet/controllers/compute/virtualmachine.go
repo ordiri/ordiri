@@ -51,8 +51,6 @@ type VirtualMachineReconciler struct {
 	Node          ordlet.NodeProvider
 }
 
-const poolName = "pool"
-
 //+kubebuilder:rbac:groups=compute,resources=virtualmachines,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=compute,resources=virtualmachines/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=compute,resources=virtualmachines/finalizers,verbs=update
@@ -108,7 +106,7 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	needsCreate := domain == nil
 	needsUpdate = needsUpdate || needsCreate
 
-	log.V(5).Info("creating new virtual machine")
+	log.V(5).Info("creating virtual machine")
 	domainOptions := []internallibvirt.DomainOption{
 		internallibvirt.WithBasicDefaults(),
 		internallibvirt.WithUuid(string(vm.UID)),
@@ -120,26 +118,33 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	// newDomain := libvirtxml.Domain{}
 
 	// vm.Status.Volumes = []computev1alpha1.VirtualMachineVolumeStatus{}
+	volumes := []computev1alpha1.VirtualMachineVolumeStatus{}
 	for _, disk := range vm.Spec.Volumes {
+		log.V(5).Info("getting volume", "disk", disk)
 		volumeStatus, domainOption, err := r.getVolume(ctx, vm, disk)
 		if err != nil {
 			return ctrl.Result{}, err
 		}
+		log.V(5).Info("found volume", "status", volumeStatus)
 
 		domainOptions = append(domainOptions, domainOption)
-		vm.Status.Volumes = append(vm.Status.Volumes, volumeStatus)
+		volumes = append(volumes, volumeStatus)
 	}
+	vm.Status.Volumes = volumes
 
+	ifaces := []computev1alpha1.VirtualMachineNetworkInterfaceStatus{}
 	for _, iface := range vm.Spec.NetworkInterfaces {
 		ifaceStatus, ifaceOption, err := r.getNetworkInterface(ctx, vm, iface)
 		if err != nil {
 			return ctrl.Result{}, err
 		}
 		domainOptions = append(domainOptions, ifaceOption)
-		vm.Status.NetworkInterfaces = append(vm.Status.NetworkInterfaces, ifaceStatus)
+		ifaces = append(ifaces, ifaceStatus)
 	}
+	vm.Status.NetworkInterfaces = ifaces
 
 	domain, dom, result, err := internallibvirt.Ensure(r.LibvirtClient, vm.Name, domainOptions...)
+
 	if err != nil {
 		return ctrl.Result{}, err
 	}
@@ -148,23 +153,29 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		log.V(5).Info("created virtual machine")
 		needsUpdate = true
 	} else if result == internallibvirt.EnsureResultDomainUpdated {
-		log.V(5).Info("created virtual machine")
+		log.V(5).Info("updated virtual machine")
 		needsUpdate = true
-	}
-	if needsUpdate {
-
-	} else {
-		log.V(5).Info("found existing virtual machine")
-		log = log.WithValues("domain", uuid.Must(uuid.FromBytes([]byte(domain.UUID[:]))).String())
+	} else if result == internallibvirt.EnsureResultDomainNone {
+		log.V(5).Info("did nothing to virtual machine")
 	}
 
 	if domain == nil {
 		return ctrl.Result{}, fmt.Errorf("unable to finhd provisioned vm")
 	}
 
+	log = log.WithValues("domain", uuid.Must(uuid.Parse(domain.UUID)).String())
+
+	state, reason, err := r.LibvirtClient.DomainGetState(*dom, 0)
+	if err != nil {
+		return ctrl.Result{}, err
+	}
+
 	log.Info("got the virtual machine state", "state", state, "reason", reason)
 
-	r.createOrUpdateMachine(ctx, vm, domain)
+	if _, err := r.createOrUpdateMachine(ctx, vm, domain); err != nil {
+		return ctrl.Result{}, err
+	}
+
 	if vm.Status.ObservedGeneration != vm.Generation {
 		vm.Status.ObservedGeneration = vm.Generation
 		needsUpdate = true
@@ -265,19 +276,19 @@ func (r *VirtualMachineReconciler) ReconcileDeletion(ctx context.Context, vm *co
 
 	}
 
-	pool, err := r.LibvirtClient.StoragePoolLookupByName(poolName)
-	if err == nil && pool.Name != "" {
-		for _, disk := range vm.Status.Volumes {
-			vol, err := r.LibvirtClient.StorageVolLookupByName(pool, disk.VolumeName)
-			log.V(5).Info("removing volume", "volume", disk.VolumeName, "volume", vol, "err", err)
-			if err != nil {
-				continue
-			}
-			if err := r.LibvirtClient.StorageVolDelete(vol, 0); err != nil {
-				return ctrl.Result{}, err
-			}
-		}
-	}
+	// pool, err := r.LibvirtClient.StoragePoolLookupByName(poolName)
+	// if err == nil && pool.Name != "" {
+	// 	for _, disk := range vm.Status.Volumes {
+	// 		vol, err := r.LibvirtClient.StorageVolLookupByName(pool, disk.VolumeName)
+	// 		log.V(5).Info("removing volume", "volume", disk.VolumeName, "volume", vol, "err", err)
+	// 		if err != nil {
+	// 			continue
+	// 		}
+	// 		if err := r.LibvirtClient.StorageVolDelete(vol, 0); err != nil {
+	// 			return ctrl.Result{}, err
+	// 		}
+	// 	}
+	// }
 
 	machine := &corev1alpha1.Machine{}
 	machine.Name = string(vm.UID)

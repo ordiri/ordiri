@@ -54,7 +54,8 @@ type VolumeClaimList struct {
 type VolumeClaimSpec struct {
 	StorageClassName string              `json:"storageClassName"`
 	Size             resourcev1.Quantity `json:"size"`
-	VolumeName       string              `json:"volumeName"`
+	// +optional
+	VolumeName string `json:"volumeName"`
 }
 
 var _ resource.Object = &VolumeClaim{}
