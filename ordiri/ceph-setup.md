@@ -49,4 +49,7 @@ ceph auth get-key client.libvirt | sudo tee client.libvirt.key
 virsh secret-set-value --secret {uuid of secret} --base64 $(cat client.libvirt.key) && rm client.libvirt.key secret.xml
 
 
-apt-get install libvirt-daemon-driver-storage-rbd
+apt-get install libvirt-daemon-driver-storage-rbd libcephfs-dev librbd-dev librados-dev
+
+ceph config set mgr mgr/cephadm/autotune_memory_target_ratio 0.2
+ceph config set osd osd_memory_target_autotune true

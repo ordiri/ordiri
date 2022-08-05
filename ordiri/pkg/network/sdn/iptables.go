@@ -7,7 +7,7 @@ func Iptables(ns string) (*iptables.IPTables, error) {
 		iptables.Command(func(args []string) []string {
 			return append([]string{"ip", "netns", "exec", ns}, args...)
 		}),
-		iptables.Debug(true),
+		// iptables.Debug(true),
 		iptables.Sudo(true),
 	)
 }

@@ -130,6 +130,7 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		domainOptions = append(domainOptions, domainOption)
 		volumes = append(volumes, volumeStatus)
 	}
+
 	vm.Status.Volumes = volumes
 
 	ifaces := []computev1alpha1.VirtualMachineNetworkInterfaceStatus{}

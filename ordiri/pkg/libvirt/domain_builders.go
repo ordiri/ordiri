@@ -156,7 +156,7 @@ func WithCephVolume(name, device string) DomainOption {
 					Name:     fmt.Sprintf("tenant1/%s", name),
 					Hosts: []libvirtxml.DomainDiskSourceHost{
 						{
-							Name: "mothership",
+							Name: "debian.mgmt",
 							Port: "6789",
 						},
 					},

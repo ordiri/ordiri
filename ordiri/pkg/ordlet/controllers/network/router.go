@@ -58,7 +58,7 @@ type RouterReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.11.0/pkg/reconcile
 func (r *RouterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = log.FromContext(ctx)
+	log := log.FromContext(ctx)
 
 	router := &networkv1alpha1.Router{}
 	if err := r.Client.Get(ctx, req.NamespacedName, router); err != nil {
@@ -69,27 +69,7 @@ func (r *RouterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	}
 
 	node := r.Node.GetNode()
-	nodeWantsRouter := false
 
-	// var finalizer = "changeme-" + r.Node.GetNode().Name
-
-	for _, nws := range node.Status.Networks {
-		if nws.Name == router.Name {
-			nodeWantsRouter = true
-		}
-	}
-
-	if nodeWantsRouter && !r.Node.GetNode().HasRole(corev1alpha1.NodeRoleNetwork) {
-		nodeWantsRouter = false
-	}
-
-	network := &networkv1alpha1.Network{}
-	if err := r.Client.Get(ctx, req.NamespacedName, network); err != nil {
-		if errors.IsNotFound(err) {
-			return ctrl.Result{}, nil
-		}
-		return ctrl.Result{}, err
-	}
 	wg := sync.WaitGroup{}
 	errs := []error{}
 	for _, selector := range router.Spec.Subnets {
@@ -97,6 +77,7 @@ func (r *RouterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 		wg.Add(1)
 		// not safe
 		go func() {
+			log.Info("starting subnet install")
 			defer wg.Done()
 			subnet := &networkv1alpha1.Subnet{}
 			subnet.Name = thisSel.Name
@@ -105,18 +86,47 @@ func (r *RouterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 				return
 			}
 
-			if !nodeWantsRouter {
+			network := &networkv1alpha1.Network{}
+			if err := r.Client.Get(ctx, client.ObjectKey{Name: subnet.Spec.Network.Name}, network); err != nil {
+				errs = append(errs, err)
+				return
+			}
+
+			if _, err := r.Node.GetNode().SubnetVlanId(subnet.Name); err != nil {
+				return
+			}
+
+			subnetWantsRouter := false
+
+			// var finalizer = "changeme-" + r.Node.GetNode().Name
+
+			for _, nws := range node.Status.Networks {
+				if nws.Name == network.Name {
+					subnetWantsRouter = true
+				}
+			}
+
+			if subnetWantsRouter && !r.Node.GetNode().HasRole(corev1alpha1.NodeRoleNetwork) {
+				subnetWantsRouter = false
+			}
+
+			log.Info("got subnet", "subnet", subnet, "wants_router", subnetWantsRouter)
+
+			if !subnetWantsRouter {
+				log.Info("removing router", "subnet", subnet, "wants_router", subnetWantsRouter)
 				if err := r.removeRouter(ctx, network, subnet); err != nil {
 					errs = append(errs, err)
 				}
 
 			} else {
+				log.Info("installing router", "subnet", subnet, "wants_router", subnetWantsRouter)
 				if err := r.installRouter(ctx, network, subnet); err != nil {
 					errs = append(errs, err)
 				}
 			}
 		}()
 	}
+	log.Info("waiting for groups")
 	wg.Wait()
 
 	if len(errs) > 0 {
