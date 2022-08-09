@@ -3,5 +3,7 @@ go 1.18
 use (
 	./go-openvswitch
 	./ordiri
+	./ordiri-netplot
 	./ordiri-runtime
+	./rtnetlink
 )
