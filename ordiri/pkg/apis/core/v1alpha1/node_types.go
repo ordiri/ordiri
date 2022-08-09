@@ -19,8 +19,6 @@ package v1alpha1
 import (
 	"context"
 	"fmt"
-	"math/rand"
-	"time"
 
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -106,8 +104,10 @@ func (in *Node) TunnelAddress() string {
 }
 
 func (in *Node) MgmtAddress() string {
-	randomAddr := rand.New(rand.NewSource(time.Now().Unix())).Intn(len(in.Spec.ManagementAddresses))
-	return in.Spec.ManagementAddresses[randomAddr]
+	if len(in.Spec.ManagementAddresses) == 0 {
+		return ""
+	}
+	return in.Spec.ManagementAddresses[0]
 }
 
 func (in *Node) GetObjectMeta() *metav1.ObjectMeta {

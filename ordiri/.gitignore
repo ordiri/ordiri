@@ -1,3 +1,5 @@
 default.etcd
 apiserver.local.config
 bin/
+*.pdf
+*.pcap

@@ -31,6 +31,7 @@ import (
 
 func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenAPIDefinition {
 	return map[string]common.OpenAPIDefinition{
+		"github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.HostLocalVolumeClaim":                 schema_pkg_apis_compute_v1alpha1_HostLocalVolumeClaim(ref),
 		"github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachine":                       schema_pkg_apis_compute_v1alpha1_VirtualMachine(ref),
 		"github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineDeployment":             schema_pkg_apis_compute_v1alpha1_VirtualMachineDeployment(ref),
 		"github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineDeploymentList":         schema_pkg_apis_compute_v1alpha1_VirtualMachineDeploymentList(ref),
@@ -367,6 +368,41 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"k8s.io/apimachinery/pkg/runtime.TypeMeta":                                                schema_k8sio_apimachinery_pkg_runtime_TypeMeta(ref),
 		"k8s.io/apimachinery/pkg/runtime.Unknown":                                                 schema_k8sio_apimachinery_pkg_runtime_Unknown(ref),
 		"k8s.io/apimachinery/pkg/version.Info":                                                    schema_k8sio_apimachinery_pkg_version_Info(ref),
+	}
+}
+
+func schema_pkg_apis_compute_v1alpha1_HostLocalVolumeClaim(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"poolName": {
+						SchemaProps: spec.SchemaProps{
+							Default: "",
+							Type:    []string{"string"},
+							Format:  "",
+						},
+					},
+					"volName": {
+						SchemaProps: spec.SchemaProps{
+							Default: "",
+							Type:    []string{"string"},
+							Format:  "",
+						},
+					},
+					"size": {
+						SchemaProps: spec.SchemaProps{
+							Default: map[string]interface{}{},
+							Ref:     ref("k8s.io/apimachinery/pkg/api/resource.Quantity"),
+						},
+					},
+				},
+				Required: []string{"poolName", "volName", "size"},
+			},
+		},
+		Dependencies: []string{
+			"k8s.io/apimachinery/pkg/api/resource.Quantity"},
 	}
 }
 
@@ -1007,12 +1043,17 @@ func schema_pkg_apis_compute_v1alpha1_VirtualMachineVolume(ref common.ReferenceC
 							Ref: ref("github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineVolumeClaim"),
 						},
 					},
+					"hostLocal": {
+						SchemaProps: spec.SchemaProps{
+							Ref: ref("github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.HostLocalVolumeClaim"),
+						},
+					},
 				},
 				Required: []string{"name"},
 			},
 		},
 		Dependencies: []string{
-			"github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineVolumeClaim"},
+			"github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.HostLocalVolumeClaim", "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineVolumeClaim"},
 	}
 }
 

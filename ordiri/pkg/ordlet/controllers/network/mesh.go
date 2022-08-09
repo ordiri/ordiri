@@ -70,6 +70,10 @@ func (r *MeshReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 
 	thisNode := r.Node.GetNode()
 
+	if node.TunnelAddress() == "" {
+		return ctrl.Result{RequeueAfter: time.Second * 30}, nil
+	}
+
 	// TODO: This needs to set the full tunnel properties like
 	// df_default and local_ip
 	if !strings.EqualFold(thisNode.Name, node.Name) {
@@ -79,10 +83,13 @@ func (r *MeshReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 		ovsClient.VSwitch.Set.Interface(portName, ovs.InterfaceOptions{
 			Type:     ovs.InterfaceTypeVXLAN,
 			RemoteIP: node.TunnelAddress(),
-			Key:      "flow",
+			Key:      "",
 			ExtraArgs: []ovs.ExtraArg{
 				func() []string {
 					return []string{"options:df_default=true"}
+				},
+				func() []string {
+					return []string{"options:out_key=flow", "options:in_key=flow"}
 				},
 				func() []string {
 					return []string{fmt.Sprintf("options:local_ip=%s", r.Node.GetNode().TunnelAddress())}

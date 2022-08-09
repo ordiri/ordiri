@@ -78,24 +78,6 @@ func (clnr *createLocalNodeRunnable) Start(ctx context.Context) error {
 	node := clnr.Node
 	log.Info("found node")
 
-	ifs, err := net.InterfaceAddrs()
-	if err != nil {
-		return err
-	}
-
-	node.Spec.ManagementAddresses = []string{}
-	for _, iface := range ifs {
-		// check the address type and if it is not a loopback the display it
-		if ipnet, ok := iface.(*net.IPNet); ok && !ipnet.IP.IsLoopback() && !ipnet.IP.IsUnspecified() && clnr.mgmtNet.Contains(ipnet.IP) {
-			node.Spec.ManagementAddresses = append(node.Spec.ManagementAddresses, ipnet.IP.String())
-		}
-	}
-
-	node.Spec.NodeRoles = []corev1alpha1.NodeRole{}
-	for _, role := range clnr.roles {
-		node.Spec.NodeRoles = append(node.Spec.NodeRoles, corev1alpha1.NodeRole(role))
-	}
-
 	ovs := sdn.Ovs()
 	if err := ovs.VSwitch.AddBridge(sdn.ExternalSwitchName); err != nil {
 		return err
@@ -105,6 +87,26 @@ func (clnr *createLocalNodeRunnable) Start(ctx context.Context) error {
 	}
 	if err := ovs.VSwitch.AddBridge(sdn.WorkloadSwitchName); err != nil {
 		return err
+	}
+
+	ifs, err := net.InterfaceAddrs()
+	if err != nil {
+		return err
+	}
+
+	newAddrs := []string{}
+	for _, iface := range ifs {
+		// check the address type and if it is not a loopback the display it
+		if ipnet, ok := iface.(*net.IPNet); ok && !ipnet.IP.IsLoopback() && !ipnet.IP.IsUnspecified() && clnr.mgmtNet.Contains(ipnet.IP) {
+			newAddrs = append(newAddrs, ipnet.IP.String())
+		}
+	}
+
+	node.Spec.ManagementAddresses = newAddrs
+
+	node.Spec.NodeRoles = []corev1alpha1.NodeRole{}
+	for _, role := range clnr.roles {
+		node.Spec.NodeRoles = append(node.Spec.NodeRoles, corev1alpha1.NodeRole(role))
 	}
 
 	if node.UID == "" {

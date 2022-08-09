@@ -1,0 +1,12 @@
+#!/usr/bin/env  bash
+
+
+ssh root@10.0.1.110 plotnetcfg | sed -E 's/digraph {/digraph {\
+graph [pad="0.5", nodesep="2", ranksep="3"];/g'| dot -Tpdf > compute.net.pdf &
+
+ssh mothership plotnetcfg | sed -E 's/digraph {/digraph {\
+graph [pad="0.5", nodesep="2", ranksep="3"];/g'| dot -Tpdf > mothership.net.pdf &
+
+wait
+
+open *.pdf

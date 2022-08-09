@@ -52,45 +52,37 @@ func (r *VirtualMachineReconciler) getVolume(ctx context.Context, vm *computev1a
 		status.Size = vol.Spec.Size
 
 		return status, internallibvirt.WithCephVolume(vol.Name, disk.Device), nil
+	} else if disk.HostLocal != nil {
+		pool, err := r.EnsurePool(ctx, disk.HostLocal.PoolName)
+		if err != nil {
+			return status, nil, err
+		}
+
+		if _, err := r.LibvirtClient.StorageVolLookupByName(*pool, disk.HostLocal.VolName); err == nil {
+			return status, internallibvirt.WithPoolVolume(pool.Name, disk.HostLocal.VolName, disk.Device), nil
+		}
+
+		volume, err := internallibvirt.NewVolume(disk.HostLocal.VolName,
+			internallibvirt.WithSize(uint64(disk.HostLocal.Size.Value())),
+		)
+		if err != nil {
+			return status, nil, fmt.Errorf("error creating new internal volume - %w", err)
+		}
+
+		volumeStr, err := volume.Marshal()
+		if err != nil {
+			return status, nil, err
+		}
+
+		storageVol, err := r.LibvirtClient.StorageVolCreateXML(*pool, volumeStr, 0)
+		if err != nil {
+			return status, nil, fmt.Errorf("unable to create storage volume - %w", err)
+		}
+
+		return status, internallibvirt.WithPoolVolume(storageVol.Pool, storageVol.Key, disk.Device), nil
 	}
 
 	return status, nil, fmt.Errorf("unknown disk type")
-
-	// Ephemeral storage / CSI style
-	// vol, err := r.volumeClaim(ctx, vm, disk)
-	// if err != nil && !k8err.IsNotFound(err) {
-	// 	return status, nil, err
-	// }
-
-	// pool, err := r.EnsurePool(ctx, poolName)
-	// if err != nil {
-	// 	return status, nil, err
-	// }
-
-	// storageVol, err := r.LibvirtClient.StorageVolLookupByName(*pool, vol.Name)
-	// if err == nil {
-	// 	return status, nil, nil
-	// }
-
-	// volume, err := internallibvirt.NewVolume(vol.Name,
-	// 	internallibvirt.WithSize(uint64(vol.Spec.Size.Value())),
-	// )
-	// if err != nil {
-	// 	return status, nil, fmt.Errorf("error creating new internal volume - %w", err)
-	// }
-
-	// volumeStr, err := volume.Marshal()
-	// if err != nil {
-	// 	return status, nil, err
-	// }
-
-	// storageVol, err = r.LibvirtClient.StorageVolCreateXML(*pool, volumeStr, 0)
-	// if err != nil {
-	// 	return status, nil, fmt.Errorf("unable to create storage volume - %w", err)
-	// }
-
-	// opt := internallibvirt.WithPoolVolume(poolName, volume.Name, disk.Device)
-	// return computev1alpha1.VirtualMachineVolumeStatus{Name: storageVol.Name}, opt, nil
 }
 
 func (r *VirtualMachineReconciler) EnsurePool(ctx context.Context, name string) (*libvirt.StoragePool, error) {

@@ -21,6 +21,7 @@ import (
 	"fmt"
 
 	k8res "k8s.io/apimachinery/pkg/api/resource"
+	resourcev1 "k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -101,10 +102,17 @@ type VirtualMachineVolume struct {
 	// +optional
 	Device      string                     `json:"device"`
 	VolumeClaim *VirtualMachineVolumeClaim `json:"volumeClaim,omitempty"`
+	HostLocal   *HostLocalVolumeClaim      `json:"hostLocal,omitempty"`
 }
 
 type VirtualMachineVolumeClaim struct {
 	ClaimName string `json:"claimName"`
+}
+
+type HostLocalVolumeClaim struct {
+	PoolName string              `json:"poolName"`
+	VolName  string              `json:"volName"`
+	Size     resourcev1.Quantity `json:"size"`
 }
 
 var _ resource.Object = &VirtualMachine{}

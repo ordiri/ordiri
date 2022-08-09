@@ -131,7 +131,7 @@ deploy-debian-ordlet: linux-ordlet
 	scp bin/ordlet-amd64-linux root@10.0.1.109:/usr/local/bin/ordlet
 	scp kubeconfig root@10.0.1.109:/etc/ordiri.conf
 
-deploy-mothership-ordlet:
+deploy-mothership-ordlet: linux-ordlet
 	scp bin/ordlet-amd64-linux mothership:/usr/local/bin/ordlet
 	scp kubeconfig mothership:/etc/ordiri.conf
 
