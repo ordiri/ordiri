@@ -31,9 +31,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	"github.com/ordiri/ordiri/controllers/compute"
 	"github.com/ordiri/ordiri/pkg/apis"
-	"github.com/ordiri/ordiri/pkg/ordlet/controllers/network"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -74,22 +72,6 @@ func main() {
 
 	if err != nil {
 		setupLog.Error(err, "unable to start manager")
-		os.Exit(1)
-	}
-
-	if err = (&network.SubnetReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
-	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "Network")
-		os.Exit(1)
-	}
-
-	if err = (&compute.VirtualMachineReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
-	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "VirtualMachine")
 		os.Exit(1)
 	}
 

@@ -35,15 +35,12 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/source"
 
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
-	"github.com/ordiri/ordiri/pkg/ordlet"
 )
 
 // NetworkReconciler reconciles a Network object
 type NetworkReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
-
-	Node ordlet.NodeProvider
 }
 
 const (

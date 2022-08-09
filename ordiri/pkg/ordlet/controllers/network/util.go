@@ -137,14 +137,3 @@ func deleteNetworkNs(name string) error {
 	}
 	return nil
 }
-
-func setNsVethIp(namespace string, addr string, cableName string) error {
-
-	cmd := exec.Command("ip", "netns", "exec", namespace, "ip", "addr", "add", addr, "dev", cableName+"-in")
-	out, err := cmd.CombinedOutput()
-	if err != nil && !strings.Contains(string(out), "File exists") {
-		return fmt.Errorf("%s: unable to add ip to ns network interface - %s - %w", cmd.String(), string(out), err)
-	}
-
-	return nil
-}

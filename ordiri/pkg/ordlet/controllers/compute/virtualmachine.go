@@ -144,7 +144,7 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	}
 	vm.Status.NetworkInterfaces = ifaces
 
-	domain, dom, result, err := internallibvirt.Ensure(r.LibvirtClient, vm.Name, domainOptions...)
+	domain, _, result, err := internallibvirt.Ensure(r.LibvirtClient, vm.Name, libvirtStatus(vm.Spec.State), domainOptions...)
 
 	if err != nil {
 		return ctrl.Result{}, err
@@ -165,13 +165,6 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	}
 
 	log = log.WithValues("domain", uuid.Must(uuid.Parse(domain.UUID)).String())
-
-	state, reason, err := r.LibvirtClient.DomainGetState(*dom, 0)
-	if err != nil {
-		return ctrl.Result{}, err
-	}
-
-	log.Info("got the virtual machine state", "state", state, "reason", reason)
 
 	if _, err := r.createOrUpdateMachine(ctx, vm, domain); err != nil {
 		return ctrl.Result{}, err
@@ -346,6 +339,18 @@ func (r *VirtualMachineReconciler) GetDomain(ctx context.Context, vm *computev1a
 	}
 
 	return &dom, xmlDom
+}
+
+func libvirtStatus(vms computev1alpha1.VirtualMachineState) libvirt.DomainState {
+	switch vms {
+	case computev1alpha1.VirtualMachineStateUnknown:
+		fallthrough
+	case computev1alpha1.VirtualMachineStatePaused:
+		return libvirt.DomainPaused
+	case computev1alpha1.VirtualMachineStateRunning:
+		return libvirt.DomainRunning
+	}
+	panic("unknown status " + vms)
 }
 
 // SetupWithManager sets up the controller with the Manager.

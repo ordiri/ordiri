@@ -57,7 +57,7 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/btree v1.0.1 // indirect
 	github.com/google/gnostic v0.5.7-v3refs // indirect
-	github.com/google/go-cmp v0.5.6 // indirect
+	github.com/google/go-cmp v0.5.8 // indirect
 	github.com/google/gofuzz v1.1.0 // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
 	github.com/google/uuid v1.3.0
@@ -116,7 +116,7 @@ require (
 	golang.org/x/net v0.0.0-20220225172249-27dd8689420f // indirect
 	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
-	golang.org/x/sys v0.0.0-20220319134239-a9b59b0215f8
+	golang.org/x/sys v0.0.0-20220408201424-a24fb2fb8a0f
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20220210224613-90d013bbcef8 // indirect
@@ -151,7 +151,7 @@ require (
 	github.com/c-robinson/iplib v1.0.3
 	github.com/digitalocean/go-libvirt v0.0.0-20220704152101-6d260d9c16a3
 	github.com/digitalocean/go-openvswitch v0.0.0-20211105174344-2a0f99c6436b
-	github.com/mdlayher/netlink v1.4.1
+	github.com/mdlayher/netlink v1.6.0
 	github.com/vishvananda/netlink v1.1.0
 	github.com/vishvananda/netns v0.0.0-20191106174202-0a2b9b5464df
 	libvirt.org/go/libvirtxml v1.8005.0
@@ -163,8 +163,12 @@ require (
 	github.com/ceph/go-ceph v0.16.0 // indirect
 	github.com/godbus/dbus/v5 v5.0.4 // indirect
 	github.com/huandu/xstrings v1.3.2 // indirect
-	github.com/josharian/native v0.0.0-20200817173448-b6b71def0850 // indirect
-	github.com/mdlayher/socket v0.0.0-20210307095302-262dc9984e00 // indirect
+	github.com/josharian/native v1.0.0 // indirect
+	github.com/jsimonetti/rtnetlink v1.2.1 // indirect
+	github.com/mdlayher/socket v0.1.1 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
+	go4.org/intern v0.0.0-20211027215823-ae77deb06f29 // indirect
+	go4.org/unsafe/assume-no-moving-gc v0.0.0-20220617031537-928513b29760 // indirect
+	inet.af/netaddr v0.0.0-20220617031823-097006376321 // indirect
 )

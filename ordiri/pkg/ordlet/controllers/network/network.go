@@ -19,7 +19,6 @@ package network
 import (
 	"context"
 	"fmt"
-	"os/exec"
 
 	k8err "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -31,9 +30,10 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 
+	"github.com/ordiri/ordiri/network"
+	"github.com/ordiri/ordiri/network/api"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
-	"github.com/ordiri/ordiri/pkg/network/sdn"
 	"github.com/ordiri/ordiri/pkg/ordlet"
 )
 
@@ -42,7 +42,8 @@ type NetworkReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
 
-	Node ordlet.NodeProvider
+	Node           ordlet.NodeProvider
+	NetworkManager api.Manager
 }
 
 // Controls internet gateway & floating ip etc ona node
@@ -50,8 +51,8 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 	log := log.FromContext(ctx)
 	log.V(5).Info("Starting to reconcile", "request", req)
 
-	network := &networkv1alpha1.Network{}
-	if err := r.Client.Get(ctx, req.NamespacedName, network); err != nil {
+	nw := &networkv1alpha1.Network{}
+	if err := r.Client.Get(ctx, req.NamespacedName, nw); err != nil {
 		if k8err.IsNotFound(err) {
 			return ctrl.Result{}, nil
 		}
@@ -59,174 +60,121 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 	}
 
 	node := r.Node.GetNode()
+	nodeHasNetwork := r.NetworkManager.HasNetwork(nw.Name)
 	nodeWantsNetwork := false
-	networkReferencesNode := false
 	for _, nws := range node.Status.Networks {
-		if nws.Name == network.Name {
+		if nws.Name == nw.Name {
 			nodeWantsNetwork = true
 		}
 	}
 
-	if nodeWantsNetwork && !r.Node.GetNode().HasRole(corev1alpha1.NodeRoleNetwork) {
+	if !r.Node.GetNode().HasRole(corev1alpha1.NodeRoleNetwork) {
 		nodeWantsNetwork = false
 	}
 
-	for _, host := range network.Status.Hosts {
-		if host.Node == node.Name {
-			networkReferencesNode = true
-		}
+	var net api.Network
+	var err error
+	if r.NetworkManager.HasNetwork(nw.Name) {
+		net = r.NetworkManager.GetNetwork(nw.Name)
+	} else {
+		net, err = network.NewNetwork(nw.Name, nw.Spec.Cidr, nw.Status.Vni)
+
+	}
+	if err != nil {
+		return ctrl.Result{}, err
 	}
 
-	// here we need to be setting the status on a per-host level as to how each thing is
-	// with conditions as well
-	// network:
-	// 	status:
-	// 		hosts:
-	// 		- name: foo
-	// 		  routers: // common routerstatusref ?
-	// 		  - name: default
-	//          mac: 00:00:00:00:00
-	//          ip: 10.1.1.1
-	// 		  - name: custom
+	log.V(5).Info("Starting to build networking", "nodeWantsNetwork", nodeWantsNetwork, "nodeHasNetwork", nodeHasNetwork, "network", net)
 
-	if networkReferencesNode && !nodeWantsNetwork {
-		log.Info("network references the node but the node doesn't want it, removing")
+	if !nodeWantsNetwork {
+		if nodeHasNetwork {
+			if err := r.NetworkManager.RemoveNetwork(ctx, net.Name()); err != nil {
+				return ctrl.Result{}, err
+			}
+			log.Info("network references the node but the node doesn't want it, removing")
 
-		// We wan to ensure we remove this node if weneed
-		err := retry.RetryOnConflict(retry.DefaultBackoff, func() error {
-			network := &networkv1alpha1.Network{}
-			if err := r.Client.Get(ctx, req.NamespacedName, network); err != nil {
-				if k8err.IsNotFound(err) {
-					return nil
-				}
-				return err
+			// We want to ensure we remove this node if weneed
+			if err := r.removeNodeFromNetworkStatus(ctx, nw); err != nil {
+				return ctrl.Result{}, err
 			}
-			found := false
-			newHosts := []networkv1alpha1.HostNetworkStatus{}
-			for _, boundHosts := range network.Status.Hosts {
-				if boundHosts.Node == r.Node.GetNode().Name {
-					found = true
-					continue
-				}
-				newHosts = append(newHosts, boundHosts)
-			}
-			if found {
-				network.Status.Hosts = newHosts
-				if err := r.Client.Status().Update(ctx, network); err != nil {
-					return err
-				}
-			}
-			return nil
-		})
-
-		if err != nil {
-			return ctrl.Result{}, err
 		}
 	} else if nodeWantsNetwork {
-		log.Info("node wants the network")
-
-		if err := r.installNat(ctx, network); err != nil {
+		if err := r.NetworkManager.EnsureNetwork(ctx, net); err != nil {
 			return ctrl.Result{}, err
 		}
-		if !networkReferencesNode {
+		log.Info("node wants the network")
+		if !nodeHasNetwork {
 			log.Info("a link from the node to the network")
 			// ensure we are referencing the node we are running on in the subnets status so we can decommission the node
 			// when removed
-			err := retry.RetryOnConflict(retry.DefaultBackoff, func() error {
-				node := r.Node.GetNode()
-				network := &networkv1alpha1.Network{}
-				if err := r.Client.Get(ctx, req.NamespacedName, network); err != nil {
-					if k8err.IsNotFound(err) {
-						return nil
-					}
-					return err
-				}
-
-				networkContainsNode := false
-				for _, hostBinding := range network.Status.Hosts {
-					if hostBinding.Node == node.Name {
-						networkContainsNode = true
-					}
-				}
-
-				if !networkContainsNode {
-					log.Info("creating link from network to host")
-					network.Status.Hosts = append(network.Status.Hosts, networkv1alpha1.HostNetworkStatus{
-						Node: node.Name,
-					})
-
-					if err := r.Client.Status().Update(ctx, network); err != nil {
-						return err
-					}
-				}
-				return nil
-			})
+			err := r.addNodeToNetworkStatus(ctx, nw)
 			if err != nil {
 				return ctrl.Result{}, err
 			}
 		}
+	} else {
+		return ctrl.Result{}, fmt.Errorf("unknown action?")
 	}
 
 	return ctrl.Result{}, nil
 }
 
-func (r *NetworkReconciler) installNat(ctx context.Context, network *networkv1alpha1.Network) error {
-	ipt, err := sdn.Iptables(network.RouterNetworkNamespace())
+func (r *NetworkReconciler) addNodeToNetworkStatus(ctx context.Context, nw *networkv1alpha1.Network) error {
+	return retry.RetryOnConflict(retry.DefaultBackoff, func() error {
+		node := r.Node.GetNode()
+		network := &networkv1alpha1.Network{}
+		if err := r.Client.Get(ctx, client.ObjectKeyFromObject(nw), network); err != nil {
+			if k8err.IsNotFound(err) {
+				return nil
+			}
+			return err
+		}
 
-	if err != nil {
-		return err
-	}
+		networkContainsNode := false
+		for _, hostBinding := range network.Status.Hosts {
+			if hostBinding.Node == node.Name {
+				networkContainsNode = true
+			}
+		}
 
-	gatewayCableName := network.RouterNetworkPublicGatewayCableName()
-	if err := createVeth(gatewayCableName, network.RouterNetworkNamespace()); err != nil {
-		return fmt.Errorf("unable to create internal router veth cable - %w", err)
-	}
+		if !networkContainsNode {
+			network.Status.Hosts = append(network.Status.Hosts, networkv1alpha1.HostNetworkStatus{
+				Node: node.Name,
+			})
 
-	renewDhclientCmd := exec.Command("ip", "netns", "exec", network.RouterNetworkNamespace(), "dhclient", "-r", gatewayCableName+"-in")
-	go func() {
-		// fire and forget for now
-		// todo: create a netlink device and actually set this properly
-		// by using some allocator in the manager to pre-allocate the ip's
-		renewDhclientCmd.Run()
-
-		cmd := exec.Command("ip", "netns", "exec", network.RouterNetworkNamespace(), "dhclient", "-r", gatewayCableName+"-in")
-		cmd.Run()
-	}()
-
-	if err := sdn.Ovs().VSwitch.AddPort(sdn.ExternalSwitchName, gatewayCableName+"-out"); err != nil {
-		return err
-	}
-
-	ruleSets := r.rulesets(network.Spec.Cidr, gatewayCableName+"-in")
-
-	for _, ruleSet := range ruleSets {
-		for _, rule := range ruleSet.Rules {
-			err := ipt.AppendUnique(ruleSet.Table, ruleSet.Chain, rule...)
-			if err != nil {
+			if err := r.Client.Status().Update(ctx, network); err != nil {
 				return err
 			}
 		}
-	}
-
-	return nil
+		return nil
+	})
 }
-
-func (nw *NetworkReconciler) rulesets(cidr string, publicInterface string) []iptRule {
-	return []iptRule{
-		{
-			Table: "raw",
-			Chain: "PREROUTING",
-			Rules: [][]string{
-				{"-p", "udp", "--dport", "69", "-s", cidr, "-j", "CT", "--helper", "tftp"},
-			},
-		}, {
-			Table: "nat",
-			Chain: "POSTROUTING",
-			Rules: [][]string{
-				{"-o", publicInterface, "-j", "MASQUERADE"},
-			},
-		},
-	}
+func (r *NetworkReconciler) removeNodeFromNetworkStatus(ctx context.Context, nw *networkv1alpha1.Network) error {
+	return retry.RetryOnConflict(retry.DefaultBackoff, func() error {
+		network := &networkv1alpha1.Network{}
+		if err := r.Client.Get(ctx, client.ObjectKeyFromObject(nw), network); err != nil {
+			if k8err.IsNotFound(err) {
+				return nil
+			}
+			return err
+		}
+		found := false
+		newHosts := []networkv1alpha1.HostNetworkStatus{}
+		for _, boundHosts := range network.Status.Hosts {
+			if boundHosts.Node == r.Node.GetNode().Name {
+				found = true
+				continue
+			}
+			newHosts = append(newHosts, boundHosts)
+		}
+		if found {
+			network.Status.Hosts = newHosts
+			if err := r.Client.Status().Update(ctx, network); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
 }
 
 // SetupWithManager sets up the controller with the Manager.

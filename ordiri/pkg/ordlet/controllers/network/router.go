@@ -27,13 +27,11 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
-	"github.com/c-robinson/iplib"
-	"github.com/digitalocean/go-openvswitch/ovs"
+	"github.com/ordiri/ordiri/network"
+	"github.com/ordiri/ordiri/network/api"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
-	"github.com/ordiri/ordiri/pkg/network/sdn"
 	"github.com/ordiri/ordiri/pkg/ordlet"
-	"github.com/vishvananda/netns"
 )
 
 // RouterReconciler reconciles a Router object
@@ -41,7 +39,8 @@ type RouterReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
 
-	Node ordlet.NodeProvider
+	Node           ordlet.NodeProvider
+	NetworkManager api.Manager
 }
 
 //+kubebuilder:rbac:groups=network,resources=routers,verbs=get;list;watch;create;update;patch;delete
@@ -72,12 +71,18 @@ func (r *RouterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 
 	wg := sync.WaitGroup{}
 	errs := []error{}
+	// For each of the selected subnets this router is deployed too
+	// check if this node contains the subnet
 	for _, selector := range router.Spec.Subnets {
+		if _, err := r.Node.GetNode().Subnet(selector.Name); err != nil {
+			continue
+		}
+
 		thisSel := selector
 		wg.Add(1)
 		// not safe
 		go func() {
-			log.Info("starting subnet install")
+			log.Info("starting subnet router install")
 			defer wg.Done()
 			subnet := &networkv1alpha1.Subnet{}
 			subnet.Name = thisSel.Name
@@ -86,41 +91,64 @@ func (r *RouterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 				return
 			}
 
-			network := &networkv1alpha1.Network{}
-			if err := r.Client.Get(ctx, client.ObjectKey{Name: subnet.Spec.Network.Name}, network); err != nil {
+			nw := &networkv1alpha1.Network{}
+			if err := r.Client.Get(ctx, client.ObjectKey{Name: subnet.Spec.Network.Name}, nw); err != nil {
 				errs = append(errs, err)
 				return
 			}
 
-			if _, err := r.Node.GetNode().SubnetVlanId(subnet.Name); err != nil {
+			if !r.NetworkManager.HasNetwork(nw.Name) {
+				errs = append(errs, fmt.Errorf("network manager has no network %s, race condition", nw.Name))
 				return
 			}
+			net := r.NetworkManager.GetNetwork(nw.Name)
+
+			if !r.NetworkManager.HasSubnet(net, subnet.Name) {
+				errs = append(errs, fmt.Errorf("network manager has no subnet, race condition"))
+				return
+			}
+
+			sn := r.NetworkManager.GetSubnet(net, subnet.Name)
 
 			subnetWantsRouter := false
 
 			// var finalizer = "changeme-" + r.Node.GetNode().Name
 
 			for _, nws := range node.Status.Networks {
-				if nws.Name == network.Name {
+				if nws.Name == nw.Name {
 					subnetWantsRouter = true
 				}
 			}
+			var rtr api.Router
+			var err error
+			if r.NetworkManager.HasRouter(net, sn, router.Name) {
+				rtr = r.NetworkManager.GetNetwork(nw.Name)
+			} else {
+				rtr, err = network.NewRouter(nw.Name)
+			}
+
+			if err != nil {
+				errs = append(errs, err)
+				return
+			}
+
+			log.V(5).Info("Starting to ensure router", "network", net)
 
 			if subnetWantsRouter && !r.Node.GetNode().HasRole(corev1alpha1.NodeRoleNetwork) {
 				subnetWantsRouter = false
 			}
 
-			log.Info("got subnet", "subnet", subnet, "wants_router", subnetWantsRouter)
+			log.Info("got router", "router", rtr, "wants_router", subnetWantsRouter)
 
 			if !subnetWantsRouter {
 				log.Info("removing router", "subnet", subnet, "wants_router", subnetWantsRouter)
-				if err := r.removeRouter(ctx, network, subnet); err != nil {
+				if err := r.NetworkManager.RemoveRouter(ctx, net, sn, rtr); err != nil {
 					errs = append(errs, err)
 				}
 
 			} else {
 				log.Info("installing router", "subnet", subnet, "wants_router", subnetWantsRouter)
-				if err := r.installRouter(ctx, network, subnet); err != nil {
+				if err := r.NetworkManager.EnsureRouter(ctx, net, sn, rtr); err != nil {
 					errs = append(errs, err)
 				}
 			}
@@ -134,113 +162,6 @@ func (r *RouterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	}
 
 	return ctrl.Result{}, nil
-}
-
-func (r *RouterReconciler) removeRouter(ctx context.Context, nw *networkv1alpha1.Network, subnet *networkv1alpha1.Subnet) error {
-	log := log.FromContext(ctx)
-	internalCableName := subnet.RouterNetworkInternalCableName()
-	log.Info("Deleting port for router ", "cableName", internalCableName)
-	// need to create flow rules taking this to the vxlan?
-	if err := sdn.Ovs().VSwitch.DeletePort(sdn.WorkloadSwitchName, internalCableName+"-out"); err != nil && !isPortNotExist(err) {
-		return fmt.Errorf("unable to remove ovs port - %w", err)
-	}
-
-	log.Info("Deleting veth cable for router ", "cableName", internalCableName)
-	if err := removeVeth(internalCableName); err != nil {
-		return fmt.Errorf("unable to remove ethernet cable - %w", err)
-	}
-	ruleSets := r.rulesets(nw.RouterNetworkPublicGatewayCableName()+"-in", internalCableName+"-in")
-	if handle, err := netns.GetFromName(subnet.RouterNetworkNamespace()); err == nil {
-		log.Info("removing ip table rules ", "ns", subnet.RouterNetworkNamespace(), "rule_count", len(ruleSets))
-		defer handle.Close()
-		ipt, err := sdn.Iptables(subnet.RouterNetworkNamespace())
-		if err != nil {
-			return fmt.Errorf("create iptables - %w", err)
-		}
-		for _, ruleSet := range ruleSets {
-			for _, rule := range ruleSet.Rules {
-				err := ipt.DeleteIfExists(ruleSet.Table, ruleSet.Chain, rule...)
-				if err != nil {
-					return err
-				}
-			}
-		}
-	} else {
-		log.Info("router network namespace does not exist, skipping ", "ns", subnet.RouterNetworkNamespace(), "rule_count", len(ruleSets))
-	}
-	log.Info("router has been removed from node")
-	return nil
-}
-func (r *RouterReconciler) installRouter(ctx context.Context, nw *networkv1alpha1.Network, subnet *networkv1alpha1.Subnet) error {
-	err := createNetworkNs(subnet.RouterNetworkNamespace())
-	if err != nil {
-		return fmt.Errorf("unable to create router network namespace - %w", err)
-	}
-
-	internetNetworkRouterCable := subnet.RouterNetworkInternalCableName()
-	if err := createVeth(internetNetworkRouterCable, subnet.RouterNetworkNamespace()); err != nil {
-		return fmt.Errorf("unable to create internal veth cable - %w", err)
-	}
-
-	vlan, err := r.Node.GetNode().SubnetVlanId(subnet.Name)
-	if err != nil {
-		return fmt.Errorf("unable to get subnet vladi id for router - %w", err)
-	}
-
-	// need to create flow rules taking this to the vxlan?
-	if err := sdn.Ovs().VSwitch.AddPort(sdn.WorkloadSwitchName, internetNetworkRouterCable+"-out"); err != nil {
-		return err
-	}
-
-	if err := sdn.Ovs().VSwitch.Set.Port(internetNetworkRouterCable+"-out", ovs.PortOptions{
-		Tag: vlan,
-	}); err != nil {
-		return err
-	}
-
-	_, dhcpNet, err := iplib.ParseCIDR(subnet.Spec.Cidr)
-	if err != nil {
-		return fmt.Errorf("unable to parse router cidr - %w", err)
-	}
-
-	dhcpAddr := dhcpNet.FirstAddress()
-
-	ones, _ := dhcpNet.Mask().Size()
-
-	if err := setNsVethIp(subnet.RouterNetworkNamespace(), fmt.Sprintf("%s/%d", dhcpAddr.String(), ones), internetNetworkRouterCable); err != nil {
-		return fmt.Errorf("unable to set router ip on internal cable %s - %W", internetNetworkRouterCable, err)
-	}
-
-	ipt, err := sdn.Iptables(subnet.RouterNetworkNamespace())
-	if err != nil {
-		return err
-	}
-
-	ruleSets := r.rulesets(nw.RouterNetworkPublicGatewayCableName()+"-in", internetNetworkRouterCable+"-in")
-
-	for _, ruleSet := range ruleSets {
-		for _, rule := range ruleSet.Rules {
-			err := ipt.AppendUnique(ruleSet.Table, ruleSet.Chain, rule...)
-			if err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-	// return fmt.Errorf("not uimplemented")
-}
-
-func (nw *RouterReconciler) rulesets(externalCablename string, internalCableName string) []iptRule {
-	return []iptRule{{
-		Table: "filter",
-		Chain: "FORWARD",
-		Rules: [][]string{
-			{"-i", externalCablename, "-o", internalCableName, "-j", "ACCEPT"},
-			{"-i", internalCableName, "-o", externalCablename, "-j", "ACCEPT"},
-		},
-	},
-	}
 }
 
 // SetupWithManager sets up the controller with the Manager.

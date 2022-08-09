@@ -79,14 +79,26 @@ func (in *Node) HasRole(role NodeRole) bool {
 	return false
 }
 
-func (node *Node) SubnetVlanId(subnet string) (int, error) {
+func (node *Node) HasSubnet(subnet string) bool {
+	_, err := node.Subnet(subnet)
+	return err == nil
+}
+func (node *Node) Subnet(subnet string) (NodeSubnetStatus, error) {
 	for _, subnetStatus := range node.Status.Subnets {
 		if subnetStatus.Name == subnet {
-			return subnetStatus.VlanId, nil
+			return subnetStatus, nil
 		}
 	}
 
-	return 0, fmt.Errorf("node has not been assigned this subnet yet")
+	return NodeSubnetStatus{}, fmt.Errorf("node has not been assigned this subnet yet")
+}
+
+func (node *Node) SubnetVlanId(subnet string) (int, error) {
+	sn, err := node.Subnet(subnet)
+	if err != nil {
+		return 0, err
+	}
+	return sn.VlanId, nil
 }
 
 func (in *Node) TunnelAddress() string {

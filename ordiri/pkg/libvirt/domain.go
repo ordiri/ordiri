@@ -4,6 +4,7 @@ package libvirt
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/digitalocean/go-libvirt"
 	"libvirt.org/go/libvirtxml"
@@ -114,8 +115,15 @@ func EnsureExisting(client *Libvirt, dom libvirt.Domain, domain *libvirtxml.Doma
 		return EnsureResultDomainUnknown, fmt.Errorf("unable to update xml definition - %w", err)
 	}
 
-	if err := doLiveUpdates(client, dom, existing, domain); err != nil {
-		return EnsureResultDomainUnknown, fmt.Errorf("error applying live updates - %w", err)
+	state, _, err := client.DomainGetState(dom, 0)
+	if err != nil {
+		return EnsureResultDomainUnknown, fmt.Errorf("unable to get domain state - %w", err)
+	}
+	if state == int32(libvirt.DomainRunning) {
+
+		if err := doLiveUpdates(client, dom, existing, domain); err != nil {
+			return EnsureResultDomainUnknown, fmt.Errorf("error applying live updates - %w", err)
+		}
 	}
 
 	return EnsureResultDomainUpdated, nil
@@ -135,7 +143,7 @@ func EnsureNew(client *Libvirt, domain *libvirtxml.Domain) (*libvirt.Domain, Ens
 	return &dom, EnsureResultDomainCreated, nil
 }
 
-func Ensure(client *Libvirt, name string, opts ...DomainOption) (*libvirtxml.Domain, *libvirt.Domain, EnsureResult, error) {
+func Ensure(client *Libvirt, name string, state libvirt.DomainState, opts ...DomainOption) (*libvirtxml.Domain, *libvirt.Domain, EnsureResult, error) {
 	domain, err := NewDomain(name, opts...)
 	if err != nil {
 		return nil, nil, EnsureResultDomainUnknown, err
@@ -145,20 +153,51 @@ func Ensure(client *Libvirt, name string, opts ...DomainOption) (*libvirtxml.Dom
 		return nil, nil, EnsureResultDomainUnknown, fmt.Errorf("missing domain uuid")
 	}
 
+	var res EnsureResult
 	dom, err := client.DomainLookupByUUID(uuidFromString(domain.UUID))
 	if err != nil {
-		dom, res, err := EnsureNew(client, domain)
+		dom, _res, err := EnsureNew(client, domain)
 		if err != nil {
 			return domain, nil, res, fmt.Errorf("error creating new domain - %w", err)
 		}
+		res = _res
 
 		return domain, dom, res, nil
+	} else {
+		_res, err := EnsureExisting(client, dom, domain)
+		if err != nil {
+			return domain, nil, res, fmt.Errorf("error updating existing domain - %w", err)
+		}
+		res = _res
 	}
 
-	res, err := EnsureExisting(client, dom, domain)
+	currentState, _, err := client.DomainGetState(dom, 0)
 	if err != nil {
-		return domain, nil, res, fmt.Errorf("error updating existing domain - %w", err)
+		return nil, nil, EnsureResultDomainUnknown, fmt.Errorf("couldn't get state of domain - %w", err)
 	}
+
+	if libvirt.DomainState(currentState) != state {
+		if state == libvirt.DomainRunning {
+			if err := client.DomainResume(dom); err != nil {
+				return nil, nil, EnsureResultDomainUnknown, err
+			}
+		} else if state == libvirt.DomainShutdown {
+			if err := client.DomainShutdownFlags(dom, libvirt.DomainShutdownDefault); err != nil {
+				return nil, nil, EnsureResultDomainUnknown, err
+			}
+		} else {
+			return nil, nil, EnsureResultDomainUnknown, fmt.Errorf("unknown state %d", state)
+		}
+		time.Sleep(time.Second * 5)
+		currentState, reason, err := client.DomainGetState(dom, 0)
+		if err != nil {
+			return nil, nil, EnsureResultDomainUnknown, fmt.Errorf("couldn't get state of domain - %w", err)
+		}
+		if state != libvirt.DomainState(currentState) {
+			return nil, nil, EnsureResultDomainUnknown, fmt.Errorf("error transitioning vm status - %s - %w", DomainState(currentState, reason), err)
+		}
+	}
+
 	return domain, &dom, res, nil
 }
 

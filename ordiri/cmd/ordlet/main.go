@@ -33,6 +33,9 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
+	nwman "github.com/ordiri/ordiri/network"
+	"github.com/ordiri/ordiri/network/api"
+	"github.com/ordiri/ordiri/network/driver/linux"
 	"github.com/ordiri/ordiri/pkg/apis"
 	"github.com/ordiri/ordiri/pkg/ordlet"
 	"github.com/ordiri/ordiri/pkg/ordlet/controllers/compute"
@@ -59,6 +62,7 @@ func main() {
 	var probeAddr string
 	var nodeRole string
 	var nodeName string
+	var networkDriver string
 	hostname, err := os.Hostname()
 	if err != nil {
 		panic("unable to determine hostname - " + err.Error())
@@ -66,6 +70,7 @@ func main() {
 	flag.StringVar(&metricsAddr, "metrics-bind-address", ":8085", "The address the metric endpoint binds to.")
 	flag.StringVar(&probeAddr, "health-probe-bind-address", ":8086", "The address the probe endpoint binds to.")
 	flag.StringVar(&nodeRole, "role", "compute,network", "The roles this node has")
+	flag.StringVar(&networkDriver, "network-driver", "linux", "The driver for network operations on this node")
 	flag.StringVar(&nodeName, "name", hostname, "The name this node has")
 	opts := zap.Options{
 		Development: true,
@@ -99,19 +104,27 @@ func main() {
 	nodeRunner := ordlet.NewNodeRunnable(mgmtNetwork, nodeName, nodeRoles)
 	mgr.Add(nodeRunner)
 
+	nwManager, err := getNetworkManager(networkDriver)
+	if err != nil {
+		setupLog.Error(err, "unable to create network manager")
+		os.Exit(1)
+	}
+
 	if err = (&network.NetworkReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
-		Node:   nodeRunner,
+		Client:         mgr.GetClient(),
+		Scheme:         mgr.GetScheme(),
+		Node:           nodeRunner,
+		NetworkManager: nwManager,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Network")
 		os.Exit(1)
 	}
 
 	if err = (&network.SubnetReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
-		Node:   nodeRunner,
+		Client:         mgr.GetClient(),
+		Scheme:         mgr.GetScheme(),
+		Node:           nodeRunner,
+		NetworkManager: nwManager,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Network")
 		os.Exit(1)
@@ -127,9 +140,10 @@ func main() {
 	}
 
 	if err = (&network.RouterReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
-		Node:   nodeRunner,
+		Client:         mgr.GetClient(),
+		Scheme:         mgr.GetScheme(),
+		Node:           nodeRunner,
+		NetworkManager: nwManager,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "VirtualMachine")
 		os.Exit(1)
@@ -163,9 +177,20 @@ func main() {
 		os.Exit(1)
 	}
 
+	mgr.Add(nwManager)
+
 	setupLog.Info("starting manager")
 	if err := mgr.Start(ctrl.SetupSignalHandler()); err != nil {
 		setupLog.Error(err, "problem running manager")
 		os.Exit(1)
 	}
+}
+
+func getNetworkManager(name string) (api.RunnableManager, error) {
+	driver, err := linux.New()
+	if err != nil {
+		return nil, err
+	}
+
+	return nwman.NewManager(driver)
 }

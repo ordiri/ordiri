@@ -19,9 +19,7 @@ package network
 import (
 	"context"
 	"fmt"
-	"io"
 	"os"
-	"path"
 	"path/filepath"
 	"reflect"
 	"strings"
@@ -30,7 +28,6 @@ import (
 	k8err "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
-	"k8s.io/client-go/util/retry"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
@@ -38,17 +35,16 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 
-	"github.com/c-robinson/iplib"
 	"github.com/digitalocean/go-openvswitch/ovs"
+	"github.com/ordiri/ordiri/network"
+	"github.com/ordiri/ordiri/network/api"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
 
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
-	"github.com/ordiri/ordiri/pkg/network/dhcp"
 	"github.com/ordiri/ordiri/pkg/network/sdn"
 	"github.com/ordiri/ordiri/pkg/ordlet"
 
 	"github.com/coreos/go-systemd/v22/dbus"
-	"github.com/coreos/go-systemd/v22/unit"
 )
 
 // SubnetReconciler reconciles a Subnet object
@@ -57,21 +53,13 @@ type SubnetReconciler struct {
 	Scheme *runtime.Scheme
 	dbus   *dbus.Conn
 
-	Node ordlet.NodeProvider
-}
-
-const (
-	SubnetProvisionedFinalizer = "ordlet.ordiri.com/node"
-)
-
-func (r *SubnetReconciler) Finalizer() string {
-	return fmt.Sprintf("%s-%s", SubnetProvisionedFinalizer, r.Node.GetNode().Name)
+	Node           ordlet.NodeProvider
+	NetworkManager api.Manager
 }
 
 func (r *SubnetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := log.FromContext(ctx)
 	log.Info("Starting to reconcile", "request", req)
-
 	subnet := &networkv1alpha1.Subnet{}
 	if err := r.Client.Get(ctx, req.NamespacedName, subnet); err != nil {
 		if k8err.IsNotFound(err) {
@@ -84,104 +72,79 @@ func (r *SubnetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	if err := r.Client.Get(ctx, types.NamespacedName{Name: subnet.Spec.Network.Name}, nw); err != nil {
 		return ctrl.Result{}, err
 	}
-	log.Info("got to here with the subnet node")
+
+	// hack during dev
+	if !r.NetworkManager.HasNetwork(nw.Name) {
+		// maybe requeue here ?
+		return ctrl.Result{Requeue: r.Node.GetNode().HasSubnet(subnet.Name)}, nil
+	}
+
+	net := r.NetworkManager.GetNetwork(nw.Name)
+
+	// Ensure the network manager is aware of this subnet
+	// so it can configure / teardown if need be
 
 	// If the node doesn't want this subnet anymore
 	// but the subnet is setup on it, we need to remove all the subnet configs from it
-	if _, err := r.Node.GetNode().SubnetVlanId(subnet.Name); err != nil {
-		nodeHasSubnet := false
-		for _, boundHosts := range subnet.Status.Hosts {
-			if boundHosts.Node == r.Node.GetNode().Name {
-				nodeHasSubnet = true
-				break
+	if _, err := r.Node.GetNode().Subnet(subnet.Name); err != nil {
+		log.Info("node does not want subnet, removing")
+		if r.NetworkManager.HasSubnet(net, subnet.Name) {
+			log.V(5).Info("removing subnet from network manager")
+			if err := r.NetworkManager.RemoveSubnet(ctx, net, subnet.Name); err != nil {
+				return ctrl.Result{}, fmt.Errorf("unable to remove subnet from node - %w", err)
 			}
-		}
-		if !nodeHasSubnet {
-			log.Info("node does not contain subnet")
-			return ctrl.Result{}, nil
-		}
-		log.Info("unconfiguring node")
-		err := r.unconfigure(ctx, nw, subnet)
-		if err != nil {
-			return ctrl.Result{}, fmt.Errorf("unable to unconfigure subnet - %w", err)
+			log.V(5).Info("removed subnet from network manager")
 		}
 
 		// We wan to ensure we remove this node if weneed
-		retry.RetryOnConflict(retry.DefaultBackoff, func() error {
-			subnet := &networkv1alpha1.Subnet{}
-			if err := r.Client.Get(ctx, req.NamespacedName, subnet); err != nil {
-				if k8err.IsNotFound(err) {
-					return nil
-				}
-				return err
-			}
-			found := false
-			newHosts := []networkv1alpha1.HostSubnetStatus{}
-			for _, boundHosts := range subnet.Status.Hosts {
-				if boundHosts.Node == r.Node.GetNode().Name {
-					found = true
-					continue
-				}
-				newHosts = append(newHosts, boundHosts)
-			}
-			if found {
-				subnet.Status.Hosts = newHosts
-				if err := r.Client.Status().Update(ctx, subnet); err != nil {
-					return err
-				}
-			}
-			return nil
-		})
-
-		finalizers := []string{}
-		for _, finalizer := range subnet.GetFinalizers() {
-			if finalizer == r.Finalizer() {
-				continue
-			}
-			finalizers = append(finalizers, finalizer)
-		}
-		if !reflect.DeepEqual(finalizers, subnet.GetFinalizers()) {
-			log.Info("removing finalizer")
-			subnet.SetFinalizers(finalizers)
-			if err := r.Client.Update(ctx, subnet); err != nil {
-				return ctrl.Result{}, err
-			}
-		} else {
-			log.Info("no finalizer to remove")
+		log.Info("removing node from subnet status")
+		if err := r.removeNodeFromSubnetStatus(ctx, subnet); err != nil {
+			return ctrl.Result{}, fmt.Errorf("error removing node from subnet status: %s/%s from %s", net.Name(), subnet.Name, r.Node.GetNode().GetName())
 		}
 
-		// newHosts := []v1alpha1.Network{}
+		log.Info("removing node finalizers from subnet")
+		// finally we remove the finalizer from the subnet
+		if err := r.removeNodeFinalizerFromSubnet(ctx, subnet); err != nil {
+			return ctrl.Result{}, fmt.Errorf("error removing node from subnet finalizers: %s/%s from %s", net.Name(), subnet.Name, r.Node.GetNode().GetName())
+		}
 
+		return ctrl.Result{}, nil
+	}
+
+	if err := r.addNodeFinalizerToSubnet(ctx, subnet); err != nil {
 		return ctrl.Result{}, err
 	}
-	log.Info("node needs subnet, ensuring finalizers exist")
 
-	finalizers := subnet.GetFinalizers()
-	found := false
-	for _, finalizer := range subnet.GetFinalizers() {
-		found = finalizer == r.Finalizer() || found
-	}
+	var sn api.Subnet
+	if !r.NetworkManager.HasSubnet(net, subnet.Name) {
+		vlan, err := r.Node.GetNode().SubnetVlanId(subnet.Name)
+		if err != nil {
+			return ctrl.Result{}, fmt.Errorf("missing vlan on subnet")
+		}
 
-	if !found {
-		finalizers = append(finalizers, r.Finalizer())
-	}
-
-	if !reflect.DeepEqual(finalizers, subnet.GetFinalizers()) {
-		subnet.SetFinalizers(finalizers)
-		if err := r.Client.Update(ctx, subnet); err != nil {
+		log.Info("network manager has not seen this subnet yet, creating a new one")
+		newSubnet, err := network.NewSubnet(subnet.Name, subnet.Spec.Cidr, vlan)
+		if err != nil {
 			return ctrl.Result{}, err
 		}
+		sn = newSubnet
+	} else {
+		log.Info("network manager knows about this subnet, retrieving existing details")
+		newSubnet := r.NetworkManager.GetSubnet(net, subnet.Name)
+		sn = newSubnet
 	}
 
-	log.Info("configuring subnet on node")
-	err := r.configure(ctx, nw, subnet)
+	log.Info("ensuring subnet is configured by the driver")
+	if err := r.NetworkManager.EnsureSubnet(ctx, net, sn); err != nil {
+		return ctrl.Result{}, fmt.Errorf("unable to ensure subnet is configured correctly - %w", err)
+	}
+	err := r.addNodeToSubnetStatus(ctx, subnet)
 	if err != nil {
 		return ctrl.Result{}, err
 	}
 
 	return ctrl.Result{}, nil
 }
-
 func (r *SubnetReconciler) unconfigure(ctx context.Context, nw *networkv1alpha1.Network, subnet *networkv1alpha1.Subnet) error {
 	// Create the DHCP service for this subnet
 	if err := r.removeDhcp(ctx, nw, subnet); err != nil {
@@ -205,37 +168,13 @@ func (r *SubnetReconciler) unconfigure(ctx context.Context, nw *networkv1alpha1.
 	}
 	return nil
 }
+
 func (r *SubnetReconciler) configure(ctx context.Context, nw *networkv1alpha1.Network, subnet *networkv1alpha1.Subnet) error {
 	log := log.FromContext(ctx).WithValues("stage", "configure")
 
 	// ensure we are referencing the node we are running on in the subnets status so we can decommission the node
 	// when removed
-	err := retry.RetryOnConflict(retry.DefaultBackoff, func() error {
-		node := r.Node.GetNode()
-		subnetLinksToNode := false
-		for _, hostBinding := range subnet.Status.Hosts {
-			if hostBinding.Node == node.Name {
-				subnetLinksToNode = true
-			}
-		}
-
-		if !subnetLinksToNode {
-			log.Info("creating link from subnet to host")
-			vlanId, err := node.SubnetVlanId(subnet.Name)
-			if err != nil {
-				return err
-			}
-			subnet.Status.Hosts = append(subnet.Status.Hosts, networkv1alpha1.HostSubnetStatus{
-				Node:   node.Name,
-				VlanId: vlanId,
-			})
-
-			if err := r.Client.Status().Update(ctx, subnet); err != nil {
-				return err
-			}
-		}
-		return nil
-	})
+	err := r.addNodeToSubnetStatus(ctx, subnet)
 	if err != nil {
 		return err
 	}
@@ -324,133 +263,6 @@ func (r *SubnetReconciler) installNat(ctx context.Context, subnet *networkv1alph
 }
 
 func (r *SubnetReconciler) installDhcp(ctx context.Context, subnet *networkv1alpha1.Subnet) error {
-	log := log.FromContext(ctx)
-
-	err := createNetworkNs(subnet.ServiceNetworkNamespace())
-
-	if err != nil {
-		return fmt.Errorf("unable to create network namespace - %w", err)
-	}
-
-	cableName := subnet.ServiceNetworkCableName()
-	if err := createVeth(cableName, subnet.ServiceNetworkNamespace()); err != nil {
-		return fmt.Errorf("unable to create veth cable %s - %w", cableName, err)
-	}
-
-	vlan, err := r.Node.GetNode().SubnetVlanId(subnet.Name)
-	if err != nil {
-		return fmt.Errorf("unable to get subnet vlan when installing dhcp - %w", err)
-	}
-
-	// need to create flow rules taking this to the vxlan?
-	if err := sdn.Ovs().VSwitch.AddPort(sdn.WorkloadSwitchName, cableName+"-out"); err != nil {
-		return err
-	}
-	if err := sdn.Ovs().VSwitch.Set.Port(cableName+"-out", ovs.PortOptions{
-		Tag: vlan,
-	}); err != nil {
-		return err
-	}
-
-	_, dhcpNet, err := iplib.ParseCIDR(subnet.Spec.Cidr)
-	if err != nil {
-		return fmt.Errorf("unable to dhcp parse cidr addr - %w", err)
-	}
-
-	ones, _ := dhcpNet.Mask().Size()
-
-	dhcpAddr := iplib.NextIP(dhcpNet.FirstAddress())
-
-	if err := setNsVethIp(subnet.ServiceNetworkNamespace(), fmt.Sprintf("%s/%d", dhcpAddr.String(), ones), cableName); err != nil {
-		return fmt.Errorf("unable to set dhcp ip on internal cable %s - %W", cableName, err)
-	}
-
-	// create the dnsmasq config to provide dhcp for this subnet
-	baseDir := filepath.Join("/run/ordiri/subnets", subnet.Name, "dhcp")
-
-	dnsMasqOptions := dhcp.DnsMasqConfig(baseDir, subnet.Name, dhcpNet)
-	if err := os.MkdirAll(baseDir, os.ModePerm); err != nil {
-		return fmt.Errorf("unable to create directory %s - %w", baseDir, err)
-	}
-
-	hostFile := filepath.Join(baseDir, "etc-hosts")
-	leaseFile := filepath.Join(baseDir, "dnsmasq.leases")
-	if err := touchFiles(hostFile, leaseFile); err != nil {
-		return err
-	}
-
-	// startCmd := strings.Join(append([]string{"ip", "netns", "exec", subnet.ServiceNetworkNamespace(), "/usr/sbin/dnsmasq"}, dnsMasqOptions.Args()...), " ")
-	startCmd := strings.Join(append([]string{"/usr/sbin/dnsmasq"}, dnsMasqOptions.Args()...), " ")
-	// create the systemd file to manage this dhcp
-	opts := []*unit.UnitOption{
-		unit.NewUnitOption("Unit", "Description", "DHCP Service for "+subnet.DhcpUnitName()),
-		unit.NewUnitOption("Install", "WantedBy", "multi-user.target"),
-		// unit.NewUnitOption("Service", "PrivateMounts", "yes"),
-		unit.NewUnitOption("Service", "BindPaths", strings.Join([]string{
-			hostFile + ":/etc/hosts",
-			leaseFile + ":/var/lib/misc/dnsmasq.leases",
-		}, " ")),
-		unit.NewUnitOption("Service", "NetworkNamespacePath", subnet.ServiceNetworkNamespacePath()),
-		unit.NewUnitOption("Service", "ExecStart", startCmd),
-	}
-
-	unitReader := unit.Serialize(opts)
-	unitBytes, err := io.ReadAll(unitReader)
-	if err != nil {
-		return fmt.Errorf("unable to get system unit file for dhcp service %w", err)
-	}
-	unitFile := path.Join(baseDir, subnet.DhcpUnitName())
-	if err := os.WriteFile(unitFile, unitBytes, 0644); err != nil {
-		return fmt.Errorf("unable to create system unit file %w", err)
-	}
-
-	units, err := r.dbus.ListUnitsByNamesContext(ctx, []string{subnet.DhcpUnitName()})
-	if err != nil {
-		return err
-	}
-	running := false
-	for _, unit := range units {
-		if unit.ActiveState == "active" {
-			running = true
-		}
-	}
-	needsReload := false
-	if running {
-		needsReloadProp, err := r.dbus.GetUnitPropertyContext(ctx, subnet.DhcpUnitName(), "NeedDaemonReload")
-		if err != nil {
-			return err
-		}
-
-		if err := needsReloadProp.Value.Store(&needsReload); err != nil {
-			return err
-		}
-	}
-
-	if !running || needsReload {
-		log.V(5).Info("No existing DHCP service, creating")
-		if err := r.dbus.ReloadContext(ctx); err != nil {
-			return err
-		}
-
-		log.V(5).Info("enabling systemd service", "service", string(unitBytes))
-		started, _, err := r.dbus.EnableUnitFilesContext(ctx, []string{unitFile}, true, true)
-		if err != nil {
-			return fmt.Errorf("unable to enable system unit file %w", err)
-		}
-
-		if !started {
-			return fmt.Errorf("invalid service unit file, not started")
-		}
-		pid, err := r.dbus.RestartUnitContext(ctx, subnet.DhcpUnitName(), "replace", nil)
-
-		if err != nil || pid == 0 {
-			return fmt.Errorf("unable to start dhcp service - %w", err)
-
-		}
-
-		log.V(5).Info("started dhcp service")
-	}
-
 	return nil
 }
 

@@ -3,15 +3,15 @@ package dhcp
 import (
 	"path"
 
-	"github.com/c-robinson/iplib"
 	"github.com/ordiri/ordiri/pkg/dnsmasq"
+	"inet.af/netaddr"
 )
 
-func DnsMasqConfig(confDir, name string, network iplib.Net) dnsmasq.Config {
-	routerAddr := network.FirstAddress()
-	dhcpAddr := iplib.NextIP(routerAddr)
-	rangeStart := iplib.NextIP(dhcpAddr)
-	rangeEnd := iplib.PreviousIP(network.LastAddress())
+func DnsMasqConfig(confDir, name string, network netaddr.IPPrefix) dnsmasq.Config {
+	routerAddr := network.IP().Next()
+	dhcpAddr := routerAddr.Next()
+	rangeStart := dhcpAddr.Next()
+	rangeEnd := network.Range().To().Prior()
 
 	return dnsmasq.New(
 		// disable dns
