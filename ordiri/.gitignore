@@ -3,3 +3,4 @@ apiserver.local.config
 bin/
 *.pdf
 *.pcap
+*.gz
