@@ -3,7 +3,7 @@ package network
 import (
 	"context"
 
-	"github.com/ordiri/ordiri/network/api"
+	"github.com/ordiri/ordiri/pkg/network/api"
 )
 
 func (ln *networkManager) List(ctx context.Context) []api.Network {

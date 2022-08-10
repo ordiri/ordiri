@@ -1,7 +1,7 @@
 package network
 
 import (
-	"github.com/ordiri/ordiri/network/api"
+	"github.com/ordiri/ordiri/pkg/network/api"
 	"inet.af/netaddr"
 )
 

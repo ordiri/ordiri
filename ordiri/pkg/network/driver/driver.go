@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ordiri/ordiri/network/api"
+	"github.com/ordiri/ordiri/pkg/network/api"
 )
 
 type DriverInfo struct {

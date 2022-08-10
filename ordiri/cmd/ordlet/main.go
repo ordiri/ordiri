@@ -33,10 +33,10 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	nwman "github.com/ordiri/ordiri/network"
-	"github.com/ordiri/ordiri/network/api"
-	"github.com/ordiri/ordiri/network/driver/linux"
 	"github.com/ordiri/ordiri/pkg/apis"
+	nwman "github.com/ordiri/ordiri/pkg/network"
+	"github.com/ordiri/ordiri/pkg/network/api"
+	"github.com/ordiri/ordiri/pkg/network/driver/linux"
 	"github.com/ordiri/ordiri/pkg/ordlet"
 	"github.com/ordiri/ordiri/pkg/ordlet/controllers/compute"
 	"github.com/ordiri/ordiri/pkg/ordlet/controllers/network"

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ordiri/ordiri/network/api"
+	"github.com/ordiri/ordiri/pkg/network/api"
 )
 
 func (ln *linuxDriver) RemoveNetwork(ctx context.Context, nw api.Network) error {

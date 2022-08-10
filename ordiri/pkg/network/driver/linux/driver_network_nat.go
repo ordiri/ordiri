@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os/exec"
 
-	"github.com/ordiri/ordiri/network/api"
+	"github.com/ordiri/ordiri/pkg/network/api"
 	"github.com/ordiri/ordiri/pkg/network/sdn"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 )

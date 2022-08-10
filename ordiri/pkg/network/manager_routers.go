@@ -3,7 +3,7 @@ package network
 import (
 	"context"
 
-	"github.com/ordiri/ordiri/network/api"
+	"github.com/ordiri/ordiri/pkg/network/api"
 )
 
 func (ln *networkManager) HasRouter(nw api.Network, sn api.Subnet, name string) bool {

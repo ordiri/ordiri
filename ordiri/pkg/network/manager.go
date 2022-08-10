@@ -4,8 +4,8 @@ import (
 	"context"
 	"sync"
 
-	"github.com/ordiri/ordiri/network/api"
-	"github.com/ordiri/ordiri/network/driver"
+	"github.com/ordiri/ordiri/pkg/network/api"
+	"github.com/ordiri/ordiri/pkg/network/driver"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 )
 

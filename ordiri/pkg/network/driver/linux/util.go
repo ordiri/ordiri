@@ -11,7 +11,7 @@ import (
 	"io/ioutil"
 	"path"
 
-	"github.com/ordiri/ordiri/network/api"
+	"github.com/ordiri/ordiri/pkg/network/api"
 )
 
 func dhcpUnitName(subnet api.Subnet) string {

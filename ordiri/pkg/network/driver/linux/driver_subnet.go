@@ -11,8 +11,8 @@ import (
 
 	"github.com/coreos/go-systemd/unit"
 	"github.com/digitalocean/go-openvswitch/ovs"
-	"github.com/ordiri/ordiri/network/api"
 	"github.com/ordiri/ordiri/pkg/log"
+	"github.com/ordiri/ordiri/pkg/network/api"
 	"github.com/ordiri/ordiri/pkg/network/dhcp"
 	"github.com/ordiri/ordiri/pkg/network/sdn"
 )

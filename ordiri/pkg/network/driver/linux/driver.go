@@ -7,7 +7,7 @@ import (
 
 	"github.com/coreos/go-systemd/v22/dbus"
 	"github.com/mdlayher/netlink"
-	"github.com/ordiri/ordiri/network/driver"
+	"github.com/ordiri/ordiri/pkg/network/driver"
 	"github.com/vishvananda/netns"
 	"golang.org/x/sys/unix"
 )

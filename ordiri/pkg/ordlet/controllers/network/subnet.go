@@ -36,9 +36,9 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/source"
 
 	"github.com/digitalocean/go-openvswitch/ovs"
-	"github.com/ordiri/ordiri/network"
-	"github.com/ordiri/ordiri/network/api"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
+	"github.com/ordiri/ordiri/pkg/network"
+	"github.com/ordiri/ordiri/pkg/network/api"
 
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
 	"github.com/ordiri/ordiri/pkg/network/sdn"

@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/digitalocean/go-openvswitch/ovs"
-	"github.com/ordiri/ordiri/network/api"
+	"github.com/ordiri/ordiri/pkg/network/api"
 	"github.com/ordiri/ordiri/pkg/network/sdn"
 )
 
