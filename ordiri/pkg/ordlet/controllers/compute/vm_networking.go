@@ -12,7 +12,7 @@ import (
 	k8log "sigs.k8s.io/controller-runtime/pkg/log"
 
 	"github.com/digitalocean/go-openvswitch/ovs"
-	internallibvirt "github.com/ordiri/ordiri/pkg/libvirt"
+	internallibvirt "github.com/ordiri/ordiri/pkg/compute/driver/libvirt"
 	"github.com/ordiri/ordiri/pkg/network/sdn"
 
 	computev1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"

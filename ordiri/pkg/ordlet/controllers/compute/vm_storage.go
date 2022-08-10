@@ -9,7 +9,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	"github.com/digitalocean/go-libvirt"
-	internallibvirt "github.com/ordiri/ordiri/pkg/libvirt"
+	internallibvirt "github.com/ordiri/ordiri/pkg/compute/driver/libvirt"
 
 	computev1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
 	storagev1alpha1 "github.com/ordiri/ordiri/pkg/apis/storage/v1alpha1"
