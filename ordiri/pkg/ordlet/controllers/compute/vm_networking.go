@@ -20,6 +20,7 @@ import (
 	"github.com/vishvananda/netlink"
 )
 
+// getNetworkInterface configures the virtual network for a virtual machine
 func (r *VirtualMachineReconciler) getNetworkInterface(ctx context.Context, vm *computev1alpha1.VirtualMachine, iface *computev1alpha1.VirtualMachineNetworkInterface) (computev1alpha1.VirtualMachineNetworkInterfaceStatus, internallibvirt.DomainOption, error) {
 	nw, subnet, err := r.interfaceSubnet(ctx, vm, iface)
 	status := computev1alpha1.VirtualMachineNetworkInterfaceStatus{
@@ -33,7 +34,7 @@ func (r *VirtualMachineReconciler) getNetworkInterface(ctx context.Context, vm *
 
 	bridgeName, err := r.configureVirtualNetwork(ctx, vm, nw, subnet)
 	if err != nil {
-		return status, nil, err
+		return status, nil, fmt.Errorf("unble to configure virtual network - %w", err)
 	}
 
 	// log.Info("found valid subnet for virtual machine interface", "interface", iface, "bridge", bridgeName)
@@ -58,6 +59,7 @@ func (r *VirtualMachineReconciler) getNetworkInterface(ctx context.Context, vm *
 	return status, opt, nil
 }
 
+// interfaceSubnet gets a network and subnet for a vm's specified interface
 func (r *VirtualMachineReconciler) interfaceSubnet(ctx context.Context, vm *computev1alpha1.VirtualMachine, iface *computev1alpha1.VirtualMachineNetworkInterface) (*networkv1alpha1.Network, *networkv1alpha1.Subnet, error) {
 	subnet := &networkv1alpha1.Subnet{}
 	subnet.Name = iface.Subnet
@@ -70,6 +72,7 @@ func (r *VirtualMachineReconciler) interfaceSubnet(ctx context.Context, vm *comp
 	return nw, subnet, err
 }
 
+// networkForSubnet gets the network for a particular subnet
 func (r *VirtualMachineReconciler) networkForSubnet(ctx context.Context, iface *networkv1alpha1.Subnet) (*networkv1alpha1.Network, error) {
 	network := networkv1alpha1.Network{}
 	if err := r.Client.Get(ctx, types.NamespacedName{Name: iface.Spec.Network.Name}, &network); err != nil {
@@ -82,6 +85,7 @@ func (r *VirtualMachineReconciler) networkForSubnet(ctx context.Context, iface *
 	return &network, nil
 }
 
+// flows gets the OVS Flow Rules for a particular vm
 func (r *VirtualMachineReconciler) flows(ctx context.Context, vm *computev1alpha1.VirtualMachine, subnet *networkv1alpha1.Subnet, subnetBridge string, vlan int, vni int64) []sdn.FlowRule {
 	return []sdn.FlowRule{
 		&sdn.WorkloadEgress{
@@ -103,6 +107,7 @@ func (r *VirtualMachineReconciler) installFlows(ctx context.Context, vm *compute
 
 	return nil
 }
+
 func (r *VirtualMachineReconciler) configureVirtualNetwork(ctx context.Context, vm *computev1alpha1.VirtualMachine, nw *networkv1alpha1.Network, subnet *networkv1alpha1.Subnet) (bridgeName string, err error) {
 	log := k8log.FromContext(ctx)
 

@@ -54,6 +54,70 @@ func (ln *linuxDriver) installNat(ctx context.Context, nw api.Network) error {
 		return err
 	}
 
+	// handle, err := netns.GetFromName(namespace)
+	// if err != nil {
+	// 	return fmt.Errorf("unable to get the network namespace handle - %w", err)
+	// }
+
+	// nft, err := nftables.New(nftables.WithNetNSFd(int(handle)))
+	// if err != nil {
+	// 	return fmt.Errorf("error getting nftables - %w", err)
+	// }
+
+	// natTable := nft.AddTable(&nftables.Table{
+	// 	Name: "ordiri-nat",
+	// })
+
+	// natChain := nft.AddChain(&nftables.Chain{
+	// 	Name:     "ordiri-nat",
+	// 	Table:    natTable,
+	// 	Type:     nftables.ChainTypeNAT,
+	// 	Hooknum:  nftables.ChainHookPostrouting,
+	// 	Priority: nftables.ChainPriorityNATSource,
+	// })
+
+	// nft.AddRule(&nftables.Rule{
+	// 	Table: natTable,
+	// 	Chain: natChain,
+	// 	Exprs: []expr.Any{
+	// 		&expr.Meta{Key: expr.MetaKeyOIFNAME, Register: 1}, // store the outgoing interface in reg1
+	// 		&expr.Cmp{ // if reg1(outgoing iface) is public router cable, masquerade
+	// 			Op:       expr.CmpOpEq,
+	// 			Register: 1,
+	// 			Data:     ifname(publicGwCableName.Namespace()),
+	// 		},
+	// 		&expr.Masq{},
+	// 	},
+	// })
+
+	// nft.AddRule(&nftables.Rule{
+	// 	Table: natTable,
+	// 	Chain: natChain,
+	// 	Exprs: []expr.Any{
+	// 		&expr.Meta{Key: expr.MetaKeyOIFNAME, Register: 1}, // store the outgoing interface in reg1
+	// 		&expr.Cmp{ // if reg1(outgoing iface) is public router cable, masquerade
+	// 			Op:       expr.CmpOpEq,
+	// 			Register: 1,
+	// 			Data:     ifname(publicGwCableName.Namespace()),
+	// 		},
+	// 		&expr.Masq{},
+	// 	},
+	// })
+	//
+	// nft.AddRule(&nftables.Rule{
+	// 	Table: natTable,
+	// 	Chain: natChain,
+	// 	Exprs: []expr.Any{
+	// 		&expr.Meta{Key: expr.MetaKeyOIFNAME, Register: 1}, // store the outgoing interface in reg1
+	// 		&expr.Cmp{ // if reg1(outgoing iface) is public router cable, masquerade
+	// 			Op:       expr.CmpOpEq,
+	// 			Register: 1,
+	// 			Data:     ifname(publicGwCableName.Namespace()),
+	// 		},
+	// 		&expr.Masq{},
+	// 	},
+	// })
+
 	ipt, err := sdn.Iptables(namespace)
 	if err != nil {
 		return err
@@ -73,6 +137,7 @@ func (ln *linuxDriver) installNat(ctx context.Context, nw api.Network) error {
 }
 
 func rulesets(cidr string, publicInterface string) []iptRule {
+
 	return []iptRule{
 		{
 			Table: "raw",

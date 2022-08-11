@@ -136,14 +136,14 @@ deploy-mothership-ordlet: linux-ordlet
 	scp kubeconfig mothership:/etc/ordiri.conf
 
 .PHONY: run-remote
-run-remote: run-debian-remote run-mothership-remote
+run-remote: stop-mothership stop-debian run-debian-remote run-mothership-remote
 	@echo "starting"
 
 run-mothership-remote: stop-mothership deploy-mothership-ordlet
-	ssh mothership 'modprobe nf_nat_tftp nf_conntrack && KUBECONFIG=/etc/ordiri.conf /usr/local/bin/ordlet -zap-log-level=10 | tee /var/log/ordlet.conf' &
+	ssh mothership 'modprobe nf_nat_tftp nf_conntrack && KUBECONFIG=/etc/ordiri.conf /usr/local/bin/ordlet -zap-log-level=5 | tee /var/log/ordlet.conf' &
 
 run-debian-remote:  stop-debian deploy-debian-ordlet
-	ssh root@10.0.1.109 'modprobe nf_nat_tftp nf_conntrack && KUBECONFIG=/etc/ordiri.conf /usr/local/bin/ordlet -zap-log-level=10 | tee /var/log/ordlet.conf' &
+	ssh root@5.0.1.109 'modprobe nf_nat_tftp nf_conntrack && KUBECONFIG=/etc/ordiri.conf /usr/local/bin/ordlet -zap-log-level=5 | tee /var/log/ordlet.conf' &
 
 .PHONY: stop-mothership
 stop-mothership:

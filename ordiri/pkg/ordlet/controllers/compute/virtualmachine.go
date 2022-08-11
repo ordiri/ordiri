@@ -59,6 +59,7 @@ const (
 	FinalizerNameVmProvisioned = "compute.ordiri.com/virtual-machine-provisioned"
 )
 
+// Reconcile the state of a virtual machine
 func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := k8log.FromContext(ctx)
 	log.V(5).Info("Starting to reconcile", "request", req)
@@ -77,6 +78,7 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	scheduledNode, scheduled := vm.ScheduledNode()
 
 	if !scheduled || scheduledNode != r.Node.GetNode().Name {
+		log.V(5).Info("Not scheduled on this node")
 		return ctrl.Result{}, nil
 	}
 
@@ -104,7 +106,7 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		internallibvirt.WithBootDevice(vm.Spec.BootDevices...),
 		internallibvirt.WithConsole(0, "serial"),
 		internallibvirt.WithCpu(2),
-		internallibvirt.WithMemory(4 * 1e6),
+		internallibvirt.WithMemory(4 * 1e3 * 1024),
 	}
 	// newDomain := libvirtxml.Domain{}
 
@@ -135,20 +137,21 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	}
 	vm.Status.NetworkInterfaces = ifaces
 
-	domain, _, result, err := internallibvirt.Ensure(r.LibvirtClient, vm.Name, libvirtStatus(vm.Spec.State), domainOptions...)
+	domain, _, result, err := internallibvirt.Ensure(ctx, r.LibvirtClient, vm.Name, libvirtStatus(vm.Spec.State), domainOptions...)
 
 	if err != nil {
-		return ctrl.Result{}, err
+		return ctrl.Result{}, fmt.Errorf("error ensuring domain - %w", err)
 	}
 
 	if result == internallibvirt.EnsureResultDomainCreated {
-		log.V(5).Info("created virtual machine")
+		log.V(5).Info("creating virtual machine")
 		needsUpdate = true
 	} else if result == internallibvirt.EnsureResultDomainUpdated {
 		log.V(5).Info("updated virtual machine")
 		needsUpdate = true
 	} else if result == internallibvirt.EnsureResultDomainNone {
 		log.V(5).Info("did nothing to virtual machine")
+		needsUpdate = false
 	}
 
 	if domain == nil {
@@ -158,7 +161,7 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	log = log.WithValues("domain", uuid.Must(uuid.Parse(domain.UUID)).String())
 
 	if _, err := r.createOrUpdateMachine(ctx, vm, domain); err != nil {
-		return ctrl.Result{}, err
+		return ctrl.Result{}, fmt.Errorf("unable to create or update machine for vm - %w", err)
 	}
 
 	if vm.Status.ObservedGeneration != vm.Generation {
@@ -167,9 +170,10 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	}
 
 	if needsUpdate {
+		log.Info("updating status of machine")
 		err = r.Client.Status().Update(ctx, vm)
 		if err != nil {
-			return ctrl.Result{}, err
+			return ctrl.Result{}, fmt.Errorf("unable to update status of vm - %w", err)
 		}
 	}
 
@@ -258,7 +262,6 @@ func (r *VirtualMachineReconciler) ReconcileDeletion(ctx context.Context, vm *co
 				return ctrl.Result{}, fmt.Errorf("error destroying vm bridge - %w", err)
 			}
 		}
-
 	}
 
 	// pool, err := r.LibvirtClient.StoragePoolLookupByName(poolName)

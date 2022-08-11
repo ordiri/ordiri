@@ -68,7 +68,7 @@ func (ln *linuxDriver) getOrCreateVeth(ctx context.Context, namespace string, ca
 }
 func (ln *linuxDriver) discoverInterface(ctx context.Context, namespace string, ns netns.NsHandle, msg netlink.LinkUpdate) error {
 	log := log.FromContext(ctx)
-	log.V(5).Info("discovering interface", "namespace", namespace, "link", msg.Link)
+	log.V(10).Info("discovering interface", "namespace", namespace, "link", msg.Link)
 	ln.interfaces.set(namespace, NetworkInterface{
 		namespace: namespace,
 		Link:      msg,

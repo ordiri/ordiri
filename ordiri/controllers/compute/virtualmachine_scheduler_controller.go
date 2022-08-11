@@ -70,6 +70,7 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		}
 		vm.SetFinalizers(finalizers)
 
+		log.V(5).Info("removing scheduler finalizer to VM")
 		return ctrl.Result{}, r.Client.Update(ctx, vm)
 	}
 
@@ -91,6 +92,7 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	}
 
 	if _, scheduled := vm.ScheduledNode(); !scheduled {
+		log.Info("scheduling vm ", "vm", vm)
 		err := r.schedule(ctx, vm)
 		if err != nil {
 			return ctrl.Result{}, err

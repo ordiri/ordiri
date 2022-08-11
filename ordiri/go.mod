@@ -162,6 +162,7 @@ require (
 	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/ceph/go-ceph v0.16.0 // indirect
 	github.com/godbus/dbus/v5 v5.0.4 // indirect
+	github.com/google/nftables v0.0.0-20220808154552-2eca00135732 // indirect
 	github.com/huandu/xstrings v1.3.2 // indirect
 	github.com/josharian/native v1.0.0 // indirect
 	github.com/jsimonetti/rtnetlink v1.2.1 // indirect

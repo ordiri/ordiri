@@ -1,116 +1,119 @@
 package libvirt
 
-import "fmt"
+import (
+	"fmt"
 
-func DomainState(state, reason int32) string {
+	"github.com/digitalocean/go-libvirt"
+)
+
+func DomainState(state libvirt.DomainState, reason int32) string {
 	reasonStr := ""
 	reasonType := ""
 	switch state {
-	case 1:
+	case libvirt.DomainRunning:
 		reasonType = "Running"
-		switch reason {
-		case 0:
+		switch libvirt.DomainRunningReason(reason) {
+		default:
 			reasonStr = "Unknown"
-		case 1:
+		case libvirt.DomainRunningBooted:
 			reasonStr = "Booted"
-		case 2:
+		case libvirt.DomainRunningMigrated:
 			reasonStr = "Migrated"
-		case 3:
+		case libvirt.DomainRunningRestored:
 			reasonStr = "Restored"
-		case 4:
+		case libvirt.DomainRunningFromSnapshot:
 			reasonStr = "From Snapshot"
-		case 5:
+		case libvirt.DomainRunningUnpaused:
 			reasonStr = "Unpaused"
-		case 6:
+		case libvirt.DomainRunningMigrationCanceled:
 			reasonStr = "Migration Canceled"
-		case 7:
+		case libvirt.DomainRunningSaveCanceled:
 			reasonStr = "Save Canceled"
-		case 8:
+		case libvirt.DomainRunningWakeup:
 			reasonStr = "Wakeup"
-		case 9:
+		case libvirt.DomainRunningCrashed:
 			reasonStr = "Crashed"
-		case 10:
+		case libvirt.DomainRunningPostcopy:
 			reasonStr = "Postcopy"
 		}
 
-	case 2:
+	case libvirt.DomainBlocked:
 		reasonType = "Blocked"
-
-		switch reason {
-		case 0:
+		switch libvirt.DomainBlockedReason(reason) {
+		default:
 			reasonStr = "Unknown"
 		}
 
-	case 3:
+	case libvirt.DomainPaused:
 		reasonType = "Paused"
-		switch reason {
-		case 0:
+		switch libvirt.DomainPausedReason(reason) {
+		default:
 			reasonStr = "Unknown"
-		case 1:
+		case libvirt.DomainPausedUser:
 			reasonStr = "User"
-		case 2:
+		case libvirt.DomainPausedMigration:
 			reasonStr = "Migration"
-		case 3:
+		case libvirt.DomainPausedSave:
 			reasonStr = "Save"
-		case 4:
+		case libvirt.DomainPausedDump:
 			reasonStr = "Dump"
-		case 5:
+		case libvirt.DomainPausedIoerror:
 			reasonStr = "Ioerror"
-		case 6:
+		case libvirt.DomainPausedWatchdog:
 			reasonStr = "Watchdog"
-		case 7:
+		case libvirt.DomainPausedFromSnapshot:
 			reasonStr = "From Snapshot"
-		case 8:
+		case libvirt.DomainPausedShuttingDown:
 			reasonStr = "Shutting Down"
-		case 9:
+		case libvirt.DomainPausedSnapshot:
 			reasonStr = "Snapshot"
-		case 10:
+		case libvirt.DomainPausedCrashed:
 			reasonStr = "Crashed"
-		case 11:
+		case libvirt.DomainPausedStartingUp:
 			reasonStr = "Starting Up"
-		case 12:
+		case libvirt.DomainPausedPostcopy:
 			reasonStr = "Postcopy"
-		case 13:
+		case libvirt.DomainPausedPostcopyFailed:
 			reasonStr = "Postcopy Failed"
 		}
 
-	case 4:
+	case libvirt.DomainShutdown:
 		reasonType = "Shutdown"
-		switch reason {
-		case 0:
+		switch libvirt.DomainShutdownReason(reason) {
+		default:
 			reasonStr = "Unknown"
-		case 1:
+		case libvirt.DomainShutdownUser:
 			reasonStr = "User"
 		}
 
-	case 5:
+	case libvirt.DomainShutoff:
 		reasonType = "Shutoff"
-		switch reason {
-		case 0:
+		switch libvirt.DomainShutoffReason(reason) {
+		default:
 			reasonStr = "Unknown"
-		case 1:
+		case libvirt.DomainShutoffShutdown:
 			reasonStr = "Shutdown"
-		case 2:
+		case libvirt.DomainShutoffDestroyed:
 			reasonStr = "Destroyed"
-		case 3:
+		case libvirt.DomainShutoffCrashed:
 			reasonStr = "Crashed"
-		case 4:
+		case libvirt.DomainShutoffMigrated:
 			reasonStr = "Migrated"
-		case 5:
+		case libvirt.DomainShutoffSaved:
 			reasonStr = "Saved"
-		case 6:
+		case libvirt.DomainShutoffFailed:
 			reasonStr = "Failed"
-		case 7:
+		case libvirt.DomainShutoffFromSnapshot:
 			reasonStr = "From Snapshot"
-		case 8:
+		case libvirt.DomainShutoffDaemon:
 			reasonStr = "Daemon"
 		}
-	case 6:
+	case libvirt.DomainCrashed:
 		reasonType = "Crashed"
-		switch reason {
-		case 0:
+		switch libvirt.DomainCrashedReason(reason) {
+		default:
 			reasonStr = "Unknown"
-		case 1:
+		case libvirt.DomainCrashedPanicked:
 			reasonStr = "Panicked"
 		}
 

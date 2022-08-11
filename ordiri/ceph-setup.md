@@ -46,7 +46,7 @@ virsh secret-define --file secret.xml
 ceph auth get-key client.libvirt | sudo tee client.libvirt.key
 
 
-virsh secret-set-value --secret {uuid of secret} --base64 $(cat client.libvirt.key) && rm client.libvirt.key secret.xml
+virsh secret-set-value --secret 4eadcf35-dc7d-4d80-a7fe-5f599d1ec49f --base64 $(cat client.libvirt.key) && rm client.libvirt.key secret.xml
 
 
 apt-get install libvirt-daemon-driver-storage-rbd libcephfs-dev librbd-dev librados-dev

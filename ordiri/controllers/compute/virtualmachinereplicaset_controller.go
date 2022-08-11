@@ -116,6 +116,7 @@ func (r *VirtualMachineReplicaSetReconciler) Reconcile(ctx context.Context, req 
 		vm := &computev1alpha1.VirtualMachine{}
 		vm.Name = fmt.Sprintf("%s-%d", rs.Name, i)
 		_, err := ctrl.CreateOrUpdate(ctx, r.Client, vm, func() error {
+			rs.Spec.Template.Spec.ScheduledNode = vm.Spec.ScheduledNode
 			if !reflect.DeepEqual(vm.Spec, rs.Spec.Template.Spec) {
 				vm.Spec = rs.Spec.Template.Spec
 			}

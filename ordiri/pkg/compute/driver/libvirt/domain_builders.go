@@ -19,11 +19,14 @@ func WithUuid(uuid string) DomainOption {
 }
 func WithBasicDefaults() DomainOption {
 	return func(domain *libvirtxml.Domain) error {
-
 		domain.Description = "Created by the golang scheduler"
-		domain.Clock = &libvirtxml.DomainClock{
-			Offset: "utc",
+
+		if domain.Clock == nil {
+
+			domain.Clock = &libvirtxml.DomainClock{}
 		}
+
+		domain.Clock.Offset = "utc"
 
 		return nil
 	}
@@ -33,11 +36,20 @@ func WithBootDevice(bootDevice ...string) DomainOption {
 		if domain.OS == nil {
 			domain.OS = &libvirtxml.DomainOS{}
 		}
+
 		if domain.OS.BootDevices == nil {
 			domain.OS.BootDevices = []libvirtxml.DomainBootDevice{}
 		}
+		existing := map[string]libvirtxml.DomainBootDevice{}
+		for _, bootDevice := range domain.OS.BootDevices {
+			existing[bootDevice.Dev] = bootDevice
+		}
 
 		for _, dev := range bootDevice {
+			if _, ok := existing[dev]; ok {
+				continue
+			}
+
 			domain.OS.BootDevices = append(domain.OS.BootDevices, libvirtxml.DomainBootDevice{
 				Dev: dev,
 			})
@@ -52,6 +64,15 @@ func WithConsole(targetPort uint, targetType string) DomainOption {
 		if domain.Devices == nil {
 			domain.Devices = &libvirtxml.DomainDeviceList{}
 		}
+
+		for _, console := range domain.Devices.Consoles {
+			if console.Target != nil && console.Target.Port != nil {
+				if *console.Target.Port == targetPort && console.Target.Type == targetType {
+					return nil
+				}
+			}
+		}
+
 		domain.Devices.Consoles = append(domain.Devices.Consoles, libvirtxml.DomainConsole{
 			Target: &libvirtxml.DomainConsoleTarget{
 				Port: &targetPort,
@@ -64,29 +85,46 @@ func WithConsole(targetPort uint, targetType string) DomainOption {
 
 func WithCpu(cpus uint) DomainOption {
 	return func(domain *libvirtxml.Domain) error {
-		domain.VCPU = &libvirtxml.DomainVCPU{
-			Placement: "static",
-			Value:     cpus,
+		if domain.VCPU == nil {
+			domain.VCPU = &libvirtxml.DomainVCPU{}
+			domain.VCPU.Placement = "static"
+			domain.VCPU.Value = cpus
 		}
-		domain.CPU = &libvirtxml.DomainCPU{
-			Mode:  "custom",
-			Match: "exact",
-			Check: "full",
+		if domain.CPU == nil {
+			domain.CPU = &libvirtxml.DomainCPU{}
+			domain.CPU.Mode = "custom"
+			domain.CPU.Match = "exact"
+			domain.CPU.Check = "none"
 		}
+		if domain.CPU.Model == nil {
+			domain.CPU.Model = &libvirtxml.DomainCPUModel{}
+			domain.CPU.Model.Fallback = "forbid"
+			domain.CPU.Model.Value = "qemu64"
+			domain.CPU.Features = append(domain.CPU.Features, libvirtxml.DomainCPUFeature{
+				Name:   "svm",
+				Policy: "disable",
+			})
+			// <feature name='svm' policy='disable'/>
+
+		}
+
 		return nil
 	}
 }
 
 func WithMemory(size uint) DomainOption {
 	return func(domain *libvirtxml.Domain) error {
-		domain.CurrentMemory = &libvirtxml.DomainCurrentMemory{
-			Value: size,
-			Unit:  "KiB",
+		if domain.CurrentMemory == nil {
+			domain.CurrentMemory = &libvirtxml.DomainCurrentMemory{}
+			domain.CurrentMemory.Value = size
+			domain.CurrentMemory.Unit = "KiB"
 		}
-		domain.Memory = &libvirtxml.DomainMemory{
-			Value: size,
-			Unit:  "KiB",
+		if domain.Memory == nil {
+			domain.Memory = &libvirtxml.DomainMemory{}
 		}
+
+		domain.Memory.Value = size
+		domain.Memory.Unit = "KiB"
 		return nil
 	}
 }
@@ -114,7 +152,19 @@ func WithNetworkInterfaces(interfaces ...libvirtxml.DomainInterface) DomainOptio
 			domain.Devices = &libvirtxml.DomainDeviceList{}
 		}
 
-		domain.Devices.Interfaces = append(domain.Devices.Interfaces, interfaces...)
+		existing := map[string]libvirtxml.DomainInterface{}
+		for _, iface := range domain.Devices.Interfaces {
+			existing[iface.MAC.Address] = iface
+		}
+
+		for _, iface := range interfaces {
+			if _, ok := existing[iface.MAC.Address]; ok {
+				continue
+			}
+
+			domain.Devices.Interfaces = append(domain.Devices.Interfaces, iface)
+
+		}
 		return nil
 	}
 }
@@ -123,15 +173,17 @@ func WithBiosOemString(entries ...string) DomainOption {
 		if domain.OS == nil {
 			domain.OS = &libvirtxml.DomainOS{}
 		}
-		domain.OS.SMBios = &libvirtxml.DomainSMBios{
-			Mode: "sysinfo",
+		if domain.OS.SMBios == nil {
+			domain.OS.SMBios = &libvirtxml.DomainSMBios{}
 		}
+		domain.OS.SMBios.Mode = "sysinfo"
 		domainSysInfo := &libvirtxml.DomainSysInfo{}
 		for _, dsi := range domain.SysInfo {
 			if dsi.SMBIOS != nil {
 				domainSysInfo = &dsi
 			}
 		}
+
 		if domainSysInfo.SMBIOS == nil {
 			domainSysInfo.SMBIOS = &libvirtxml.DomainSysInfoSMBIOS{}
 		}
@@ -141,6 +193,7 @@ func WithBiosOemString(entries ...string) DomainOption {
 		}
 
 		domainSysInfo.SMBIOS.OEMStrings.Entry = append(domainSysInfo.SMBIOS.OEMStrings.Entry, entries...)
+
 		return nil
 	}
 }
@@ -202,7 +255,18 @@ func WithPoolVolume(pool, volume, device string) DomainOption {
 
 func WithDisk(disks ...libvirtxml.DomainDisk) DomainOption {
 	return func(domain *libvirtxml.Domain) error {
-		domain.Devices.Disks = append(domain.Devices.Disks, disks...)
+		existing := map[string]libvirtxml.DomainDisk{}
+		for _, disk := range domain.Devices.Disks {
+			existing[disk.Target.Dev] = disk
+		}
+
+		for _, disk := range disks {
+			if _, ok := existing[disk.Target.Dev]; ok {
+				continue
+			}
+
+			domain.Devices.Disks = append(domain.Devices.Disks, disk)
+		}
 		return nil
 	}
 }

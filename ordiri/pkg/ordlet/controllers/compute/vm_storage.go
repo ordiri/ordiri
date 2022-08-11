@@ -8,6 +8,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/digitalocean/go-libvirt"
 	internallibvirt "github.com/ordiri/ordiri/pkg/compute/driver/libvirt"
 
@@ -53,6 +54,9 @@ func (r *VirtualMachineReconciler) getVolume(ctx context.Context, vm *computev1a
 
 		return status, internallibvirt.WithCephVolume(vol.Name, disk.Device), nil
 	} else if disk.HostLocal != nil {
+		if disk.HostLocal.PoolName == "" {
+			return status, nil, fmt.Errorf("missing pool name")
+		}
 		pool, err := r.EnsurePool(ctx, disk.HostLocal.PoolName)
 		if err != nil {
 			return status, nil, err
@@ -88,6 +92,7 @@ func (r *VirtualMachineReconciler) getVolume(ctx context.Context, vm *computev1a
 func (r *VirtualMachineReconciler) EnsurePool(ctx context.Context, name string) (*libvirt.StoragePool, error) {
 	pool, err := r.LibvirtClient.StoragePoolLookupByName(name)
 	if err != nil {
+		spew.Dump(err)
 		xmlpool := libvirtxml.StoragePool{
 			Name: name,
 			Type: "dir",
