@@ -1,0 +1,5 @@
+additionalProperties:
+  supportsES6: true
+  useObjectParameters: true
+  npmName: "@ordiri/client-typescript"
+  modelPropertyNaming: original
