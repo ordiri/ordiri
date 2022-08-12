@@ -18,6 +18,7 @@ if [[ -z ${GEN_ROOT:-} ]]; then
 else
     echo ">>> Reusing gen repo at ${GEN_ROOT}"
 fi
+export OPENAPI_SKIP_FETCH_SPEC="True"
 
 TYPESCRIPT="${GEN_ROOT}/openapi/typescript.sh"
 echo ">>> Running ${TYPESCRIPT}"
