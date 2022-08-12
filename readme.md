@@ -1,5 +1,7 @@
-# ordiri
+# Ordiri
+A multi-tenant IaaC platform
 
+Built for my homelab
 network inspired by openstack
 network =: subnet
 
