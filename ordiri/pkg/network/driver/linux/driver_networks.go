@@ -3,23 +3,27 @@ package linux
 import (
 	"context"
 	"fmt"
+
 	"os/exec"
 
+	"github.com/ordiri/ordiri/pkg/log"
 	"github.com/ordiri/ordiri/pkg/network/api"
+
 	"github.com/ordiri/ordiri/pkg/network/sdn"
-	"sigs.k8s.io/controller-runtime/pkg/log"
 )
 
-const (
-	NetworkServicesNamespacePrefix = "ordiri-services-"
-	NetworkRouterNamespacePrefix   = "ordiri-router-"
-)
-const (
-	VethSuffixNamespace = "-in"
-	VethSuffixRoot      = "-out"
-)
+func (ln *linuxDriver) RemoveNetwork(ctx context.Context, nw api.Network) error {
+	return fmt.Errorf("method 'RemoveNetwork' not implemented")
+}
 
-func (ln *linuxDriver) installNat(ctx context.Context, nw api.Network) error {
+func (ln *linuxDriver) EnsureNetwork(ctx context.Context, nw api.Network) error {
+	if err := ln.installNetworkNat(ctx, nw); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (ln *linuxDriver) installNetworkNat(ctx context.Context, nw api.Network) error {
 	log := log.FromContext(ctx)
 	namespace := namespaceForRouter(nw)
 	publicGwCableName := publicGwCable(nw)
@@ -35,6 +39,7 @@ func (ln *linuxDriver) installNat(ctx context.Context, nw api.Network) error {
 
 	log.V(5).Info("Renew DHCP")
 	go func() {
+		// TODO: just look at it
 		renewDhclientCmd := exec.Command("ip", "netns", "exec", namespace, "dhclient", "-r", publicGwCableName.Namespace())
 		// fire and forget for now
 		// todo: create a netlink device and actually set this properly

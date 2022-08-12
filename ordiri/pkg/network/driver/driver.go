@@ -18,6 +18,9 @@ func (di DriverInfo) String() string {
 
 type Driver interface {
 	Info() DriverInfo
+	RemoveInterface(context.Context, api.Network, api.Subnet, api.Interface) error
+	EnsureInterface(context.Context, api.Network, api.Subnet, api.Interface) (string, error)
+
 	RemoveRouter(context.Context, api.Network, api.Subnet, api.Router) error
 	EnsureRouter(context.Context, api.Network, api.Subnet, api.Router) error
 

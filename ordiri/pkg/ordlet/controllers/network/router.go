@@ -29,6 +29,7 @@ import (
 
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
+	"github.com/ordiri/ordiri/pkg/mac"
 	"github.com/ordiri/ordiri/pkg/network"
 	"github.com/ordiri/ordiri/pkg/network/api"
 	"github.com/ordiri/ordiri/pkg/ordlet"
@@ -122,9 +123,18 @@ func (r *RouterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 			var rtr api.Router
 			var err error
 			if r.NetworkManager.HasRouter(net, sn, router.Name) {
-				rtr = r.NetworkManager.GetNetwork(nw.Name)
+				rtr = r.NetworkManager.GetRouter(net, sn, router.Name)
 			} else {
-				rtr, err = network.NewRouter(nw.Name)
+				macAddr, err := mac.Parse(router.Spec.Mac)
+				if err != nil {
+					errs = append(errs, fmt.Errorf("invalid mac address - %w", err))
+					return
+				}
+				rtr, err = network.NewRouter(router.Name, network.WithMac(macAddr))
+				if err != nil {
+					errs = append(errs, fmt.Errorf("unable to create router - %w", err))
+					return
+				}
 			}
 
 			if err != nil {

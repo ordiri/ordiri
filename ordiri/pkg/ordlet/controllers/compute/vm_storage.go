@@ -25,7 +25,7 @@ func (r *VirtualMachineReconciler) getClaim(ctx context.Context, vm *computev1al
 	return claim, nil
 }
 
-func (r *VirtualMachineReconciler) getVolume(ctx context.Context, vm *computev1alpha1.VirtualMachine, disk *computev1alpha1.VirtualMachineVolume) (computev1alpha1.VirtualMachineVolumeStatus, internallibvirt.DomainOption, error) {
+func (r *VirtualMachineReconciler) ensureVolume(ctx context.Context, vm *computev1alpha1.VirtualMachine, disk *computev1alpha1.VirtualMachineVolume) (computev1alpha1.VirtualMachineVolumeStatus, internallibvirt.DomainOption, error) {
 	log := log.FromContext(ctx)
 	status := computev1alpha1.VirtualMachineVolumeStatus{
 		Name:   disk.Name,
@@ -57,7 +57,7 @@ func (r *VirtualMachineReconciler) getVolume(ctx context.Context, vm *computev1a
 		if disk.HostLocal.PoolName == "" {
 			return status, nil, fmt.Errorf("missing pool name")
 		}
-		pool, err := r.EnsurePool(ctx, disk.HostLocal.PoolName)
+		pool, err := r.ensureStoragePool(ctx, disk.HostLocal.PoolName)
 		if err != nil {
 			return status, nil, err
 		}
@@ -91,7 +91,7 @@ func (r *VirtualMachineReconciler) getVolume(ctx context.Context, vm *computev1a
 	return status, nil, fmt.Errorf("unknown disk type")
 }
 
-func (r *VirtualMachineReconciler) EnsurePool(ctx context.Context, name string) (*libvirt.StoragePool, error) {
+func (r *VirtualMachineReconciler) ensureStoragePool(ctx context.Context, name string) (*libvirt.StoragePool, error) {
 	pool, err := r.LibvirtClient.StoragePoolLookupByName(name)
 	if err != nil {
 		spew.Dump(err)

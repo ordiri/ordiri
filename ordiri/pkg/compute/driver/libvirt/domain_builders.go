@@ -154,11 +154,11 @@ func WithNetworkInterfaces(interfaces ...libvirtxml.DomainInterface) DomainOptio
 
 		existing := map[string]libvirtxml.DomainInterface{}
 		for _, iface := range domain.Devices.Interfaces {
-			existing[iface.MAC.Address] = iface
+			existing[iface.Target.Dev] = iface
 		}
 
 		for _, iface := range interfaces {
-			if _, ok := existing[iface.MAC.Address]; ok {
+			if _, ok := existing[iface.Target.Dev]; ok {
 				continue
 			}
 

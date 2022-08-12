@@ -18,7 +18,6 @@ package compute
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	k8err "k8s.io/apimachinery/pkg/api/errors"
@@ -34,12 +33,11 @@ import (
 	"github.com/digitalocean/go-libvirt"
 	"github.com/google/uuid"
 	internallibvirt "github.com/ordiri/ordiri/pkg/compute/driver/libvirt"
-	"github.com/ordiri/ordiri/pkg/network/sdn"
+	"github.com/ordiri/ordiri/pkg/network/api"
 	"github.com/ordiri/ordiri/pkg/ordlet"
 
 	computev1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
-	"github.com/vishvananda/netlink"
 )
 
 // VirtualMachineReconciler reconciles a VirtualMachine object
@@ -47,8 +45,9 @@ type VirtualMachineReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
 
-	LibvirtClient *internallibvirt.Libvirt
-	Node          ordlet.NodeProvider
+	LibvirtClient  *internallibvirt.Libvirt
+	Node           ordlet.NodeProvider
+	NetworkManager api.Manager
 }
 
 //+kubebuilder:rbac:groups=compute,resources=virtualmachines,verbs=get;list;watch;create;update;patch;delete
@@ -114,7 +113,7 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	volumes := []computev1alpha1.VirtualMachineVolumeStatus{}
 	for _, disk := range vm.Spec.Volumes {
 		log.V(5).Info("getting volume", "disk", disk)
-		volumeStatus, domainOption, err := r.getVolume(ctx, vm, disk)
+		volumeStatus, domainOption, err := r.ensureVolume(ctx, vm, disk)
 		if err != nil {
 			return ctrl.Result{}, err
 		}
@@ -128,7 +127,7 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 
 	ifaces := []computev1alpha1.VirtualMachineNetworkInterfaceStatus{}
 	for _, iface := range vm.Spec.NetworkInterfaces {
-		ifaceStatus, ifaceOption, err := r.getNetworkInterface(ctx, vm, iface)
+		ifaceStatus, ifaceOption, err := r.ensureNetworkInterface(ctx, vm, iface)
 		if err != nil {
 			return ctrl.Result{}, err
 		}
@@ -230,36 +229,22 @@ func (r *VirtualMachineReconciler) ReconcileDeletion(ctx context.Context, vm *co
 		}
 	}
 
-	ovsClient := sdn.Ovs()
 	for _, iface := range vm.Spec.NetworkInterfaces {
-		nw, subnet, err := r.interfaceSubnet(ctx, vm, iface)
-		if err != nil {
-			return ctrl.Result{}, err
+		if !r.NetworkManager.HasNetwork(iface.Network) {
+			continue
 		}
-		vlanId, err := r.Node.GetNode().SubnetVlanId(subnet.Name)
-		if err == nil {
-			flows := r.flows(ctx, vm, subnet, subnet.VMBridge(vm), vlanId, nw.Status.Vni)
+		net := r.NetworkManager.GetNetwork(iface.Network)
 
-			for _, flow := range flows {
-				if err := flow.Remove(ovsClient); err != nil {
-					return ctrl.Result{}, err
-				}
-			}
+		if !r.NetworkManager.HasSubnet(net, iface.Subnet) {
+			continue
 		}
 
-		bridgeName := subnet.VMBridge(vm)
+		subnet := r.NetworkManager.GetSubnet(net, iface.Subnet)
 
-		if err := ovsClient.VSwitch.DeletePort(sdn.WorkloadSwitchName, bridgeName); err != nil {
-			return ctrl.Result{}, fmt.Errorf("unable to delete switch port - %w", err)
-		}
-		nl, err := netlink.LinkByName(bridgeName)
-		if err != nil && !errors.As(err, &netlink.LinkNotFoundError{}) {
-			return ctrl.Result{}, fmt.Errorf("error fetching netlink device - %w", err)
-		}
-
-		if nl != nil {
-			if err := netlink.LinkDel(nl); err != nil {
-				return ctrl.Result{}, fmt.Errorf("error destroying vm bridge - %w", err)
+		if r.NetworkManager.HasInterface(net, subnet, iface.Key()) {
+			netIface := r.NetworkManager.GetInterface(net, subnet, iface.Key())
+			if err := r.NetworkManager.RemoveInterface(ctx, net, subnet, netIface); err != nil {
+				return ctrl.Result{}, err
 			}
 		}
 	}
@@ -351,6 +336,10 @@ func libvirtStatus(vms computev1alpha1.VirtualMachineState) libvirt.DomainState 
 func (r *VirtualMachineReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	if r.LibvirtClient == nil {
 		r.LibvirtClient = internallibvirt.Local()
+	}
+
+	if r.NetworkManager == nil {
+		panic("missing network manager")
 	}
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&computev1alpha1.VirtualMachine{}).

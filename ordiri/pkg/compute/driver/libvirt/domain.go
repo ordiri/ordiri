@@ -296,10 +296,7 @@ func doLiveUpdates(client *Libvirt, dom libvirt.Domain, old, new *libvirtxml.Dom
 			}
 		} else {
 			needsUpdate := false
-			if old.Source.Bridge.Bridge != iface.Source.Bridge.Bridge {
-				needsUpdate = true
-			}
-			if !needsUpdate && old.Target.Dev != iface.Target.Dev {
+			if old.Target.Dev != iface.Target.Dev {
 				needsUpdate = true
 			}
 

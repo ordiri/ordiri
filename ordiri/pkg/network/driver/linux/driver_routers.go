@@ -115,8 +115,3 @@ func (nw *linuxDriver) rulesets(externalCablename string, internalCableName stri
 	},
 	}
 }
-func ifname(n string) []byte {
-	b := make([]byte, 16)
-	copy(b, []byte(n+"\x00"))
-	return b
-}

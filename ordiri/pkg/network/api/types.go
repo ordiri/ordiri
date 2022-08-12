@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"net"
 
 	"inet.af/netaddr"
 )
@@ -26,8 +27,15 @@ type RouterManager interface {
 	EnsureRouter(ctx context.Context, nw Network, sn Subnet, rtr Router) error
 	RemoveRouter(ctx context.Context, nw Network, sn Subnet, rtr Router) error
 }
+type InterfaceManager interface {
+	HasInterface(nw Network, sn Subnet, name string) bool
+	GetInterface(nw Network, sn Subnet, name string) Interface
+	EnsureInterface(ctx context.Context, nw Network, sn Subnet, iface Interface) (string, error)
+	RemoveInterface(ctx context.Context, nw Network, sn Subnet, iface Interface) error
+}
 
 type Manager interface {
+	InterfaceManager
 	RouterManager
 	NetworkManager
 	SubnetManager
@@ -54,4 +62,12 @@ type Subnet interface {
 
 type Router interface {
 	Name() string
+	Mac() net.HardwareAddr
+	IP() netaddr.IP
+}
+
+type Interface interface {
+	Name() string
+	Mac() net.HardwareAddr
+	IP() netaddr.IP
 }

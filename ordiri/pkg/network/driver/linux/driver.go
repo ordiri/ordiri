@@ -17,6 +17,8 @@ const (
 )
 
 const (
+	InterfaceBridgePrefix     = "obr"
+	InterfaceTunTapPrefix     = "ovm"
 	PublicGatewayCablePrefix  = "prtr-"
 	InternalRouterCablePrefix = "irtr-"
 	NetworkServiceCablePrefix = "svc-"

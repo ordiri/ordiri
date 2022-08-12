@@ -15,6 +15,7 @@ import (
 	"github.com/ordiri/ordiri/pkg/network/api"
 	"github.com/ordiri/ordiri/pkg/network/dhcp"
 	"github.com/ordiri/ordiri/pkg/network/sdn"
+	"github.com/vishvananda/netlink"
 )
 
 func (ln *linuxDriver) RemoveSubnet(ctx context.Context, nw api.Network, sn api.Subnet) error {
@@ -26,7 +27,7 @@ func (ln *linuxDriver) EnsureSubnet(ctx context.Context, nw api.Network, sn api.
 		return err
 	}
 
-	if err := ln.installFlows(ctx, nw, sn); err != nil {
+	if err := ln.installSubnetFlows(ctx, nw, sn); err != nil {
 		return err
 	}
 
@@ -173,7 +174,7 @@ func (ln *linuxDriver) flows(ctx context.Context, nw api.Network, subnet api.Sub
 	}, nil
 }
 
-func (ln *linuxDriver) installFlows(ctx context.Context, nw api.Network, subnet api.Subnet) error {
+func (ln *linuxDriver) installSubnetFlows(ctx context.Context, nw api.Network, subnet api.Subnet) error {
 	flows, err := ln.flows(ctx, nw, subnet)
 	if err != nil {
 		return err
@@ -188,4 +189,9 @@ func (ln *linuxDriver) installFlows(ctx context.Context, nw api.Network, subnet 
 	}
 
 	return nil
+}
+
+func (ln *linuxDriver) subnetBridge(ctx context.Context, nw api.Network, sn api.Subnet) (*netlink.Bridge, error) {
+	// link := netlink.Tuntap{}
+	return nil, fmt.Errorf("createTunTap not implemented")
 }

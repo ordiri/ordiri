@@ -23,6 +23,14 @@ func namespaceForServices(network api.Network, subnet api.Subnet) string {
 	return NetworkServicesNamespacePrefix + network.Name() + subnet.Name()
 }
 
+func interfaceBridgeName(network api.Network, subnet api.Subnet, iface api.Interface) string {
+	return InterfaceBridgePrefix + hash(network.Name()+subnet.Name()+iface.Mac().String())
+}
+
+func interfaceTunTapName(network api.Network, subnet api.Subnet, iface api.Interface) string {
+	return InterfaceTunTapPrefix + hash(network.Name()+subnet.Name()+iface.Mac().String())
+}
+
 func publicGwCable(network api.Network) VethCable {
 	return VethCable(PublicGatewayCablePrefix + hash(network.Name()))
 }

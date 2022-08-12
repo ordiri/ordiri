@@ -150,9 +150,10 @@ func main() {
 	}
 
 	if err = (&compute.VirtualMachineReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
-		Node:   nodeRunner,
+		Client:         mgr.GetClient(),
+		Scheme:         mgr.GetScheme(),
+		Node:           nodeRunner,
+		NetworkManager: nwManager,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "VirtualMachine")
 		os.Exit(1)

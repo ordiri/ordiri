@@ -11,18 +11,20 @@ import (
 
 func NewManager(driver driver.Driver) (api.RunnableManager, error) {
 	return &networkManager{
-		driver:   driver,
-		networks: []api.Network{},
-		subnets:  make(map[string][]api.Subnet),
-		routers:  make(map[string]map[string][]api.Router),
+		driver:     driver,
+		networks:   []api.Network{},
+		subnets:    make(map[string][]api.Subnet),
+		routers:    make(map[string]map[string][]api.Router),
+		interfaces: make(map[string]map[string][]api.Interface),
 	}, nil
 }
 
 type networkManager struct {
-	networks []api.Network
-	subnets  map[string][]api.Subnet
-	routers  map[string]map[string][]api.Router
-	driver   driver.Driver
+	networks   []api.Network
+	subnets    map[string][]api.Subnet
+	routers    map[string]map[string][]api.Router
+	interfaces map[string]map[string][]api.Interface
+	driver     driver.Driver
 
 	l sync.Mutex
 }

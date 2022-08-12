@@ -29,16 +29,6 @@ func (ln *linuxDriver) getOrCreateVeth(ctx context.Context, namespace string, ca
 		if err != nil {
 			return fmt.Errorf("unable to get ns for public gateway cable - %w", err)
 		}
-
-		if _, existing := ln.interfaces.search(cableName.Root()); existing != nil {
-			log.Info("veth cable in wrong namespace, attempting to move", "namespace", namespace, "cableName", cableName, "actualNamespace", existing.namespace)
-
-			if err := netlink.LinkDel(existing); err != nil {
-				return err
-			}
-		}
-
-		log.V(5).Info("veth not found, creating", "namespace", namespace, "cableName", cableName)
 		link := &netlink.Veth{
 			LinkAttrs: netlink.LinkAttrs{
 				Name:      cableName.Namespace(),
@@ -47,6 +37,16 @@ func (ln *linuxDriver) getOrCreateVeth(ctx context.Context, namespace string, ca
 			},
 			PeerName: cableName.Root(),
 		}
+
+		if _, existing := ln.interfaces.search(cableName.Root()); existing != nil {
+			log.Info("veth cable in wrong namespace, attempting to move", "namespace", namespace, "cableName", cableName, "actualNamespace", existing.namespace)
+
+			if err := netlink.LinkDel(link); err != nil {
+				return fmt.Errorf("unable to delete link in wrong namespace - %w", err)
+			}
+		}
+
+		log.V(5).Info("veth not found, creating", "namespace", namespace, "cableName", cableName)
 		if err := netlink.LinkAdd(link); err != nil {
 			return fmt.Errorf("unable to create public gateway veth '%s' - %w", cableName+"-in", err)
 		}

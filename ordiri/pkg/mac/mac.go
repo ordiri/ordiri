@@ -9,6 +9,8 @@ const MacAddrLength = 6
 
 var EmptyMacAddr = []byte{}
 
+var Parse = net.ParseMAC
+
 func New() net.HardwareAddr {
 	buf := make([]byte, MacAddrLength)
 	_, err := rand.Read(buf[:])
