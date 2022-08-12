@@ -106,6 +106,7 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		internallibvirt.WithConsole(0, "serial"),
 		internallibvirt.WithCpu(2),
 		internallibvirt.WithMemory(4 * 1e3 * 1024),
+		internallibvirt.WithVnc(),
 	}
 	// newDomain := libvirtxml.Domain{}
 

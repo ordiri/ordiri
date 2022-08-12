@@ -1,5 +1,3 @@
-
-
 #!/bin/bash
 
 # Copyright 2015 The Kubernetes Authors.
@@ -17,7 +15,7 @@
 # limitations under the License.
 
 # kubernetes-client/gen commit to use for code generation.
-export GEN_COMMIT=82c3ff5
+export GEN_COMMIT=master
 
 # GitHub username/organization to clone kubernetes repo from.
 export USERNAME=kubernetes
@@ -32,4 +30,6 @@ export CLIENT_VERSION="0.8-SNAPSHOT"
 # Name of the release package
 export PACKAGE_NAME="@ordiri/client"
 
-export OPENAPI_GENERATOR_COMMIT=1314e229
+export OPENAPI_GENERATOR_COMMIT=master
+
+export OPENAPI_SKIP_FETCH_SPEC="true"

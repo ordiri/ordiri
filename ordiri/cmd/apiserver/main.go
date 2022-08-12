@@ -21,6 +21,7 @@ import (
 
 	"github.com/spf13/pflag"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apiserver/pkg/server"
 	"k8s.io/klog"
 	"sigs.k8s.io/apiserver-runtime/pkg/builder"
 
@@ -74,6 +75,10 @@ func main() {
 					"authorizing the requests, this flag is only intended for debugging in your workstation "+
 					"and the apiserver will be crashing if its binding address is not 127.0.0.1.")
 			return set
+		}).
+		WithConfigFns(func(config *server.RecommendedConfig) *server.RecommendedConfig {
+			config.CorsAllowedOriginList = append(config.CorsAllowedOriginList, "http://localhost:3000")
+			return config
 		})
 
 	// apiBuilder = WithLocalDebugExtension(apiBuilder)

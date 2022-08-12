@@ -14,5 +14,10 @@ export default createTheme({
         LinkComponent: LinkBehavior,
       },
     },
+    MuiListItemButton: {
+      defaultProps: {
+        LinkComponent: LinkBehavior,
+      },
+    },
   },
 });

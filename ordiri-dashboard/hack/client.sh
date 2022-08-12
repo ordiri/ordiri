@@ -4,23 +4,4 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-. settings
-
-if [[ -z ${GEN_ROOT:-} ]]; then
-    : "${GEN_COMMIT?Need to set GEN_COMMIT to kubernetes-client/gen commit}"
-    TEMP_FOLDER=$(mktemp -d)
-    trap "rm -rf ${TEMP_FOLDER}" EXIT SIGINT
-
-    GEN_ROOT="${TEMP_FOLDER}/gen"
-    echo ">>> Cloning gen repo"
-    git clone --recursive https://github.com/kubernetes-client/gen.git "${GEN_ROOT}"
-    (cd ${GEN_ROOT} && git checkout ${GEN_COMMIT})
-else
-    echo ">>> Reusing gen repo at ${GEN_ROOT}"
-fi
-export OPENAPI_SKIP_FETCH_SPEC="True"
-
-TYPESCRIPT="${GEN_ROOT}/openapi/typescript.sh"
-echo ">>> Running ${TYPESCRIPT}"
-${TYPESCRIPT} src/gen settings
-echo ">>> Done."
+rm -fr src/gen && openapi-generator generate --skip-validate-spec  -i ./hack/swagger.json -g typescript-fetch -o src/gen --config client-oapi-gen.yaml

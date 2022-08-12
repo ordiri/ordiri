@@ -202,13 +202,7 @@ func NewDomain(name string, opts ...DomainOption) (*libvirtxml.Domain, error) {
 		},
 		CPU: &libvirtxml.DomainCPU{},
 		Devices: &libvirtxml.DomainDeviceList{
-			Graphics: []libvirtxml.DomainGraphic{
-				{
-					Spice: &libvirtxml.DomainGraphicSpice{
-						AutoPort: "yes",
-					},
-				},
-			},
+			Graphics: []libvirtxml.DomainGraphic{},
 			Channels: []libvirtxml.DomainChannel{
 				{
 					Source: &libvirtxml.DomainChardevSource{

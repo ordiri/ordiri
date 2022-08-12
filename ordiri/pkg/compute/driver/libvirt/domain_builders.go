@@ -168,6 +168,46 @@ func WithNetworkInterfaces(interfaces ...libvirtxml.DomainInterface) DomainOptio
 		return nil
 	}
 }
+func WithVnc() DomainOption {
+	return WithGraphics(libvirtxml.DomainGraphic{
+		VNC: &libvirtxml.DomainGraphicVNC{
+			Listen:   "0.0.0.0",
+			AutoPort: "yes",
+			Passwd:   "password",
+		},
+	})
+}
+func WithGraphics(graphics ...libvirtxml.DomainGraphic) DomainOption {
+	return func(domain *libvirtxml.Domain) error {
+		if domain.Devices == nil {
+			domain.Devices = &libvirtxml.DomainDeviceList{}
+		}
+		key := func(g libvirtxml.DomainGraphic) string {
+			if g.VNC != nil {
+				return "vnc"
+			}
+			if g.Spice != nil {
+				return "spice"
+			}
+			return ""
+		}
+
+		existing := map[string]libvirtxml.DomainGraphic{}
+		for _, graphic := range domain.Devices.Graphics {
+			existing[key(graphic)] = graphic
+		}
+
+		for _, graphic := range graphics {
+			if _, ok := existing[key(graphic)]; ok {
+				continue
+			}
+
+			domain.Devices.Graphics = append(domain.Devices.Graphics, graphic)
+
+		}
+		return nil
+	}
+}
 func WithBiosOemString(entries ...string) DomainOption {
 	return func(domain *libvirtxml.Domain) error {
 		if domain.OS == nil {
