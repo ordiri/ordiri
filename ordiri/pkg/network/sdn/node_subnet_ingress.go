@@ -27,7 +27,7 @@ func (sti *NodeSubnetIngress) Install(client *ovs.Client) error {
 		},
 		Actions: []ovs.Action{
 			ovs.ModVLANVID(sti.NodeLocalVlan),
-			ovs.Flood(),
+			ovs.Normal(),
 		},
 		Priority: 1,
 	})
