@@ -25,7 +25,7 @@ const (
 
 func EnsureExisting(ctx context.Context, client *Libvirt, dom libvirt.Domain, opts ...DomainOption) (EnsureResult, *libvirtxml.Domain, error) {
 	log := log.FromContext(ctx)
-	existingXml, err := client.DomainGetXMLDesc(dom, libvirt.DomainXMLSecure|libvirt.DomainXMLUpdateCPU)
+	existingXml, err := client.DomainGetXMLDesc(dom, libvirt.DomainXMLSecure|libvirt.DomainXMLUpdateCPU|libvirt.DomainXMLInactive)
 	if err != nil {
 		return EnsureResultDomainUnknown, nil, err
 	}
@@ -65,7 +65,7 @@ func EnsureExisting(ctx context.Context, client *Libvirt, dom libvirt.Domain, op
 
 		return domainStr != existingXml
 	}()
-	log.V(5).Info("updating existing domain", "domainStr", domainStr, "wasChanged", wasChanged)
+	log.V(5).Info("updating existing domain", "wasChanged", wasChanged)
 	dom, err = client.DomainDefineXMLFlags(domainStr, 0)
 	if err != nil {
 		return EnsureResultDomainUnknown, nil, fmt.Errorf("unable to update xml definition - %w", err)
@@ -257,7 +257,7 @@ func doLiveUpdates(client *Libvirt, dom libvirt.Domain, old, new *libvirtxml.Dom
 
 	ifaces := map[string]libvirtxml.DomainInterface{}
 	for _, iface := range old.Devices.Interfaces {
-		ifaces[iface.MAC.Address] = iface
+		ifaces[iface.Target.Dev] = iface
 	}
 	// spew.Dump("Got the ifaces", ifaces)
 	// spew.Dump("Got the disks", disks)
@@ -290,9 +290,9 @@ func doLiveUpdates(client *Libvirt, dom libvirt.Domain, old, new *libvirtxml.Dom
 		if err != nil {
 			return fmt.Errorf("unable to marshal iface to remove - %w", err)
 		}
-		if old, ok := ifaces[iface.MAC.Address]; !ok {
+		if old, ok := ifaces[iface.Target.Dev]; !ok {
 			if err := client.DomainAttachDeviceFlags(dom, xml, 0); err != nil {
-				return fmt.Errorf("error creating new network interface %s - %w", iface.MAC.Address, err)
+				return fmt.Errorf("error creating new network interface %s - %w", iface.Target.Dev, err)
 			}
 		} else {
 			needsUpdate := false
@@ -305,12 +305,12 @@ func doLiveUpdates(client *Libvirt, dom libvirt.Domain, old, new *libvirtxml.Dom
 
 			if needsUpdate {
 				if err := client.DomainUpdateDeviceFlags(dom, xml, libvirt.DomainDeviceModifyLive); err != nil {
-					return fmt.Errorf("error updating network interface %s - %w", iface.MAC.Address, err)
+					return fmt.Errorf("error updating network interface %s - %w", iface.Target.Dev, err)
 				}
 			}
 
 		}
-		delete(ifaces, iface.MAC.Address)
+		delete(ifaces, iface.Target.Dev)
 	}
 
 	for _, iface := range ifaces {
@@ -320,7 +320,7 @@ func doLiveUpdates(client *Libvirt, dom libvirt.Domain, old, new *libvirtxml.Dom
 		}
 
 		if err := client.DomainDetachDeviceFlags(dom, xml, uint32(libvirt.DomainDeviceModifyLive)); err != nil {
-			return fmt.Errorf("unable to remove ifac %s - %w", iface.MAC.Address, err)
+			return fmt.Errorf("unable to remove ifac %s - %w", iface.Target.Dev, err)
 		}
 	}
 

@@ -62,11 +62,13 @@ func (r *VirtualMachineReconciler) getVolume(ctx context.Context, vm *computev1a
 			return status, nil, err
 		}
 
-		if _, err := r.LibvirtClient.StorageVolLookupByName(*pool, disk.HostLocal.VolName); err == nil {
-			return status, internallibvirt.WithPoolVolume(pool.Name, disk.HostLocal.VolName, disk.Device), nil
+		hostLocalVolumeName := vm.Name + "-" + disk.HostLocal.VolName
+
+		if _, err := r.LibvirtClient.StorageVolLookupByName(*pool, hostLocalVolumeName); err == nil {
+			return status, internallibvirt.WithPoolVolume(pool.Name, hostLocalVolumeName, disk.Device), nil
 		}
 
-		volume, err := internallibvirt.NewVolume(disk.HostLocal.VolName,
+		volume, err := internallibvirt.NewVolume(hostLocalVolumeName,
 			internallibvirt.WithSize(uint64(disk.HostLocal.Size.Value())),
 		)
 		if err != nil {
@@ -83,7 +85,7 @@ func (r *VirtualMachineReconciler) getVolume(ctx context.Context, vm *computev1a
 			return status, nil, fmt.Errorf("unable to create storage volume - %w", err)
 		}
 
-		return status, internallibvirt.WithPoolVolume(storageVol.Pool, storageVol.Key, disk.Device), nil
+		return status, internallibvirt.WithPoolVolume(storageVol.Pool, hostLocalVolumeName, disk.Device), nil
 	}
 
 	return status, nil, fmt.Errorf("unknown disk type")

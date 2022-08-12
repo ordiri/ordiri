@@ -20,7 +20,7 @@ roles:
       - "netcfg/choose_interface=auto"
       - "console-setup/ask_detect=false"
       - "console-keymaps-at/keymap=us"
-      - "console=ttyS0,115200n8"
+      - "console=ttyS0,115200"
       - "serial"
     files:
       preseed.cfg: |

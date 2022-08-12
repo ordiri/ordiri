@@ -143,7 +143,7 @@ run-mothership-remote: stop-mothership deploy-mothership-ordlet
 	ssh mothership 'modprobe nf_nat_tftp nf_conntrack && KUBECONFIG=/etc/ordiri.conf /usr/local/bin/ordlet -zap-log-level=5 | tee /var/log/ordlet.conf' &
 
 run-debian-remote:  stop-debian deploy-debian-ordlet
-	ssh root@5.0.1.109 'modprobe nf_nat_tftp nf_conntrack && KUBECONFIG=/etc/ordiri.conf /usr/local/bin/ordlet -zap-log-level=5 | tee /var/log/ordlet.conf' &
+	ssh root@debian 'modprobe nf_nat_tftp nf_conntrack && KUBECONFIG=/etc/ordiri.conf /usr/local/bin/ordlet -zap-log-level=5 | tee /var/log/ordlet.conf' &
 
 .PHONY: stop-mothership
 stop-mothership:
