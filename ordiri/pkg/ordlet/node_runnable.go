@@ -4,10 +4,12 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"reflect"
 
 	"github.com/go-logr/logr"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
 	"github.com/ordiri/ordiri/pkg/network/sdn"
+	"k8s.io/apimachinery/pkg/api/errors"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/runtime/inject"
@@ -57,8 +59,10 @@ func (clnr *createLocalNodeRunnable) GetNode() *corev1alpha1.Node {
 	if err := clnr.Refresh(context.Background()); err != nil {
 		panic("error refreshing local node: " + err.Error())
 	}
+
 	return clnr.Node
 }
+
 func (clnr *createLocalNodeRunnable) Refresh(ctx context.Context) error {
 	return clnr.client.Get(ctx, client.ObjectKeyFromObject(clnr.Node), clnr.Node)
 }
@@ -72,8 +76,12 @@ func (clnr *createLocalNodeRunnable) Start(ctx context.Context) error {
 	log.Info("Starting local node runner")
 
 	err := clnr.Refresh(ctx)
-	if err != nil {
-		return err
+	if err != nil && errors.IsNotFound(err) {
+		if err := clnr.client.Create(ctx, clnr.Node); err != nil {
+			return fmt.Errorf("unable to create new node - %W", err)
+		}
+	} else if err != nil {
+		return fmt.Errorf("error fetching existing node - %w", err)
 	}
 	node := clnr.Node
 	log.Info("found node")
@@ -89,20 +97,28 @@ func (clnr *createLocalNodeRunnable) Start(ctx context.Context) error {
 		return err
 	}
 
-	ifs, err := net.InterfaceAddrs()
-	if err != nil {
+	var updateAddrs = func(node *corev1alpha1.Node) (bool, error) {
+		ifs, err := net.InterfaceAddrs()
+		if err != nil {
+			return false, err
+		}
+
+		newAddrs := []string{}
+		for _, iface := range ifs {
+			// check the address type and if it is not a loopback the display it
+			if ipnet, ok := iface.(*net.IPNet); ok && !ipnet.IP.IsLoopback() && !ipnet.IP.IsUnspecified() && clnr.mgmtNet.Contains(ipnet.IP) {
+				newAddrs = append(newAddrs, ipnet.IP.String())
+			}
+		}
+		changed := reflect.DeepEqual(node.Spec.ManagementAddresses, newAddrs)
+		node.Spec.ManagementAddresses = newAddrs
+
+		return changed, nil
+	}
+
+	if _, err := updateAddrs(node); err != nil {
 		return err
 	}
-
-	newAddrs := []string{}
-	for _, iface := range ifs {
-		// check the address type and if it is not a loopback the display it
-		if ipnet, ok := iface.(*net.IPNet); ok && !ipnet.IP.IsLoopback() && !ipnet.IP.IsUnspecified() && clnr.mgmtNet.Contains(ipnet.IP) {
-			newAddrs = append(newAddrs, ipnet.IP.String())
-		}
-	}
-
-	node.Spec.ManagementAddresses = newAddrs
 
 	node.Spec.NodeRoles = []corev1alpha1.NodeRole{}
 	for _, role := range clnr.roles {
@@ -121,6 +137,8 @@ func (clnr *createLocalNodeRunnable) Start(ctx context.Context) error {
 			return err
 		}
 	}
+
+	<-ctx.Done()
 
 	return nil
 }

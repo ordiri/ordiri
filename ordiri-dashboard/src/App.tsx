@@ -5,7 +5,7 @@ import theme from './theme';
 import { Divider, ListItemButton, ListItemIcon, ListItemText, ThemeProvider } from '@mui/material';
 import { mainListItems, secondaryListItems } from './components/menu-items';
 import { Route, Routes } from 'react-router-dom';
-import GenericResource from './pages/generic-resource';
+import GenericResource, { ResourcePageProps } from './pages/generic-resource';
 import CoreIcon from '@mui/icons-material/Hub';
 import ComputeIcon from '@mui/icons-material/Computer';
 import NetworkIcon from '@mui/icons-material/CloudQueue';
@@ -98,15 +98,15 @@ function App() {
           <Layout.Content>
             <Routes>
               {Object.entries(types).map(([key, obj]) => {
-                const ComponentElement: typeof GenericResource = (() => {
+                const ComponentElement = (() => {
                   if (obj.component) {
                     return obj.component
                   }
                   
-                   return  GenericResource
+                  return ({title}:{title: string}) => <GenericResource title={title} columns={obj.columns} api={obj.client} />
                 })()
                 
-              return <Route key={key} path={key.toLowerCase()} element={<ComponentElement columns={obj.columns} title={key} api={obj.client} />} />
+              return <Route key={key} path={key.toLowerCase()} element={<ComponentElement title={key} />} />
               })}
             </Routes>
           </Layout.Content>

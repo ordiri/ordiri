@@ -1,4 +1,4 @@
-import { JSONApiResponse } from "@ordiri/client-typescript";
+import { ApiResponse } from "@ordiri/client-typescript";
 import { useEffect, useState } from "react";
 
 interface KubeWatchData<TWatchedObj> {
@@ -8,7 +8,7 @@ interface KubeWatchData<TWatchedObj> {
 }
 
 // Streams data out of a chunked-encoding response body and yields objects as they are decoded
-export default function useWatch<TWatchedObj>(request: () => Promise<JSONApiResponse<TWatchedObj>>): KubeWatchData<TWatchedObj> {
+export default function useWatch<TWatchedObj>(request: () => Promise<ApiResponse<TWatchedObj>>): KubeWatchData<TWatchedObj> {
   const [watchData, setWatchData] = useState<KubeWatchData<TWatchedObj>>({
     loading: false,
     items: {},
@@ -20,7 +20,7 @@ export default function useWatch<TWatchedObj>(request: () => Promise<JSONApiResp
     async function loadData() {
       try {
         setWatchData((d) => ({ ...d, loading: true }))
-        request().then(async (response: JSONApiResponse<TWatchedObj>) => {
+        request().then(async (response: ApiResponse<TWatchedObj>) => {
           for await (let line of makeReaderIterator(response.raw.body!.getReader())) {
             const obj: { type: "ADDED" | "MODIFIED" | "DELETED", object: any } = JSON.parse(line)
             if (obj.type === 'ADDED' || obj.type === 'MODIFIED') {
