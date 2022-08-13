@@ -1,5 +1,8 @@
-additionalProperties:
-  supportsES6: true
-  useObjectParameters: true
-  npmName: "@ordiri/client-typescript"
-  modelPropertyNaming: original
+supportsES6: true
+fileContentDataType: Blob
+platform: browser
+useObjectParameters: true
+npmName: "@ordiri/client-typescript"
+modelPropertyNaming: original
+useRxJS: true
+typescriptThreePlus: true
