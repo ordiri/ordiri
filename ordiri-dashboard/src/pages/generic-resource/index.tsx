@@ -69,7 +69,7 @@ function ResultTable<T>({ lister, title, columns }: ResultTableProps<T>) {
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
                     <TableRow>
-                        {Object.entries(columns).map((a) => <TableCell key={a[1].label}>{a[1].label}</TableCell>)}
+                        {Object.entries(columns).map(([key, val]) => <TableCell key={key}>{val.label}</TableCell>)}
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -82,12 +82,12 @@ function ResultTable<T>({ lister, title, columns }: ResultTableProps<T>) {
                     {showErrorBar && <TableRow>
                         <TableCell colSpan={Math.max(Object.keys(columns).length, 1)}>Error fetching objects - {watchData.error}</TableCell>
                     </TableRow>}
-                    {showResults && Object.entries(watchData.items).map((row, idx) => (
+                    {showResults && Object.entries(watchData.items).map(([uid, row]) => (
                         <TableRow
-                            key={row[0]}
+                            key={uid}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
-                            {Object.entries(columns).map((it, idx) => <ResultCell header={it[1]} result={row[1]} />)}
+                            {Object.entries(columns).map(([key, val]) => <ResultCell key={key} header={val} result={row} />)}
 
                         </TableRow>
                     ))}
@@ -130,28 +130,7 @@ export default function GenericResourcePage<T>({ api, title, columns }: GenericR
             ...listers,
             [it]: {
                 lister: proto[it].bind(api),
-                columns: {
-                    name: {
-                        label: "Name",
-                        selector: "metadata.name",
-                    }, hosts: {
-                        label: "Hosts",
-                        selector: "status",
-                        formatter: (res: ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeStatus) => {
-                            if (res.networks) {
-                                return <>
-                                    <div>
-                                        networks: {res.networks.map(it => <Chip label={it.name} />)}
-                                    </div>
-                                    <div>
-                                        VMs: {res.virtualMachines.map(it => <Chip label={it.name} />)}
-                                    </div>
-                                </>
-                            }
-                            return <span>Empty</span>
-                        }
-                    }
-                }
+                columns
             }
         }
     }, {} as ResourceBoxes<T>)

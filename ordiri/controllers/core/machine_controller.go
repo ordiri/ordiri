@@ -19,6 +19,7 @@ package core
 import (
 	"context"
 	"fmt"
+	"reflect"
 
 	"k8s.io/apimachinery/pkg/api/errors"
 	meta "k8s.io/apimachinery/pkg/api/meta"
@@ -128,10 +129,12 @@ func (r *MachineReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 		})
 	}
 
-	m.Status = newStatus
-	m.Status.ObservedGeneration = m.Generation
-	if err := r.Client.Status().Update(ctx, m); err != nil {
-		return ctrl.Result{}, err
+	if !reflect.DeepEqual(m.Status, newStatus) {
+		m.Status = newStatus
+		m.Status.ObservedGeneration = m.Generation
+		if err := r.Client.Status().Update(ctx, m); err != nil {
+			return ctrl.Result{}, err
+		}
 	}
 
 	return ctrl.Result{}, nil

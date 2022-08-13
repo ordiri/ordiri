@@ -24,6 +24,18 @@ A React UI for interacting with the API Server
 # [Ordiri Client Typescript](./ordiri-client-typescript/)
 Open API client for use in a browser
 
+----
+# Running locally
+```
+Terminal 1: make etcd
+Terminal 2: make run-apiserver # the apiserver-runtime 
+Terminal 3: make run-manager # cluster wide controllers (scheduling & allocation mostly)
+Terminal 4: make run-remote # the ordlets that run on physical hosts
+Terminal 5: make run-ipxe # the ipxe metadata server
+Terminal 6: make run-dashboard # the dashboard
+```
+
+---
 
 Networking:
 dhcp
