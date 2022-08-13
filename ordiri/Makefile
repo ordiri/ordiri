@@ -162,6 +162,7 @@ start-all:
 	make run-manager &
 	make run-remote &
 
+
 # .PHONY: start stop
 
 
@@ -191,6 +192,8 @@ run-ipxe:
 	killall bootserver || true
 	go build -o bin/bootserver ./cmd/bootserver
 	KUBECONFIG=kubeconfig ./bin/bootserver server
+run-dashboard: 
+	cd ../ordiri-dashboard && npm start
 
 .PHONY: run-local
 run-local: binaries

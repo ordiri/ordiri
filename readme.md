@@ -24,6 +24,16 @@ A React UI for interacting with the API Server
 # [Ordiri Client Typescript](./ordiri-client-typescript/)
 Open API client for use in a browser
 
+# Todo
+Security is the next big hurdle, need to come up with a story around vault or ory etc
+currently no auth on control plane so no "true" tenant isolation
+https://github.com/novnc/noVNC
+
+Can have an iso that is shipped to phys ordlet nodes which registers them in idp and does anything else
+
+need tenant logins and security key/kms/ca - finally a legit use for my yubi key :)
+
+
 ----
 # Running locally
 ```
