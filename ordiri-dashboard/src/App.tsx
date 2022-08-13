@@ -1,9 +1,8 @@
-import React from 'react';
 import Router from './router';
 import './App.css';
 import { DefaultLayout } from './layouts';
 import theme from './theme';
-import { Chip, Divider, ListItemButton, ListItemIcon, ListItemText, ThemeProvider } from '@mui/material';
+import { Divider, ListItemButton, ListItemIcon, ListItemText, ThemeProvider } from '@mui/material';
 import { mainListItems, secondaryListItems } from './components/menu-items';
 import { Route, Routes } from 'react-router-dom';
 import GenericResource from './pages/generic-resource';
@@ -13,41 +12,18 @@ import NetworkIcon from '@mui/icons-material/CloudQueue';
 import StorageIcon from '@mui/icons-material/Storage';
 import { ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineVolume, ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeStatus, ComputeOrdiriComV1alpha1Api, Configuration, CoreOrdiriComV1alpha1Api, NetworkOrdiriComV1alpha1Api, StorageOrdiriComV1alpha1Api } from '@ordiri/client-typescript';
 import CoreResourcesPage from './pages/core';
+import ordiriConfig from './ordiri-config';
 
 function App() {
-  const config  = new Configuration({
-    basePath: "https://10.0.2.102:9443"
-  })
-
   const types: Record<string, any> = {
     "Core": {
-      client: new CoreOrdiriComV1alpha1Api(config),
       component: CoreResourcesPage,
       icon: <CoreIcon />,
-      headers: [{
-        label: "Name",
-        selector: "metadata.name",
-      }, {
-          label: "Hosts",
-          selector: "status",
-          formatter: (res: ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeStatus) => {
-            if (res.networks) {
-              return <>
-                <div>
-                  networks: {res.networks.map(it => <Chip label={it.name} />)}
-                </div>
-                <div>
-                  VMs: {res.virtualMachines.map(it => <Chip label={it.name} />)}
-                </div>
-              </>
-            }
-          }
-        }]
     },
     "Compute": {
-      client: new ComputeOrdiriComV1alpha1Api(config),
+      client: new ComputeOrdiriComV1alpha1Api(ordiriConfig),
       icon: <ComputeIcon />,
-      headers: [{
+      columns: [{
         label: "Name",
         selector: "metadata.name",
       }, {
@@ -77,9 +53,9 @@ function App() {
         }]
     },
     "Network": {
-      client: new NetworkOrdiriComV1alpha1Api(config),
+      client: new NetworkOrdiriComV1alpha1Api(ordiriConfig),
       icon: <NetworkIcon />,
-      headers: [{
+      columns: [{
           label: "Name",
           selector: "metadata.name",
         }, {
@@ -88,9 +64,9 @@ function App() {
         }]
     },
     "Storage": {
-      client: new StorageOrdiriComV1alpha1Api(config),
+      client: new StorageOrdiriComV1alpha1Api(ordiriConfig),
       icon: <StorageIcon />,
-      headers: [{
+      columns: [{
           label: "Name",
           selector: "metadata.name",
         }, {
@@ -99,6 +75,7 @@ function App() {
         }]
     }
   }
+
   const Layout = DefaultLayout
   return (
     <ThemeProvider theme={theme}>
@@ -121,7 +98,6 @@ function App() {
           <Layout.Content>
             <Routes>
               {Object.entries(types).map(([key, obj]) => {
-
                 const ComponentElement: typeof GenericResource = (() => {
                   if (obj.component) {
                     return obj.component
@@ -130,7 +106,7 @@ function App() {
                    return  GenericResource
                 })()
                 
-              return <Route key={key} path={key.toLowerCase()} element={<ComponentElement headers={obj.headers} title={key} api={obj.client} />} />
+              return <Route key={key} path={key.toLowerCase()} element={<ComponentElement columns={obj.columns} title={key} api={obj.client} />} />
               })}
             </Routes>
           </Layout.Content>

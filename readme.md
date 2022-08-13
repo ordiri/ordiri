@@ -1,11 +1,31 @@
 # Ordiri
-A multi-tenant IaaC platform
+An IaaC platform for my homelab
 
-Built for my homelab
-network inspired by openstack
-network =: subnet
+My homelab has gone through a lot of iterations through the years, starting off with basic raspberry pi's before moving to a small dedicated mac mini before finally making the shift to a rack mount server.
+
+This project is an attepmt to solve my own personal problems when playing in my homelab which all stem from a lack of physical hardware. While Kubernetes is great for running applications, it lacks any true multi-tenancy and OpenStack felt a bit dead so I decided to take all the lessons i'd learnt and make my own system.
+
+Currently it supports the 3 main areas you would care about - compute, storage and network - and is able to provision overlapping tenant isolated networks which span multiple physical hosts by using VXLan tunnels and linux namespaces, launch a virtual machine and provide it with both host level or distributed (Rados) block storage.
 
 
+
+# [Ordiri](./ordiri)
+Main code base for the per-node ordlet as well as the control plane apiserver
+
+## [API Server](./ordiri/cmd/apiserver)
+The API Server uses the Kubernetes API server packages to provide a kubernetes style api
+
+## [Boot Server](./ordiri/cmd/bootserver/) - Deprecated
+A simple HTTP server that uses MachineProfiles to serve differing IPXE boot configurations to a machine
+
+# [Ordiri Dashboard](./ordiri-dashboard)
+A React UI for interacting with the API Server
+
+# [Ordiri Client Typescript](./ordiri-client-typescript/)
+Open API client for use in a browser
+
+
+Networking:
 dhcp
 ```
 node-a (vma)
