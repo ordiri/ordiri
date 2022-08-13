@@ -8,7 +8,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/digitalocean/go-libvirt"
 	internallibvirt "github.com/ordiri/ordiri/pkg/compute/driver/libvirt"
 
@@ -94,7 +93,6 @@ func (r *VirtualMachineReconciler) ensureVolume(ctx context.Context, vm *compute
 func (r *VirtualMachineReconciler) ensureStoragePool(ctx context.Context, name string) (*libvirt.StoragePool, error) {
 	pool, err := r.LibvirtClient.StoragePoolLookupByName(name)
 	if err != nil {
-		spew.Dump(err)
 		xmlpool := libvirtxml.StoragePool{
 			Name: name,
 			Type: "dir",

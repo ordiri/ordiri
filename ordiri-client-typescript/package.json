@@ -1,0 +1,29 @@
+{
+  "name": "@ordiri/client-typescript",
+  "version": "v1",
+  "description": "OpenAPI client for @ordiri/client-typescript",
+  "author": "OpenAPI-Generator",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GIT_USER_ID/GIT_REPO_ID.git"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "url-parse": "^1.4.8",
+    "fetch-readablestream": "^0.2.0"
+  },
+  "devDependencies": {
+    "typescript": "^4.0",
+    "@types/node": "^18.7.2",
+    "@types/url-parse": "^1.4.8",
+    "openapi-typescript": "^5.4.1",
+    "openapi-typescript-codegen": "^0.23.0"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "/dist"
+  ]
+}

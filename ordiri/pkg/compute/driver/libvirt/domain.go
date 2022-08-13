@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/digitalocean/go-libvirt"
 	"github.com/ordiri/ordiri/pkg/log"
 	"libvirt.org/go/libvirtxml"
@@ -35,10 +34,6 @@ func EnsureExisting(ctx context.Context, client *Libvirt, dom libvirt.Domain, op
 		return EnsureResultDomainUnknown, nil, err
 	}
 
-	fmt.Print("\n\n\n\n")
-	spew.Dump(existingXml)
-	fmt.Print("\n\n\n\n")
-
 	domain := &libvirtxml.Domain{}
 	if err := domain.Unmarshal(existingXml); err != nil {
 		return EnsureResultDomainUnknown, nil, err
@@ -65,21 +60,25 @@ func EnsureExisting(ctx context.Context, client *Libvirt, dom libvirt.Domain, op
 
 		return domainStr != existingXml
 	}()
+
 	log.V(5).Info("updating existing domain", "wasChanged", wasChanged)
 	dom, err = client.DomainDefineXMLFlags(domainStr, 0)
 	if err != nil {
 		return EnsureResultDomainUnknown, nil, fmt.Errorf("unable to update xml definition - %w", err)
 	}
 
+	log.V(5).Info("getting domain state")
 	state, _, err := client.DomainGetState(dom, 0)
 	if err != nil {
 		return EnsureResultDomainUnknown, nil, fmt.Errorf("unable to get domain state - %w", err)
 	}
 	if state == int32(libvirt.DomainRunning) {
+		log.V(5).Info("applying live updates to vm")
 		if err := doLiveUpdates(client, dom, existing, domain); err != nil {
 			return EnsureResultDomainUnknown, nil, fmt.Errorf("error applying live updates - %w", err)
 		}
 	}
+	log.V(5).Info("ensure node has completed")
 
 	res := EnsureResultDomainNone
 	if wasChanged {
@@ -253,8 +252,6 @@ func doLiveUpdates(client *Libvirt, dom libvirt.Domain, old, new *libvirtxml.Dom
 	for _, iface := range old.Devices.Interfaces {
 		ifaces[iface.Target.Dev] = iface
 	}
-	// spew.Dump("Got the ifaces", ifaces)
-	// spew.Dump("Got the disks", disks)
 
 	// Call the attach device for all the devices not yet seen
 	for _, disk := range new.Devices.Disks {

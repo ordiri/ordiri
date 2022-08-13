@@ -3,7 +3,7 @@ import Router from './router';
 import './App.css';
 import { DefaultLayout } from './layouts';
 import theme from './theme';
-import { Divider, ListItem, ListItemButton, ListItemIcon, ListItemText, ThemeProvider } from '@mui/material';
+import { Chip, Divider, ListItemButton, ListItemIcon, ListItemText, ThemeProvider } from '@mui/material';
 import { mainListItems, secondaryListItems } from './components/menu-items';
 import { Route, Routes } from 'react-router-dom';
 import GenericResource from './pages/generic-resource';
@@ -11,22 +11,38 @@ import CoreIcon from '@mui/icons-material/Hub';
 import ComputeIcon from '@mui/icons-material/Computer';
 import NetworkIcon from '@mui/icons-material/CloudQueue';
 import StorageIcon from '@mui/icons-material/Storage';
-import { ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineVolume, ComputeOrdiriComV1alpha1Api, Configuration, CoreOrdiriComV1alpha1Api, NetworkOrdiriComV1alpha1Api, StorageOrdiriComV1alpha1Api } from './gen/src';
-
-
+import { ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineVolume, ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeStatus, ComputeOrdiriComV1alpha1Api, Configuration, CoreOrdiriComV1alpha1Api, NetworkOrdiriComV1alpha1Api, StorageOrdiriComV1alpha1Api } from '@ordiri/client-typescript';
+import CoreResourcesPage from './pages/core';
 
 function App() {
   const config  = new Configuration({
     basePath: "https://10.0.2.102:9443"
   })
+
   const types: Record<string, any> = {
     "Core": {
       client: new CoreOrdiriComV1alpha1Api(config),
+      component: CoreResourcesPage,
       icon: <CoreIcon />,
       headers: [{
         label: "Name",
         selector: "metadata.name",
-      }]
+      }, {
+          label: "Hosts",
+          selector: "status",
+          formatter: (res: ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeStatus) => {
+            if (res.networks) {
+              return <>
+                <div>
+                  networks: {res.networks.map(it => <Chip label={it.name} />)}
+                </div>
+                <div>
+                  VMs: {res.virtualMachines.map(it => <Chip label={it.name} />)}
+                </div>
+              </>
+            }
+          }
+        }]
     },
     "Compute": {
       client: new ComputeOrdiriComV1alpha1Api(config),
@@ -91,10 +107,10 @@ function App() {
           <Layout.Sidebar>
             {mainListItems}
             <Divider sx={{ my: 1 }} />
-            {Object.keys(types).map((key) => {
+            {Object.entries(types).map(([key, obj]) => {
               return <ListItemButton key={key} href={key.toLowerCase()}>
                 <ListItemIcon>
-                  {types[key].icon}
+                  {obj.icon}
                 </ListItemIcon>
                 <ListItemText primary={key} />
               </ListItemButton>
@@ -104,8 +120,17 @@ function App() {
           </Layout.Sidebar>
           <Layout.Content>
             <Routes>
-              {Object.keys(types).map(key => {
-                return <Route key={key} path={key.toLowerCase()} element={<GenericResource headers={types[key].headers} title={key} api={types[key].client} />} />
+              {Object.entries(types).map(([key, obj]) => {
+
+                const ComponentElement: typeof GenericResource = (() => {
+                  if (obj.component) {
+                    return obj.component
+                  }
+                  
+                   return  GenericResource
+                })()
+                
+              return <Route key={key} path={key.toLowerCase()} element={<ComponentElement headers={obj.headers} title={key} api={obj.client} />} />
               })}
             </Routes>
           </Layout.Content>

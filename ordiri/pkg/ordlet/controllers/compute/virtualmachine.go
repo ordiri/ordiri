@@ -70,7 +70,7 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		if k8err.IsNotFound(err) {
 			return ctrl.Result{}, nil
 		}
-		return ctrl.Result{}, err
+		return ctrl.Result{}, fmt.Errorf("vm not found - %w", err)
 	}
 
 	log = log.WithValues("vm", vm.Name)
@@ -83,12 +83,16 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 
 	if !vm.DeletionTimestamp.IsZero() {
 		log.V(5).Info("Detected VM in deletion mode")
-		return r.ReconcileDeletion(ctx, vm)
+		result, err := r.ReconcileDeletion(ctx, vm)
+		if err != nil {
+			return ctrl.Result{}, fmt.Errorf("error deleting virtual machine - %w", err)
+		}
+		return result, nil
 	}
 
 	if controllerutil.AddFinalizer(vm, FinalizerNameVmProvisioned) {
 		if err := r.Client.Update(ctx, vm); err != nil {
-			return ctrl.Result{}, err
+			return ctrl.Result{}, fmt.Errorf("unable to add finalizers - %w", err)
 		}
 	}
 
@@ -116,7 +120,7 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		log.V(5).Info("getting volume", "disk", disk)
 		volumeStatus, domainOption, err := r.ensureVolume(ctx, vm, disk)
 		if err != nil {
-			return ctrl.Result{}, err
+			return ctrl.Result{}, fmt.Errorf("error ensuring volume - %w", err)
 		}
 		log.V(5).Info("found volume", "status", volumeStatus)
 
@@ -130,7 +134,7 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	for _, iface := range vm.Spec.NetworkInterfaces {
 		ifaceStatus, ifaceOption, err := r.ensureNetworkInterface(ctx, vm, iface)
 		if err != nil {
-			return ctrl.Result{}, err
+			return ctrl.Result{}, fmt.Errorf("error ensuring network - %w", err)
 		}
 		domainOptions = append(domainOptions, ifaceOption)
 		ifaces = append(ifaces, ifaceStatus)
@@ -171,8 +175,8 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 
 	if needsUpdate {
 		log.Info("updating status of machine")
-		err = r.Client.Status().Update(ctx, vm)
-		if err != nil {
+
+		if err := r.Client.Status().Update(ctx, vm); err != nil {
 			return ctrl.Result{}, fmt.Errorf("unable to update status of vm - %w", err)
 		}
 	}

@@ -1,12 +1,13 @@
 import { Grid, Paper, Toolbar } from '@mui/material'
-import React, { FunctionComponent } from 'react'
+import React, { FunctionComponent, useCallback, useState } from 'react'
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import { JSONApiResponse } from '../../gen/src';
+import useWatch, { makeReaderIterator } from '../../hooks/watcher';
+import { JSONApiResponse } from '@ordiri/client-typescript';
 
 type ResultTableHeader = {
     label: string
@@ -16,20 +17,10 @@ type ResultTableHeader = {
 
 type ResultTableTableHeaders = Record<string, ResultTableHeader>
 
-interface GenericResourceProps {
-    api: any
-    title: string
-    headers: ResultTableTableHeaders
-}
+type listerItems<T = any> = Record<string, T>
+type listerResult<T> = { items: listerItems<T> }
 
-type listerItems = Record<string, any>
-type listerResult = { items: listerItems }
 
-interface ResultTableProps {
-    lister: (props: {watch: boolean}) => any // Observable<listerResult>
-    title: string
-    headers: ResultTableTableHeaders
-}
 
 const ResultCell = ({ header, result }: { header: ResultTableHeader, result: any }) => {
     var data = ""
@@ -50,79 +41,20 @@ const ResultCell = ({ header, result }: { header: ResultTableHeader, result: any
     </TableCell>
 }
 
-async function* makeReaderIterator(reader: ReadableStreamDefaultReader<Uint8Array>) {
-    const utf8Decoder = new TextDecoder('utf-8');
-    let { value: chunk, done: readerDone } = await reader.read();
-    var decodedChunk = chunk ? utf8Decoder.decode(chunk) : '';
 
-    const re = /\n|\r|\r\n/gm;
-    let startIndex = 0;
-    let result;
 
-    for (; ;) {
-        let result = re.exec(decodedChunk);
-        if (!result) {
-            if (readerDone) {
-                console.log("done")
-                debugger
-                break;
-            }
-            let remainder = decodedChunk.substr(startIndex);
-            ({ value: chunk, done: readerDone } = await reader.read());
-            decodedChunk = remainder + (decodedChunk ? utf8Decoder.decode(chunk) : '');
-            startIndex = re.lastIndex = 0;
-            continue;
-        }
-        yield decodedChunk.substring(startIndex, result.index);
-        startIndex = re.lastIndex;
-    }
-    if (startIndex < decodedChunk.length) {
-        // last line didn't end in a newline char
-        yield decodedChunk.substr(startIndex);
-    }
+interface ResultTableProps<T> {
+    lister: (props: { watch: boolean }) => Promise<JSONApiResponse<T>> // Observable<listerResult>
+    title: string
+    headers: ResultTableTableHeaders
 }
+function ResultTable<T>({ lister, title, headers }: ResultTableProps<T>) {
+    const [isLoading, setLoading] = useState(false)
+    const [data, setData] = useState<listerItems>({})
 
-
-
-const ResultTable = ({ lister, title, headers }: ResultTableProps) => {
-    const [isLoading, setLoading] = React.useState(true);
-    const [data, setData] = React.useState<listerItems>({});
-
-    React.useEffect(() => {
-        async function loadDataAsync() {
-            setLoading(true)
-            try {
-                var res = lister({watch: true})
-                console.log("creating lister")
-                res.then(async (response: JSONApiResponse<any>) => {
-                    for await (let line of makeReaderIterator(response.raw.body!.getReader())) {
-                        const obj: { type: "ADDED" | "MODIFIED" | "DELETED", object: any}= JSON.parse(line)
-                        console.log(obj);
-                        if (obj.type === 'ADDED' || obj.type === 'MODIFIED') {
-                            setData((data) => {
-                                return { ...data, [obj.object.metadata.uid]: obj.object }
-                            })
-                        }else if (obj.type === "DELETED") {
-                            setData((data) => {
-                                delete(data[obj.object.metadata.uid])
-                                return { ...data }
-                            })
-                        }else{
-                            console.log(obj)
-                            debugger;
-                        }
-                    }
-                })
-
-            } catch (e) {
-                console.warn(e);
-            } finally {
-                setLoading(false)
-            }
-        }
-
-        loadDataAsync();
-    }, [lister]);
+    const listerCb = useCallback(() => lister({ watch: true }), [lister])
+    const watchData = useWatch(listerCb)
+    
 
 
 
@@ -136,10 +68,10 @@ const ResultTable = ({ lister, title, headers }: ResultTableProps) => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {isLoading && <TableRow>
+                    {watchData.loading && <TableRow>
                         <TableCell colSpan={Math.max(Object.keys(headers).length, 1)}>Loading...</TableCell>    
                     </TableRow>}
-                    {!isLoading && Object.keys(data).length > 0 && Object.entries(data).map((row, idx) => (
+                    {!watchData.loading && Object.keys(watchData.items).length > 0 && Object.entries(watchData.items).map((row, idx) => (
                         <TableRow
                             key={row[0]}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -152,8 +84,16 @@ const ResultTable = ({ lister, title, headers }: ResultTableProps) => {
             </Table>
         </TableContainer>
     </Paper>
+
 }
 
+
+
+export interface GenericResourceProps {
+    api: any
+    title: string
+    headers: ResultTableTableHeaders
+}
 
 const GenericResourcePage = ({ api, title, headers }: GenericResourceProps) => {
     const proto = Object.getPrototypeOf(api)
@@ -165,7 +105,7 @@ const GenericResourcePage = ({ api, title, headers }: GenericResourceProps) => {
 
     return <Grid container spacing={3}>
         {listers.map((lister, idx) => <Grid key={idx} item xs={12}>
-            <ResultTable headers={headers} title={`${title} - ${lister.match('V1alpha1(.*?)Raw$')?.[1]}`} lister={proto[lister].bind(api)} />
+            <ResultTable<any> headers={headers} title={`${title} - ${lister.match('V1alpha1(.*?)Raw$')?.[1]}`} lister={proto[lister].bind(api)} />
         </Grid>)}
     </Grid>
 }

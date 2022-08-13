@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/ordiri/ordiri/log"
 
 	// "github.com/ordiri/ordiri/log"
@@ -110,8 +109,6 @@ func (s *Server) HTTPHandler() http.Handler {
 			errorResponse(w, r, "{{ .Message }}", struct{ Message string }{Message: err.Error()})
 			return
 		}
-
-		spew.Dump(config, filename)
 
 		if _, ok := config.Files[filename]; !ok {
 			errorResponse(w, r, "{{ .Message }}", struct{ Message string }{Message: "invalid file specified"})
