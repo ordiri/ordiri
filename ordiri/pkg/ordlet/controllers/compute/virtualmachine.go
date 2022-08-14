@@ -26,6 +26,7 @@ import (
 	"libvirt.org/go/libvirtxml"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	k8log "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
@@ -219,18 +220,18 @@ func (r *VirtualMachineReconciler) ReconcileDeletion(ctx context.Context, vm *co
 
 		state, reason, err := r.LibvirtClient.DomainGetState(*domain, 0)
 		if err != nil {
-			return ctrl.Result{}, err
+			return ctrl.Result{}, fmt.Errorf("unable to get domain state - %w", err)
 		}
 		log.Info("got the virtual machine state", "state", state, "reason", reason)
 		if libvirt.DomainState(state) == libvirt.DomainRunning || libvirt.DomainState(state) == libvirt.DomainPaused {
 			if err := r.LibvirtClient.DomainDestroyFlags(*domain, libvirt.DomainDestroyDefault); err != nil {
-				return ctrl.Result{}, err
+				return ctrl.Result{}, fmt.Errorf("unable to destroy vm - %w", err)
 			}
 		}
 
 		log.V(5).Info("undefining Vm")
 		if err := r.LibvirtClient.DomainUndefineFlags(*domain, 0); err != nil {
-			return ctrl.Result{}, err
+			return ctrl.Result{}, fmt.Errorf("unable to undefine vm - %", err)
 		}
 	}
 
@@ -249,7 +250,7 @@ func (r *VirtualMachineReconciler) ReconcileDeletion(ctx context.Context, vm *co
 		if r.NetworkManager.HasInterface(net, subnet, iface.Key()) {
 			netIface := r.NetworkManager.GetInterface(net, subnet, iface.Key())
 			if err := r.NetworkManager.RemoveInterface(ctx, net, subnet, netIface); err != nil {
-				return ctrl.Result{}, err
+				return ctrl.Result{}, fmt.Errorf("unable to remove network interface - %w", err)
 			}
 		}
 	}
@@ -270,27 +271,22 @@ func (r *VirtualMachineReconciler) ReconcileDeletion(ctx context.Context, vm *co
 
 	machine := &corev1alpha1.Machine{}
 	machine.Name = string(vm.UID)
-	if err := r.Client.Delete(ctx, machine); !k8err.IsNotFound(err) {
-		return ctrl.Result{}, err
+	if err := r.Client.Delete(ctx, machine); err != nil && !k8err.IsNotFound(err) {
+		return ctrl.Result{}, fmt.Errorf("unable to delete machine - %w", err)
 	}
 
 	if err := r.removeFinalizer(ctx, vm); err != nil {
-		return ctrl.Result{}, err
+		return ctrl.Result{}, fmt.Errorf("unable to remove finalizer - %w", err)
 	}
 
 	return ctrl.Result{}, nil
 }
 
 func (r *VirtualMachineReconciler) removeFinalizer(ctx context.Context, vm *computev1alpha1.VirtualMachine) error {
-	newFinalizers := []string{}
-	for _, finalizer := range vm.GetFinalizers() {
-		if finalizer != FinalizerNameVmProvisioned {
-			newFinalizers = append(newFinalizers, finalizer)
+	if controllerutil.RemoveFinalizer(vm, FinalizerNameVmProvisioned) {
+		if err := r.Client.Update(ctx, vm); err != nil {
+			return err
 		}
-	}
-	vm.SetFinalizers(newFinalizers)
-	if err := r.Client.Update(ctx, vm); err != nil {
-		return err
 	}
 
 	return nil
@@ -363,5 +359,8 @@ func (r *VirtualMachineReconciler) SetupWithManager(mgr ctrl.Manager) error {
 
 			return false
 		}))).
+		WithOptions(controller.Options{
+			MaxConcurrentReconciles: 5,
+		}).
 		Complete(r)
 }

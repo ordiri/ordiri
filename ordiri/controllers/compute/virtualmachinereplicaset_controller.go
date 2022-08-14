@@ -102,7 +102,12 @@ func (r *VirtualMachineReplicaSetReconciler) Reconcile(ctx context.Context, req 
 		vm.Name = fmt.Sprintf("%s-%d", rs.Name, i)
 		_, err := ctrl.CreateOrUpdate(ctx, r.Client, vm, func() error {
 			rs.Spec.Template.Spec.ScheduledNode = vm.Spec.ScheduledNode
-			if !reflect.DeepEqual(vm.Spec, rs.Spec.Template.Spec) {
+			vm2 := vm.DeepCopy()
+			// todo: hack remove this
+			for _, nw := range vm2.Spec.NetworkInterfaces {
+				nw.Mac = ""
+			}
+			if !reflect.DeepEqual(vm2.Spec, rs.Spec.Template.Spec) {
 				vm.Spec = rs.Spec.Template.Spec
 			}
 			if vm.Annotations == nil {

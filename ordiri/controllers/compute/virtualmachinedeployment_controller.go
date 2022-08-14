@@ -35,6 +35,10 @@ type VirtualMachineDeploymentReconciler struct {
 	Scheme *runtime.Scheme
 }
 
+const (
+	FinalizerNameDeploymentController = "compute.ordiri.com/deployment-controller"
+)
+
 //+kubebuilder:rbac:groups=compute,resources=virtualmachinedeployments,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=compute,resources=virtualmachinedeployments/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=compute,resources=virtualmachinedeployments/finalizers,verbs=update
@@ -65,7 +69,7 @@ func (r *VirtualMachineDeploymentReconciler) Reconcile(ctx context.Context, req 
 
 	hasFinalizer := false
 	for _, name := range deployment.GetFinalizers() {
-		if name == FinalizerNameVmProvisioned {
+		if name == FinalizerNameDeploymentController {
 			hasFinalizer = true
 		}
 	}
@@ -83,7 +87,7 @@ func (r *VirtualMachineDeploymentReconciler) Reconcile(ctx context.Context, req 
 		}
 		finalizers := []string{}
 		for _, finalizer := range deployment.GetFinalizers() {
-			if finalizer != FinalizerNameVmProvisioned {
+			if finalizer != FinalizerNameDeploymentController {
 				finalizers = append(finalizers, finalizer)
 			}
 		}
@@ -97,7 +101,7 @@ func (r *VirtualMachineDeploymentReconciler) Reconcile(ctx context.Context, req 
 
 	if !hasFinalizer {
 		log.V(5).Info("adding finalizer to Deployment")
-		deployment.SetFinalizers(append(deployment.GetFinalizers(), FinalizerNameVmProvisioned))
+		deployment.SetFinalizers(append(deployment.GetFinalizers(), FinalizerNameDeploymentController))
 		if err := r.Client.Update(ctx, deployment); err != nil {
 			return ctrl.Result{}, err
 		}
