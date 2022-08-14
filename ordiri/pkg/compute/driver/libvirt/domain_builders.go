@@ -5,6 +5,7 @@ package libvirt
 import (
 	"fmt"
 
+	"github.com/davecgh/go-spew/spew"
 	"libvirt.org/go/libvirtxml"
 )
 
@@ -171,9 +172,11 @@ func WithNetworkInterfaces(interfaces ...libvirtxml.DomainInterface) DomainOptio
 func WithVnc() DomainOption {
 	return WithGraphics(libvirtxml.DomainGraphic{
 		VNC: &libvirtxml.DomainGraphicVNC{
-			Listen:   "0.0.0.0",
-			AutoPort: "yes",
-			Passwd:   "password",
+			Listen:    "0.0.0.0",
+			AutoPort:  "yes",
+			Passwd:    "password12",
+			WebSocket: -1,
+			Port:      -1,
 		},
 	})
 }
@@ -189,7 +192,8 @@ func WithGraphics(graphics ...libvirtxml.DomainGraphic) DomainOption {
 			if g.Spice != nil {
 				return "spice"
 			}
-			return ""
+			spew.Dump(g)
+			panic("unable to decode graphic type")
 		}
 
 		existing := map[string]libvirtxml.DomainGraphic{}
@@ -203,7 +207,6 @@ func WithGraphics(graphics ...libvirtxml.DomainGraphic) DomainOption {
 			}
 
 			domain.Devices.Graphics = append(domain.Devices.Graphics, graphic)
-
 		}
 		return nil
 	}

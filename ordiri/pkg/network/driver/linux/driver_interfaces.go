@@ -12,7 +12,20 @@ import (
 )
 
 func (ln *linuxDriver) RemoveInterface(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface) error {
-	return fmt.Errorf("method 'RemoveInterface' not implemented")
+	// Remove the  flow rules for vm
+	if err := ln.removeInterfaceFlows(ctx, nw, sn, iface); err != nil {
+		return err
+	}
+
+	// remove tun/tap device
+	if err := ln.removeInterfaceTunTap(ctx, nw, sn, iface); err != nil {
+		return err
+	}
+
+	if err := ln.removeInterfaceBridge(ctx, nw, sn, iface); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (ln *linuxDriver) EnsureInterface(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface) (string, error) {
@@ -35,9 +48,33 @@ func (ln *linuxDriver) EnsureInterface(ctx context.Context, nw api.Network, sn a
 	return tuntap.Name, nil
 }
 
+func (ln *linuxDriver) removeInterfaceBridge(ctx context.Context, nw api.Network, subnet api.Subnet, iface api.Interface) error {
+	bridgeName := interfaceBridgeName(nw, subnet, iface)
+
+	if _, iface := ln.interfaces.search(bridgeName); iface != nil {
+		if err := netlink.LinkDel(iface); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (ln *linuxDriver) removeInterfaceTunTap(ctx context.Context, nw api.Network, subnet api.Subnet, iface api.Interface) error {
+	bridgeName := interfaceTunTapName(nw, subnet, iface)
+
+	if _, iface := ln.interfaces.search(bridgeName); iface != nil {
+		if err := netlink.LinkDel(iface); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func (ln *linuxDriver) createInterfaceBridge(ctx context.Context, nw api.Network, subnet api.Subnet, iface api.Interface) (*netlink.Bridge, error) {
 	bridgeName := interfaceBridgeName(nw, subnet, iface)
 
+	// todo: convert this to use the interfaces list
+	// that's streaming from netlink subscription
 	nl, err := netlink.LinkByName(bridgeName)
 	if err != nil && !errors.As(err, &netlink.LinkNotFoundError{}) {
 		return nil, fmt.Errorf("unknown error fetching vm bridge - %w", err)
@@ -147,6 +184,22 @@ func (ln *linuxDriver) interfaceFlowRules(ctx context.Context, nw api.Network, s
 	return []sdn.FlowRule{}, nil
 }
 
+func (ln *linuxDriver) removeInterfaceFlows(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface) error {
+	flowrules, err := ln.interfaceFlowRules(ctx, nw, sn, iface)
+	if err != nil {
+		return err
+	}
+
+	ovsClient := sdn.Ovs()
+
+	for _, flow := range flowrules {
+		if err := flow.Remove(ovsClient); err != nil {
+			return fmt.Errorf("error removing flow - %w", err)
+		}
+	}
+
+	return nil
+}
 func (ln *linuxDriver) installInterfaceFlows(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface) error {
 	flowrules, err := ln.interfaceFlowRules(ctx, nw, sn, iface)
 	if err != nil {

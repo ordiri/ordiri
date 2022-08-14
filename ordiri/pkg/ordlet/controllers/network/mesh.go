@@ -103,6 +103,7 @@ func (r *MeshReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 
 func (r *MeshReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
+		Named("mesh").
 		For(&corev1alpha1.Node{}).
 		Complete(r)
 }

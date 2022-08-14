@@ -19,11 +19,8 @@ package network
 import (
 	"context"
 	"fmt"
-	"os"
-	"path/filepath"
 	"reflect"
 	"strings"
-	"syscall"
 
 	k8err "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -145,117 +142,67 @@ func (r *SubnetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 
 	return ctrl.Result{}, nil
 }
-func (r *SubnetReconciler) unconfigure(ctx context.Context, nw *networkv1alpha1.Network, subnet *networkv1alpha1.Subnet) error {
-	// Create the DHCP service for this subnet
-	if err := r.removeDhcp(ctx, nw, subnet); err != nil {
-		return fmt.Errorf("unable to unconfigure dhcp - %w", err)
-	}
-	ovsClient := sdn.Ovs()
 
-	vlanId, err := r.Node.GetNode().SubnetVlanId(subnet.Name)
-	if err == nil {
-		// Setup all the flow rules for any VM in this subnet
-		flows, err := r.flows(ctx, nw, subnet, vlanId)
-		if err != nil {
-			return fmt.Errorf("unable to unconfigure openflow - %w", err)
-		}
+// func (r *SubnetReconciler) unconfigure(ctx context.Context, nw *networkv1alpha1.Network, subnet *networkv1alpha1.Subnet) error {
+// 	// // Create the DHCP service for this subnet
+// 	// if err := r.removeDhcp(ctx, nw, subnet); err != nil {
+// 	// 	return fmt.Errorf("unable to unconfigure dhcp - %w", err)
+// 	// }
+// 	ovsClient := sdn.Ovs()
 
-		for _, flow := range flows {
-			if err := flow.Remove(ovsClient); err != nil {
-				return fmt.Errorf("unable to unconfigure openflow rule %+v - %w", flow, err)
-			}
-		}
-	}
-	return nil
-}
+// 	vlanId, err := r.Node.GetNode().SubnetVlanId(subnet.Name)
+// 	if err == nil {
+// 		// Setup all the flow rules for any VM in this subnet
+// 		flows, err := r.flows(ctx, nw, subnet, vlanId)
+// 		if err != nil {
+// 			return fmt.Errorf("unable to unconfigure openflow - %w", err)
+// 		}
 
-func (r *SubnetReconciler) configure(ctx context.Context, nw *networkv1alpha1.Network, subnet *networkv1alpha1.Subnet) error {
-	log := log.FromContext(ctx).WithValues("stage", "configure")
+// 		for _, flow := range flows {
+// 			if err := flow.Remove(ovsClient); err != nil {
+// 				return fmt.Errorf("unable to unconfigure openflow rule %+v - %w", flow, err)
+// 			}
+// 		}
+// 	}
+// 	return nil
+// }
 
-	// ensure we are referencing the node we are running on in the subnets status so we can decommission the node
-	// when removed
-	err := r.addNodeToSubnetStatus(ctx, subnet)
-	if err != nil {
-		return err
-	}
-	if r.Node.GetNode().HasRole(corev1alpha1.NodeRoleNetwork) {
+// func (r *SubnetReconciler) configure(ctx context.Context, nw *networkv1alpha1.Network, subnet *networkv1alpha1.Subnet) error {
+// 	log := log.FromContext(ctx).WithValues("stage", "configure")
 
-		log.Info("installing NAT on node")
-		if err := r.installNat(ctx, subnet); err != nil {
-			return err
-		}
-		if subnet.Spec.Dhcp.Enabled {
-			log.Info("dhcp enabled, installing dhcp on node")
-			// Create the DHCP service for this subnet
-			if err := r.installDhcp(ctx, subnet); err != nil {
-				return err
-			}
-		} else {
-			log.Info("dhcp disabled, ensuring dhcp is removed")
-			if err := r.removeDhcp(ctx, nw, subnet); err != nil {
-				return err
-			}
-		}
-	}
+// 	// ensure we are referencing the node we are running on in the subnets status so we can decommission the node
+// 	// when removed
+// 	err := r.addNodeToSubnetStatus(ctx, subnet)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	if r.Node.GetNode().HasRole(corev1alpha1.NodeRoleNetwork) {
 
-	// Setup all the flow rules for any VM in this subnet
-	log.Info("installing openflow rules on node")
-	if err := r.installFlows(ctx, subnet); err != nil {
-		return err
-	}
-	return nil
-}
+// 		log.Info("installing NAT on node")
+// 		if err := r.installNat(ctx, subnet); err != nil {
+// 			return err
+// 		}
+// 		if subnet.Spec.Dhcp.Enabled {
+// 			log.Info("dhcp enabled, installing dhcp on node")
+// 			// Create the DHCP service for this subnet
+// 			if err := r.installDhcp(ctx, subnet); err != nil {
+// 				return err
+// 			}
+// 		} else {
+// 			log.Info("dhcp disabled, ensuring dhcp is removed")
+// 			if err := r.removeDhcp(ctx, nw, subnet); err != nil {
+// 				return err
+// 			}
+// 		}
+// 	}
 
-func (r *SubnetReconciler) removeDhcp(ctx context.Context, nw *networkv1alpha1.Network, subnet *networkv1alpha1.Subnet) error {
-	cableName := subnet.ServiceNetworkCableName()
-	log := log.FromContext(ctx)
-
-	log.Info("Deleting port for dhcp", "cableName", cableName)
-	// need to create flow rules taking this to the vxlan?
-	if err := sdn.Ovs().VSwitch.DeletePort(sdn.WorkloadSwitchName, cableName+"-out"); err != nil && !isPortNotExist(err) {
-		return fmt.Errorf("unable to remove dhcp port - %w", err)
-	}
-	log.Info("Deleting veth cable for dhcp ", "cableName", cableName)
-	if err := removeVeth(cableName); err != nil {
-		return fmt.Errorf("unable to delete veth cable %s - %w", cableName, err)
-	}
-
-	// create the dnsmasq config to provide dhcp for this subnet
-	baseDir := filepath.Join("/run/ordiri/subnets", subnet.Name, "dhcp")
-
-	if err := r.dbus.ReloadContext(ctx); err != nil {
-		return err
-	}
-	units, err := r.dbus.ListUnitsByNamesContext(ctx, []string{subnet.DhcpUnitName()})
-	if err != nil {
-		return err
-	}
-
-	if len(units) > 0 {
-		for _, unit := range units {
-			if unit.ActiveState == "active" {
-				r.dbus.KillUnitContext(ctx, unit.Name, int32(syscall.SIGTERM))
-			}
-			if unit.LoadState != "not-found" {
-				if _, err := r.dbus.DisableUnitFilesContext(ctx, []string{unit.Name}, true); err != nil {
-					return fmt.Errorf("unable to disable unit file %+v - %w", unit, err)
-				}
-			}
-		}
-	}
-
-	if err := os.RemoveAll(baseDir); err != nil {
-		return fmt.Errorf("unable to remove subnet runtime files - %w", err)
-	}
-
-	log.Info("deleting the network namespace for DHCP ", "ns", subnet.ServiceNetworkNamespace())
-
-	if err := deleteNetworkNs(subnet.ServiceNetworkNamespace()); err != nil {
-		return fmt.Errorf("unable to delete network namespace - %w", err)
-	}
-
-	return nil
-}
+// 	// Setup all the flow rules for any VM in this subnet
+// 	log.Info("installing openflow rules on node")
+// 	if err := r.installFlows(ctx, subnet); err != nil {
+// 		return err
+// 	}
+// 	return nil
+// }
 
 func (r *SubnetReconciler) installNat(ctx context.Context, subnet *networkv1alpha1.Subnet) error {
 	return nil

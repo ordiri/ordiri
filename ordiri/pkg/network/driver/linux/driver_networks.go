@@ -8,12 +8,28 @@ import (
 
 	"github.com/ordiri/ordiri/pkg/log"
 	"github.com/ordiri/ordiri/pkg/network/api"
+	"github.com/vishvananda/netlink"
 
 	"github.com/ordiri/ordiri/pkg/network/sdn"
 )
 
 func (ln *linuxDriver) RemoveNetwork(ctx context.Context, nw api.Network) error {
-	return fmt.Errorf("method 'RemoveNetwork' not implemented")
+	namespace := namespaceForRouter(nw)
+	publicGwCableName := publicGwCable(nw)
+	go func() {
+		releaseDhcpClient := exec.Command("ip", "netns", "exec", namespace, "dhclient", "-r", publicGwCableName.Namespace())
+		releaseDhcpClient.Run()
+	}()
+	if err := deleteNetworkNs(namespace); err != nil {
+		return fmt.Errorf("unable to delete network ns - %w", err)
+	}
+	if _, iface := ln.interfaces.search(publicGwCableName.Root()); iface != nil {
+		if err := netlink.LinkDel(iface); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (ln *linuxDriver) EnsureNetwork(ctx context.Context, nw api.Network) error {

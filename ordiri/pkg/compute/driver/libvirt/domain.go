@@ -123,12 +123,11 @@ func Ensure(ctx context.Context, client *Libvirt, name string, desiredState libv
 
 		return domain, dom, res, nil
 	} else {
-		_res, _domain, err := EnsureExisting(ctx, client, dom, opts...)
+		_res, _, err := EnsureExisting(ctx, client, dom, opts...)
 		if err != nil {
 			return domain, nil, res, fmt.Errorf("error updating existing domain - %w", err)
 		}
 		res = _res
-		domain = _domain
 	}
 
 	domainState, _, err := client.DomainGetState(dom, 0)
@@ -162,6 +161,17 @@ func Ensure(ctx context.Context, client *Libvirt, name string, desiredState libv
 		if desiredState != actualState {
 			return nil, nil, EnsureResultDomainUnknown, fmt.Errorf("error transitioning vm status - %s - %w", DomainState(actualState, reason), err)
 		}
+	}
+
+	// Note we don't addd the INACTIVE flag here to ensure it's the live config from the running VM, not what we have on disk
+	existingXml, err := client.DomainGetXMLDesc(dom, libvirt.DomainXMLSecure|libvirt.DomainXMLUpdateCPU)
+	if err != nil {
+		return nil, nil, EnsureResultDomainUnknown, fmt.Errorf("error fetching latest xml description - %w", err)
+	}
+
+	domain = &libvirtxml.Domain{}
+	if err := domain.Unmarshal(existingXml); err != nil {
+		return nil, nil, EnsureResultDomainUnknown, fmt.Errorf("error unmarshalling latest xml description - %w", err)
 	}
 
 	return domain, &dom, res, nil

@@ -29,11 +29,21 @@ func (ln *networkManager) GetSubnet(nw api.Network, name string) api.Subnet {
 }
 
 func (ln *networkManager) RemoveSubnet(ctx context.Context, nw api.Network, name string) error {
+	subnet := ln.GetSubnet(nw, name)
+	for _, iface := range ln.interfaces[nw.Name()][name] {
+		if err := ln.RemoveInterface(ctx, nw, subnet, iface); err != nil {
+			// todo error types
+			// return err
+		}
+	}
+
 	ln.l.Lock()
 	defer ln.l.Unlock()
-	if err := ln.driver.RemoveSubnet(ctx, nw, ln.GetSubnet(nw, name)); err != nil {
+
+	if err := ln.driver.RemoveSubnet(ctx, nw, subnet); err != nil {
 		return err
 	}
+
 	sns := []api.Subnet{}
 	for _, sn := range ln.subnets[nw.Name()] {
 		if sn.Name() == name {

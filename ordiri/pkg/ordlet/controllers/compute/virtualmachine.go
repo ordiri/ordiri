@@ -21,6 +21,7 @@ import (
 	"fmt"
 
 	k8err "k8s.io/apimachinery/pkg/api/errors"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 	"libvirt.org/go/libvirtxml"
@@ -28,9 +29,12 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
+	"sigs.k8s.io/controller-runtime/pkg/event"
+	"sigs.k8s.io/controller-runtime/pkg/handler"
 	k8log "sigs.k8s.io/controller-runtime/pkg/log"
-	"sigs.k8s.io/controller-runtime/pkg/predicate"
+	"sigs.k8s.io/controller-runtime/pkg/source"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/digitalocean/go-libvirt"
 	"github.com/google/uuid"
 	internallibvirt "github.com/ordiri/ordiri/pkg/compute/driver/libvirt"
@@ -169,6 +173,16 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		return ctrl.Result{}, fmt.Errorf("unable to create or update machine for vm - %w", err)
 	}
 
+	for _, graphics := range domain.Devices.Graphics {
+		if vnc := graphics.VNC; vnc != nil {
+			vncPort := int64(vnc.WebSocket)
+			if vm.Status.VncPort != vncPort {
+				needsUpdate = true
+				vm.Status.VncPort = vncPort
+			}
+		}
+	}
+
 	if vm.Status.ObservedGeneration != vm.Generation {
 		vm.Status.ObservedGeneration = vm.Generation
 		needsUpdate = true
@@ -231,7 +245,7 @@ func (r *VirtualMachineReconciler) ReconcileDeletion(ctx context.Context, vm *co
 
 		log.V(5).Info("undefining Vm")
 		if err := r.LibvirtClient.DomainUndefineFlags(*domain, 0); err != nil {
-			return ctrl.Result{}, fmt.Errorf("unable to undefine vm - %", err)
+			return ctrl.Result{}, fmt.Errorf("unable to undefine vm - %w", err)
 		}
 	}
 
@@ -255,19 +269,23 @@ func (r *VirtualMachineReconciler) ReconcileDeletion(ctx context.Context, vm *co
 		}
 	}
 
-	// pool, err := r.LibvirtClient.StoragePoolLookupByName(poolName)
-	// if err == nil && pool.Name != "" {
-	// 	for _, disk := range vm.Status.Volumes {
-	// 		vol, err := r.LibvirtClient.StorageVolLookupByName(pool, disk.VolumeName)
-	// 		log.V(5).Info("removing volume", "volume", disk.VolumeName, "volume", vol, "err", err)
-	// 		if err != nil {
-	// 			continue
-	// 		}
-	// 		if err := r.LibvirtClient.StorageVolDelete(vol, 0); err != nil {
-	// 			return ctrl.Result{}, err
-	// 		}
-	// 	}
-	// }
+	for _, volume := range vm.Spec.Volumes {
+		if hl := volume.HostLocal; hl != nil {
+			pool, err := r.LibvirtClient.StoragePoolLookupByName(hl.PoolName)
+			if err == nil && pool.Name != "" {
+				hostLocalVolumeName := vm.Name + "-" + hl.VolName
+				vol, err := r.LibvirtClient.StorageVolLookupByName(pool, hostLocalVolumeName)
+				log.V(5).Info("removing volume", "volume", hostLocalVolumeName, "volume", vol, "err", err)
+				if err != nil {
+					continue
+				}
+				if err := r.LibvirtClient.StorageVolDelete(vol, 0); err != nil {
+					return ctrl.Result{}, fmt.Errorf("error deleting storage volume %s/%s - %w", hl.PoolName, hostLocalVolumeName, err)
+				}
+			}
+		}
+
+	}
 
 	machine := &corev1alpha1.Machine{}
 	machine.Name = string(vm.UID)
@@ -338,27 +356,40 @@ func (r *VirtualMachineReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	if r.LibvirtClient == nil {
 		r.LibvirtClient = internallibvirt.Local()
 	}
-
 	if r.NetworkManager == nil {
 		panic("missing network manager")
 	}
+
+	// bad context here, needs to come from somewhere that will cancel on close
+	chanEvents, err := r.LibvirtClient.LifecycleEvents(context.Background())
+	if err != nil {
+		return err
+	}
+
+	chanWatchers := make(chan event.GenericEvent)
+	go func() {
+		for evt := range chanEvents {
+			// Skip events about the config file being defined as that's us
+			if evt.Event == int32(libvirt.DomainEventDefined) {
+				continue
+			}
+			spew.Dump(evt)
+			chanWatchers <- (event.GenericEvent{
+				Object: &computev1alpha1.VirtualMachine{
+					ObjectMeta: v1.ObjectMeta{
+						Name: evt.Dom.Name,
+					},
+				},
+			})
+		}
+	}()
+
+	// todo we should make our own controller class
+	// that let's people subscribe to the node obj
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&computev1alpha1.VirtualMachine{}).
 		Owns(&corev1alpha1.Machine{}).
-		WithEventFilter(predicate.And(predicate.NewPredicateFuncs(func(object client.Object) bool {
-			node := r.Node.GetNode()
-			if node.UID == "" {
-				return true
-			}
-
-			switch obj := object.(type) {
-			case *computev1alpha1.VirtualMachine:
-				scheduledOn, scheduled := obj.ScheduledNode()
-				return scheduled && scheduledOn == node.Name
-			}
-
-			return false
-		}))).
+		Watches(&source.Channel{Source: chanWatchers}, &handler.EnqueueRequestForObject{}).
 		WithOptions(controller.Options{
 			MaxConcurrentReconciles: 5,
 		}).

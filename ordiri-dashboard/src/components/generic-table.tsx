@@ -14,7 +14,7 @@ import GenericForm, { NodeForm } from './generic-form';
 export type ResultTableHeader = {
     label: string
     selector: string
-    formatter?: (arg0: any) => JSX.Element
+    formatter?: (arg0: any) => JSX.Element | undefined
 }
 
 export type ResultTableHeaders = Record<string, ResultTableHeader>
@@ -30,7 +30,7 @@ const ResultCell = ({ header, result }: { header: ResultTableHeader, result: any
             return null
         }, result)
     } else {
-        data = typeof result == "string" ? result : JSON.stringify(result)
+        data = header.formatter || typeof result == "string" ? result : JSON.stringify(result)
     }
 
     return <TableCell>

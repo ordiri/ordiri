@@ -80,6 +80,16 @@ func touchFile(fileName string) error {
 
 }
 
+func deleteNetworkNs(name string) error {
+	cmd := exec.Command("ip", "netns", "delete", name)
+	out, err := cmd.CombinedOutput()
+
+	if err != nil && !strings.Contains(string(out), "No such file or directory") {
+		return fmt.Errorf("%s: error removing network ns - %s - %w", cmd.String(), string(out), err)
+	}
+	return nil
+}
+
 func createNetworkNs(name string) error {
 	cmd := exec.Command("ip", "netns", "add", name)
 	out, err := cmd.CombinedOutput()

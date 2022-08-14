@@ -41,7 +41,7 @@ func (ln *linuxDriver) getOrCreateVeth(ctx context.Context, namespace string, ca
 		if _, existing := ln.interfaces.search(cableName.Root()); existing != nil {
 			log.Info("veth cable in wrong namespace, attempting to move", "namespace", namespace, "cableName", cableName, "actualNamespace", existing.namespace)
 
-			if err := netlink.LinkDel(link); err != nil {
+			if err := netlink.LinkDel(existing.Link); err != nil {
 				return fmt.Errorf("unable to delete link in wrong namespace - %w", err)
 			}
 		}

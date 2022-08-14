@@ -51,9 +51,6 @@ func (ln *networkManager) GetNetwork(name string) api.Network {
 }
 
 func (ln *networkManager) RemoveNetwork(ctx context.Context, name string) error {
-	ln.l.Lock()
-	defer ln.l.Unlock()
-
 	nw := ln.GetNetwork(name)
 
 	for _, subnet := range ln.subnets[nw.Name()] {
@@ -61,6 +58,9 @@ func (ln *networkManager) RemoveNetwork(ctx context.Context, name string) error 
 			return err
 		}
 	}
+
+	ln.l.Lock()
+	defer ln.l.Unlock()
 
 	if err := ln.driver.RemoveNetwork(ctx, nw); err != nil {
 		return err

@@ -934,7 +934,8 @@ func schema_pkg_apis_compute_v1alpha1_VirtualMachineStatus(ref common.ReferenceC
 					},
 					"networkInterfaces": {
 						SchemaProps: spec.SchemaProps{
-							Type: []string{"array"},
+							Description: "NetworkInterfaces connected to a virtual machine",
+							Type:        []string{"array"},
 							Items: &spec.SchemaOrArray{
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
@@ -947,7 +948,8 @@ func schema_pkg_apis_compute_v1alpha1_VirtualMachineStatus(ref common.ReferenceC
 					},
 					"disks": {
 						SchemaProps: spec.SchemaProps{
-							Type: []string{"array"},
+							Description: "Volumes is all the volumes which are allocated to this virtual machine",
+							Type:        []string{"array"},
 							Items: &spec.SchemaOrArray{
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
@@ -956,6 +958,14 @@ func schema_pkg_apis_compute_v1alpha1_VirtualMachineStatus(ref common.ReferenceC
 									},
 								},
 							},
+						},
+					},
+					"vncPort": {
+						SchemaProps: spec.SchemaProps{
+							Description: "VncPort contains the port number where the VNC server listens for this VM",
+							Default:     0,
+							Type:        []string{"integer"},
+							Format:      "int64",
 						},
 					},
 					"conditions": {
@@ -983,6 +993,7 @@ func schema_pkg_apis_compute_v1alpha1_VirtualMachineStatus(ref common.ReferenceC
 						},
 					},
 				},
+				Required: []string{"vncPort"},
 			},
 		},
 		Dependencies: []string{

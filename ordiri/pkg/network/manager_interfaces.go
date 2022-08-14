@@ -62,15 +62,19 @@ func (ln *networkManager) EnsureInterface(ctx context.Context, nw api.Network, s
 }
 
 func (ln *networkManager) RemoveInterface(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface) error {
-	ln.l.Lock()
-	defer ln.l.Unlock()
-
 	if _, ok := ln.interfaces[nw.Name()]; !ok {
 		return nil
 	}
 
 	if _, ok := ln.interfaces[nw.Name()][sn.Name()]; !ok {
 		return nil
+	}
+
+	ln.l.Lock()
+	defer ln.l.Unlock()
+
+	if err := ln.driver.RemoveInterface(ctx, nw, sn, iface); err != nil {
+		return err
 	}
 
 	ifaces := []api.Interface{}

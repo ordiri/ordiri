@@ -1,5 +1,5 @@
 import { Grid } from '@mui/material'
-import { ApiResponse } from '@ordiri/client-typescript'
+import { ApiResponse, BaseAPI, ComputeOrdiriComV1alpha1Api } from '@ordiri/client-typescript'
 import { ResultTable, ResultTableHeaders } from '../../components/generic-table'
 
 export type Lister<T> = (props: { watch: boolean }) => Promise<ApiResponse<T>>
@@ -7,8 +7,9 @@ export interface ResourceBox<T> {
     lister: Lister<T>
     columns: ResultTableHeaders
 }
-export type ResourceBoxes<T> = Record<string, ResourceBox<T>>
-
+export type ResourceBoxes<T> = {
+    [Property in keyof T as string]: ResourceBox<T[Property]>;
+}
 
 export interface ResourcePageProps {
     title: string
@@ -17,15 +18,24 @@ export interface ResourcePageProps {
 export function CreateResourcePage<T>(listers: ResourceBoxes<T>) {
     return ({ title }: ResourcePageProps) => {
         return <Grid container spacing={3}>
-            {Object.entries(listers).map(([name, lister]) => <Grid key={name} item xs={12}>
+            {Object.entries(listers).map(([name, lister]: [any, any]) => <Grid key={name} item xs={12}>
                 <ResultTable<T> columns={lister.columns} title={`${title} - ${name}`} lister={lister.lister} />
             </Grid>)}
         </Grid>
     }
 }
 
+const a = new ComputeOrdiriComV1alpha1Api()
+
+const foo = CreateResourcePage({a: {
+    columns: {
+
+    },
+    lister: a.listComputeOrdiriComV1alpha1VirtualMachineRaw
+}})
+
 export interface GenericResourceProps {
-    api: any
+    api: BaseAPI
     title: string
     columns: ResultTableHeaders
 }

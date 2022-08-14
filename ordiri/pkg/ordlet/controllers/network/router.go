@@ -76,6 +76,7 @@ func (r *RouterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	// check if this node contains the subnet
 	for _, selector := range router.Spec.Subnets {
 		if _, err := r.Node.GetNode().Subnet(selector.Name); err != nil {
+			log.Info("skipping subnet as not scheduled on this node")
 			continue
 		}
 

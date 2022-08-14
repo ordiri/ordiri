@@ -198,9 +198,16 @@ var (
 type VirtualMachineStatus struct {
 	// The generation observed by the deployment controller.
 	// +optional
-	ObservedGeneration int64                                  `json:"observedGeneration"`
-	NetworkInterfaces  []VirtualMachineNetworkInterfaceStatus `json:"networkInterfaces,omitempty"`
-	Volumes            []VirtualMachineVolumeStatus           `json:"disks,omitempty"`
+	ObservedGeneration int64 `json:"observedGeneration"`
+
+	// NetworkInterfaces connected to a virtual machine
+	NetworkInterfaces []VirtualMachineNetworkInterfaceStatus `json:"networkInterfaces,omitempty"`
+
+	// Volumes is all the volumes which are allocated to this virtual machine
+	Volumes []VirtualMachineVolumeStatus `json:"disks,omitempty"`
+
+	// VncPort contains the port number where the VNC server listens for this VM
+	VncPort int64 `json:"vncPort"`
 
 	// Represents the observations of a foo's current state.
 	// Known .status.conditions.type are: "AssignedRole", "Progressing", and "Degraded"
@@ -211,6 +218,7 @@ type VirtualMachineStatus struct {
 	// +kubebuilder:default=[{type: "MachineCreated", status: "False"}, {type: "MachineRunning", status: "False"}]
 	Conditions []metav1.Condition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type" protobuf:"bytes,1,rep,name=conditions"`
 }
+
 type VirtualMachineNetworkInterfaceStatus struct {
 	Name string `json:"name"`
 	Mac  string `json:"mac"`

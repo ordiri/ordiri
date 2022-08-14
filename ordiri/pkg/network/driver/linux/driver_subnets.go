@@ -8,6 +8,7 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+	"syscall"
 
 	"github.com/coreos/go-systemd/unit"
 	"github.com/digitalocean/go-openvswitch/ovs"
@@ -19,7 +20,15 @@ import (
 )
 
 func (ln *linuxDriver) RemoveSubnet(ctx context.Context, nw api.Network, sn api.Subnet) error {
-	return fmt.Errorf("method 'RemoveSubnet' not implemented")
+	if err := ln.removeSubnetFlows(ctx, nw, sn); err != nil {
+		return fmt.Errorf("error removing subnet flows - %w", err)
+	}
+
+	if err := ln.removeDhcp(ctx, nw, sn); err != nil {
+		return fmt.Errorf("error removing dhcp - %w", err)
+	}
+
+	return nil
 }
 
 func (ln *linuxDriver) EnsureSubnet(ctx context.Context, nw api.Network, sn api.Subnet) error {
@@ -29,6 +38,70 @@ func (ln *linuxDriver) EnsureSubnet(ctx context.Context, nw api.Network, sn api.
 
 	if err := ln.installSubnetFlows(ctx, nw, sn); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func isPortNotExist(err error) bool {
+	if ovs.IsPortNotExist(err) {
+		return true
+	}
+
+	return strings.Contains(err.Error(), "does not have a port")
+}
+
+func (ln *linuxDriver) removeDhcp(ctx context.Context, nw api.Network, subnet api.Subnet) error {
+	cableName := dhcpCableName(nw, subnet)
+	log := log.FromContext(ctx)
+	namespace := namespaceForServices(nw, subnet)
+	unitName := dhcpUnitName(subnet)
+
+	log.Info("Deleting port for dhcp", "cableName", cableName)
+	// need to create flow rules taking this to the vxlan?
+	if err := sdn.Ovs().VSwitch.DeletePort(sdn.WorkloadSwitchName, cableName.Root()); err != nil && !isPortNotExist(err) {
+		return fmt.Errorf("unable to remove dhcp port - %w", err)
+	}
+	log.Info("Deleting veth cable for dhcp ", "cableName", cableName)
+
+	if _, iface := ln.interfaces.search(cableName.Root()); iface != nil {
+		if err := netlink.LinkDel(iface); err != nil {
+			return fmt.Errorf("error removing cable interface - %w", err)
+		}
+	}
+
+	// create the dnsmasq config to provide dhcp for this subnet
+	baseDir := filepath.Join("/run/ordiri/subnets", subnet.Name(), "dhcp")
+
+	if err := ln.dbus.ReloadContext(ctx); err != nil {
+		return fmt.Errorf("unabel to reload systemctl dbus ctx - %w", err)
+	}
+	units, err := ln.dbus.ListUnitsByNamesContext(ctx, []string{unitName})
+	if err != nil {
+		return fmt.Errorf("error getting systemctl unit names - %w", err)
+	}
+
+	if len(units) > 0 {
+		for _, unit := range units {
+			if unit.ActiveState == "active" {
+				ln.dbus.KillUnitContext(ctx, unit.Name, int32(syscall.SIGTERM))
+			}
+			if unit.LoadState != "not-found" {
+				if _, err := ln.dbus.DisableUnitFilesContext(ctx, []string{unit.Name}, true); err != nil {
+					return fmt.Errorf("unable to disable unit file %+v - %w", unit, err)
+				}
+			}
+		}
+	}
+
+	if err := os.RemoveAll(baseDir); err != nil {
+		return fmt.Errorf("unable to remove subnet runtime files - %w", err)
+	}
+
+	log.Info("deleting the network namespace for DHCP ", "ns", namespace)
+
+	if err := deleteNetworkNs(namespace); err != nil {
+		return fmt.Errorf("unable to delete network namespace - %w", err)
 	}
 
 	return nil
@@ -174,6 +247,22 @@ func (ln *linuxDriver) flows(ctx context.Context, nw api.Network, subnet api.Sub
 	}, nil
 }
 
+func (ln *linuxDriver) removeSubnetFlows(ctx context.Context, nw api.Network, subnet api.Subnet) error {
+	flows, err := ln.flows(ctx, nw, subnet)
+	if err != nil {
+		return err
+	}
+	ovsClient := sdn.Ovs()
+
+	for _, flow := range flows {
+		if err := flow.Remove(ovsClient); err != nil {
+			return fmt.Errorf("error adding flow - %w", err)
+		}
+	}
+
+	return nil
+
+}
 func (ln *linuxDriver) installSubnetFlows(ctx context.Context, nw api.Network, subnet api.Subnet) error {
 	flows, err := ln.flows(ctx, nw, subnet)
 	if err != nil {
@@ -189,9 +278,4 @@ func (ln *linuxDriver) installSubnetFlows(ctx context.Context, nw api.Network, s
 	}
 
 	return nil
-}
-
-func (ln *linuxDriver) subnetBridge(ctx context.Context, nw api.Network, sn api.Subnet) (*netlink.Bridge, error) {
-	// link := netlink.Tuntap{}
-	return nil, fmt.Errorf("createTunTap not implemented")
 }

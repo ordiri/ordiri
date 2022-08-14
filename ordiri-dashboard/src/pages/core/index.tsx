@@ -12,7 +12,7 @@ interface CoreResourceProps { }
 const CoreResourcesPage = () => {
     const api = new CoreOrdiriComV1alpha1Api(ordiriConfig)
 
-    const Page = CreateResourcePage<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Node>({
+    const Page = CreateResourcePage({
         "Nodes": {
             lister: api.listCoreOrdiriComV1alpha1NodeRaw.bind(api),
             columns: {
@@ -52,7 +52,7 @@ const CoreResourcesPage = () => {
                 approved: {
                     selector: "spec.approved",
                     label: "Approved",
-                    formatter: (approved) => {
+                    formatter: (approved: boolean) => {
                         if (approved == true) {
                             return <IconApproved />
                         }else{
@@ -63,7 +63,7 @@ const CoreResourcesPage = () => {
                 properties: {
                     selector: "spec.properties",
                     label: "Properties",
-                    formatter: (arg) => {
+                    formatter: (arg: any) => {
                         return arg.map((property: {name: string, value: any}) => {
                             return <span key={property.value}>{property.name}: {JSON.stringify(property.value)}</span>
                         })
