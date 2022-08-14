@@ -51,6 +51,11 @@ func (ln *linuxDriver) EnsureInterface(ctx context.Context, nw api.Network, sn a
 func (ln *linuxDriver) removeInterfaceBridge(ctx context.Context, nw api.Network, subnet api.Subnet, iface api.Interface) error {
 	bridgeName := interfaceBridgeName(nw, subnet, iface)
 
+	// need to create flow rules taking this to the vxlan?
+	if err := sdn.Ovs().VSwitch.DeletePort(sdn.WorkloadSwitchName, bridgeName); err != nil && !isPortNotExist(err) {
+		return fmt.Errorf("unable to remove interface bridge port from ovs switch - %w", err)
+	}
+
 	if _, iface := ln.interfaces.search(bridgeName); iface != nil {
 		if err := netlink.LinkDel(iface); err != nil {
 			return err

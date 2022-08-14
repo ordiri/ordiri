@@ -2,6 +2,7 @@ package linux
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -65,7 +66,7 @@ func (ln *linuxDriver) removeDhcp(ctx context.Context, nw api.Network, subnet ap
 	log.Info("Deleting veth cable for dhcp ", "cableName", cableName)
 
 	if _, iface := ln.interfaces.search(cableName.Root()); iface != nil {
-		if err := netlink.LinkDel(iface); err != nil {
+		if err := netlink.LinkDel(iface.Link); err != nil && !errors.As(err, &netlink.LinkNotFoundError{}) {
 			return fmt.Errorf("error removing cable interface - %w", err)
 		}
 	}
