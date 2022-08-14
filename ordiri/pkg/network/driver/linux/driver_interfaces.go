@@ -116,17 +116,16 @@ func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network
 		la.Name = tuntapName
 		la.HardwareAddr = iface.Mac()
 		tuntap = &netlink.Tuntap{
-			LinkAttrs:  la,
-			Mode:       netlink.TUNTAP_MODE_TAP,
-			Flags:      netlink.TUNTAP_DEFAULTS | netlink.TUNTAP_VNET_HDR,
+			LinkAttrs: la,
+			Mode:      netlink.TUNTAP_MODE_TAP,
+			// Flags:      netlink.TUNTAP_DEFAULTS | netlink.TUNTAP_VNET_HDR,
+			Queues:     2,
 			NonPersist: false,
-			Queues:     1,
 		}
 
 		if err := netlink.LinkAdd(tuntap); err != nil {
 			return nil, fmt.Errorf("unable to add new tuntap device for vm - %w", err)
 		}
-
 	}
 
 	// we could set it on create but this ensure it's always correct and you can't
@@ -140,7 +139,6 @@ func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network
 	if err := netlink.LinkSetUp(tuntap); err != nil {
 		return nil, fmt.Errorf("unable to set tuntap device up - %w", err)
 	}
-
 	return tuntap, nil
 }
 func (ln *linuxDriver) interfaceFlowRules(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface) ([]sdn.FlowRule, error) {

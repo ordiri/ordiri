@@ -71,7 +71,7 @@ func (r *VirtualMachineDeploymentReconciler) Reconcile(ctx context.Context, req 
 	}
 
 	if !deployment.DeletionTimestamp.IsZero() {
-		log.V(5).Info("Detected RS it deletion mode")
+		log.V(5).Info("Detected Deployment in deletion mode")
 
 		rs := &computev1alpha1.VirtualMachineReplicaSet{}
 		rs.Name = deployment.Name

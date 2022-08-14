@@ -54,14 +54,6 @@ func (subnet *Subnet) RouterNetworkInternalCableName() string {
 	return fmt.Sprintf("irtr-%s", subnet.DeviceHash())
 }
 
-func (subnet *Subnet) VMTap(vmName common.DeviceHashProvider) string {
-	return "ovm-" + subnet.DeviceHash() + vmName.DeviceHash()
-}
-
 func (subnet *Subnet) VMBridge(vmName common.DeviceHashProvider) string {
 	return "obr-" + subnet.DeviceHash() + vmName.DeviceHash()
-}
-
-func (subnet *Subnet) TunnelName() string {
-	return "otn-" + subnet.DeviceHash()
 }

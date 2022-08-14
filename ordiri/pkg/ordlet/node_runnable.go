@@ -138,7 +138,7 @@ func (clnr *createLocalNodeRunnable) Start(ctx context.Context) error {
 		}
 	}
 
-	<-ctx.Done()
+	log.Info("node runnable complette")
 
 	return nil
 }

@@ -25,13 +25,14 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	computev1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
 )
 
 const (
-	FinalizerNameVmProvisioned = "compute.ordiri.com/replicaset-controller"
+	FinalizerNameReplicaSetController = "compute.ordiri.com/replicaset-controller"
 )
 
 // VirtualMachineReplicaSetReconciler reconciles a VirtualMachineReplicaSet object
@@ -67,49 +68,33 @@ func (r *VirtualMachineReplicaSetReconciler) Reconcile(ctx context.Context, req 
 	}
 	log.V(5).Info("found replicaset", "rs", rs)
 
-	hasFinalizer := false
-	for _, name := range rs.GetFinalizers() {
-		if name == FinalizerNameVmProvisioned {
-			hasFinalizer = true
-		}
-	}
-
 	if !rs.DeletionTimestamp.IsZero() {
-		log.V(5).Info("Detected RS it deletion mode")
+		log.V(5).Info("Detected replicaset in deletion mode")
 
 		for i := 0; i < rs.Spec.Replicas; i++ {
 			vm := &computev1alpha1.VirtualMachine{}
 			vm.Name = fmt.Sprintf("%s-%d", rs.Name, i)
 			if err := r.Client.Delete(ctx, vm); err != nil {
 				if errors.IsNotFound(err) {
-					return ctrl.Result{}, nil
+					continue // Doesn't matter if it's already gone
 				}
 				return ctrl.Result{}, err
 			}
 		}
-		finalizers := []string{}
-		for _, finalizer := range rs.GetFinalizers() {
-
-			if finalizer != FinalizerNameVmProvisioned {
-				finalizers = append(finalizers, finalizer)
+		if controllerutil.RemoveFinalizer(rs, FinalizerNameReplicaSetController) {
+			if err := r.Client.Update(ctx, rs); err != nil {
+				return ctrl.Result{}, err
 			}
-		}
-		rs.SetFinalizers(finalizers)
-		if err := r.Client.Update(ctx, rs); err != nil {
-			return ctrl.Result{}, err
 		}
 
 		return ctrl.Result{}, nil
 	}
 
-	if !hasFinalizer {
+	if controllerutil.AddFinalizer(rs, FinalizerNameReplicaSetController) {
 		log.V(5).Info("adding finalizer to ReplicaSet")
-		rs.SetFinalizers(append(rs.GetFinalizers(), FinalizerNameVmProvisioned))
 		if err := r.Client.Update(ctx, rs); err != nil {
 			return ctrl.Result{}, err
 		}
-
-		return ctrl.Result{}, nil
 	}
 
 	for i := 0; i < rs.Spec.Replicas; i++ {

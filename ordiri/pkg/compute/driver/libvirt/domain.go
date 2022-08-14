@@ -153,7 +153,7 @@ func Ensure(ctx context.Context, client *Libvirt, name string, desiredState libv
 		} else {
 			return nil, nil, EnsureResultDomainUnknown, fmt.Errorf("unknown state %d", desiredState)
 		}
-		time.Sleep(time.Second * 5)
+		time.Sleep(time.Second * 1) //todo why??
 		dstate, reason, err := client.DomainGetState(dom, 0)
 		if err != nil {
 			return nil, nil, EnsureResultDomainUnknown, fmt.Errorf("couldn't get state of domain - %w", err)

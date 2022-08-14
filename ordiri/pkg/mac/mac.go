@@ -1,8 +1,11 @@
 package mac
 
 import (
-	"crypto/rand"
+	"encoding/binary"
 	"net"
+
+	crand "crypto/rand"
+	mrand "math/rand"
 )
 
 const MacAddrLength = 6
@@ -11,10 +14,21 @@ var EmptyMacAddr = []byte{}
 
 var Parse = net.ParseMAC
 
+func init() {
+	// https://stackoverflow.com/posts/54491783/revisions
+	var b [8]byte
+	_, err := crand.Read(b[:])
+	if err != nil {
+		panic("cannot seed math/rand package with cryptographically secure random number generator")
+	}
+	mrand.Seed(int64(binary.LittleEndian.Uint64(b[:])))
+}
+
 func New() net.HardwareAddr {
 	buf := make([]byte, MacAddrLength)
-	_, err := rand.Read(buf[:])
+	_, err := crand.Read(buf[:])
 	if err != nil {
+		panic("failed mac gen")
 		return EmptyMacAddr
 	}
 

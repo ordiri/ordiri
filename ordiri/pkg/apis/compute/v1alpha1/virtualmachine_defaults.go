@@ -56,8 +56,13 @@ func SetDefaults_VirtualMachineSpec(obj *VirtualMachineSpec) {
 	}
 }
 
-func SetDefaults_VirtualMachineNetworkInterface(obj *VirtualMachineNetworkInterface) {
-	if obj.Mac == "" {
-		obj.Mac = mac.Unicast().String()
+// We do this explicitly on the VM to prevent templated
+// resources which directly embed the VirtualMachineSpec
+func SetDefaults_VirtualMachine(obj *VirtualMachine) {
+	nws := obj.Spec.NetworkInterfaces
+	for _, nw := range nws {
+		if nw.Mac == "" {
+			nw.Mac = mac.Unicast().String()
+		}
 	}
 }

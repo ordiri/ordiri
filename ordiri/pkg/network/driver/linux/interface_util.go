@@ -1,6 +1,8 @@
 package linux
 
 import (
+	"fmt"
+
 	"github.com/ordiri/ordiri/pkg/network/api"
 )
 
@@ -28,17 +30,18 @@ func interfaceBridgeName(network api.Network, subnet api.Subnet, iface api.Inter
 }
 
 func interfaceTunTapName(network api.Network, subnet api.Subnet, iface api.Interface) string {
-	return InterfaceTunTapPrefix + hash(network.Name()+subnet.Name()+iface.Mac().String())
+	fmt.Printf("getting iface name for - %s=%s\n\n", iface.Mac().String(), hash(iface.Mac().String()))
+	return InterfaceTunTapPrefix + hash(iface.Mac().String())
 }
 
 func publicGwCable(network api.Network) VethCable {
 	return VethCable(PublicGatewayCablePrefix + hash(network.Name()))
 }
 func internalRouterCable(network api.Network, subnet api.Subnet) VethCable {
-	return VethCable(InternalRouterCablePrefix + hash(subnet.Name()+subnet.Name()))
+	return VethCable(InternalRouterCablePrefix + hash(network.Name()+subnet.Name()))
 }
 func servicesCableName(network api.Network, subnet api.Subnet, svc string) VethCable {
-	return VethCable(NetworkServiceCablePrefix + hash(subnet.Name()+subnet.Name()))
+	return VethCable(NetworkServiceCablePrefix + hash(network.Name()+subnet.Name()))
 }
 func dhcpCableName(network api.Network, subnet api.Subnet) VethCable {
 	return servicesCableName(network, subnet, "dhcp")
