@@ -80,7 +80,8 @@ export function ResultTable<T>({ lister, title, columns }: ResultTableProps<T>) 
 
     return <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
         <Toolbar>{title}</Toolbar>
-        <AddNewPopover />
+        {/* todo: add back this form */}
+        {false && <AddNewPopover />}
         <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>

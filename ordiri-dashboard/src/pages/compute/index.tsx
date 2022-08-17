@@ -11,7 +11,7 @@ const PageTitle = "Compute Services"
 
 interface ComputeResourceProps { }
 
-export const VncDialogLauncher = ({host, port}: {host: string, port:number}) => {
+export const VncDialogLauncher = ({ host, port, name }: { host: string, name: string, port:number}) => {
     const [open, setOpen] = useState(false);
 
     const handleClickOpen = () => {
@@ -26,10 +26,10 @@ export const VncDialogLauncher = ({host, port}: {host: string, port:number}) => 
     return (
         <>
             <Button onClick={handleClickOpen}>
-                {port}
+                Launch
             </Button>
             <Dialog open={open} onClose={handleClose} fullWidth={true} maxWidth={'xl'}>
-                <DialogTitle>Create</DialogTitle>
+                <DialogTitle>Console for {name}</DialogTitle>
                 <DialogContent>
                     <VncScreen
                         url={`ws://${host}:${port}`}
@@ -56,7 +56,7 @@ const ComputeResourcesPage = (props: ComputeResourceProps) => {
 
     // todo the type here is clearly done at 4am, it should be inferred from the listers return values
     const Page = CreateResourcePage({
-        "Nodes": {
+        "Virtual Machines": {
             lister: api.listComputeOrdiriComV1alpha1VirtualMachineRaw.bind(api),
             columns: {
                 name: {
@@ -65,29 +65,6 @@ const ComputeResourcesPage = (props: ComputeResourceProps) => {
                 }, node: {
                     label: "Node",
                     selector: "spec.node",
-                }, vnc: {
-                    label: "VNC Display Port",
-                    formatter: (obj: ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine) => {
-                        if (obj.spec == null || obj.status == null) {
-                            return "Pending"
-                        }
-
-                        const host = obj.spec.node
-                        const port = (obj.status as {vncPort: number|undefined}).vncPort
-                        if (!port || port <= 0) {
-                            return "Pending"
-                        }
-                        var url = ""
-                        if (host === "debian") {
-                            url ="10.0.1.110"
-                        }else if (host === "mothership") {
-                            url = "10.0.2.118"
-                        }
-
-                        return <>
-                            <VncDialogLauncher host={url} port={port!} />
-                        </>
-                    }
                 }, nws: {
                     label: "Networks",
                     selector: "spec.networkInterfaces",
@@ -114,6 +91,29 @@ const ComputeResourcesPage = (props: ComputeResourceProps) => {
                         {res.map(it => {
                             return <div>{it.name}/{it.device}/{it.hostLocal?.size}</div>
                         })}
+                        </>
+                    }
+                }, vnc: {
+                    label: "Console",
+                    formatter: (obj: ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine) => {
+                        if (obj.spec == null || obj.status == null) {
+                            return "Pending"
+                        }
+
+                        const host = obj.spec.node
+                        const port = (obj.status as { vncPort: number | undefined }).vncPort
+                        if (!port || port <= 0) {
+                            return "Pending"
+                        }
+                        var url = ""
+                        if (host === "debian") {
+                            url = "10.0.1.110"
+                        } else if (host === "mothership") {
+                            url = "10.0.2.118"
+                        }
+
+                        return <>
+                            <VncDialogLauncher name={obj.metadata?.name || "N/A"} host={url} port={port!} />
                         </>
                     }
                 }

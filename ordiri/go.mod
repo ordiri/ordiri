@@ -148,28 +148,31 @@ require (
 
 require (
 	github.com/Masterminds/sprig v2.22.0+incompatible
-	github.com/c-robinson/iplib v1.0.3
+	github.com/ceph/go-ceph v0.16.0
+	github.com/coreos/go-systemd v0.0.0-20190321100706-95778dfbb74e
 	github.com/digitalocean/go-libvirt v0.0.0-20220704152101-6d260d9c16a3
 	github.com/digitalocean/go-openvswitch v0.0.0-20211105174344-2a0f99c6436b
+	github.com/insomniacslk/dhcp v0.0.0-20220812085412-509691fd59ec
 	github.com/mdlayher/netlink v1.6.0
 	github.com/vishvananda/netlink v1.1.0
 	github.com/vishvananda/netns v0.0.0-20191106174202-0a2b9b5464df
+	inet.af/netaddr v0.0.0-20220617031823-097006376321
 	libvirt.org/go/libvirtxml v1.8005.0
 )
 
 require (
+	github.com/BurntSushi/toml v0.4.1 // indirect
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/semver v1.5.0 // indirect
-	github.com/ceph/go-ceph v0.16.0 // indirect
+	github.com/container-storage-interface/spec v1.6.0 // indirect
 	github.com/godbus/dbus/v5 v5.0.4 // indirect
-	github.com/google/nftables v0.0.0-20220808154552-2eca00135732 // indirect
 	github.com/huandu/xstrings v1.3.2 // indirect
 	github.com/josharian/native v1.0.0 // indirect
 	github.com/jsimonetti/rtnetlink v1.2.1 // indirect
 	github.com/mdlayher/socket v0.1.1 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
+	github.com/u-root/uio v0.0.0-20210528114334-82958018845c // indirect
 	go4.org/intern v0.0.0-20211027215823-ae77deb06f29 // indirect
 	go4.org/unsafe/assume-no-moving-gc v0.0.0-20220617031537-928513b29760 // indirect
-	inet.af/netaddr v0.0.0-20220617031823-097006376321 // indirect
 )

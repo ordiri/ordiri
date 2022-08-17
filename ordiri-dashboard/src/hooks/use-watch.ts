@@ -66,7 +66,6 @@ export async function* makeReaderIterator(reader: ReadableStreamDefaultReader<Ui
     let result = re.exec(decodedChunk);
     if (!result) {
       if (readerDone) {
-        debugger
         break;
       }
       let remainder = decodedChunk.substr(startIndex);

@@ -126,7 +126,7 @@ func main() {
 		Node:           nodeRunner,
 		NetworkManager: nwManager,
 	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "Network")
+		setupLog.Error(err, "unable to create controller", "controller", "Subnet")
 		os.Exit(1)
 	}
 
@@ -135,7 +135,7 @@ func main() {
 		Scheme: mgr.GetScheme(),
 		Node:   nodeRunner,
 	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "VirtualMachine")
+		setupLog.Error(err, "unable to create controller", "controller", "Mesh")
 		os.Exit(1)
 	}
 
@@ -145,7 +145,15 @@ func main() {
 		Node:           nodeRunner,
 		NetworkManager: nwManager,
 	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "VirtualMachine")
+		setupLog.Error(err, "unable to create controller", "controller", "Router")
+		os.Exit(1)
+	}
+	if err = (&storage.VolumeReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+		Node:   nodeRunner,
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "Volume")
 		os.Exit(1)
 	}
 
@@ -156,14 +164,6 @@ func main() {
 		NetworkManager: nwManager,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "VirtualMachine")
-		os.Exit(1)
-	}
-	if err = (&storage.VolumeReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
-		Node:   nodeRunner,
-	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "Volume")
 		os.Exit(1)
 	}
 
