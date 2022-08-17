@@ -51,6 +51,24 @@ func (il *ifaceList) set(ns string, iface NetworkInterface) {
 	il.interfaces[ns][iface.Attrs().Index] = iface
 }
 
+func (il *ifaceList) delete(ns string, iface NetworkInterface) bool {
+	il.l.Lock()
+	defer il.l.Unlock()
+	if il.interfaces == nil {
+		return false
+	}
+
+	if il.interfaces[ns] == nil {
+		return false
+	}
+
+	if _, exists := il.interfaces[ns][iface.Attrs().Index]; exists {
+		delete(il.interfaces[ns], iface.Attrs().Index)
+		return true
+	}
+	return false
+}
+
 func (il *ifaceList) get(ns string, name string) *NetworkInterface {
 	for _, iface := range il.interfaces[ns] {
 		if iface.Name() == name {

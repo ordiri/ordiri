@@ -20,6 +20,7 @@ import (
 	"context"
 	"fmt"
 	"sync"
+	"time"
 
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -99,13 +100,13 @@ func (r *RouterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 				return
 			}
 
-			if !r.NetworkManager.HasNetwork(nw.Name) {
-				errs = append(errs, fmt.Errorf("network manager has no network %s, race condition", nw.Name))
+			if err := ordlet.WaitForNetwork(ctx, r.NetworkManager, nw.Name, time.Second*5); err != nil {
+				errs = append(errs, fmt.Errorf("network manager has no network %s - %w", nw.Name, err))
 				return
 			}
 			net := r.NetworkManager.GetNetwork(nw.Name)
 
-			if !r.NetworkManager.HasSubnet(net, subnet.Name) {
+			if err := ordlet.WaitForSubnet(ctx, r.NetworkManager, net, subnet.Name, time.Second*5); err != nil {
 				errs = append(errs, fmt.Errorf("network manager has no subnet, race condition"))
 				return
 			}
@@ -167,6 +168,7 @@ func (r *RouterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	}
 	log.Info("waiting for groups")
 	wg.Wait()
+	log.Info("groups completed")
 
 	if len(errs) > 0 {
 		return ctrl.Result{}, fmt.Errorf("errrors encountered %+v", errs)

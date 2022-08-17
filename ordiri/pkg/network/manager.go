@@ -11,32 +11,36 @@ import (
 
 func NewManager(driver driver.Driver) (api.RunnableManager, error) {
 	return &networkManager{
-		driver:     driver,
-		networks:   []api.Network{},
-		subnets:    make(map[string][]api.Subnet),
-		routers:    make(map[string]map[string][]api.Router),
-		interfaces: make(map[string]map[string][]api.Interface),
+		driver:   driver,
+		networks: []*managedNet{},
 	}, nil
 }
 
-type networkManager struct {
-	networks   []api.Network
-	subnets    map[string][]api.Subnet
-	routers    map[string]map[string][]api.Router
-	interfaces map[string]map[string][]api.Interface
-	driver     driver.Driver
+type managedSubnet struct {
+	sn         api.Subnet
+	routers    []api.Router
+	interfaces []api.Interface
 
 	l sync.Mutex
 }
 
-func (ln *networkManager) network(name string) api.Network {
-	for _, nw := range ln.networks {
-		if nw.Name() == name {
-			return nw
-		}
-	}
-	return nil
+type managedNet struct {
+	nw      api.Network
+	subnets []*managedSubnet
+
+	l sync.Mutex
 }
+
+type networkManager struct {
+	networks []*managedNet
+	// subnets    map[string][]api.Subnet
+	// routers    map[string]map[string][]api.Router
+	// interfaces map[string]map[string][]api.Interface
+	driver driver.Driver
+
+	l sync.Mutex
+}
+
 func (ln *networkManager) Close() error {
 	if closer, isCloser := ln.driver.(driver.RunnableDriver); isCloser {
 		if err := closer.Close(); err != nil {

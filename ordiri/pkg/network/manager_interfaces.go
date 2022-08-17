@@ -2,21 +2,17 @@ package network
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/ordiri/ordiri/pkg/network/api"
 )
 
 func (ln *networkManager) HasInterface(nw api.Network, sn api.Subnet, name string) bool {
-	if _, ok := ln.interfaces[nw.Name()]; !ok {
+	_, subnet := ln.subnet(nw, sn.Name())
+	if subnet == nil {
 		return false
 	}
-
-	if _, ok := ln.interfaces[nw.Name()][sn.Name()]; !ok {
-		return false
-	}
-
-	interfaces := ln.interfaces[nw.Name()][sn.Name()]
-	for _, rtr := range interfaces {
+	for _, rtr := range subnet.interfaces {
 		if rtr.Name() == name {
 			return true
 		}
@@ -25,66 +21,59 @@ func (ln *networkManager) HasInterface(nw api.Network, sn api.Subnet, name strin
 }
 
 func (ln *networkManager) GetInterface(nw api.Network, sn api.Subnet, name string) api.Interface {
-	if _, ok := ln.interfaces[nw.Name()]; ok {
-		if _, ok := ln.interfaces[nw.Name()][sn.Name()]; ok {
-			interfaces := ln.interfaces[nw.Name()][sn.Name()]
-			for _, rtr := range interfaces {
-				if rtr.Name() == name {
-					return rtr
-				}
-			}
+	_, subnet := ln.subnet(nw, sn.Name())
+	if subnet == nil {
+		return nil
+	}
+	interfaces := subnet.interfaces
+	for _, iface := range interfaces {
+		if iface.Name() == name {
+			return iface
 		}
 	}
-
-	panic("interface does not exist")
+	return nil
 }
 
 func (ln *networkManager) EnsureInterface(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface) (string, error) {
-	ln.l.Lock()
-	defer ln.l.Unlock()
+	_, subnet := ln.subnet(nw, sn.Name())
+	if subnet == nil {
+		return "", fmt.Errorf("subnet does not exist")
+	}
+	subnet.l.Lock()
+	defer subnet.l.Unlock()
 
 	ifaceName, err := ln.driver.EnsureInterface(ctx, nw, sn, iface)
 	if err != nil {
 		return "", err
 	}
 
-	if _, ok := ln.interfaces[nw.Name()]; !ok {
-		ln.interfaces[nw.Name()] = make(map[string][]api.Interface)
+	for i, _iface := range subnet.interfaces {
+		if iface.Name() == _iface.Name() {
+			subnet.interfaces[i] = iface
+			return ifaceName, nil
+		}
 	}
-
-	if _, ok := ln.interfaces[nw.Name()][sn.Name()]; !ok {
-		ln.interfaces[nw.Name()][sn.Name()] = []api.Interface{}
-	}
-
-	ln.interfaces[nw.Name()][sn.Name()] = append(ln.interfaces[nw.Name()][sn.Name()], iface)
+	subnet.routers = append(subnet.routers, iface)
 
 	return ifaceName, nil
 }
 
 func (ln *networkManager) RemoveInterface(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface) error {
-	if _, ok := ln.interfaces[nw.Name()]; !ok {
-		return nil
+	_, subnet := ln.subnet(nw, sn.Name())
+	if subnet == nil {
+		return fmt.Errorf("subnet does not exist")
 	}
-
-	if _, ok := ln.interfaces[nw.Name()][sn.Name()]; !ok {
-		return nil
-	}
-
-	ln.l.Lock()
-	defer ln.l.Unlock()
-
-	if err := ln.driver.RemoveInterface(ctx, nw, sn, iface); err != nil {
-		return err
-	}
+	subnet.l.Lock()
+	defer subnet.l.Unlock()
 
 	ifaces := []api.Interface{}
-	for _, _iface := range ifaces {
+	for _, _iface := range subnet.routers {
 		if _iface.Name() == iface.Name() {
 			continue
 		}
-		ifaces = append(ifaces, iface)
+		ifaces = append(ifaces, _iface)
 	}
-	ln.interfaces[nw.Name()][sn.Name()] = ifaces
+	subnet.interfaces = ifaces
 
 	return nil
 }

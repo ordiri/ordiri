@@ -1,8 +1,6 @@
 package linux
 
 import (
-	"fmt"
-
 	"github.com/ordiri/ordiri/pkg/network/api"
 )
 
@@ -30,7 +28,6 @@ func interfaceBridgeName(network api.Network, subnet api.Subnet, iface api.Inter
 }
 
 func interfaceTunTapName(network api.Network, subnet api.Subnet, iface api.Interface) string {
-	fmt.Printf("getting iface name for - %s=%s\n\n", iface.Mac().String(), hash(iface.Mac().String()))
 	return InterfaceTunTapPrefix + hash(iface.Mac().String())
 }
 

@@ -2,75 +2,87 @@ package network
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/ordiri/ordiri/pkg/network/api"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 )
 
-func (ln *networkManager) subnet(nw api.Network, name string) api.Subnet {
-	for _, sn := range ln.subnets[nw.Name()] {
-		if sn.Name() == name {
-			return sn
+func (ln *networkManager) subnet(nw api.Network, name string) (*managedNet, *managedSubnet) {
+	net := ln.network(nw.Name())
+	if net == nil {
+		return nil, nil
+	}
+
+	for _, sn := range net.subnets {
+		if name == sn.sn.Name() {
+			return net, sn
 		}
 	}
-	return nil
+	return nil, nil
 }
 
 func (ln *networkManager) HasSubnet(nw api.Network, name string) bool {
-	return ln.subnet(nw, name) != nil
+	_, sn := ln.subnet(nw, name)
+	return sn != nil
 }
 
 func (ln *networkManager) GetSubnet(nw api.Network, name string) api.Subnet {
-	if sn := ln.subnet(nw, name); sn != nil {
-		return sn
+	if _, sn := ln.subnet(nw, name); sn != nil {
+		return sn.sn
 	}
 
 	panic("no such network " + name)
 }
 
 func (ln *networkManager) RemoveSubnet(ctx context.Context, nw api.Network, name string) error {
-	subnet := ln.GetSubnet(nw, name)
-	for _, iface := range ln.interfaces[nw.Name()][name] {
-		if err := ln.RemoveInterface(ctx, nw, subnet, iface); err != nil {
-			// todo error types
-			// return err
-		}
-	}
-
 	ln.l.Lock()
 	defer ln.l.Unlock()
+	net, sn := ln.subnet(nw, name)
+	if sn == nil {
+		return nil
+	}
+	if len(sn.interfaces) > 0 || len(sn.routers) > 0 {
+		return fmt.Errorf("subnet still has interfaces or routers")
+	}
 
-	if err := ln.driver.RemoveSubnet(ctx, nw, subnet); err != nil {
+	// net.l.Lock()
+	// defer net.l.Unlock()
+
+	if err := ln.driver.RemoveSubnet(ctx, nw, sn.sn); err != nil {
 		return err
 	}
 
-	sns := []api.Subnet{}
-	for _, sn := range ln.subnets[nw.Name()] {
-		if sn.Name() == name {
-			continue
+	// sn.l.Lock()
+	// defer sn.l.Unlock()
+
+	sns := []*managedSubnet{}
+	for _, msn := range net.subnets {
+		if msn != sn {
+			sns = append(sns, msn)
 		}
-		sns = append(sns, sn)
 	}
-	ln.subnets[nw.Name()] = sns
+	net.subnets = sns
+
 	return nil
 }
 
 func (ln *networkManager) EnsureSubnet(ctx context.Context, nw api.Network, sn api.Subnet) error {
-	log := log.FromContext(ctx)
-	log.Info("ensuring subnet exists")
 	ln.l.Lock()
 	defer ln.l.Unlock()
+	log := log.FromContext(ctx)
+	log.Info("ensuring subnet exists")
 	if err := ln.driver.EnsureSubnet(ctx, nw, sn); err != nil {
 		return err
 	}
 
-	if !ln.HasSubnet(nw, sn.Name()) {
-		if ln.subnets[nw.Name()] == nil {
-			ln.subnets[nw.Name()] = []api.Subnet{}
-		}
+	net := ln.network(nw.Name())
+	net.subnets = append(net.subnets, &managedSubnet{
+		sn:         sn,
+		routers:    []api.Router{},
+		interfaces: []api.Interface{},
+	})
 
-		ln.subnets[nw.Name()] = append(ln.subnets[nw.Name()], sn)
-	}
 	return nil
 }
 

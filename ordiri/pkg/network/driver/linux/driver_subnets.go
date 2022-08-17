@@ -33,13 +33,18 @@ func (ln *linuxDriver) RemoveSubnet(ctx context.Context, nw api.Network, sn api.
 }
 
 func (ln *linuxDriver) EnsureSubnet(ctx context.Context, nw api.Network, sn api.Subnet) error {
+	log := log.FromContext(ctx)
+	log.Info("Installing DHCP")
 	if err := ln.installDhcp(ctx, nw, sn); err != nil {
 		return err
 	}
 
+	log.Info("Installing Subnet Flows")
 	if err := ln.installSubnetFlows(ctx, nw, sn); err != nil {
 		return err
 	}
+
+	log.Info("Subnet Ensured")
 
 	return nil
 }

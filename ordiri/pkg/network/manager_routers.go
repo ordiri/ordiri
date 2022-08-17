@@ -2,20 +2,17 @@ package network
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/ordiri/ordiri/pkg/network/api"
 )
 
 func (ln *networkManager) HasRouter(nw api.Network, sn api.Subnet, name string) bool {
-	if _, ok := ln.routers[nw.Name()]; !ok {
+	_, subnet := ln.subnet(nw, sn.Name())
+	if subnet == nil {
 		return false
 	}
-
-	if _, ok := ln.routers[nw.Name()][sn.Name()]; !ok {
-		return false
-	}
-
-	routers := ln.routers[nw.Name()][sn.Name()]
+	routers := subnet.routers
 	for _, rtr := range routers {
 		if rtr.Name() == name {
 			return true
@@ -25,61 +22,63 @@ func (ln *networkManager) HasRouter(nw api.Network, sn api.Subnet, name string) 
 }
 
 func (ln *networkManager) GetRouter(nw api.Network, sn api.Subnet, name string) api.Router {
-	if _, ok := ln.routers[nw.Name()]; ok {
-		if _, ok := ln.routers[nw.Name()][sn.Name()]; ok {
-			routers := ln.routers[nw.Name()][sn.Name()]
-			for _, rtr := range routers {
-				if rtr.Name() == name {
-					return rtr
-				}
-			}
+	_, subnet := ln.subnet(nw, sn.Name())
+	if subnet == nil {
+		return nil
+	}
+	routers := subnet.routers
+	for _, rtr := range routers {
+		if rtr.Name() == name {
+			return rtr
 		}
 	}
-
-	panic("router does not exist")
+	return nil
 }
 
 func (ln *networkManager) EnsureRouter(ctx context.Context, nw api.Network, sn api.Subnet, rtr api.Router) error {
-	ln.l.Lock()
-	defer ln.l.Unlock()
+	_, subnet := ln.subnet(nw, sn.Name())
+	if subnet == nil {
+		return fmt.Errorf("subnet does not exist")
+	}
+	// subnet.l.Lock()
+	// defer subnet.l.Unlock()
 
 	if err := ln.driver.EnsureRouter(ctx, nw, sn, rtr); err != nil {
 		return err
 	}
+	subnet.l.Lock()
+	defer subnet.l.Unlock()
 
-	if _, ok := ln.routers[nw.Name()]; !ok {
-		ln.routers[nw.Name()] = make(map[string][]api.Router)
+	for i, _rtr := range subnet.routers {
+		if rtr.Name() == _rtr.Name() {
+			subnet.routers[i] = rtr
+			return nil
+		}
 	}
-
-	if _, ok := ln.routers[nw.Name()][sn.Name()]; !ok {
-		ln.routers[nw.Name()][sn.Name()] = []api.Router{}
-	}
-
-	ln.routers[nw.Name()][sn.Name()] = append(ln.routers[nw.Name()][sn.Name()], rtr)
+	subnet.routers = append(subnet.routers, rtr)
 
 	return nil
 }
 
 func (ln *networkManager) RemoveRouter(ctx context.Context, nw api.Network, sn api.Subnet, rtr api.Router) error {
-	ln.l.Lock()
-	defer ln.l.Unlock()
-
-	if _, ok := ln.routers[nw.Name()]; !ok {
-		return nil
+	_, subnet := ln.subnet(nw, sn.Name())
+	if subnet == nil {
+		return fmt.Errorf("subnet does not exist")
 	}
+	// subnet.l.Lock()
+	// defer subnet.l.Unlock()
 
-	if _, ok := ln.routers[nw.Name()][sn.Name()]; !ok {
-		return nil
-	}
+	subnet.l.Lock()
+	defer subnet.l.Unlock()
 
 	rtrs := []api.Router{}
-	for _, router := range rtrs {
-		if router.Name() == rtr.Name() {
+	for _, _rtr := range subnet.routers {
+		if _rtr.Name() == rtr.Name() {
 			continue
 		}
-		rtrs = append(rtrs, router)
+		rtrs = append(rtrs, _rtr)
 	}
-	ln.routers[nw.Name()][sn.Name()] = rtrs
+	subnet.routers = rtrs
 
 	return nil
 }

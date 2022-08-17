@@ -97,6 +97,9 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 			if err := r.removeNodeFromNetworkStatus(ctx, nw); err != nil {
 				return ctrl.Result{}, err
 			}
+		} else {
+
+			log.V(5).Info("network not on this node, skipping")
 		}
 	} else if nodeWantsNetwork {
 		if err := r.NetworkManager.EnsureNetwork(ctx, net); err != nil {

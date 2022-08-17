@@ -3,12 +3,14 @@ package compute
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"libvirt.org/go/libvirtxml"
 
 	internallibvirt "github.com/ordiri/ordiri/pkg/compute/driver/libvirt"
 	"github.com/ordiri/ordiri/pkg/mac"
 	"github.com/ordiri/ordiri/pkg/network"
+	"github.com/ordiri/ordiri/pkg/ordlet"
 
 	computev1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
 )
@@ -19,14 +21,15 @@ func (r *VirtualMachineReconciler) ensureNetworkInterface(ctx context.Context, v
 		Name: iface.Key(),
 		Mac:  iface.Mac,
 	}
-	if !r.NetworkManager.HasNetwork(iface.Network) {
-		return status, nil, fmt.Errorf("network %s does not exist", iface.Network)
+	if err := ordlet.WaitForNetwork(ctx, r.NetworkManager, iface.Network, time.Second*5); err != nil {
+		return status, nil, fmt.Errorf("error waiting for network %s - %w", iface.Network, err)
 	}
 	net := r.NetworkManager.GetNetwork(iface.Network)
 
-	if !r.NetworkManager.HasSubnet(net, iface.Subnet) {
-		return status, nil, fmt.Errorf("subnet %s does not exist", iface.Network)
+	if err := ordlet.WaitForSubnet(ctx, r.NetworkManager, net, iface.Subnet, time.Second*5); err != nil {
+		return status, nil, fmt.Errorf("error waiting for subnet %s - %w", iface.Subnet, err)
 	}
+
 	subnet := r.NetworkManager.GetSubnet(net, iface.Subnet)
 
 	mac, err := mac.Parse(iface.Mac)

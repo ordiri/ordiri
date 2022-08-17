@@ -6,36 +6,13 @@ import (
 	"github.com/ordiri/ordiri/pkg/network/api"
 )
 
-func (ln *networkManager) List(ctx context.Context) []api.Network {
-	nws := []api.Network{}
-	// nwMap := map[int32]Network{}
-	// for _, iface := range ln.interfaces {
-	// 	masterTxt := ""
-	// 	if iface.Attributes.Master != nil {
-	// 		masterTxt = fmt.Sprintf("%d@", *iface.Attributes.Master)
-	// 	}
-	// 	if _, ok := nwMap[iface.Attributes.NsId]; !ok {
-	// 		nsName := ln.ns[iface.Attributes.NsId]
-	// 		if nsName == "" {
-	// 			nsName = "default"
-	// 		}
-	// 		nw, err := NewNetwork(nsName)
-	// 		if err != nil {
-	// 			panic(err)
-	// 		}
-	// 		nwMap[iface.Attributes.NsId] = nw
-	// 	}
-
-	// 	subnet, err := NewSubnet(iface.Name())
-	// 	if err != nil {
-	// 		panic(err)
-	// 	}
-	// 	nwMap[iface.Attributes.NsId].AddSubnet(subnet)
-
-	// 	fmt.Printf("Got the iface %s%s(%d)\n", masterTxt, iface.Name(), iface.Attributes.NsId)
-	// }
-	// spew.Dump(nwMap)
-	return nws
+func (ln *networkManager) network(name string) *managedNet {
+	for _, nw := range ln.networks {
+		if nw.nw.Name() == name {
+			return nw
+		}
+	}
+	return nil
 }
 
 func (ln *networkManager) HasNetwork(name string) bool {
@@ -44,33 +21,37 @@ func (ln *networkManager) HasNetwork(name string) bool {
 
 func (ln *networkManager) GetNetwork(name string) api.Network {
 	if nw := ln.network(name); nw != nil {
-		return nw
+		return nw.nw
 	}
 
 	panic("no such network " + name)
 }
 
 func (ln *networkManager) RemoveNetwork(ctx context.Context, name string) error {
-	nw := ln.GetNetwork(name)
+	ln.l.Lock()
+	defer ln.l.Unlock()
 
-	for _, subnet := range ln.subnets[nw.Name()] {
-		if err := ln.RemoveSubnet(ctx, nw, subnet.Name()); err != nil {
+	nw := ln.network(name)
+	if nw == nil {
+		return nil
+	}
+
+	for _, subnet := range nw.subnets {
+		if err := ln.RemoveSubnet(ctx, nw.nw, subnet.sn.Name()); err != nil {
 			return err
 		}
 	}
 
-	ln.l.Lock()
-	defer ln.l.Unlock()
-
-	if err := ln.driver.RemoveNetwork(ctx, nw); err != nil {
+	if err := ln.driver.RemoveNetwork(ctx, nw.nw); err != nil {
 		return err
 	}
-	nws := []api.Network{}
-	for _, nw := range ln.networks {
-		if nw.Name() == name {
+
+	nws := []*managedNet{}
+	for _, net := range ln.networks {
+		if nw == net {
 			continue
 		}
-		nws = append(nws, nw)
+		nws = append(nws, net)
 	}
 	ln.networks = nws
 	return nil
@@ -85,7 +66,7 @@ func (ln *networkManager) EnsureNetwork(ctx context.Context, nw api.Network) err
 	}
 
 	if !ln.HasNetwork(nw.Name()) {
-		ln.networks = append(ln.networks, nw)
+		ln.networks = append(ln.networks, &managedNet{nw: nw, subnets: []*managedSubnet{}})
 	}
 
 	return nil

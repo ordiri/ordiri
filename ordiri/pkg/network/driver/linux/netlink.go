@@ -8,6 +8,7 @@ import (
 	"github.com/ordiri/ordiri/pkg/log"
 	"github.com/vishvananda/netlink"
 	"github.com/vishvananda/netns"
+	"golang.org/x/sys/unix"
 )
 
 type NetworkInterface struct {
@@ -29,6 +30,7 @@ func (ln *linuxDriver) getOrCreateVeth(ctx context.Context, namespace string, ca
 		if err != nil {
 			return fmt.Errorf("unable to get ns for public gateway cable - %w", err)
 		}
+		defer handle.Close()
 		link := &netlink.Veth{
 			LinkAttrs: netlink.LinkAttrs{
 				Name:      cableName.Namespace(),
@@ -68,11 +70,19 @@ func (ln *linuxDriver) getOrCreateVeth(ctx context.Context, namespace string, ca
 }
 func (ln *linuxDriver) discoverInterface(ctx context.Context, namespace string, ns netns.NsHandle, msg netlink.LinkUpdate) error {
 	log := log.FromContext(ctx)
-	log.V(10).Info("discovering interface", "namespace", namespace, "link", msg.Link)
-	ln.interfaces.set(namespace, NetworkInterface{
-		namespace: namespace,
-		Link:      msg,
-	})
+	if msg.Header.Type == unix.RTM_DELLINK {
+		log.V(10).Info("deleting interface", "namespace", namespace, "link", msg.Link)
+		ln.interfaces.delete(namespace, NetworkInterface{
+			namespace: namespace,
+			Link:      msg,
+		})
+	} else {
+		log.V(10).Info("discovering interface", "namespace", namespace, "link", msg.Link)
+		ln.interfaces.set(namespace, NetworkInterface{
+			namespace: namespace,
+			Link:      msg,
+		})
+	}
 	return nil
 }
 

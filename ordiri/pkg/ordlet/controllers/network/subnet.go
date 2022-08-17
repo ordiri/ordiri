@@ -72,7 +72,7 @@ func (r *SubnetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 
 	// hack during dev
 	if !r.NetworkManager.HasNetwork(nw.Name) {
-		// maybe requeue here ?
+		log.Info("Network manager does not have network", "name", nw.Name)
 		return ctrl.Result{Requeue: r.Node.GetNode().HasSubnet(subnet.Name)}, nil
 	}
 

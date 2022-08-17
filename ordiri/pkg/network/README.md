@@ -6,4 +6,4 @@ Network subsystem capable of creating logical tenant networks which are isolated
 # Driver - Linux
 Initial implementation of an SDN for linux
 The idea would be to rip out the basic linux driver and move it to a CNI plugin if needed + use existing CNI
-plugins where possible
+plugins where possible, the manager is clearly not anything worth writing home about either and need to be replaced
