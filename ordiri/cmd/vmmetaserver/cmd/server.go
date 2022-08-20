@@ -7,10 +7,16 @@ package cmd
 import ( // "github.com/ordiri/ordiri/config"
 	// "k8s.io/client-go/tools/clientcmd"
 	// "github.com/ordiri/ordiri/config"
+	"context"
+	"log"
+	"net"
+	"net/url"
+
+	"net/http"
+	"net/http/httputil"
+
 	"github.com/spf13/cobra"
 )
-
-var port = "9090"
 
 // serverCmd represents the server command
 var serverCmd = &cobra.Command{
@@ -23,35 +29,21 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
-		// // if you want to change the loading rules (which files in which order), you can do so here
+		proxy := httputil.NewSingleHostReverseProxy(&url.URL{
+			Host:   "metadataserver",
+			Scheme: "http",
+		})
+		proxy.Transport = &http.Transport{
+			DialContext: func(_ context.Context, _, _ string) (net.Conn, error) {
+				return net.Dial("unix", "/run/ordiri/metadata/md-server.sock")
+			},
+		}
 
-		// configOverrides := &clientcmd.ConfigOverrides{}
-		// // if you want to change override values or bind them to flags, there are methods to help you
+		log.Println("Starting proxy server on", ":80")
+		if err := http.ListenAndServe(":80", proxy); err != nil {
+			log.Fatal("ListenAndServe:", err)
+		}
 
-		// kubeConfig := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(loadingRules, configOverrides)
-		// restConfig, err := kubeConfig.ClientConfig()
-		// if err != nil {
-		// 	return err
-		// }
-
-		// client := clientset.NewForConfigOrDie(restConfig)
-
-		// stopCh := make(chan struct{})
-
-		// conn, err := net.Listen("unix", "/run/ordlet/metadata.sock")
-		// if err != nil {
-		// 	return err
-		// }
-
-		// log.Logger.Info("Starting server")
-		// err = http.Serve(conn, metadataServer.HTTPHandler())
-		// stopCh <- struct{}{}
-
-		// if err != nil {
-		// 	return err
-		// }
-		// return nil
 		return nil
 	},
 }
