@@ -20,7 +20,7 @@ import (
 	"context"
 	"fmt"
 	"reflect"
-	"strings"
+	"time"
 
 	k8err "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -32,7 +32,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 
-	"github.com/digitalocean/go-openvswitch/ovs"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
 	"github.com/ordiri/ordiri/pkg/network"
 	"github.com/ordiri/ordiri/pkg/network/api"
@@ -65,52 +64,69 @@ func (r *SubnetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 		return ctrl.Result{}, err
 	}
 
+	node := r.Node.GetNode()
+
+	nodeWantsSubnet := false
+	if _, err := node.Subnet(subnet.Name); err == nil {
+		nodeWantsSubnet = true
+	}
+
+	subnetHasNode := false
+	for _, host := range subnet.Status.Hosts {
+		if host.Node == node.Name {
+			subnetHasNode = true
+		}
+	}
+
+	if !nodeWantsSubnet && !subnetHasNode {
+		return ctrl.Result{}, nil
+	}
+
 	nw := &networkv1alpha1.Network{}
 	if err := r.Client.Get(ctx, types.NamespacedName{Name: subnet.Spec.Network.Name}, nw); err != nil {
 		return ctrl.Result{}, err
 	}
 
-	// hack during dev
-	if !r.NetworkManager.HasNetwork(nw.Name) {
-		log.Info("Network manager does not have network", "name", nw.Name)
-		return ctrl.Result{Requeue: r.Node.GetNode().HasSubnet(subnet.Name)}, nil
-	}
-
-	net := r.NetworkManager.GetNetwork(nw.Name)
-
-	// Ensure the network manager is aware of this subnet
-	// so it can configure / teardown if need be
-
 	// If the node doesn't want this subnet anymore
 	// but the subnet is setup on it, we need to remove all the subnet configs from it
-	if _, err := r.Node.GetNode().Subnet(subnet.Name); err != nil {
+	if !nodeWantsSubnet {
 		log.Info("node does not want subnet, removing")
-		if r.NetworkManager.HasSubnet(net, subnet.Name) {
-			log.V(5).Info("removing subnet from network manager")
-			if err := r.NetworkManager.RemoveSubnet(ctx, net, subnet.Name); err != nil {
-				return ctrl.Result{}, fmt.Errorf("unable to remove subnet from node - %w", err)
+		if r.NetworkManager.HasNetwork(nw.Name) {
+			net := r.NetworkManager.GetNetwork(nw.Name)
+			if r.NetworkManager.HasSubnet(net, subnet.Name) {
+				log.V(5).Info("removing subnet from network manager")
+				if err := r.NetworkManager.RemoveSubnet(ctx, net, subnet.Name); err != nil {
+					return ctrl.Result{}, fmt.Errorf("unable to remove subnet from node - %w", err)
+				}
+				log.V(5).Info("removed subnet from network manager")
 			}
-			log.V(5).Info("removed subnet from network manager")
 		}
 
-		// We wan to ensure we remove this node if weneed
+		// We want to ensure we remove this node if we need
 		log.Info("removing node from subnet status")
 		if err := r.removeNodeFromSubnetStatus(ctx, subnet); err != nil {
-			return ctrl.Result{}, fmt.Errorf("error removing node from subnet status: %s/%s from %s", net.Name(), subnet.Name, r.Node.GetNode().GetName())
+			return ctrl.Result{}, fmt.Errorf("error removing node from subnet status: %s from %s", subnet.Name, r.Node.GetNode().GetName())
 		}
 
 		log.Info("removing node finalizers from subnet")
 		// finally we remove the finalizer from the subnet
 		if err := r.removeNodeFinalizerFromSubnet(ctx, subnet); err != nil {
-			return ctrl.Result{}, fmt.Errorf("error removing node from subnet finalizers: %s/%s from %s", net.Name(), subnet.Name, r.Node.GetNode().GetName())
+			return ctrl.Result{}, fmt.Errorf("error removing node from subnet finalizers: %s from %s", subnet.Name, r.Node.GetNode().GetName())
 		}
 
 		return ctrl.Result{}, nil
 	}
 
+	if !r.NetworkManager.HasNetwork(nw.Name) {
+		log.Info("waiting for network manager to start", "name", nw.Name)
+		return ctrl.Result{RequeueAfter: time.Second * 1}, nil
+	}
+
 	if err := r.addNodeFinalizerToSubnet(ctx, subnet); err != nil {
 		return ctrl.Result{}, err
 	}
+
+	net := r.NetworkManager.GetNetwork(nw.Name)
 
 	var sn api.Subnet
 	if !r.NetworkManager.HasSubnet(net, subnet.Name) {
@@ -135,8 +151,8 @@ func (r *SubnetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	if err := r.NetworkManager.EnsureSubnet(ctx, net, sn); err != nil {
 		return ctrl.Result{}, fmt.Errorf("unable to ensure subnet is configured correctly - %w", err)
 	}
-	err := r.addNodeToSubnetStatus(ctx, subnet)
-	if err != nil {
+
+	if err := r.addNodeToSubnetStatus(ctx, subnet); err != nil {
 		return ctrl.Result{}, err
 	}
 
@@ -289,12 +305,4 @@ func (r *SubnetReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		For(&networkv1alpha1.Subnet{}).
 		Watches(&source.Kind{Type: &corev1alpha1.Node{}}, enqueueRequestFromNode).
 		Complete(r)
-}
-
-func isPortNotExist(err error) bool {
-	if ovs.IsPortNotExist(err) {
-		return true
-	}
-
-	return strings.Contains(err.Error(), "does not have a port")
 }

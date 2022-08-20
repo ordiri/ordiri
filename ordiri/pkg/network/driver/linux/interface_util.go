@@ -38,8 +38,11 @@ func internalRouterCable(network api.Network, subnet api.Subnet, rtr api.Router)
 	return VethCable(InternalRouterCablePrefix + hash(network.Name()+subnet.Name()+rtr.Name()))
 }
 func servicesCableName(network api.Network, subnet api.Subnet, svc string) VethCable {
-	return VethCable(NetworkServiceCablePrefix + hash(network.Name()+subnet.Name()))
+	return VethCable(NetworkServiceCablePrefix + hash(network.Name()+subnet.Name()+svc))
 }
 func dhcpCableName(network api.Network, subnet api.Subnet) VethCable {
 	return servicesCableName(network, subnet, "dhcp")
+}
+func metadataCableName(network api.Network, subnet api.Subnet) VethCable {
+	return servicesCableName(network, subnet, "metadata")
 }

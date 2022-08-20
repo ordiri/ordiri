@@ -68,7 +68,7 @@ func (ld *linuxDriver) installRouter(ctx context.Context, nw api.Network, subnet
 	}
 
 	internalRouterCableName := internalRouterCable(nw, subnet, rtr)
-	if err := ld.getOrCreateVeth(ctx, routerNetworkNamespace, internalRouterCableName); err != nil {
+	if err := ld.getOrCreateVeth(ctx, routerNetworkNamespace, internalRouterCableName, rtr.Mac()); err != nil {
 		return fmt.Errorf("unable to create internal veth cable - %w", err)
 	}
 

@@ -6,11 +6,9 @@ import (
 	"fmt"
 
 	"github.com/digitalocean/go-openvswitch/ovs"
-	"github.com/ordiri/ordiri/pkg/mac"
 	"github.com/ordiri/ordiri/pkg/network/api"
 	"github.com/ordiri/ordiri/pkg/network/sdn"
 	"github.com/vishvananda/netlink"
-	"inet.af/netaddr"
 )
 
 func (ln *linuxDriver) RemoveInterface(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface) error {
@@ -190,16 +188,11 @@ func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network
 }
 func (ln *linuxDriver) interfaceFlowRules(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface) ([]sdn.FlowRule, error) {
 	return []sdn.FlowRule{
-		&sdn.SubnetMetadataServer{
-			WorkloadSwitch: sdn.WorkloadSwitchName,
-			WorkloadPort:   interfaceBridgeName(nw, sn, iface),
-			MetadataPort:   dhcpCableName(nw, sn).Root(),
-		},
-		&sdn.ArpResponder{
-			Switch: sdn.WorkloadSwitchName,
-			Mac:    mac.Unicast(),
-			Ip:     netaddr.MustParseIP("169.254.169.254"),
-		},
+		// &sdn.SubnetMetadataServer{
+		// 	WorkloadSwitch: sdn.WorkloadSwitchName,
+		// 	WorkloadPort:   interfaceBridgeName(nw, sn, iface),
+		// 	MetadataPort:   dhcpCableName(nw, sn).Root(),
+		// },
 	}, nil
 }
 

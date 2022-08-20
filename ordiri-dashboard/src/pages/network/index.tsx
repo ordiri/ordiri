@@ -2,15 +2,25 @@ import ordiriConfig from '../../ordiri-config';
 import { CreateResourcePage } from '../generic-resource';
 import { ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostNetworkStatus, ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostSubnetStatus, NetworkOrdiriComV1alpha1Api } from '@ordiri/client-typescript';
 import { Chip } from '@mui/material';
+import { useState } from 'react';
 
 const PageTitle = "Network Services"
 
 interface NetworkResourceProps { }
 
+const vlanColors: Array<any> = [
+    "primary",
+    "secondary",
+    "error",
+    "warning",
+    "info",
+    "success"
+]
+
 const NetworkResourcesPage = (props: NetworkResourceProps) => {
     const api = new NetworkOrdiriComV1alpha1Api(ordiriConfig)
 
-    // todo the type here is clearly done at 4am, it should be inferred from the listers return values
+    // pretty bad, creates a whole new on every render
     const Page = CreateResourcePage({
         "Networks": {
             lister: api.listNetworkOrdiriComV1alpha1NetworkRaw.bind(api),
@@ -57,7 +67,7 @@ const NetworkResourcesPage = (props: NetworkResourceProps) => {
                             return all
                         }, {} as Record<number, {vlan: number, items: string[]}>)
                         
-                        return Object.entries(grouped).map(([vlanId, {items}]) => <Chip key={vlanId} label={`${vlanId} - ${items.join(", ")}`} size="small" />)
+                        return Object.entries(grouped).map(([vlanId, { items }]) => <Chip color={vlanColors[Number(vlanId)]} key={vlanId} label={`${vlanId} - ${items.join(", ")}`} size="small" />)
                     }
                 }
             }

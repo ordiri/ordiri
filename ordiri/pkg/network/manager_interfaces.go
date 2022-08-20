@@ -35,12 +35,12 @@ func (ln *networkManager) GetInterface(nw api.Network, sn api.Subnet, name strin
 }
 
 func (ln *networkManager) EnsureInterface(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface) (string, error) {
+	ln.l.Lock()
+	defer ln.l.Unlock()
 	_, subnet := ln.subnet(nw, sn.Name())
 	if subnet == nil {
 		return "", fmt.Errorf("subnet does not exist")
 	}
-	subnet.l.Lock()
-	defer subnet.l.Unlock()
 
 	ifaceName, err := ln.driver.EnsureInterface(ctx, nw, sn, iface)
 	if err != nil {
@@ -59,12 +59,12 @@ func (ln *networkManager) EnsureInterface(ctx context.Context, nw api.Network, s
 }
 
 func (ln *networkManager) RemoveInterface(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface) error {
+	ln.l.Lock()
+	defer ln.l.Unlock()
 	_, subnet := ln.subnet(nw, sn.Name())
 	if subnet == nil {
 		return fmt.Errorf("subnet does not exist")
 	}
-	subnet.l.Lock()
-	defer subnet.l.Unlock()
 
 	if err := ln.driver.RemoveInterface(ctx, nw, sn, iface); err != nil {
 		return fmt.Errorf("unable to remove interface - %w", err)

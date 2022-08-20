@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/ordiri/ordiri/pkg/log"
+	"github.com/ordiri/ordiri/pkg/mac"
 	"github.com/ordiri/ordiri/pkg/network/api"
 	"github.com/vishvananda/netlink"
 	"github.com/vishvananda/netns"
@@ -53,7 +54,7 @@ func (ln *linuxDriver) installNetworkNat(ctx context.Context, nw api.Network) er
 		return fmt.Errorf("error creating network namespace for NAT")
 	}
 
-	if err := ln.getOrCreateVeth(ctx, namespace, publicGwCableName); err != nil {
+	if err := ln.getOrCreateVeth(ctx, namespace, publicGwCableName, mac.Unicast()); err != nil {
 		return err
 	}
 

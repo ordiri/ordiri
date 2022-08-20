@@ -20,15 +20,11 @@ type managedSubnet struct {
 	sn         api.Subnet
 	routers    []api.Router
 	interfaces []api.Interface
-
-	l sync.Mutex
 }
 
 type managedNet struct {
 	nw      api.Network
 	subnets []*managedSubnet
-
-	l sync.Mutex
 }
 
 type networkManager struct {

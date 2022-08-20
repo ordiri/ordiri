@@ -108,6 +108,12 @@ func (in *RouterList) GetListMeta() *metav1.ListMeta {
 
 // RouterStatus defines the observed state of Router
 type RouterStatus struct {
+	Hosts []HostRouterStatus `json:"hosts"`
+}
+
+type HostRouterStatus struct {
+	Subnet string `json:"subnet"`
+	Node   string `json:"node"`
 }
 
 func (in RouterStatus) SubResourceName() string {

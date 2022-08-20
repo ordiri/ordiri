@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net"
 	"os"
 	"path/filepath"
 	"strings"
@@ -12,17 +13,26 @@ import (
 	"github.com/coreos/go-systemd/unit"
 	"github.com/digitalocean/go-openvswitch/ovs"
 	"github.com/ordiri/ordiri/pkg/log"
+	"github.com/ordiri/ordiri/pkg/mac"
 	"github.com/ordiri/ordiri/pkg/network/api"
 	"github.com/ordiri/ordiri/pkg/network/dhcp"
 	"github.com/ordiri/ordiri/pkg/network/sdn"
 	"github.com/vishvananda/netlink"
 )
 
+func metaMac() net.HardwareAddr {
+	addr, _ := mac.Parse("00:00:00:00:0A:F6")
+	return addr
+}
+
 func (ln *linuxDriver) RemoveSubnet(ctx context.Context, nw api.Network, sn api.Subnet) error {
 	if err := ln.removeSubnetFlows(ctx, nw, sn); err != nil {
 		return fmt.Errorf("error removing subnet flows - %w", err)
 	}
 
+	if err := ln.removeMetadataServer(ctx, nw, sn); err != nil {
+		return fmt.Errorf("error removing metadata server - %w", err)
+	}
 	if err := ln.removeDhcp(ctx, nw, sn); err != nil {
 		return fmt.Errorf("error removing dhcp - %w", err)
 	}
@@ -68,6 +78,9 @@ func isPortNotExist(err error) bool {
 	return strings.Contains(err.Error(), "does not have a port")
 }
 
+func (ln *linuxDriver) removeMetadataServer(ctx context.Context, nw api.Network, subnet api.Subnet) error {
+	return fmt.Errorf("not implemented")
+}
 func (ln *linuxDriver) removeDhcp(ctx context.Context, nw api.Network, subnet api.Subnet) error {
 	cableName := dhcpCableName(nw, subnet)
 	log := log.FromContext(ctx)
@@ -125,22 +138,39 @@ func (ln *linuxDriver) removeDhcp(ctx context.Context, nw api.Network, subnet ap
 }
 
 func (ln *linuxDriver) installMetadataServer(ctx context.Context, nw api.Network, subnet api.Subnet) error {
+	log := log.FromContext(ctx)
 	namespace := namespaceForServices(nw, subnet)
-	cableName := dhcpCableName(nw, subnet)
+	cableName := metadataCableName(nw, subnet)
 
-	if err := setNsVethIp(namespace, "169.254.169.254/32", cableName.Namespace()); err != nil {
-		return fmt.Errorf("unable to set dhcp ip on internal cable %s - %W", cableName, err)
+	if err := ln.getOrCreateVeth(ctx, namespace, cableName, metaMac()); err != nil {
+		return fmt.Errorf("unable to create veth cable %s - %w", cableName, err)
 	}
 
-	// create the dnsmasq config to provide dhcp for this subnet
-	baseDir := filepath.Join(confDir, "/subnets", subnet.Name(), "ordiri-metedata")
+	// need to create flow rules taking this to the vxlan?
+	log.Info("adding metadata cable to workload switch", "cableName", cableName)
+	if err := sdn.Ovs().VSwitch.AddPort(sdn.WorkloadSwitchName, cableName.Root()); err != nil {
+		return err
+	}
+	log.Info("ensuring correct vlan tag on metadata cable", "cableName", cableName)
+	if err := sdn.Ovs().VSwitch.Set.Port(cableName.Root(), ovs.PortOptions{
+		Tag: int(subnet.Segment()),
+	}); err != nil {
+		return err
+	}
+
+	if err := setNsVethIp(namespace, "169.254.169.254/32", cableName.Namespace()); err != nil {
+		return fmt.Errorf("unable to set metadata ip on internal cable %s - %W", cableName, err)
+	}
+
+	// create the dnsmasq config to provide metadata for this subnet
+	baseDir := filepath.Join(confDir, "/metadata", subnet.Name(), "ordiri-metedata")
 	if err := os.MkdirAll(baseDir, os.ModePerm); err != nil {
 		return fmt.Errorf("unable to create directory %s - %w", baseDir, err)
 	}
 
 	// startCmd := strings.Join(append([]string{"ip", "netns", "exec", namespace, "/usr/sbin/dnsmasq"}, dnsMasqOptions.Args()...), " ")
 	startCmd := strings.Join([]string{"/usr/local/bin/ordiri-metadata", "--subnet", subnet.Name()}, " ")
-	// create the systemd file to manage this dhcp
+	// create the systemd file to manage this metadata
 	unitName := metadataServerUnitName(subnet)
 	opts := []*unit.UnitOption{
 		unit.NewUnitOption("Unit", "Description", "Ordiri Metadata Service for "+unitName),
@@ -162,8 +192,13 @@ func (ln *linuxDriver) createSubnetServicesNs(ctx context.Context, nw api.Networ
 		return fmt.Errorf("unable to create network namespace - %w", err)
 	}
 
+	return nil
+}
+func (ln *linuxDriver) installDhcp(ctx context.Context, nw api.Network, subnet api.Subnet) error {
+	log := log.FromContext(ctx)
+	namespace := namespaceForServices(nw, subnet)
 	cableName := dhcpCableName(nw, subnet)
-	if err := ln.getOrCreateVeth(ctx, namespace, cableName); err != nil {
+	if err := ln.getOrCreateVeth(ctx, namespace, cableName, mac.Unicast()); err != nil {
 		return fmt.Errorf("unable to create veth cable %s - %w", cableName, err)
 	}
 
@@ -178,11 +213,6 @@ func (ln *linuxDriver) createSubnetServicesNs(ctx context.Context, nw api.Networ
 	}); err != nil {
 		return err
 	}
-	return nil
-}
-func (ln *linuxDriver) installDhcp(ctx context.Context, nw api.Network, subnet api.Subnet) error {
-	namespace := namespaceForServices(nw, subnet)
-	cableName := dhcpCableName(nw, subnet)
 
 	dhcpCidr := subnet.Cidr()
 

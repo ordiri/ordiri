@@ -8,8 +8,9 @@ import (
 )
 
 func (ln *networkManager) network(name string) *managedNet {
-	for _, nw := range ln.networks {
-		if nw.nw.Name() == name {
+	nws := ln.networks
+	for _, nw := range nws {
+		if nw != nil && nw.nw.Name() == name {
 			return nw
 		}
 	}
@@ -35,12 +36,6 @@ func (ln *networkManager) RemoveNetwork(ctx context.Context, name string) error 
 	nw := ln.network(name)
 	if nw == nil {
 		return nil
-	}
-
-	for _, sn := range nw.subnets {
-		if err := ln.RemoveSubnet(ctx, nw.nw, sn.sn.Name()); err != nil {
-			return err
-		}
 	}
 
 	if len(nw.subnets) > 0 {

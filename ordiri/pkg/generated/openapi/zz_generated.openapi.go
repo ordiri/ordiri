@@ -75,6 +75,7 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/ordiri/ordiri/pkg/apis/core/v1alpha1.NodeVirtualMachineStatus":                schema_pkg_apis_core_v1alpha1_NodeVirtualMachineStatus(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.DhcpConfiguration":                    schema_pkg_apis_network_v1alpha1_DhcpConfiguration(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.HostNetworkStatus":                    schema_pkg_apis_network_v1alpha1_HostNetworkStatus(ref),
+		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.HostRouterStatus":                     schema_pkg_apis_network_v1alpha1_HostRouterStatus(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.HostSubnetStatus":                     schema_pkg_apis_network_v1alpha1_HostSubnetStatus(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.Network":                              schema_pkg_apis_network_v1alpha1_Network(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkList":                          schema_pkg_apis_network_v1alpha1_NetworkList(ref),
@@ -640,6 +641,23 @@ func schema_pkg_apis_compute_v1alpha1_VirtualMachineDeploymentStatus(ref common.
 			SchemaProps: spec.SchemaProps{
 				Description: "VirtualMachineDeploymentStatus defines the observed state of VirtualMachineDeployment",
 				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"observedGeneration": {
+						SchemaProps: spec.SchemaProps{
+							Default: 0,
+							Type:    []string{"integer"},
+							Format:  "int32",
+						},
+					},
+					"replicas": {
+						SchemaProps: spec.SchemaProps{
+							Default: 0,
+							Type:    []string{"integer"},
+							Format:  "int32",
+						},
+					},
+				},
+				Required: []string{"observedGeneration", "replicas"},
 			},
 		},
 	}
@@ -886,6 +904,16 @@ func schema_pkg_apis_compute_v1alpha1_VirtualMachineReplicaSetStatus(ref common.
 			SchemaProps: spec.SchemaProps{
 				Description: "VirtualMachineReplicaSetStatus defines the observed state of VirtualMachineReplicaSet",
 				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"replicas": {
+						SchemaProps: spec.SchemaProps{
+							Default: 0,
+							Type:    []string{"integer"},
+							Format:  "int32",
+						},
+					},
+				},
+				Required: []string{"replicas"},
 			},
 		},
 	}
@@ -2203,6 +2231,33 @@ func schema_pkg_apis_network_v1alpha1_HostNetworkStatus(ref common.ReferenceCall
 	}
 }
 
+func schema_pkg_apis_network_v1alpha1_HostRouterStatus(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"subnet": {
+						SchemaProps: spec.SchemaProps{
+							Default: "",
+							Type:    []string{"string"},
+							Format:  "",
+						},
+					},
+					"node": {
+						SchemaProps: spec.SchemaProps{
+							Default: "",
+							Type:    []string{"string"},
+							Format:  "",
+						},
+					},
+				},
+				Required: []string{"subnet", "node"},
+			},
+		},
+	}
+}
+
 func schema_pkg_apis_network_v1alpha1_HostSubnetStatus(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
@@ -2899,8 +2954,26 @@ func schema_pkg_apis_network_v1alpha1_RouterStatus(ref common.ReferenceCallback)
 			SchemaProps: spec.SchemaProps{
 				Description: "RouterStatus defines the observed state of Router",
 				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"hosts": {
+						SchemaProps: spec.SchemaProps{
+							Type: []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: map[string]interface{}{},
+										Ref:     ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.HostRouterStatus"),
+									},
+								},
+							},
+						},
+					},
+				},
+				Required: []string{"hosts"},
 			},
 		},
+		Dependencies: []string{
+			"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.HostRouterStatus"},
 	}
 }
 

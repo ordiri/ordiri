@@ -36,18 +36,16 @@ func (ln *networkManager) GetRouter(nw api.Network, sn api.Subnet, name string) 
 }
 
 func (ln *networkManager) EnsureRouter(ctx context.Context, nw api.Network, sn api.Subnet, rtr api.Router) error {
+	ln.l.Lock()
+	defer ln.l.Unlock()
 	_, subnet := ln.subnet(nw, sn.Name())
 	if subnet == nil {
 		return fmt.Errorf("subnet does not exist")
 	}
-	// subnet.l.Lock()
-	// defer subnet.l.Unlock()
 
 	if err := ln.driver.EnsureRouter(ctx, nw, sn, rtr); err != nil {
 		return err
 	}
-	subnet.l.Lock()
-	defer subnet.l.Unlock()
 
 	for i, _rtr := range subnet.routers {
 		if rtr.Name() == _rtr.Name() {
@@ -61,19 +59,16 @@ func (ln *networkManager) EnsureRouter(ctx context.Context, nw api.Network, sn a
 }
 
 func (ln *networkManager) RemoveRouter(ctx context.Context, nw api.Network, sn api.Subnet, rtr api.Router) error {
+	ln.l.Lock()
+	defer ln.l.Unlock()
 	_, subnet := ln.subnet(nw, sn.Name())
 	if subnet == nil {
 		return fmt.Errorf("subnet does not exist")
 	}
-	// subnet.l.Lock()
-	// defer subnet.l.Unlock()
 
 	if err := ln.driver.RemoveRouter(ctx, nw, sn, rtr); err != nil {
 		return err
 	}
-
-	subnet.l.Lock()
-	defer subnet.l.Unlock()
 
 	rtrs := []api.Router{}
 	for _, _rtr := range subnet.routers {

@@ -20,7 +20,7 @@ func (ni *NetworkInterface) Name() string {
 	return ni.Attrs().Name
 }
 
-func (ln *linuxDriver) getOrCreateVeth(ctx context.Context, namespace string, cableName VethCable) error {
+func (ln *linuxDriver) getOrCreateVeth(ctx context.Context, namespace string, cableName VethCable, macAddr net.HardwareAddr) error {
 	log := log.FromContext(ctx)
 	log.V(5).Info("Searching for existing veth cable", "namespace", namespace, "cableName", cableName)
 	existingIface := ln.interfaces.get(namespace, cableName.Namespace())
@@ -33,9 +33,10 @@ func (ln *linuxDriver) getOrCreateVeth(ctx context.Context, namespace string, ca
 		defer handle.Close()
 		link := &netlink.Veth{
 			LinkAttrs: netlink.LinkAttrs{
-				Name:      cableName.Namespace(),
-				Namespace: netlink.NsFd(handle),
-				Flags:     net.FlagUp,
+				Name:         cableName.Namespace(),
+				Namespace:    netlink.NsFd(handle),
+				Flags:        net.FlagUp,
+				HardwareAddr: macAddr,
 			},
 			PeerName: cableName.Root(),
 		}
@@ -62,6 +63,7 @@ func (ln *linuxDriver) getOrCreateVeth(ctx context.Context, namespace string, ca
 		return fmt.Errorf("error fetching link - %w", err)
 	}
 
+	log.V(5).Info("ensuring link up", "namespace", namespace, "cableName", cableName)
 	if err := netlink.LinkSetUp(link); err != nil {
 		return fmt.Errorf("unable to set link up - %w", err)
 	}

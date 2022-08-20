@@ -84,24 +84,23 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 		return ctrl.Result{}, err
 	}
 
-	log.V(5).Info("Starting to build networking", "nodeWantsNetwork", nodeWantsNetwork, "nodeHasNetwork", nodeHasNetwork, "network", net)
-
 	if !nodeWantsNetwork {
 		if nodeHasNetwork {
+			log.V(5).Info("removing node from network", "nodeWantsNetwork", nodeWantsNetwork, "nodeHasNetwork", nodeHasNetwork, "network", net)
 			if err := r.NetworkManager.RemoveNetwork(ctx, net.Name()); err != nil {
 				return ctrl.Result{}, err
 			}
 			log.Info("network references the node but the node doesn't want it, removing")
-
-			// We want to ensure we remove this node if weneed
-			if err := r.removeNodeFromNetworkStatus(ctx, nw); err != nil {
-				return ctrl.Result{}, err
-			}
 		} else {
-
 			log.V(5).Info("network not on this node, skipping")
 		}
+
+		// We want to ensure we remove this node if weneed
+		if err := r.removeNodeFromNetworkStatus(ctx, nw); err != nil {
+			return ctrl.Result{}, err
+		}
 	} else if nodeWantsNetwork {
+		log.V(5).Info("Starting to build networking", "nodeWantsNetwork", nodeWantsNetwork, "nodeHasNetwork", nodeHasNetwork, "network", net)
 		if err := r.NetworkManager.EnsureNetwork(ctx, net); err != nil {
 			return ctrl.Result{}, err
 		}
