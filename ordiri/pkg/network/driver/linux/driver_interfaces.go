@@ -6,9 +6,11 @@ import (
 	"fmt"
 
 	"github.com/digitalocean/go-openvswitch/ovs"
+	"github.com/ordiri/ordiri/pkg/mac"
 	"github.com/ordiri/ordiri/pkg/network/api"
 	"github.com/ordiri/ordiri/pkg/network/sdn"
 	"github.com/vishvananda/netlink"
+	"inet.af/netaddr"
 )
 
 func (ln *linuxDriver) RemoveInterface(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface) error {
@@ -25,6 +27,7 @@ func (ln *linuxDriver) RemoveInterface(ctx context.Context, nw api.Network, sn a
 	if err := ln.removeInterfaceBridge(ctx, nw, sn, iface); err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -61,6 +64,7 @@ func (ln *linuxDriver) removeInterfaceBridge(ctx context.Context, nw api.Network
 			return err
 		}
 	}
+
 	return nil
 }
 
@@ -72,6 +76,7 @@ func (ln *linuxDriver) removeInterfaceTunTap(ctx context.Context, nw api.Network
 			return err
 		}
 	}
+
 	return nil
 }
 
@@ -118,7 +123,6 @@ func (ln *linuxDriver) createInterfaceBridge(ctx context.Context, nw api.Network
 	}
 
 	vlan := subnet.Segment()
-
 	ovsClient := sdn.Ovs()
 
 	if err := ovsClient.VSwitch.AddPort(sdn.WorkloadSwitchName, bridgeName); err != nil {
@@ -168,7 +172,6 @@ func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network
 		if err := netlink.LinkAdd(tuntap); err != nil {
 			return nil, fmt.Errorf("unable to add new tuntap device for vm - %w", err)
 		}
-
 	}
 
 	// we could set it on create but this ensure it's always correct and you can't
@@ -186,7 +189,18 @@ func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network
 	return tuntap, nil
 }
 func (ln *linuxDriver) interfaceFlowRules(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface) ([]sdn.FlowRule, error) {
-	return []sdn.FlowRule{}, nil
+	return []sdn.FlowRule{
+		&sdn.SubnetMetadataServer{
+			WorkloadSwitch: sdn.WorkloadSwitchName,
+			WorkloadPort:   interfaceBridgeName(nw, sn, iface),
+			MetadataPort:   dhcpCableName(nw, sn).Root(),
+		},
+		&sdn.ArpResponder{
+			Switch: sdn.WorkloadSwitchName,
+			Mac:    mac.Unicast(),
+			Ip:     netaddr.MustParseIP("169.254.169.254"),
+		},
+	}, nil
 }
 
 func (ln *linuxDriver) removeInterfaceFlows(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface) error {
@@ -210,10 +224,10 @@ func (ln *linuxDriver) installInterfaceFlows(ctx context.Context, nw api.Network
 	if err != nil {
 		return err
 	}
+
 	ovsClient := sdn.Ovs()
 
 	for _, flow := range flowrules {
-
 		if err := flow.Install(ovsClient); err != nil {
 			return fmt.Errorf("error adding flow - %w", err)
 		}

@@ -21,6 +21,7 @@ import type {
   ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineList,
   ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet,
   ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSetList,
+  IoK8sApiAutoscalingV1Scale,
   IoK8sApimachineryPkgApisMetaV1APIResourceList,
   IoK8sApimachineryPkgApisMetaV1DeleteOptions,
   IoK8sApimachineryPkgApisMetaV1Status,
@@ -39,6 +40,8 @@ import {
     ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSetToJSON,
     ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSetListFromJSON,
     ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSetListToJSON,
+    IoK8sApiAutoscalingV1ScaleFromJSON,
+    IoK8sApiAutoscalingV1ScaleToJSON,
     IoK8sApimachineryPkgApisMetaV1APIResourceListFromJSON,
     IoK8sApimachineryPkgApisMetaV1APIResourceListToJSON,
     IoK8sApimachineryPkgApisMetaV1DeleteOptionsFromJSON,
@@ -205,6 +208,15 @@ export interface PatchComputeOrdiriComV1alpha1VirtualMachineDeploymentRequest {
     force?: boolean;
 }
 
+export interface PatchComputeOrdiriComV1alpha1VirtualMachineDeploymentScaleRequest {
+    name: string;
+    body: object;
+    pretty?: string;
+    dryRun?: string;
+    fieldManager?: string;
+    force?: boolean;
+}
+
 export interface PatchComputeOrdiriComV1alpha1VirtualMachineDeploymentStatusRequest {
     name: string;
     body: object;
@@ -232,6 +244,15 @@ export interface PatchComputeOrdiriComV1alpha1VirtualMachineReplicaSetStatusRequ
     force?: boolean;
 }
 
+export interface PatchComputeOrdiriComV1alpha1VirtualMachineRestartRequest {
+    name: string;
+    body: object;
+    pretty?: string;
+    dryRun?: string;
+    fieldManager?: string;
+    force?: boolean;
+}
+
 export interface PatchComputeOrdiriComV1alpha1VirtualMachineStatusRequest {
     name: string;
     body: object;
@@ -251,6 +272,11 @@ export interface ReadComputeOrdiriComV1alpha1VirtualMachineDeploymentRequest {
     pretty?: string;
 }
 
+export interface ReadComputeOrdiriComV1alpha1VirtualMachineDeploymentScaleRequest {
+    name: string;
+    pretty?: string;
+}
+
 export interface ReadComputeOrdiriComV1alpha1VirtualMachineDeploymentStatusRequest {
     name: string;
     pretty?: string;
@@ -262,6 +288,11 @@ export interface ReadComputeOrdiriComV1alpha1VirtualMachineReplicaSetRequest {
 }
 
 export interface ReadComputeOrdiriComV1alpha1VirtualMachineReplicaSetStatusRequest {
+    name: string;
+    pretty?: string;
+}
+
+export interface ReadComputeOrdiriComV1alpha1VirtualMachineRestartRequest {
     name: string;
     pretty?: string;
 }
@@ -287,6 +318,14 @@ export interface ReplaceComputeOrdiriComV1alpha1VirtualMachineDeploymentRequest 
     fieldManager?: string;
 }
 
+export interface ReplaceComputeOrdiriComV1alpha1VirtualMachineDeploymentScaleRequest {
+    name: string;
+    body: IoK8sApiAutoscalingV1Scale;
+    pretty?: string;
+    dryRun?: string;
+    fieldManager?: string;
+}
+
 export interface ReplaceComputeOrdiriComV1alpha1VirtualMachineDeploymentStatusRequest {
     name: string;
     body: ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment;
@@ -306,6 +345,14 @@ export interface ReplaceComputeOrdiriComV1alpha1VirtualMachineReplicaSetRequest 
 export interface ReplaceComputeOrdiriComV1alpha1VirtualMachineReplicaSetStatusRequest {
     name: string;
     body: ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet;
+    pretty?: string;
+    dryRun?: string;
+    fieldManager?: string;
+}
+
+export interface ReplaceComputeOrdiriComV1alpha1VirtualMachineRestartRequest {
+    name: string;
+    body: ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
@@ -1261,6 +1308,59 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     }
 
     /**
+     * partially update scale of the specified VirtualMachineDeployment
+     */
+    async patchComputeOrdiriComV1alpha1VirtualMachineDeploymentScaleRaw(requestParameters: PatchComputeOrdiriComV1alpha1VirtualMachineDeploymentScaleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApiAutoscalingV1Scale>> {
+        if (requestParameters.name === null || requestParameters.name === undefined) {
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchComputeOrdiriComV1alpha1VirtualMachineDeploymentScale.');
+        }
+
+        if (requestParameters.body === null || requestParameters.body === undefined) {
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchComputeOrdiriComV1alpha1VirtualMachineDeploymentScale.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.dryRun !== undefined) {
+            queryParameters['dryRun'] = requestParameters.dryRun;
+        }
+
+        if (requestParameters.fieldManager !== undefined) {
+            queryParameters['fieldManager'] = requestParameters.fieldManager;
+        }
+
+        if (requestParameters.force !== undefined) {
+            queryParameters['force'] = requestParameters.force;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json-patch+json';
+
+        const response = await this.request({
+            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachinedeployments/{name}/scale`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            method: 'PATCH',
+            headers: headerParameters,
+            query: queryParameters,
+            body: requestParameters.body as any,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApiAutoscalingV1ScaleFromJSON(jsonValue));
+    }
+
+    /**
+     * partially update scale of the specified VirtualMachineDeployment
+     */
+    async patchComputeOrdiriComV1alpha1VirtualMachineDeploymentScale(requestParameters: PatchComputeOrdiriComV1alpha1VirtualMachineDeploymentScaleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApiAutoscalingV1Scale> {
+        const response = await this.patchComputeOrdiriComV1alpha1VirtualMachineDeploymentScaleRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
      * partially update status of the specified VirtualMachineDeployment
      */
     async patchComputeOrdiriComV1alpha1VirtualMachineDeploymentStatusRaw(requestParameters: PatchComputeOrdiriComV1alpha1VirtualMachineDeploymentStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment>> {
@@ -1420,6 +1520,59 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     }
 
     /**
+     * partially update restart of the specified VirtualMachine
+     */
+    async patchComputeOrdiriComV1alpha1VirtualMachineRestartRaw(requestParameters: PatchComputeOrdiriComV1alpha1VirtualMachineRestartRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine>> {
+        if (requestParameters.name === null || requestParameters.name === undefined) {
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchComputeOrdiriComV1alpha1VirtualMachineRestart.');
+        }
+
+        if (requestParameters.body === null || requestParameters.body === undefined) {
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchComputeOrdiriComV1alpha1VirtualMachineRestart.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.dryRun !== undefined) {
+            queryParameters['dryRun'] = requestParameters.dryRun;
+        }
+
+        if (requestParameters.fieldManager !== undefined) {
+            queryParameters['fieldManager'] = requestParameters.fieldManager;
+        }
+
+        if (requestParameters.force !== undefined) {
+            queryParameters['force'] = requestParameters.force;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json-patch+json';
+
+        const response = await this.request({
+            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachines/{name}/restart`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            method: 'PATCH',
+            headers: headerParameters,
+            query: queryParameters,
+            body: requestParameters.body as any,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineFromJSON(jsonValue));
+    }
+
+    /**
+     * partially update restart of the specified VirtualMachine
+     */
+    async patchComputeOrdiriComV1alpha1VirtualMachineRestart(requestParameters: PatchComputeOrdiriComV1alpha1VirtualMachineRestartRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine> {
+        const response = await this.patchComputeOrdiriComV1alpha1VirtualMachineRestartRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
      * partially update status of the specified VirtualMachine
      */
     async patchComputeOrdiriComV1alpha1VirtualMachineStatusRaw(requestParameters: PatchComputeOrdiriComV1alpha1VirtualMachineStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine>> {
@@ -1541,6 +1694,40 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     }
 
     /**
+     * read scale of the specified VirtualMachineDeployment
+     */
+    async readComputeOrdiriComV1alpha1VirtualMachineDeploymentScaleRaw(requestParameters: ReadComputeOrdiriComV1alpha1VirtualMachineDeploymentScaleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApiAutoscalingV1Scale>> {
+        if (requestParameters.name === null || requestParameters.name === undefined) {
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readComputeOrdiriComV1alpha1VirtualMachineDeploymentScale.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachinedeployments/{name}/scale`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApiAutoscalingV1ScaleFromJSON(jsonValue));
+    }
+
+    /**
+     * read scale of the specified VirtualMachineDeployment
+     */
+    async readComputeOrdiriComV1alpha1VirtualMachineDeploymentScale(requestParameters: ReadComputeOrdiriComV1alpha1VirtualMachineDeploymentScaleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApiAutoscalingV1Scale> {
+        const response = await this.readComputeOrdiriComV1alpha1VirtualMachineDeploymentScaleRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
      * read status of the specified VirtualMachineDeployment
      */
     async readComputeOrdiriComV1alpha1VirtualMachineDeploymentStatusRaw(requestParameters: ReadComputeOrdiriComV1alpha1VirtualMachineDeploymentStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment>> {
@@ -1639,6 +1826,40 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
      */
     async readComputeOrdiriComV1alpha1VirtualMachineReplicaSetStatus(requestParameters: ReadComputeOrdiriComV1alpha1VirtualMachineReplicaSetStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet> {
         const response = await this.readComputeOrdiriComV1alpha1VirtualMachineReplicaSetStatusRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * read restart of the specified VirtualMachine
+     */
+    async readComputeOrdiriComV1alpha1VirtualMachineRestartRaw(requestParameters: ReadComputeOrdiriComV1alpha1VirtualMachineRestartRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine>> {
+        if (requestParameters.name === null || requestParameters.name === undefined) {
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readComputeOrdiriComV1alpha1VirtualMachineRestart.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachines/{name}/restart`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineFromJSON(jsonValue));
+    }
+
+    /**
+     * read restart of the specified VirtualMachine
+     */
+    async readComputeOrdiriComV1alpha1VirtualMachineRestart(requestParameters: ReadComputeOrdiriComV1alpha1VirtualMachineRestartRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine> {
+        const response = await this.readComputeOrdiriComV1alpha1VirtualMachineRestartRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -1771,6 +1992,55 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
      */
     async replaceComputeOrdiriComV1alpha1VirtualMachineDeployment(requestParameters: ReplaceComputeOrdiriComV1alpha1VirtualMachineDeploymentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment> {
         const response = await this.replaceComputeOrdiriComV1alpha1VirtualMachineDeploymentRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * replace scale of the specified VirtualMachineDeployment
+     */
+    async replaceComputeOrdiriComV1alpha1VirtualMachineDeploymentScaleRaw(requestParameters: ReplaceComputeOrdiriComV1alpha1VirtualMachineDeploymentScaleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApiAutoscalingV1Scale>> {
+        if (requestParameters.name === null || requestParameters.name === undefined) {
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceComputeOrdiriComV1alpha1VirtualMachineDeploymentScale.');
+        }
+
+        if (requestParameters.body === null || requestParameters.body === undefined) {
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceComputeOrdiriComV1alpha1VirtualMachineDeploymentScale.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.dryRun !== undefined) {
+            queryParameters['dryRun'] = requestParameters.dryRun;
+        }
+
+        if (requestParameters.fieldManager !== undefined) {
+            queryParameters['fieldManager'] = requestParameters.fieldManager;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachinedeployments/{name}/scale`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: IoK8sApiAutoscalingV1ScaleToJSON(requestParameters.body),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApiAutoscalingV1ScaleFromJSON(jsonValue));
+    }
+
+    /**
+     * replace scale of the specified VirtualMachineDeployment
+     */
+    async replaceComputeOrdiriComV1alpha1VirtualMachineDeploymentScale(requestParameters: ReplaceComputeOrdiriComV1alpha1VirtualMachineDeploymentScaleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApiAutoscalingV1Scale> {
+        const response = await this.replaceComputeOrdiriComV1alpha1VirtualMachineDeploymentScaleRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -1918,6 +2188,55 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
      */
     async replaceComputeOrdiriComV1alpha1VirtualMachineReplicaSetStatus(requestParameters: ReplaceComputeOrdiriComV1alpha1VirtualMachineReplicaSetStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet> {
         const response = await this.replaceComputeOrdiriComV1alpha1VirtualMachineReplicaSetStatusRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * replace restart of the specified VirtualMachine
+     */
+    async replaceComputeOrdiriComV1alpha1VirtualMachineRestartRaw(requestParameters: ReplaceComputeOrdiriComV1alpha1VirtualMachineRestartRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine>> {
+        if (requestParameters.name === null || requestParameters.name === undefined) {
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceComputeOrdiriComV1alpha1VirtualMachineRestart.');
+        }
+
+        if (requestParameters.body === null || requestParameters.body === undefined) {
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceComputeOrdiriComV1alpha1VirtualMachineRestart.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.dryRun !== undefined) {
+            queryParameters['dryRun'] = requestParameters.dryRun;
+        }
+
+        if (requestParameters.fieldManager !== undefined) {
+            queryParameters['fieldManager'] = requestParameters.fieldManager;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachines/{name}/restart`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineToJSON(requestParameters.body),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineFromJSON(jsonValue));
+    }
+
+    /**
+     * replace restart of the specified VirtualMachine
+     */
+    async replaceComputeOrdiriComV1alpha1VirtualMachineRestart(requestParameters: ReplaceComputeOrdiriComV1alpha1VirtualMachineRestartRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine> {
+        const response = await this.replaceComputeOrdiriComV1alpha1VirtualMachineRestartRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

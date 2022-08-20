@@ -19,6 +19,12 @@ import {
     ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostNetworkStatusFromJSONTyped,
     ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostNetworkStatusToJSON,
 } from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostNetworkStatus';
+import type { IoK8sApimachineryPkgApisMetaV1Condition } from './IoK8sApimachineryPkgApisMetaV1Condition';
+import {
+    IoK8sApimachineryPkgApisMetaV1ConditionFromJSON,
+    IoK8sApimachineryPkgApisMetaV1ConditionFromJSONTyped,
+    IoK8sApimachineryPkgApisMetaV1ConditionToJSON,
+} from './IoK8sApimachineryPkgApisMetaV1Condition';
 
 /**
  * NetworkStatus defines the observed state of Network
@@ -27,11 +33,23 @@ import {
  */
 export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkStatus {
     /**
+     * Represents the observations of a Networks current state. Known .status.conditions.type are: "AssignedRole", "Progressing", and "Degraded"
+     * @type {Array<IoK8sApimachineryPkgApisMetaV1Condition>}
+     * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkStatus
+     */
+    conditions?: Array<IoK8sApimachineryPkgApisMetaV1Condition>;
+    /**
      * 
      * @type {Array<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostNetworkStatus>}
      * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkStatus
      */
     hosts: Array<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostNetworkStatus>;
+    /**
+     * The generation observed by the deployment controller.
+     * @type {number}
+     * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkStatus
+     */
+    observedGeneration?: number;
     /**
      * 
      * @type {number}
@@ -61,7 +79,9 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkStatusFromJSON
     }
     return {
         
+        'conditions': !exists(json, 'conditions') ? undefined : ((json['conditions'] as Array<any>).map(IoK8sApimachineryPkgApisMetaV1ConditionFromJSON)),
         'hosts': ((json['hosts'] as Array<any>).map(ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostNetworkStatusFromJSON)),
+        'observedGeneration': !exists(json, 'observedGeneration') ? undefined : json['observedGeneration'],
         'vni': json['vni'],
     };
 }
@@ -75,7 +95,9 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkStatusToJSON(v
     }
     return {
         
+        'conditions': value.conditions === undefined ? undefined : ((value.conditions as Array<any>).map(IoK8sApimachineryPkgApisMetaV1ConditionToJSON)),
         'hosts': ((value.hosts as Array<any>).map(ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostNetworkStatusToJSON)),
+        'observedGeneration': value.observedGeneration,
         'vni': value.vni,
     };
 }

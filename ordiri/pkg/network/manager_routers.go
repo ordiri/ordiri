@@ -68,6 +68,10 @@ func (ln *networkManager) RemoveRouter(ctx context.Context, nw api.Network, sn a
 	// subnet.l.Lock()
 	// defer subnet.l.Unlock()
 
+	if err := ln.driver.RemoveRouter(ctx, nw, sn, rtr); err != nil {
+		return err
+	}
+
 	subnet.l.Lock()
 	defer subnet.l.Unlock()
 

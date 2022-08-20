@@ -69,7 +69,7 @@ func main() {
 	}
 	flag.StringVar(&metricsAddr, "metrics-bind-address", ":8085", "The address the metric endpoint binds to.")
 	flag.StringVar(&probeAddr, "health-probe-bind-address", ":8086", "The address the probe endpoint binds to.")
-	flag.StringVar(&nodeRole, "role", "compute,network", "The roles this node has")
+	flag.StringVar(&nodeRole, "role", "compute,network,storage", "The roles this node has")
 	flag.StringVar(&networkDriver, "network-driver", "linux", "The driver for network operations on this node")
 	flag.StringVar(&nodeName, "name", hostname, "The name this node has")
 	opts := zap.Options{

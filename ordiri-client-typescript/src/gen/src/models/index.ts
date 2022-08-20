@@ -1,6 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export * from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1HostLocalVolumeClaim';
+export * from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1Operation';
 export * from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine';
 export * from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment';
 export * from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeploymentList';
@@ -63,6 +64,9 @@ export * from './ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaimList';
 export * from './ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaimSpec';
 export * from './ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeList';
 export * from './ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeSpec';
+export * from './IoK8sApiAutoscalingV1Scale';
+export * from './IoK8sApiAutoscalingV1ScaleSpec';
+export * from './IoK8sApiAutoscalingV1ScaleStatus';
 export * from './IoK8sApiCoreV1ObjectReference';
 export * from './IoK8sApimachineryPkgApisMetaV1APIGroup';
 export * from './IoK8sApimachineryPkgApisMetaV1APIGroupList';

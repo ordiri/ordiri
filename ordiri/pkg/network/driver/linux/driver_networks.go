@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/ordiri/ordiri/pkg/log"
 	"github.com/ordiri/ordiri/pkg/network/api"
 	"github.com/vishvananda/netlink"
@@ -34,9 +33,13 @@ func (ln *linuxDriver) RemoveNetwork(ctx context.Context, nw api.Network) error 
 }
 
 func (ln *linuxDriver) EnsureNetwork(ctx context.Context, nw api.Network) error {
+	log := log.FromContext(ctx)
+	log.V(5).Info("Ensuring network", "nw", nw)
 	if err := ln.installNetworkNat(ctx, nw); err != nil {
 		return err
 	}
+
+	log.V(5).Info("Network ensured")
 	return nil
 }
 
@@ -94,12 +97,14 @@ func (ln *linuxDriver) installNetworkNat(ctx context.Context, nw api.Network) er
 			return
 		}
 		defer close()
-		netconf, err := dhclient4(publicGwCableName.Namespace(), 5, true)
-		if err == nil {
-			spew.Dump(netconf)
+
+		log.V(5).Info("Running dhcp client")
+		if err := dhclient4(publicGwCableName.Namespace(), 5, true); err == nil {
+			log.V(5).Info("error running dhcp client")
 			errCh <- nil
 			return
 		}
+		log.V(5).Info("dhcp client completed")
 
 		errCh <- nil
 	}(handle, curNs)
@@ -107,6 +112,8 @@ func (ln *linuxDriver) installNetworkNat(ctx context.Context, nw api.Network) er
 	if err := <-errCh; err != nil {
 		return fmt.Errorf("unable to get addr from dhcp - %w", err)
 	}
+
+	log.V(5).Info("Network NAT configured")
 
 	// handle, err := netns.GetFromName(namespace)
 	// if err != nil {

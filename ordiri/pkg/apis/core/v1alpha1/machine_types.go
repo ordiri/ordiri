@@ -53,13 +53,13 @@ func (m *Machine) IsApproved() bool {
 	return m.Spec.Approved != nil && *m.Spec.Approved
 }
 
-func (m *Machine) Properties() (map[string]*string, error) {
-	properties := map[string]*string{}
+func (m *Machine) Properties() (map[string]string, error) {
+	properties := map[string]string{}
 	for _, property := range m.Spec.Properties {
 		if value, ok := properties[property.Name]; ok {
-			return nil, fmt.Errorf("found duplicate property %s, old: %s, new: %s", property.Name, *value, property.Value)
+			return nil, fmt.Errorf("found duplicate property %s, old: %s, new: %s", property.Name, value, property.Value)
 		}
-		properties[property.Name] = &property.Value
+		properties[property.Name] = property.Value
 	}
 
 	return properties, nil

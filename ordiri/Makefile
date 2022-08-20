@@ -51,10 +51,6 @@ help: ## Display this help.
 
 ##@ Development
 
-.PHONY: openapi
-openapi: openapi-gen ## Generate WebhookConfiguration, ClusterRole and CustomResourceDefinition objects.
-	$(OPENAPI_GEN) -v10 --input-dirs k8s.io/apimachinery/pkg/api/resource,k8s.io/apimachinery/pkg/apis/meta/v1,k8s.io/apimachinery/pkg/runtime,k8s.io/apimachinery/pkg/version,github.com/ordiri/ordiri/pkg/apis/... --output-package pkg/generated/openapi -O zz_generated.openapi --output-base . --go-header-file ./hack/boilerplate.go.txt
-
 
 .PHONY: manifests
 manifests: controller-gen generate ## Generate WebhookConfiguration, ClusterRole and CustomResourceDefinition objects.
@@ -83,7 +79,7 @@ generate-defaulter: $(DEFAULTER_GEN)
 	$(DEFAULTER_GEN)  --input-dirs $(INPUT_DIRS) --output-base=. --trim-path-prefix $(PACKAGE_NAME) --output-package $(PACKAGE_NAME)/$(gendir)/defaulters --go-header-file ./hack/boilerplate.go.txt
 	
 generate-openapi:
-	$(OPENAPI_GEN) -v10 --input-dirs k8s.io/apimachinery/pkg/api/resource,k8s.io/api/core/v1,k8s.io/apimachinery/pkg/apis/meta/v1,k8s.io/apimachinery/pkg/runtime,k8s.io/apimachinery/pkg/version,$(PACKAGE_NAME)/pkg/apis/... --output-package $(gendir)/openapi -O zz_generated.openapi --go-header-file ./hack/boilerplate.go.txt
+	$(OPENAPI_GEN) -v10 --input-dirs k8s.io/apimachinery/pkg/api/resource,k8s.io/api/autoscaling/v1,k8s.io/api/core/v1,k8s.io/apimachinery/pkg/apis/meta/v1,k8s.io/apimachinery/pkg/runtime,k8s.io/apimachinery/pkg/version,$(PACKAGE_NAME)/pkg/apis/... --output-package $(gendir)/openapi -O zz_generated.openapi --go-header-file ./hack/boilerplate.go.txt
 
 .PHONY: fmt
 fmt: ## Run go fmt against code.
@@ -192,6 +188,10 @@ run-ipxe:
 	killall bootserver || true
 	go build -o bin/bootserver ./cmd/bootserver
 	KUBECONFIG=kubeconfig ./bin/bootserver server
+run-vmmetaserver: 
+	killall vmmetaserver || true
+	go build -o bin/vmmetaserver ./cmd/vmmetaserver
+	KUBECONFIG=kubeconfig ./bin/vmmetaserver server
 run-dashboard: 
 	cd ../ordiri-dashboard && npm start
 

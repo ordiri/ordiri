@@ -46,6 +46,8 @@ type VirtualMachineInterface interface {
 	List(ctx context.Context, opts v1.ListOptions) (*v1alpha1.VirtualMachineList, error)
 	Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error)
 	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.VirtualMachine, err error)
+	Restart(ctx context.Context, virtualMachineName string, virtualMachineRestart *v1alpha1.VirtualMachineRestart, opts v1.UpdateOptions) (*v1alpha1.VirtualMachineRestart, error)
+
 	VirtualMachineExpansion
 }
 
@@ -177,6 +179,20 @@ func (c *virtualMachines) Patch(ctx context.Context, name string, pt types.Patch
 		SubResource(subresources...).
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Body(data).
+		Do(ctx).
+		Into(result)
+	return
+}
+
+// Restart takes the top resource name and the representation of a virtualMachineRestart and updates it. Returns the server's representation of the virtualMachineRestart, and an error, if there is any.
+func (c *virtualMachines) Restart(ctx context.Context, virtualMachineName string, virtualMachineRestart *v1alpha1.VirtualMachineRestart, opts v1.UpdateOptions) (result *v1alpha1.VirtualMachineRestart, err error) {
+	result = &v1alpha1.VirtualMachineRestart{}
+	err = c.client.Put().
+		Resource("virtualmachines").
+		Name(virtualMachineName).
+		SubResource("restart").
+		VersionedParams(&opts, scheme.ParameterCodec).
+		Body(virtualMachineRestart).
 		Do(ctx).
 		Into(result)
 	return

@@ -13,6 +13,12 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { ComGithubOrdiriOrdiriPkgApisComputeV1alpha1Operation } from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1Operation';
+import {
+    ComGithubOrdiriOrdiriPkgApisComputeV1alpha1OperationFromJSON,
+    ComGithubOrdiriOrdiriPkgApisComputeV1alpha1OperationFromJSONTyped,
+    ComGithubOrdiriOrdiriPkgApisComputeV1alpha1OperationToJSON,
+} from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1Operation';
 import type { ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineSpec } from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineSpec';
 import {
     ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineSpecFromJSON,
@@ -58,6 +64,12 @@ export interface ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine {
     metadata?: IoK8sApimachineryPkgApisMetaV1ObjectMeta;
     /**
      * 
+     * @type {Array<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1Operation>}
+     * @memberof ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine
+     */
+    pendingOperations?: Array<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1Operation>;
+    /**
+     * 
      * @type {ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineSpec}
      * @memberof ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine
      */
@@ -92,6 +104,7 @@ export function ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineFromJSO
         'apiVersion': !exists(json, 'apiVersion') ? undefined : json['apiVersion'],
         'kind': !exists(json, 'kind') ? undefined : json['kind'],
         'metadata': !exists(json, 'metadata') ? undefined : IoK8sApimachineryPkgApisMetaV1ObjectMetaFromJSON(json['metadata']),
+        'pendingOperations': !exists(json, 'pendingOperations') ? undefined : ((json['pendingOperations'] as Array<any>).map(ComGithubOrdiriOrdiriPkgApisComputeV1alpha1OperationFromJSON)),
         'spec': !exists(json, 'spec') ? undefined : ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineSpecFromJSON(json['spec']),
         'status': !exists(json, 'status') ? undefined : ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineStatusFromJSON(json['status']),
     };
@@ -109,6 +122,7 @@ export function ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineToJSON(
         'apiVersion': value.apiVersion,
         'kind': value.kind,
         'metadata': IoK8sApimachineryPkgApisMetaV1ObjectMetaToJSON(value.metadata),
+        'pendingOperations': value.pendingOperations === undefined ? undefined : ((value.pendingOperations as Array<any>).map(ComGithubOrdiriOrdiriPkgApisComputeV1alpha1OperationToJSON)),
         'spec': ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineSpecToJSON(value.spec),
         'status': ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineStatusToJSON(value.status),
     };

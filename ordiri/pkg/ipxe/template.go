@@ -56,6 +56,24 @@ chain -ar {{ .Node | BootUrl }}
 {{ end}}
 `
 
+var needsDiscovery = func(nodeObj *corev1alpha1.Machine) bool {
+	properties, err := nodeObj.Properties()
+	if err != nil {
+		return true
+	}
+
+	discovered := 0
+	for key := range ipxeVars {
+		if _, ok := properties[key]; !ok {
+			return true
+		}
+
+		discovered += 1
+	}
+
+	return discovered != len(ipxeVars)
+}
+
 func ipxeFuncs() template.FuncMap {
 	return template.FuncMap{
 		"IpxeEcho": func(lines string) string {
@@ -80,22 +98,7 @@ func ipxeFuncs() template.FuncMap {
 		"BootUrl": func(node *corev1alpha1.Machine) string {
 			return "boot.ipxe?uuid=${uuid}"
 		},
-		"NeedsDiscovery": func(nodeObj *corev1alpha1.Machine) bool {
-			properties, err := nodeObj.Properties()
-			if err != nil {
-				return true
-			}
-
-			discovered := 0
-			for key, _ := range ipxeVars {
-				if _, ok := properties[key]; !ok {
-					return true
-				}
-				discovered += 1
-			}
-
-			return discovered != len(ipxeVars)
-		},
+		"NeedsDiscovery": needsDiscovery,
 		"IsNodeRejected": func(nodeObj *corev1alpha1.Machine) bool {
 			return nodeObj.IsRejected()
 		},

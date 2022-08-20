@@ -111,6 +111,7 @@ func (r *VirtualMachineDeploymentReconciler) Reconcile(ctx context.Context, req 
 
 	rs := &computev1alpha1.VirtualMachineReplicaSet{}
 	rs.Name = deployment.Name
+
 	_, err := ctrl.CreateOrUpdate(ctx, r.Client, rs, func() error {
 		if !reflect.DeepEqual(rs.Spec.Template, deployment.Spec.Template) {
 			rs.Spec.Template = deployment.Spec.Template
@@ -120,10 +121,17 @@ func (r *VirtualMachineDeploymentReconciler) Reconcile(ctx context.Context, req 
 
 		return ctrl.SetControllerReference(deployment, rs, r.Scheme)
 	})
+
 	log.V(5).Info("found replicaset", "rs", rs)
 
 	if err != nil {
 		return ctrl.Result{}, err
+	}
+	if deployment.Spec.Replicas != deployment.Status.Replicas {
+		deployment.Status.Replicas = deployment.Spec.Replicas
+		if err := r.Client.Status().Update(ctx, deployment); err != nil {
+			return ctrl.Result{}, err
+		}
 	}
 
 	return ctrl.Result{}, nil

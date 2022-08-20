@@ -127,8 +127,6 @@ func (in *NetworkList) GetListMeta() *metav1.ListMeta {
 	return &in.ListMeta
 }
 
-type NetworkCondition = metav1.Condition
-
 // NetworkStatus defines the observed state of Network
 type NetworkStatus struct {
 	// The generation observed by the deployment controller.
@@ -142,7 +140,7 @@ type NetworkStatus struct {
 	// +listType=map
 	// +listMapKey=type
 	// +kubebuilder:default=[{type: "MachineCreated", status: "False"}, {type: "MachineRunning", status: "False"}]
-	Conditions []NetworkCondition  `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type" protobuf:"bytes,1,rep,name=conditions"`
+	Conditions []metav1.Condition  `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type" protobuf:"bytes,1,rep,name=conditions"`
 	Vni        int64               `json:"vni"`
 	Hosts      []HostNetworkStatus `json:"hosts"`
 }

@@ -17,6 +17,7 @@ limitations under the License.aoeaoeaoeao
 package v1alpha1
 
 import (
+	autoscalingv1 "k8s.io/api/autoscaling/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -31,6 +32,9 @@ var SchemeGroupVersion = schema.GroupVersion{Group: GroupName, Version: Version}
 
 var AddToScheme = func(scheme *runtime.Scheme) error {
 	metav1.AddToGroupVersion(scheme, SchemeGroupVersion)
+	if !scheme.Recognizes(autoscalingv1.SchemeGroupVersion.WithKind("Scale")) {
+		autoscalingv1.AddToScheme(scheme)
+	}
 	// +kubebuilder:scaffold:install
 
 	scheme.AddKnownTypes(SchemeGroupVersion, &VirtualMachineDeployment{}, &VirtualMachineDeploymentList{}, &VirtualMachineReplicaSet{}, &VirtualMachineReplicaSetList{})

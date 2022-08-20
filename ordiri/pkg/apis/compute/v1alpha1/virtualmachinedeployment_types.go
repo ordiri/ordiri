@@ -52,7 +52,7 @@ type VirtualMachineDeploymentList struct {
 
 // VirtualMachineDeploymentSpec defines the desired state of VirtualMachineDeployment
 type VirtualMachineDeploymentSpec struct {
-	Replicas int                    `json:"replicas"`
+	Replicas int32                  `json:"replicas"`
 	Template VirtualMachineTemplate `json:"template"`
 }
 
@@ -100,6 +100,8 @@ func (in *VirtualMachineDeploymentList) GetListMeta() *metav1.ListMeta {
 
 // VirtualMachineDeploymentStatus defines the observed state of VirtualMachineDeployment
 type VirtualMachineDeploymentStatus struct {
+	ObservedGeneration int32 `json:"observedGeneration"`
+	Replicas           int32 `json:"replicas"`
 }
 
 func (in VirtualMachineDeploymentStatus) SubResourceName() string {
@@ -118,4 +120,12 @@ var _ resource.StatusSubResource = &VirtualMachineDeploymentStatus{}
 
 func (in VirtualMachineDeploymentStatus) CopyTo(parent resource.ObjectWithStatusSubResource) {
 	parent.(*VirtualMachineDeployment).Status = in
+}
+
+var _ resource.ObjectWithArbitrarySubResource = &VirtualMachineDeployment{}
+
+func (in *VirtualMachineDeployment) GetArbitrarySubResources() []resource.ArbitrarySubResource {
+	return []resource.ArbitrarySubResource{
+		// +kubebuilder:scaffold:subresource
+	}
 }

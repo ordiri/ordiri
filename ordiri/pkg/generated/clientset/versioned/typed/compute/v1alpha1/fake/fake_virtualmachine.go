@@ -130,3 +130,13 @@ func (c *FakeVirtualMachines) Patch(ctx context.Context, name string, pt types.P
 	}
 	return obj.(*v1alpha1.VirtualMachine), err
 }
+
+// Restart takes the representation of a virtualMachineRestart and updates it. Returns the server's representation of the virtualMachineRestart, and an error, if there is any.
+func (c *FakeVirtualMachines) Restart(ctx context.Context, virtualMachineName string, virtualMachineRestart *v1alpha1.VirtualMachineRestart, opts v1.UpdateOptions) (result *v1alpha1.VirtualMachineRestart, err error) {
+	obj, err := c.Fake.
+		Invokes(testing.NewRootUpdateSubresourceAction(virtualmachinesResource, "restart", virtualMachineRestart), &v1alpha1.VirtualMachineRestart{})
+	if obj == nil {
+		return nil, err
+	}
+	return obj.(*v1alpha1.VirtualMachineRestart), err
+}

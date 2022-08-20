@@ -33,15 +33,25 @@ import (
 // +genclient
 // +genclient:nonNamespaced
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
-
+// +genclient:method=Restart,verb=update,subresource=restart,input=VirtualMachineRestart,result=VirtualMachineRestart
 // VirtualMachine
-// +k8s:openapi-gen=true
 type VirtualMachine struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   VirtualMachineSpec   `json:"spec,omitempty"`
-	Status VirtualMachineStatus `json:"status,omitempty"`
+	Spec       VirtualMachineSpec   `json:"spec,omitempty"`
+	Status     VirtualMachineStatus `json:"status,omitempty"`
+	Operations []*Operation         `json:"pendingOperations,omitempty"`
+}
+
+type OperationType string
+
+const (
+	OperationTypeRestart OperationType = "restart"
+)
+
+type Operation struct {
+	Type OperationType `json:"type"`
 }
 
 // VirtualMachineList
@@ -247,4 +257,13 @@ var _ resource.StatusSubResource = &VirtualMachineStatus{}
 
 func (in VirtualMachineStatus) CopyTo(parent resource.ObjectWithStatusSubResource) {
 	parent.(*VirtualMachine).Status = in
+}
+
+var _ resource.ObjectWithArbitrarySubResource = &VirtualMachine{}
+
+func (in *VirtualMachine) GetArbitrarySubResources() []resource.ArbitrarySubResource {
+	return []resource.ArbitrarySubResource{
+		// +kubebuilder:scaffold:subresource
+		&VirtualMachineRestart{},
+	}
 }

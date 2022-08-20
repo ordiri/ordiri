@@ -8,3 +8,5 @@ const (
 	VethSuffixNamespace = "-in"
 	VethSuffixRoot      = "-out"
 )
+
+const confDir = "/run/ordiri"

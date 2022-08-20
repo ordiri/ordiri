@@ -50,10 +50,6 @@ func (subnet *Subnet) RouterNetworkNamespace() string {
 	return fmt.Sprintf("router-%s", subnet.Spec.Network.Name)
 }
 
-func (subnet *Subnet) RouterNetworkInternalCableName() string {
-	return fmt.Sprintf("irtr-%s", subnet.DeviceHash())
-}
-
 func (subnet *Subnet) VMBridge(vmName common.DeviceHashProvider) string {
 	return "obr-" + subnet.DeviceHash() + vmName.DeviceHash()
 }

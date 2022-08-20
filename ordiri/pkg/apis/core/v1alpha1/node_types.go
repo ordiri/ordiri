@@ -54,8 +54,9 @@ type NodeList struct {
 type NodeRole string
 
 const (
-	NodeRoleCompute = "compute"
-	NodeRoleNetwork = "network"
+	NodeRoleCompute NodeRole = "compute"
+	NodeRoleNetwork NodeRole = "network"
+	NodeRoleStorage NodeRole = "storage"
 )
 
 // NodeSpec defines the desired state of Node

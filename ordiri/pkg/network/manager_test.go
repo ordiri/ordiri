@@ -3,7 +3,6 @@ package network
 import (
 	"context"
 	"reflect"
-	"sync"
 	"testing"
 
 	"github.com/ordiri/ordiri/pkg/network/api"
@@ -65,7 +64,6 @@ func Test_networkManager_Start(t *testing.T) {
 	type fields struct {
 		networks []*managedNet
 		driver   driver.Driver
-		l        sync.Mutex
 	}
 	type args struct {
 		ctx context.Context
@@ -83,7 +81,6 @@ func Test_networkManager_Start(t *testing.T) {
 			ln := &networkManager{
 				networks: tt.fields.networks,
 				driver:   tt.fields.driver,
-				l:        tt.fields.l,
 			}
 			if err := ln.Start(tt.args.ctx); (err != nil) != tt.wantErr {
 				t.Errorf("networkManager.Start() error = %v, wantErr %v", err, tt.wantErr)

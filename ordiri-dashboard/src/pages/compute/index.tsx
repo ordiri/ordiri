@@ -51,8 +51,15 @@ export const VncDialogLauncher = ({ host, port, name }: { host: string, name: st
     );
 }
 
+declare global {
+    interface Window {
+        api: ComputeOrdiriComV1alpha1Api;
+    }
+}
 const ComputeResourcesPage = (props: ComputeResourceProps) => {
     const api = new ComputeOrdiriComV1alpha1Api(ordiriConfig)
+
+    window.api = api
 
     // todo the type here is clearly done at 4am, it should be inferred from the listers return values
     const Page = CreateResourcePage({

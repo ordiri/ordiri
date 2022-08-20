@@ -19,14 +19,19 @@ package network
 import (
 	"context"
 	"fmt"
+	"reflect"
 	"sync"
 	"time"
 
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/types"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/handler"
 	"sigs.k8s.io/controller-runtime/pkg/log"
+	"sigs.k8s.io/controller-runtime/pkg/reconcile"
+	"sigs.k8s.io/controller-runtime/pkg/source"
 
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
@@ -76,11 +81,6 @@ func (r *RouterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	// For each of the selected subnets this router is deployed too
 	// check if this node contains the subnet
 	for _, selector := range router.Spec.Subnets {
-		if _, err := r.Node.GetNode().Subnet(selector.Name); err != nil {
-			log.Info("skipping subnet as not scheduled on this node")
-			continue
-		}
-
 		thisSel := selector
 		wg.Add(1)
 		// not safe
@@ -94,6 +94,11 @@ func (r *RouterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 				return
 			}
 
+			subnetWantsRouter := false
+			if _, err := node.Subnet(subnet.Name); err == nil {
+				subnetWantsRouter = true
+			}
+
 			nw := &networkv1alpha1.Network{}
 			if err := r.Client.Get(ctx, client.ObjectKey{Name: subnet.Spec.Network.Name}, nw); err != nil {
 				errs = append(errs, err)
@@ -101,27 +106,22 @@ func (r *RouterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 			}
 
 			if err := ordlet.WaitForNetwork(ctx, r.NetworkManager, nw.Name, time.Second*5); err != nil {
-				errs = append(errs, fmt.Errorf("network manager has no network %s - %w", nw.Name, err))
+				if subnetWantsRouter {
+					errs = append(errs, fmt.Errorf("network manager has no network %s - %w", nw.Name, err))
+				}
 				return
 			}
 			net := r.NetworkManager.GetNetwork(nw.Name)
 
 			if err := ordlet.WaitForSubnet(ctx, r.NetworkManager, net, subnet.Name, time.Second*5); err != nil {
-				errs = append(errs, fmt.Errorf("network manager has no subnet, race condition"))
+				if subnetWantsRouter {
+					errs = append(errs, fmt.Errorf("network manager has no subnet, race condition"))
+				}
 				return
 			}
 
 			sn := r.NetworkManager.GetSubnet(net, subnet.Name)
 
-			subnetWantsRouter := false
-
-			// var finalizer = "changeme-" + r.Node.GetNode().Name
-
-			for _, nws := range node.Status.Networks {
-				if nws.Name == nw.Name {
-					subnetWantsRouter = true
-				}
-			}
 			var rtr api.Router
 			var err error
 			if r.NetworkManager.HasRouter(net, sn, router.Name) {
@@ -179,7 +179,25 @@ func (r *RouterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 
 // SetupWithManager sets up the controller with the Manager.
 func (r *RouterReconciler) SetupWithManager(mgr ctrl.Manager) error {
+	enqueueRequestFromSubnet := handler.EnqueueRequestsFromMapFunc(func(o client.Object) []reconcile.Request {
+		reqs := []reconcile.Request{}
+		switch obj := o.(type) {
+		case *networkv1alpha1.Subnet:
+			for _, iface := range obj.Status.Hosts {
+				reqs = append(reqs, reconcile.Request{
+					NamespacedName: types.NamespacedName{
+						Name: "router-" + iface.Node,
+					},
+				})
+			}
+		default:
+			panic(fmt.Sprintf("unexpected %s", reflect.TypeOf(o).String()))
+
+		}
+		return reqs
+	})
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&networkv1alpha1.Router{}).
+		Watches(&source.Kind{Type: &networkv1alpha1.Subnet{}}, enqueueRequestFromSubnet).
 		Complete(r)
 }

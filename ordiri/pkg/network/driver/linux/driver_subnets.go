@@ -4,9 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 	"syscall"
@@ -29,13 +27,26 @@ func (ln *linuxDriver) RemoveSubnet(ctx context.Context, nw api.Network, sn api.
 		return fmt.Errorf("error removing dhcp - %w", err)
 	}
 
+	if err := deleteNetworkNs(namespaceForServices(nw, sn)); err != nil {
+		return fmt.Errorf("error removing network namespace - %w", err)
+	}
+
 	return nil
 }
 
 func (ln *linuxDriver) EnsureSubnet(ctx context.Context, nw api.Network, sn api.Subnet) error {
 	log := log.FromContext(ctx)
-	log.Info("Installing DHCP")
+	log.Info("Installing Services Network")
+	if err := ln.createSubnetServicesNs(ctx, nw, sn); err != nil {
+		return err
+	}
+
+	log.Info("Installing Services Network")
 	if err := ln.installDhcp(ctx, nw, sn); err != nil {
+		return err
+	}
+	log.Info("Installing MetadataService")
+	if err := ln.installMetadataServer(ctx, nw, sn); err != nil {
 		return err
 	}
 
@@ -113,7 +124,36 @@ func (ln *linuxDriver) removeDhcp(ctx context.Context, nw api.Network, subnet ap
 	return nil
 }
 
-func (ln *linuxDriver) installDhcp(ctx context.Context, nw api.Network, subnet api.Subnet) error {
+func (ln *linuxDriver) installMetadataServer(ctx context.Context, nw api.Network, subnet api.Subnet) error {
+	namespace := namespaceForServices(nw, subnet)
+	cableName := dhcpCableName(nw, subnet)
+
+	if err := setNsVethIp(namespace, "169.254.169.254/32", cableName.Namespace()); err != nil {
+		return fmt.Errorf("unable to set dhcp ip on internal cable %s - %W", cableName, err)
+	}
+
+	// create the dnsmasq config to provide dhcp for this subnet
+	baseDir := filepath.Join(confDir, "/subnets", subnet.Name(), "ordiri-metedata")
+	if err := os.MkdirAll(baseDir, os.ModePerm); err != nil {
+		return fmt.Errorf("unable to create directory %s - %w", baseDir, err)
+	}
+
+	// startCmd := strings.Join(append([]string{"ip", "netns", "exec", namespace, "/usr/sbin/dnsmasq"}, dnsMasqOptions.Args()...), " ")
+	startCmd := strings.Join([]string{"/usr/local/bin/ordiri-metadata", "--subnet", subnet.Name()}, " ")
+	// create the systemd file to manage this dhcp
+	unitName := metadataServerUnitName(subnet)
+	opts := []*unit.UnitOption{
+		unit.NewUnitOption("Unit", "Description", "Ordiri Metadata Service for "+unitName),
+		unit.NewUnitOption("Install", "WantedBy", "multi-user.target"),
+		// unit.NewUnitOption("Service", "PrivateMounts", "yes"),
+		unit.NewUnitOption("Service", "NetworkNamespacePath", namespacePath(namespace)),
+		unit.NewUnitOption("Service", "ExecStart", startCmd),
+	}
+
+	return ln.enableUnitFile(ctx, baseDir, unitName, opts)
+}
+
+func (ln *linuxDriver) createSubnetServicesNs(ctx context.Context, nw api.Network, subnet api.Subnet) error {
 	log := log.FromContext(ctx)
 	namespace := namespaceForServices(nw, subnet)
 
@@ -138,6 +178,11 @@ func (ln *linuxDriver) installDhcp(ctx context.Context, nw api.Network, subnet a
 	}); err != nil {
 		return err
 	}
+	return nil
+}
+func (ln *linuxDriver) installDhcp(ctx context.Context, nw api.Network, subnet api.Subnet) error {
+	namespace := namespaceForServices(nw, subnet)
+	cableName := dhcpCableName(nw, subnet)
 
 	dhcpCidr := subnet.Cidr()
 
@@ -148,7 +193,7 @@ func (ln *linuxDriver) installDhcp(ctx context.Context, nw api.Network, subnet a
 	}
 
 	// create the dnsmasq config to provide dhcp for this subnet
-	baseDir := filepath.Join("/run/ordiri/subnets", subnet.Name(), "dhcp")
+	baseDir := filepath.Join(confDir, "/subnets", subnet.Name(), "dhcp")
 
 	dnsMasqOptions := dhcp.DnsMasqConfig(baseDir, subnet.Name(), subnet.Cidr())
 	if err := os.MkdirAll(baseDir, os.ModePerm); err != nil {
@@ -177,68 +222,10 @@ func (ln *linuxDriver) installDhcp(ctx context.Context, nw api.Network, subnet a
 		unit.NewUnitOption("Service", "ExecStart", startCmd),
 	}
 
-	unitReader := unit.Serialize(opts)
-	unitBytes, err := io.ReadAll(unitReader)
-	if err != nil {
-		return fmt.Errorf("unable to get system unit file for dhcp service %w", err)
-	}
-	unitFile := path.Join(baseDir, unitName)
-	if err := os.WriteFile(unitFile, unitBytes, 0644); err != nil {
-		return fmt.Errorf("unable to create system unit file %w", err)
-	}
-
-	units, err := ln.dbus.ListUnitsByNamesContext(ctx, []string{unitName})
-	if err != nil {
-		return err
-	}
-	running := false
-	for _, unit := range units {
-		if unit.ActiveState == "active" {
-			running = true
-		}
-	}
-	needsReload := false
-	if running {
-		needsReloadProp, err := ln.dbus.GetUnitPropertyContext(ctx, unitName, "NeedDaemonReload")
-		if err != nil {
-			return err
-		}
-
-		if err := needsReloadProp.Value.Store(&needsReload); err != nil {
-			return err
-		}
-	}
-
-	if !running || needsReload {
-		log.V(5).Info("No existing DHCP service, creating")
-		if err := ln.dbus.ReloadContext(ctx); err != nil {
-			return err
-		}
-
-		log.V(5).Info("enabling systemd service", "service", string(unitBytes))
-		started, _, err := ln.dbus.EnableUnitFilesContext(ctx, []string{unitFile}, true, true)
-		if err != nil {
-			return fmt.Errorf("unable to enable system unit file %w", err)
-		}
-
-		if !started {
-			return fmt.Errorf("invalid service unit file, not started")
-		}
-		pid, err := ln.dbus.RestartUnitContext(ctx, unitName, "replace", nil)
-
-		if err != nil || pid == 0 {
-			return fmt.Errorf("unable to start dhcp service - %w", err)
-
-		}
-
-		log.V(5).Info("started dhcp service")
-	}
-
-	return nil
+	return ln.enableUnitFile(ctx, baseDir, unitName, opts)
 }
 
 func (ln *linuxDriver) flows(ctx context.Context, nw api.Network, subnet api.Subnet) ([]sdn.FlowRule, error) {
-
 	return []sdn.FlowRule{
 		&sdn.NodeSubnetEgress{
 			Switch:        sdn.TunnelSwitchName,

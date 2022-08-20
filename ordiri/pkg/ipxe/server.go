@@ -145,27 +145,38 @@ func (s *Server) HTTPHandler() http.Handler {
 			nodeObj.Spec.Properties = []corev1alpha1.MachineProperty{}
 		}
 
-		changed := true
+		changed := false
 		needsDiscovery := false
 		queryVars := r.URL.Query()
 		properties, err := nodeObj.Properties()
 		if err != nil {
 			ipxeErrorResponse(w, r, err.Error())
 		}
+
 		for key := range ipxeVars {
-			if key == "uuid" {
-				continue
-			}
-			newValue, ok := queryVars[key]
-			if !ok { // Missing a known key, we send the user to the discovery url
-				needsDiscovery = true
-				continue
+			currentValue, hasCurrentValue := properties[key]
+			queryValues, hasQueryValue := queryVars[key]
+			queryValue := ""
+			if hasQueryValue && len(queryValues) > 0 {
+				queryValue = queryValues[0]
 			}
 
-			if existing, ok := properties[key]; !ok || *existing != newValue[0] {
+			if !hasCurrentValue && !hasQueryValue {
+				needsDiscovery = true
+			} else if hasQueryValue && !hasCurrentValue {
 				changed = true
-				str := newValue[0]
-				existing = &str
+				nodeObj.Spec.Properties = append(nodeObj.Spec.Properties, corev1alpha1.MachineProperty{
+					Name:  key,
+					Value: queryValue,
+				})
+			} else if hasQueryValue && currentValue != queryValue {
+				changed = true
+				for k, prop := range nodeObj.Spec.Properties {
+					if prop.Name == key {
+						nodeObj.Spec.Properties[k].Value = queryValue
+						break
+					}
+				}
 			}
 		}
 
@@ -198,6 +209,17 @@ func (s *Server) HTTPHandler() http.Handler {
 		nodeObj, err := getNode(ctx, uuid)
 		if err != nil {
 			ipxeErrorResponse(w, r, err.Error())
+			return
+		}
+
+		if needsDiscovery(nodeObj) {
+			successResponse(w, r, IpxeDiscoverTemplate, struct {
+				Node           *corev1alpha1.Machine
+				NeedsDiscovery bool
+			}{
+				Node:           nodeObj,
+				NeedsDiscovery: true,
+			})
 			return
 		}
 

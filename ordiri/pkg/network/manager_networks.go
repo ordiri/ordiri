@@ -2,6 +2,7 @@ package network
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/ordiri/ordiri/pkg/network/api"
 )
@@ -36,10 +37,14 @@ func (ln *networkManager) RemoveNetwork(ctx context.Context, name string) error 
 		return nil
 	}
 
-	for _, subnet := range nw.subnets {
-		if err := ln.RemoveSubnet(ctx, nw.nw, subnet.sn.Name()); err != nil {
+	for _, sn := range nw.subnets {
+		if err := ln.RemoveSubnet(ctx, nw.nw, sn.sn.Name()); err != nil {
 			return err
 		}
+	}
+
+	if len(nw.subnets) > 0 {
+		return fmt.Errorf("network still has active subnets")
 	}
 
 	if err := ln.driver.RemoveNetwork(ctx, nw.nw); err != nil {

@@ -34,7 +34,6 @@ import (
 	k8log "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/digitalocean/go-libvirt"
 	"github.com/google/uuid"
 	internallibvirt "github.com/ordiri/ordiri/pkg/compute/driver/libvirt"
@@ -251,22 +250,27 @@ func (r *VirtualMachineReconciler) ReconcileDeletion(ctx context.Context, vm *co
 
 	for _, iface := range vm.Spec.NetworkInterfaces {
 		if !r.NetworkManager.HasNetwork(iface.Network) {
+			log.V(5).Info("network already removed", "iface", iface)
 			continue
 		}
 		net := r.NetworkManager.GetNetwork(iface.Network)
 
 		if !r.NetworkManager.HasSubnet(net, iface.Subnet) {
+			log.V(5).Info("subnet already removed", "iface", iface)
 			continue
 		}
 
 		subnet := r.NetworkManager.GetSubnet(net, iface.Subnet)
 
-		if r.NetworkManager.HasInterface(net, subnet, iface.Key()) {
-			netIface := r.NetworkManager.GetInterface(net, subnet, iface.Key())
-			if err := r.NetworkManager.RemoveInterface(ctx, net, subnet, netIface); err != nil {
-				return ctrl.Result{}, fmt.Errorf("unable to remove network interface - %w", err)
-			}
+		if !r.NetworkManager.HasInterface(net, subnet, iface.Key()) {
+			log.V(5).Info("interface already removed", "iface", iface)
+			continue
 		}
+		netIface := r.NetworkManager.GetInterface(net, subnet, iface.Key())
+		if err := r.NetworkManager.RemoveInterface(ctx, net, subnet, netIface); err != nil {
+			return ctrl.Result{}, fmt.Errorf("unable to remove network interface - %w", err)
+		}
+		log.V(5).Info("interface was successfully removed", "iface", iface)
 	}
 
 	for _, volume := range vm.Spec.Volumes {
@@ -373,7 +377,6 @@ func (r *VirtualMachineReconciler) SetupWithManager(mgr ctrl.Manager) error {
 			if evt.Event == int32(libvirt.DomainEventDefined) {
 				continue
 			}
-			spew.Dump(evt)
 			chanWatchers <- (event.GenericEvent{
 				Object: &computev1alpha1.VirtualMachine{
 					ObjectMeta: v1.ObjectMeta{

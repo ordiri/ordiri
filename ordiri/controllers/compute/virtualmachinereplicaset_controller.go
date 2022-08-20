@@ -19,6 +19,7 @@ package compute
 import (
 	"context"
 	"fmt"
+	"math"
 	"reflect"
 
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -71,7 +72,7 @@ func (r *VirtualMachineReplicaSetReconciler) Reconcile(ctx context.Context, req 
 	if !rs.DeletionTimestamp.IsZero() {
 		log.V(5).Info("Detected replicaset in deletion mode")
 
-		for i := 0; i < rs.Spec.Replicas; i++ {
+		for i := int32(0); i < rs.Spec.Replicas; i++ {
 			vm := &computev1alpha1.VirtualMachine{}
 			vm.Name = fmt.Sprintf("%s-%d", rs.Name, i)
 			if err := r.Client.Delete(ctx, vm); err != nil {
@@ -97,9 +98,17 @@ func (r *VirtualMachineReplicaSetReconciler) Reconcile(ctx context.Context, req 
 		}
 	}
 
-	for i := 0; i < rs.Spec.Replicas; i++ {
+	for i := int32(0); i < int32(math.Max(float64(rs.Spec.Replicas), float64(rs.Status.Replicas))); i++ {
 		vm := &computev1alpha1.VirtualMachine{}
-		vm.Name = fmt.Sprintf("%s-%d", rs.Name, i)
+		vm.Name = fmt.Sprintf("%s-%d", rs.Name, int64(i))
+		if i >= rs.Spec.Replicas {
+			log.Info("deleting item", "vm", vm.Name)
+			if err := r.Client.Delete(ctx, vm); err != nil && !errors.IsNotFound(err) {
+				return ctrl.Result{}, err
+			}
+			continue
+		}
+
 		_, err := ctrl.CreateOrUpdate(ctx, r.Client, vm, func() error {
 			rs.Spec.Template.Spec.ScheduledNode = vm.Spec.ScheduledNode
 			vm2 := vm.DeepCopy()
@@ -129,6 +138,12 @@ func (r *VirtualMachineReplicaSetReconciler) Reconcile(ctx context.Context, req 
 		log.V(5).Info("found vm " + fmt.Sprint(i))
 
 		if err != nil {
+			return ctrl.Result{}, err
+		}
+	}
+	if rs.Spec.Replicas != rs.Status.Replicas {
+		rs.Status.Replicas = rs.Spec.Replicas
+		if err := r.Client.Status().Update(ctx, rs); err != nil {
 			return ctrl.Result{}, err
 		}
 	}

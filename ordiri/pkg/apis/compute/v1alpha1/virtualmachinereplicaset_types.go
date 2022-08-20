@@ -52,7 +52,7 @@ type VirtualMachineReplicaSetList struct {
 
 // VirtualMachineReplicaSetSpec defines the desired state of VirtualMachineReplicaSet
 type VirtualMachineReplicaSetSpec struct {
-	Replicas int                    `json:"replicas"`
+	Replicas int32                  `json:"replicas"`
 	Template VirtualMachineTemplate `json:"template"`
 }
 
@@ -105,6 +105,7 @@ func (in *VirtualMachineReplicaSetList) GetListMeta() *metav1.ListMeta {
 
 // VirtualMachineReplicaSetStatus defines the observed state of VirtualMachineReplicaSet
 type VirtualMachineReplicaSetStatus struct {
+	Replicas int32 `json:"replicas"`
 }
 
 func (in VirtualMachineReplicaSetStatus) SubResourceName() string {

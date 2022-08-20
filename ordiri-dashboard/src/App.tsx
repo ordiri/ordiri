@@ -13,7 +13,8 @@ import StorageIcon from '@mui/icons-material/Storage';
 import CoreResourcesPage from './pages/core';
 import ordiriConfig from './ordiri-config';
 import ComputeResourcesPage from './pages/compute';
-import { NetworkOrdiriComV1alpha1Api, StorageOrdiriComV1alpha1Api } from '@ordiri/client-typescript';
+import { StorageOrdiriComV1alpha1Api } from '@ordiri/client-typescript';
+import NetworkResourcesPage from './pages/network';
 
 function App() {
   const types: Record<string, any> = {
@@ -27,15 +28,8 @@ function App() {
       icon: <ComputeIcon />
     },
     "Network": {
-      client: new NetworkOrdiriComV1alpha1Api(ordiriConfig),
-      icon: <NetworkIcon />,
-      columns: [{
-          label: "Name",
-          selector: "metadata.name",
-        }, {
-          label: "CIDR",
-          selector: "spec.cidr",
-        }]
+      component: NetworkResourcesPage,
+      icon: <NetworkIcon />
     },
     "Storage": {
       client: new StorageOrdiriComV1alpha1Api(ordiriConfig),

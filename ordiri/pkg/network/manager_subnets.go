@@ -42,12 +42,25 @@ func (ln *networkManager) RemoveSubnet(ctx context.Context, nw api.Network, name
 	if sn == nil {
 		return nil
 	}
-	if len(sn.interfaces) > 0 || len(sn.routers) > 0 {
-		return fmt.Errorf("subnet still has interfaces or routers")
+
+	for _, rtr := range sn.routers {
+		if err := ln.RemoveRouter(ctx, nw, sn.sn, rtr); err != nil {
+			return fmt.Errorf("error removing router - %w", err)
+		}
 	}
 
-	// net.l.Lock()
-	// defer net.l.Unlock()
+	for _, iface := range sn.interfaces {
+		if err := ln.RemoveInterface(ctx, nw, sn.sn, iface); err != nil {
+			return fmt.Errorf("error removing router - %w", err)
+		}
+	}
+
+	if len(sn.interfaces) > 0 || len(sn.routers) > 0 {
+		return fmt.Errorf("subnet still has interfaces(%d) or routers(%d)", len(sn.interfaces), len(sn.routers))
+	}
+
+	net.l.Lock()
+	defer net.l.Unlock()
 
 	if err := ln.driver.RemoveSubnet(ctx, nw, sn.sn); err != nil {
 		return err

@@ -17,6 +17,9 @@ import (
 func dhcpUnitName(subnet api.Subnet) string {
 	return fmt.Sprintf("dhcp-%s.service", subnet.Name())
 }
+func metadataServerUnitName(subnet api.Subnet) string {
+	return fmt.Sprintf("ordiri-md-%s.service", subnet.Name())
+}
 
 func namespacePath(namespace string) string {
 	return fmt.Sprintf("/var/run/netns/%s", namespace)

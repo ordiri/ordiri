@@ -45,13 +45,13 @@ export interface ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineStatus
      */
     conditions?: Array<IoK8sApimachineryPkgApisMetaV1Condition>;
     /**
-     * 
+     * Volumes is all the volumes which are allocated to this virtual machine
      * @type {Array<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineVolumeStatus>}
      * @memberof ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineStatus
      */
     disks?: Array<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineVolumeStatus>;
     /**
-     * 
+     * NetworkInterfaces connected to a virtual machine
      * @type {Array<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterfaceStatus>}
      * @memberof ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineStatus
      */
@@ -62,6 +62,12 @@ export interface ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineStatus
      * @memberof ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineStatus
      */
     observedGeneration?: number;
+    /**
+     * VncPort contains the port number where the VNC server listens for this VM
+     * @type {number}
+     * @memberof ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineStatus
+     */
+    vncPort: number;
 }
 
 /**
@@ -69,6 +75,7 @@ export interface ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineStatus
  */
 export function instanceOfComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineStatus(value: object): boolean {
     let isInstance = true;
+    isInstance = isInstance && "vncPort" in value;
 
     return isInstance;
 }
@@ -87,6 +94,7 @@ export function ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineStatusF
         'disks': !exists(json, 'disks') ? undefined : ((json['disks'] as Array<any>).map(ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineVolumeStatusFromJSON)),
         'networkInterfaces': !exists(json, 'networkInterfaces') ? undefined : ((json['networkInterfaces'] as Array<any>).map(ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterfaceStatusFromJSON)),
         'observedGeneration': !exists(json, 'observedGeneration') ? undefined : json['observedGeneration'],
+        'vncPort': json['vncPort'],
     };
 }
 
@@ -103,6 +111,7 @@ export function ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineStatusT
         'disks': value.disks === undefined ? undefined : ((value.disks as Array<any>).map(ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineVolumeStatusToJSON)),
         'networkInterfaces': value.networkInterfaces === undefined ? undefined : ((value.networkInterfaces as Array<any>).map(ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterfaceStatusToJSON)),
         'observedGeneration': value.observedGeneration,
+        'vncPort': value.vncPort,
     };
 }
 

@@ -16,6 +16,7 @@ src/apis/VersionApi.ts
 src/apis/index.ts
 src/index.ts
 src/models/ComGithubOrdiriOrdiriPkgApisComputeV1alpha1HostLocalVolumeClaim.ts
+src/models/ComGithubOrdiriOrdiriPkgApisComputeV1alpha1Operation.ts
 src/models/ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine.ts
 src/models/ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment.ts
 src/models/ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeploymentList.ts
@@ -78,6 +79,9 @@ src/models/ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaimList.ts
 src/models/ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaimSpec.ts
 src/models/ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeList.ts
 src/models/ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeSpec.ts
+src/models/IoK8sApiAutoscalingV1Scale.ts
+src/models/IoK8sApiAutoscalingV1ScaleSpec.ts
+src/models/IoK8sApiAutoscalingV1ScaleStatus.ts
 src/models/IoK8sApiCoreV1ObjectReference.ts
 src/models/IoK8sApimachineryPkgApisMetaV1APIGroup.ts
 src/models/IoK8sApimachineryPkgApisMetaV1APIGroupList.ts

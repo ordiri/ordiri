@@ -53,7 +53,7 @@ func (ln *networkManager) EnsureInterface(ctx context.Context, nw api.Network, s
 			return ifaceName, nil
 		}
 	}
-	subnet.routers = append(subnet.routers, iface)
+	subnet.interfaces = append(subnet.interfaces, iface)
 
 	return ifaceName, nil
 }
@@ -66,8 +66,12 @@ func (ln *networkManager) RemoveInterface(ctx context.Context, nw api.Network, s
 	subnet.l.Lock()
 	defer subnet.l.Unlock()
 
+	if err := ln.driver.RemoveInterface(ctx, nw, sn, iface); err != nil {
+		return fmt.Errorf("unable to remove interface - %w", err)
+	}
+
 	ifaces := []api.Interface{}
-	for _, _iface := range subnet.routers {
+	for _, _iface := range subnet.interfaces {
 		if _iface.Name() == iface.Name() {
 			continue
 		}
