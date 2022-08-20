@@ -4,17 +4,8 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 */
 package cmd
 
-import (
-	"net/http"
-
-	// "github.com/ordiri/ordiri/config"
-	"github.com/ordiri/ordiri/log"
-	clientset "github.com/ordiri/ordiri/pkg/generated/clientset/versioned"
-	"github.com/ordiri/ordiri/pkg/metadata"
-	"k8s.io/client-go/tools/clientcmd"
-
+import ( // "github.com/ordiri/ordiri/config"
 	// "k8s.io/client-go/tools/clientcmd"
-
 	// "github.com/ordiri/ordiri/config"
 	"github.com/spf13/cobra"
 )
@@ -32,35 +23,43 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
-		// if you want to change the loading rules (which files in which order), you can do so here
+		// loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
+		// // if you want to change the loading rules (which files in which order), you can do so here
 
-		configOverrides := &clientcmd.ConfigOverrides{}
-		// if you want to change override values or bind them to flags, there are methods to help you
+		// configOverrides := &clientcmd.ConfigOverrides{}
+		// // if you want to change override values or bind them to flags, there are methods to help you
 
-		kubeConfig := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(loadingRules, configOverrides)
-		restConfig, err := kubeConfig.ClientConfig()
-		if err != nil {
-			return err
-		}
+		// kubeConfig := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(loadingRules, configOverrides)
+		// restConfig, err := kubeConfig.ClientConfig()
+		// if err != nil {
+		// 	return err
+		// }
 
-		client := clientset.NewForConfigOrDie(restConfig)
+		// client := clientset.NewForConfigOrDie(restConfig)
 
-		stopCh := make(chan struct{})
-		metadataServer := metadata.NewServer(client)
-		go metadataServer.Start(stopCh)
+		// stopCh := make(chan struct{})
 
-		log.Logger.Info("Starting server")
-		err = http.ListenAndServe(":"+port, metadataServer.HTTPHandler())
-		stopCh <- struct{}{}
+		// conn, err := net.Listen("unix", "/run/ordlet/metadata.sock")
+		// if err != nil {
+		// 	return err
+		// }
 
-		if err != nil {
-			return err
-		}
+		// log.Logger.Info("Starting server")
+		// err = http.Serve(conn, metadataServer.HTTPHandler())
+		// stopCh <- struct{}{}
+
+		// if err != nil {
+		// 	return err
+		// }
+		// return nil
 		return nil
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(serverCmd)
+
+	serverCmd.PersistentFlags().StringP("network", "n", "", "which network")
+	serverCmd.PersistentFlags().StringP("subnet", "s", "", "which subnet to watch")
+
 }

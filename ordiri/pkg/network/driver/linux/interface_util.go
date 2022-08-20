@@ -18,7 +18,7 @@ func namespaceForRouter(network api.Network) string {
 	return NetworkRouterNamespacePrefix + network.Name()
 }
 
-func namespaceForServices(network api.Network, subnet api.Subnet) string {
+func namespaceForDhcp(network api.Network, subnet api.Subnet) string {
 	// return NetworkServicesNamespacePrefix + network.Name() +"-"+ subnet.Name()
 	return NetworkServicesNamespacePrefix + network.Name() + subnet.Name()
 }

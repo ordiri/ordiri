@@ -188,11 +188,12 @@ func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network
 }
 func (ln *linuxDriver) interfaceFlowRules(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface) ([]sdn.FlowRule, error) {
 	return []sdn.FlowRule{
-		// &sdn.SubnetMetadataServer{
-		// 	WorkloadSwitch: sdn.WorkloadSwitchName,
-		// 	WorkloadPort:   interfaceBridgeName(nw, sn, iface),
-		// 	MetadataPort:   dhcpCableName(nw, sn).Root(),
-		// },
+		&sdn.MetadataServer{
+			Switch:       sdn.WorkloadSwitchName,
+			WorkloadPort: interfaceBridgeName(nw, sn, iface),
+			MetadataPort: metadataCableName(nw, sn).Root(),
+			Mac:          metaMac(),
+		},
 	}, nil
 }
 

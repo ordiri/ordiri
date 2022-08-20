@@ -1,55 +1,33 @@
 package metadata
 
 import (
+	"context"
 	"fmt"
 	"net"
 	"net/http"
 	"strings"
-	"time"
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/ordiri/ordiri/log"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 
+	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
 	// "github.com/ordiri/ordiri/log"
 	e "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
-	clientset "github.com/ordiri/ordiri/pkg/generated/clientset/versioned"
-
 	// "go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
-
 	// "github.com/ordiri/ordiri/config"
-
-	"github.com/ordiri/ordiri/pkg/generated/informers/externalversions"
 )
 
 // Server serves boot and provisioning configs to machines via HTTP.
 type Server struct {
-	client clientset.Interface
-
-	watcher *vmWatcher
+	client client.Client
 }
 
 // NewServer returns a new Server.
-func NewServer(client clientset.Interface) *Server {
+func NewServer(client client.Client) *Server {
 	return &Server{
 		client: client,
 	}
-}
-
-// HTTPHandler returns a HTTP handler for the server.
-func (s *Server) Start(stopCh chan struct{}) {
-	informerFactory := externalversions.NewSharedInformerFactory(s.client, time.Second*60)
-	machine := informerFactory.Core().V1alpha1().Machines()
-	s.watcher = &vmWatcher{
-		Metas: make(map[string]*VirtualMachineMetadata),
-	}
-
-	machine.Informer().AddEventHandler(s.watcher)
-
-	go func() {
-		machine.Informer().Run(stopCh)
-	}()
-
-	<-stopCh
 }
 
 func (s *Server) HTTPHandler() http.Handler {
@@ -69,15 +47,29 @@ func (s *Server) HTTPHandler() http.Handler {
 			addr = r.URL.Query().Get("_spoof")
 		}
 
-		host, _, err := net.SplitHostPort(addr)
-		if err != nil {
+		host := net.ParseIP(addr)
+		if host.IsUnspecified() {
 			errorResponse(w, r, fmt.Sprintf("invalid incoming request for %q", addr), nil)
 			return
 		}
-		meta, ok := s.watcher.Metas[host]
-		if !ok {
-			errorResponse(w, r, fmt.Sprintf("missing metadata for machine %q", host), nil)
+		vmByIp := &corev1alpha1.MachineList{}
+
+		if err := s.client.List(context.Background(), vmByIp); err != nil {
+			errorResponse(w, r, fmt.Sprintf("error listing machine for ip %q - %s", host, err.Error()), nil)
 			return
+		}
+		if len(vmByIp.Items) == 0 {
+			errorResponse(w, r, fmt.Sprintf("missing machines for machine %q", host), nil)
+			return
+		}
+		props, err := vmByIp.Items[0].Properties()
+		if err != nil {
+			errorResponse(w, r, fmt.Sprintf("error getting properties for machine %q - %s", host, err.Error()), nil)
+			return
+		}
+		meta := &VirtualMachineMetadata{
+			Name:       vmByIp.Items[0].Name,
+			Properties: props,
 		}
 		path := strings.TrimPrefix(r.URL.EscapedPath(), mdBasePath)
 		spew.Dump(path)
@@ -102,7 +94,7 @@ func (s *Server) HTTPHandler() http.Handler {
 // logRequest logs HTTP requests.
 func (s *Server) logRequest(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, req *http.Request) {
-		log.Logger.Info("HTTP %s %v\n", req.Method, req.URL)
+		fmt.Printf("HTTP %s %v\n", req.Method, req.URL)
 		next.ServeHTTP(w, req)
 	}
 

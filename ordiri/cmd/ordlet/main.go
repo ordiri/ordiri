@@ -166,6 +166,14 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "VirtualMachine")
 		os.Exit(1)
 	}
+	if err = (&compute.MachineMetadataController{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+		Port: 9090,
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "MachineMetadataController")
+		os.Exit(1)
+	}
 
 	//+kubebuilder:scaffold:builder
 

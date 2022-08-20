@@ -12,14 +12,22 @@ type ArpResponder struct {
 	Switch string
 	Mac    net.HardwareAddr
 	Ip     netaddr.IP
+	VlanId int
 }
 
+func (wi *ArpResponder) matches() []ovs.Match {
+	matches := []ovs.Match{
+		ovs.NetworkDestination(wi.Ip.String()),
+	}
+	if wi.VlanId > 0 {
+		matches = append(matches, ovs.DataLinkVLAN(wi.VlanId))
+	}
+	return matches
+}
 func (wi *ArpResponder) Install(client *ovs.Client) error {
 	return client.OpenFlow.AddFlow(wi.Switch, &ovs.Flow{
 		Protocol: ovs.ProtocolARP,
-		Matches: []ovs.Match{
-			ovs.NetworkDestination(wi.Ip.String()),
-		},
+		Matches:  wi.matches(),
 		Actions: []ovs.Action{
 			// ovs.ModVLANVID(wi.NodeLocalVlan),
 			ovs.Move("NXM_OF_ETH_SRC[]", "NXM_OF_ETH_DST[]"),

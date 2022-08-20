@@ -121,6 +121,10 @@ endif
 linux-ordlet: 
 	GOOS=linux GOARCH=amd64 go build -o bin/ordlet-amd64-linux ./cmd/ordlet
 	chmod +x bin/ordlet-amd64-linux
+.PHONY: linux-md
+linux-md: 
+	GOOS=linux GOARCH=amd64 go build -o bin/metadata-amd64-linux ./cmd/vmmetaserver
+	chmod +x bin/metadata-amd64-linux
 
 .PHONY: deploy-debian-ordlet deploy-mothership-ordlet
 deploy-debian-ordlet: linux-ordlet
@@ -131,14 +135,20 @@ deploy-mothership-ordlet: linux-ordlet
 	scp bin/ordlet-amd64-linux mothership:/usr/local/bin/ordlet
 	scp kubeconfig mothership:/etc/ordiri.conf
 
+deploy-debian-md: linux-md
+	scp bin/metadata-amd64-linux root@10.0.1.109:/usr/local/bin/ordiri-metadata
+
+deploy-mothership-md: linux-md
+	scp bin/metadata-amd64-linux mothership:/usr/local/bin/ordiri-metadata
+
 .PHONY: run-remote
 run-remote: stop-mothership stop-debian run-debian-remote run-mothership-remote
 	@echo "starting"
 
-run-mothership-remote: stop-mothership deploy-mothership-ordlet
+run-mothership-remote: stop-mothership deploy-mothership-md deploy-mothership-ordlet
 	ssh mothership 'modprobe nf_nat_tftp nf_conntrack && KUBECONFIG=/etc/ordiri.conf /usr/local/bin/ordlet -zap-log-level=5 | tee /var/log/ordlet.conf' &
 
-run-debian-remote:  stop-debian deploy-debian-ordlet
+run-debian-remote:  stop-debian deploy-debian-md deploy-debian-ordlet
 	ssh root@debian 'modprobe nf_nat_tftp nf_conntrack && KUBECONFIG=/etc/ordiri.conf /usr/local/bin/ordlet -zap-log-level=5 | tee /var/log/ordlet.conf' &
 
 .PHONY: stop-mothership

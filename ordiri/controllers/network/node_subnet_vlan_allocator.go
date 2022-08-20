@@ -48,7 +48,7 @@ const VirtualMachineByNode = ".internal.node"
 
 // Reconcile needs a serious rewrite
 func (r *NodeSubnetVlanAllocator) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = log.FromContext(ctx)
+	log := log.FromContext(ctx)
 	n := &corev1alpha1.Node{}
 	if err := r.Client.Get(ctx, req.NamespacedName, n); err != nil {
 		if errors.IsNotFound(err) {
@@ -65,6 +65,10 @@ func (r *NodeSubnetVlanAllocator) Reconcile(ctx context.Context, req ctrl.Reques
 			changed = true
 		}
 		previouslyAllocatedSubnets[subnet.ObjectReference.Name] = subnet
+		if _, exists := previouslyAllocatedVlanNumbers[subnet.VlanId]; exists {
+			log.Info("already allocated", "subnet", subnet)
+
+		}
 		previouslyAllocatedVlanNumbers[subnet.VlanId] = true
 	}
 

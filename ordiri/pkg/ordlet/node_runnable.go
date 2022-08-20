@@ -25,7 +25,7 @@ type RunnableNodeProvider interface {
 	manager.Runnable
 }
 
-func NewNodeRunnable(mgmtNet *net.IPNet, nodeName string, roles []string) RunnableNodeProvider {
+func NewNodeRunnable(mgmtNet *net.IPNet, nodeName string, roles []string) *createLocalNodeRunnable {
 	node := &corev1alpha1.Node{}
 	node.Name = nodeName
 	nodeRoles := []corev1alpha1.NodeRole{}
@@ -38,7 +38,7 @@ func NewNodeRunnable(mgmtNet *net.IPNet, nodeName string, roles []string) Runnab
 	return NewNodeRunnableWithNode(mgmtNet, node)
 }
 
-func NewNodeRunnableWithNode(mgmtNet *net.IPNet, node *corev1alpha1.Node) RunnableNodeProvider {
+func NewNodeRunnableWithNode(mgmtNet *net.IPNet, node *corev1alpha1.Node) *createLocalNodeRunnable {
 	return &createLocalNodeRunnable{
 		mgmtNet: mgmtNet,
 		roles:   node.Spec.NodeRoles,

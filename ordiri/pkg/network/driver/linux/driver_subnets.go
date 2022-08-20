@@ -21,7 +21,10 @@ import (
 )
 
 func metaMac() net.HardwareAddr {
-	addr, _ := mac.Parse("00:00:00:00:0A:F6")
+	addr, err := mac.Parse("00:00:00:00:0A:F6")
+	if err != nil {
+		panic(err.Error())
+	}
 	return addr
 }
 
@@ -37,7 +40,7 @@ func (ln *linuxDriver) RemoveSubnet(ctx context.Context, nw api.Network, sn api.
 		return fmt.Errorf("error removing dhcp - %w", err)
 	}
 
-	if err := deleteNetworkNs(namespaceForServices(nw, sn)); err != nil {
+	if err := deleteNetworkNs(namespaceForDhcp(nw, sn)); err != nil {
 		return fmt.Errorf("error removing network namespace - %w", err)
 	}
 
@@ -84,7 +87,7 @@ func (ln *linuxDriver) removeMetadataServer(ctx context.Context, nw api.Network,
 func (ln *linuxDriver) removeDhcp(ctx context.Context, nw api.Network, subnet api.Subnet) error {
 	cableName := dhcpCableName(nw, subnet)
 	log := log.FromContext(ctx)
-	namespace := namespaceForServices(nw, subnet)
+	namespace := namespaceForDhcp(nw, subnet)
 	unitName := dhcpUnitName(subnet)
 
 	log.Info("Deleting port for dhcp", "cableName", cableName)
@@ -139,7 +142,7 @@ func (ln *linuxDriver) removeDhcp(ctx context.Context, nw api.Network, subnet ap
 
 func (ln *linuxDriver) installMetadataServer(ctx context.Context, nw api.Network, subnet api.Subnet) error {
 	log := log.FromContext(ctx)
-	namespace := namespaceForServices(nw, subnet)
+	namespace := namespaceForDhcp(nw, subnet)
 	cableName := metadataCableName(nw, subnet)
 
 	if err := ln.getOrCreateVeth(ctx, namespace, cableName, metaMac()); err != nil {
@@ -169,7 +172,7 @@ func (ln *linuxDriver) installMetadataServer(ctx context.Context, nw api.Network
 	}
 
 	// startCmd := strings.Join(append([]string{"ip", "netns", "exec", namespace, "/usr/sbin/dnsmasq"}, dnsMasqOptions.Args()...), " ")
-	startCmd := strings.Join([]string{"/usr/local/bin/ordiri-metadata", "--subnet", subnet.Name()}, " ")
+	startCmd := strings.Join([]string{"/usr/local/bin/ordiri-metadata", "--network", nw.Name(), "--subnet", subnet.Name(), "server"}, " ")
 	// create the systemd file to manage this metadata
 	unitName := metadataServerUnitName(subnet)
 	opts := []*unit.UnitOption{
@@ -177,6 +180,7 @@ func (ln *linuxDriver) installMetadataServer(ctx context.Context, nw api.Network
 		unit.NewUnitOption("Install", "WantedBy", "multi-user.target"),
 		// unit.NewUnitOption("Service", "PrivateMounts", "yes"),
 		unit.NewUnitOption("Service", "NetworkNamespacePath", namespacePath(namespace)),
+		unit.NewUnitOption("Service", "Environment", "KUBECONFIG=/etc/ordiri.conf"),
 		unit.NewUnitOption("Service", "ExecStart", startCmd),
 	}
 
@@ -185,18 +189,18 @@ func (ln *linuxDriver) installMetadataServer(ctx context.Context, nw api.Network
 
 func (ln *linuxDriver) createSubnetServicesNs(ctx context.Context, nw api.Network, subnet api.Subnet) error {
 	log := log.FromContext(ctx)
-	namespace := namespaceForServices(nw, subnet)
+	dhcpNamespace := namespaceForDhcp(nw, subnet)
 
-	log.Info("creating network namespace", "namespace", namespace)
-	if err := createNetworkNs(namespace); err != nil {
-		return fmt.Errorf("unable to create network namespace - %w", err)
+	log.Info("creating dhcp namespace", "namespace", dhcpNamespace)
+	if err := createNetworkNs(dhcpNamespace); err != nil {
+		return fmt.Errorf("unable to create dhcp namespace - %w", err)
 	}
 
 	return nil
 }
 func (ln *linuxDriver) installDhcp(ctx context.Context, nw api.Network, subnet api.Subnet) error {
 	log := log.FromContext(ctx)
-	namespace := namespaceForServices(nw, subnet)
+	namespace := namespaceForDhcp(nw, subnet)
 	cableName := dhcpCableName(nw, subnet)
 	if err := ln.getOrCreateVeth(ctx, namespace, cableName, mac.Unicast()); err != nil {
 		return fmt.Errorf("unable to create veth cable %s - %w", cableName, err)
