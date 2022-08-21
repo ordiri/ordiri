@@ -77,6 +77,9 @@ type VirtualMachineSpec struct {
 	Role string `json:"role"`
 
 	// +optional
+	ServiceAccountName string `json:"serviceAccountName"`
+
+	// +optional
 	ScheduledNode string `json:"node"`
 
 	State VirtualMachineState `json:"state"`

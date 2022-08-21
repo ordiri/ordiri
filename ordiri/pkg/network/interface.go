@@ -22,6 +22,12 @@ func InterfaceWithIps(ip ...netaddr.IP) InterfaceOption {
 		return nil
 	}
 }
+func InterfaceWithHostnames(hostnames ...string) InterfaceOption {
+	return func(ni *netInterface) error {
+		ni.hostnames = append(ni.hostnames, hostnames...)
+		return nil
+	}
+}
 
 func NewInterface(name string, opt ...InterfaceOption) (api.Interface, error) {
 	iface := &netInterface{
@@ -40,9 +46,10 @@ func NewInterface(name string, opt ...InterfaceOption) (api.Interface, error) {
 }
 
 type netInterface struct {
-	name string
-	mac  net.HardwareAddr
-	ip   []netaddr.IP
+	name      string
+	mac       net.HardwareAddr
+	ip        []netaddr.IP
+	hostnames []string
 }
 
 func (ni *netInterface) Name() string {
@@ -55,6 +62,9 @@ func (ni *netInterface) Mac() net.HardwareAddr {
 
 func (ni *netInterface) IP() []netaddr.IP {
 	return ni.ip
+}
+func (ni *netInterface) Hostnames() []string {
+	return ni.hostnames
 }
 
 var _ api.Interface = &netInterface{}

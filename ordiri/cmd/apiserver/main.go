@@ -27,6 +27,7 @@ import (
 
 	// +kubebuilder:scaffold:resource-imports
 	"github.com/ordiri/ordiri/pkg/apis"
+	authorizationv1alpha1 "github.com/ordiri/ordiri/pkg/apis/authorization/v1alpha1"
 	computev1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
@@ -44,6 +45,9 @@ func main() {
 		}).
 
 		// +kubebuilder:scaffold:resource-register
+		WithResource(&authorizationv1alpha1.RoleBinding{}).
+		WithResource(&authorizationv1alpha1.Role{}).
+		WithResource(&authorizationv1alpha1.ServiceAccount{}).
 		WithResource(&storagev1alpha1.VolumeClaim{}).
 		WithResource(&networkv1alpha1.Router{}).
 		WithResource(&storagev1alpha1.Volume{}).

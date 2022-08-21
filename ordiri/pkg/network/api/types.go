@@ -50,14 +50,14 @@ type Network interface {
 	Name() string
 	Cidr() netaddr.IPPrefix
 	Segment() int64
+	DnsRecords() map[netaddr.IP][]string
+	WithDns(netaddr.IP, []string) bool
 }
 
 type Subnet interface {
 	Name() string
 	Cidr() netaddr.IPPrefix
 	Segment() int
-	// The name of all the hosts this subnet is deployed too
-	Hosts() []string
 }
 
 type Router interface {
@@ -68,6 +68,7 @@ type Router interface {
 
 type Interface interface {
 	Name() string
+	Hostnames() []string
 	Mac() net.HardwareAddr
 	IP() []netaddr.IP
 }

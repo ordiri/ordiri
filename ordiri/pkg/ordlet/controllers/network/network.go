@@ -20,6 +20,7 @@ import (
 	"context"
 	"fmt"
 
+	"inet.af/netaddr"
 	k8err "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/util/retry"
@@ -30,6 +31,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 
+	computev1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
 	"github.com/ordiri/ordiri/pkg/network"
@@ -78,7 +80,6 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 		net = r.NetworkManager.GetNetwork(nw.Name)
 	} else {
 		net, err = network.NewNetwork(nw.Name, nw.Spec.Cidr, nw.Status.Vni)
-
 	}
 	if err != nil {
 		return ctrl.Result{}, err
@@ -101,6 +102,24 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 		}
 	} else if nodeWantsNetwork {
 		log.V(5).Info("Starting to build networking", "nodeWantsNetwork", nodeWantsNetwork, "nodeHasNetwork", nodeHasNetwork, "network", net)
+		vmsInNetwork := &computev1alpha1.VirtualMachineList{}
+		if err := r.Client.List(ctx, vmsInNetwork, client.MatchingFields{"VmsByNetwork": nw.Name}); err != nil {
+			return ctrl.Result{}, fmt.Errorf("unable to get vms in this network - %w", err)
+		}
+
+		for _, vm := range vmsInNetwork.Items {
+			for _, iface := range vm.Spec.NetworkInterfaces {
+				for _, ip := range iface.Ips {
+					parsed, err := netaddr.ParseIP(ip)
+					if err != nil {
+						return ctrl.Result{}, err
+					}
+
+					net.WithDns(parsed, []string{vm.Name})
+				}
+			}
+		}
+
 		if err := r.NetworkManager.EnsureNetwork(ctx, net); err != nil {
 			return ctrl.Result{}, err
 		}
@@ -183,6 +202,15 @@ func (r *NetworkReconciler) removeNodeFromNetworkStatus(ctx context.Context, nw 
 func (r *NetworkReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	// ctx := context.Background()
 
+	mgr.GetFieldIndexer().IndexField(context.TODO(), &computev1alpha1.VirtualMachine{}, "VmsByNetwork", func(o client.Object) []string {
+		nws := []string{}
+		obj := o.(*computev1alpha1.VirtualMachine)
+		for _, iface := range obj.Spec.NetworkInterfaces {
+			nws = append(nws, iface.Network)
+		}
+		return nws
+	})
+
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&networkv1alpha1.Network{}).
 		// We want to watch nodes as they have the ability to request a network be scheduled on them
@@ -193,6 +221,18 @@ func (r *NetworkReconciler) SetupWithManager(mgr ctrl.Manager) error {
 				for _, nw := range o.Status.Networks {
 					reqs = append(reqs, reconcile.Request{
 						NamespacedName: client.ObjectKey{Name: nw.Name},
+					})
+				}
+			}
+			return reqs
+		})).
+		Watches(&source.Kind{Type: &computev1alpha1.VirtualMachine{}}, handler.EnqueueRequestsFromMapFunc(func(o client.Object) []reconcile.Request {
+			reqs := []reconcile.Request{}
+			switch o := o.(type) {
+			case *computev1alpha1.VirtualMachine:
+				for _, iface := range o.Spec.NetworkInterfaces {
+					reqs = append(reqs, reconcile.Request{
+						NamespacedName: client.ObjectKey{Name: iface.Network},
 					})
 				}
 			}

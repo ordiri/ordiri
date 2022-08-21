@@ -1,10 +1,11 @@
 package sdn
 
 const (
-	OpenFlowTableEntry        = 0
+	OpenFlowTableEntrypoint   = 0
+	OpenFlowTableUnicast      = 1
+	OpenFlowTableMulticast    = 2
+	OpenFlowTableBroadcast    = 3
 	OpenFlowTableArp          = 0
-	OpenFlowTableMulticast    = 0
-	OpenFlowTableUnicast      = 0
 	OpenFlowTableArpResponder = 0
 )
 

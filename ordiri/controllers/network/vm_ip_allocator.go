@@ -23,7 +23,6 @@ import (
 	"inet.af/netaddr"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/client-go/util/retry"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
@@ -52,13 +51,7 @@ func (r *VmIpAllocator) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 				return ctrl.Result{}, err
 			}
 			iface.Ips = append(iface.Ips, nextIp.String())
-			err = retry.RetryOnConflict(retry.DefaultRetry, func() error {
-				if err := r.Client.Update(ctx, vm); err != nil {
-					return err
-				}
-				return nil
-			})
-			if err != nil {
+			if err := r.Client.Update(ctx, vm); err != nil {
 				return ctrl.Result{}, fmt.Errorf("unable to update vm with allocated IP - %w", err)
 			}
 		}
@@ -76,10 +69,12 @@ func (r *VmIpAllocator) getNextIp(ctx context.Context, iface *computev1alpha1.Vi
 		}
 		return netaddr.IP{}, err
 	}
+
 	vmsInSubnet := &computev1alpha1.VirtualMachineList{}
 	if err := r.Client.List(ctx, vmsInSubnet); err != nil {
 		return netaddr.IP{}, err
 	}
+
 	allocated := map[netaddr.IP]string{}
 	for _, vm := range vmsInSubnet.Items {
 		for _, iface := range vm.Spec.NetworkInterfaces {

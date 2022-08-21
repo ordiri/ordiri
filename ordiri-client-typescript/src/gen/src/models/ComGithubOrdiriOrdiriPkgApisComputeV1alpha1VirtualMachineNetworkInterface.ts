@@ -24,7 +24,7 @@ export interface ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetwor
      * @type {Array<string>}
      * @memberof ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterface
      */
-    ip: Array<string>;
+    ip?: Array<string>;
     /**
      * 
      * @type {string}
@@ -50,7 +50,6 @@ export interface ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetwor
  */
 export function instanceOfComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterface(value: object): boolean {
     let isInstance = true;
-    isInstance = isInstance && "ip" in value;
     isInstance = isInstance && "network" in value;
     isInstance = isInstance && "subnet" in value;
 
@@ -67,7 +66,7 @@ export function ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetwork
     }
     return {
         
-        'ip': json['ip'],
+        'ip': !exists(json, 'ip') ? undefined : json['ip'],
         'mac': !exists(json, 'mac') ? undefined : json['mac'],
         'network': json['network'],
         'subnet': json['subnet'],

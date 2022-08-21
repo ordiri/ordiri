@@ -3,23 +3,24 @@ package metadata
 import (
 	"context"
 	"fmt"
-	"net"
 	"net/http"
+	"path"
 	"strings"
 
-	"github.com/ordiri/ordiri/log"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
+	"github.com/davecgh/go-spew/spew"
+	computev1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
+	"github.com/ordiri/ordiri/pkg/metadata/resolvers"
 	// "github.com/ordiri/ordiri/log"
-	e "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
 	// "go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	// "github.com/ordiri/ordiri/config"
 )
 
 // Server serves boot and provisioning configs to machines via HTTP.
 type Server struct {
-	client client.Client
+	client      client.Client
+	allHandlers []string
 }
 
 // NewServer returns a new Server.
@@ -29,64 +30,95 @@ func NewServer(client client.Client) *Server {
 	}
 }
 
+const VirtualMachineByInterfaceIpKey = ".spec.virtual_machine_by_interface_ip"
+
+func KeyForVmInterface(network, subnet, ip string) string {
+	return fmt.Sprintf("%s:%s:%s", network, subnet, ip)
+}
+
+func (s *Server) HandleMissing(w http.ResponseWriter, r *http.Request) {
+	potential := map[string]bool{}
+	spew.Dump(s.allHandlers)
+	for _, handlerPath := range s.allHandlers {
+		fmt.Printf("checking if %q has %q prefix\n\n\n\n", r.URL.EscapedPath(), handlerPath)
+		if strings.HasPrefix(handlerPath, r.URL.EscapedPath()) {
+			path := strings.TrimPrefix(handlerPath, r.URL.EscapedPath())
+			parts := strings.Split(path, "/")
+			key := parts[0]
+			if len(parts) > 1 {
+				key = key + "/"
+			}
+			potential[key] = true
+		}
+	}
+	for key := range potential {
+		w.Write([]byte(key + "\n"))
+	}
+}
+
+func (s *Server) vmForRequest(r *http.Request) (*computev1alpha1.VirtualMachine, string, string, string, error) {
+	subnet := r.Header.Get("X-Ordiri-Subnet")
+	network := r.Header.Get("X-Ordiri-Network")
+	ip := r.Header.Get("X-Ordiri-Ip")
+
+	vmKey := KeyForVmInterface(network, subnet, ip)
+	if subnet == "" || network == "" || ip == "" {
+		return nil, "", "", "", fmt.Errorf("invalid incoming request for %q", vmKey)
+	}
+
+	vmByIp := &computev1alpha1.VirtualMachineList{}
+	if err := s.client.List(context.Background(), vmByIp, client.MatchingFields{VirtualMachineByInterfaceIpKey: vmKey}); err != nil {
+		return nil, "", "", "", fmt.Errorf("error listing machine for ip %q - %s", vmKey, err.Error())
+	}
+
+	if len(vmByIp.Items) == 0 {
+		return nil, "", "", "", fmt.Errorf("missing machines for ip %q", vmKey)
+	}
+
+	return &vmByIp.Items[0], network, subnet, ip, nil
+}
 func (s *Server) HTTPHandler() http.Handler {
 	mux := http.NewServeMux()
 	// handler := otelhttp.NewHandler(mux, "server")
+	s.allHandlers = []string{}
 
-	chain := func(tag, route string, next http.Handler) {
-		// next = otelhttp.WithRouteTag(tag, next)
+	apiBasePath := "/latest"
+	udBasePath := apiBasePath + "/user-data"
+	mux.Handle(udBasePath, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		vm, _, _, _, err := s.vmForRequest(r)
+		if err != nil {
+			errorResponse(w, r, err.Error(), nil)
+			return
+		}
+		w.Write([]byte(vm.Spec.UserData))
+	}))
+
+	mdBasePath := apiBasePath + "/meta-data/"
+	chain := func(tag, route string, handler resolvers.Resolver) {
+		route = path.Join(mdBasePath, route)
+		s.allHandlers = append(s.allHandlers, route)
+		next := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			vm, subnet, network, ip, err := s.vmForRequest(r)
+			if err != nil {
+				errorResponse(w, r, err.Error(), nil)
+				return
+			}
+			path := strings.TrimPrefix(r.URL.EscapedPath(), mdBasePath)
+			res, success := handler(vm, path, subnet, network, ip)
+			if !success {
+				s.HandleMissing(w, r)
+				return
+			}
+			w.Write([]byte(res))
+		})
 		logger := s.logRequest(next)
 		mux.Handle(route, logger)
 	}
 
-	mdBasePath := "/latest/meta-data/"
-	chain("Metadata", mdBasePath, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		addr := r.RemoteAddr
-		if r.URL.Query().Has("_spoof") {
-			addr = r.URL.Query().Get("_spoof")
-		}
+	mux.Handle("/", http.HandlerFunc(s.HandleMissing))
 
-		host := net.ParseIP(addr)
-		if host.IsUnspecified() {
-			errorResponse(w, r, fmt.Sprintf("invalid incoming request for %q", addr), nil)
-			return
-		}
-		vmByIp := &corev1alpha1.MachineList{}
-
-		if err := s.client.List(context.Background(), vmByIp); err != nil {
-			errorResponse(w, r, fmt.Sprintf("error listing machine for ip %q - %s", host, err.Error()), nil)
-			return
-		}
-		if len(vmByIp.Items) == 0 {
-			errorResponse(w, r, fmt.Sprintf("missing machines for machine %q", host), nil)
-			return
-		}
-		props, err := vmByIp.Items[0].Properties()
-		if err != nil {
-			errorResponse(w, r, fmt.Sprintf("error getting properties for machine %q - %s", host, err.Error()), nil)
-			return
-		}
-		meta := &VirtualMachineMetadata{
-			Name:       vmByIp.Items[0].Name,
-			Properties: props,
-		}
-		path := strings.TrimPrefix(r.URL.EscapedPath(), mdBasePath)
-		// should probably do some sort of file based thing and could just store metadata in some namespace with a bunch of files
-		// and let the golang fileserver expose it
-		resolver, ok := resolvers[path]
-		if !ok {
-			errorResponse(w, r, fmt.Sprintf("invalid path %q", path), nil)
-			return
-		}
-
-		val, ok := resolver(meta)
-		if !ok {
-			errorResponse(w, r, fmt.Sprintf("unable to resolve value for %q", path), nil)
-			return
-		}
-
-		successResponse(w, r, val, struct{}{})
-	}))
+	chain("Network", "local-ipv4", resolvers.LocalIpv4)
+	chain("Network", "local-hostname", resolvers.Hostname)
 
 	return mux
 }
@@ -99,95 +131,6 @@ func (s *Server) logRequest(next http.Handler) http.Handler {
 	}
 
 	return http.HandlerFunc(fn)
-}
-
-type vmWatcher struct {
-	Metas map[string]*VirtualMachineMetadata
-}
-
-func (ich *vmWatcher) OnAdd(obj interface{}) {
-	machine, ok := obj.(*e.Machine)
-	if !ok {
-		log.Logger.Info("object was not a Machine")
-		return
-	}
-	// log.Logger.Info("got machine profile onadd", "machine", machine)
-
-	mp, err := machine.Properties()
-	if err != nil {
-		log.Logger.Error(err, "unable to get machine properties", "machine", machine)
-		return
-	}
-	ip, ok := mp["ip"]
-	if !ok {
-		log.Logger.Info("object did not have an ip")
-		return
-	}
-	ich.Metas[ip] = &VirtualMachineMetadata{
-		Name:       getMachineName(machine),
-		Properties: mp,
-	}
-}
-
-func (ich *vmWatcher) OnUpdate(oldObj, newObj interface{}) {
-	machine, ok := newObj.(*e.Machine)
-	if !ok {
-		log.Logger.Info("object was not a Machine")
-		return
-	}
-
-	// log.Logger.Info("got machine profile onupdate", "machine", machine)
-
-	mp, err := machine.Properties()
-	if err != nil {
-		log.Logger.Error(err, "unable to get machine properties", "machine", machine)
-		return
-	}
-
-	ip, ok := mp["ip"]
-	if !ok {
-		log.Logger.Info("object did not have an ip")
-		return
-	}
-
-	ich.Metas[ip] = &VirtualMachineMetadata{
-		Name:       getMachineName(machine),
-		Properties: mp,
-	}
-}
-
-func getMachineName(m *e.Machine) string {
-	if len(m.OwnerReferences) > 0 {
-		for _, or := range m.OwnerReferences {
-			if or.Kind != "VirtualMachine" {
-				continue
-			}
-			return or.Name
-		}
-	}
-
-	return m.Name
-}
-
-func (ich *vmWatcher) OnDelete(obj interface{}) {
-	machine, ok := obj.(*e.Machine)
-	if !ok {
-		log.Logger.Info("object was not a Machine")
-		return
-	}
-	mp, err := machine.Properties()
-	if err != nil {
-		log.Logger.Error(err, "unable to get machine properties", "machine", machine)
-		return
-	}
-
-	ip, ok := mp["ip"]
-	if !ok {
-		log.Logger.Info("object did not have an ip")
-		return
-	}
-
-	delete(ich.Metas, ip)
 }
 
 type VirtualMachineMetadata struct {

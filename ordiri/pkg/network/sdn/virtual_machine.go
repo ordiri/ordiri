@@ -9,7 +9,7 @@ import (
 )
 
 type VirtualMachine struct {
-	Switch           string
+	WorkloadSwitch   string
 	WorkloadPort     string
 	MetadataPort     string
 	MetadataMac      net.HardwareAddr
@@ -22,31 +22,30 @@ type VirtualMachine struct {
 func (wi *VirtualMachine) rules() []FlowRule {
 	rules := []FlowRule{
 		&MetadataServer{
-			Switch:       wi.Switch,
+			Switch:       wi.WorkloadSwitch,
 			Mac:          wi.MetadataMac,
 			WorkloadPort: wi.WorkloadPort,
 			MetadataPort: wi.MetadataPort,
 		},
 	}
 
-	for _, ip := range wi.Ips {
-		rules = append(rules, &ArpResponder{
-			Switch: wi.Switch,
-			Mac:    wi.Mac,
-			Ip:     ip,
-			VlanId: wi.Segment,
-		})
+	// for _, ip := range wi.Ips {
+	// 	rules = append(rules, &ArpResponder{
+	// 		Switch: wi.TunnelSwitch,
+	// 		Mac:    wi.Mac,
+	// 		Ip:     ip,
+	// 		VlanId: wi.Segment,
+	// 	})
 
-		if wi.StrictSourceDest {
-			rules = append(rules, &StaticMacEntry{
-				Switch:  wi.Switch,
-				Port:    wi.WorkloadPort,
-				Segment: wi.Segment,
-				MacAddr: wi.Mac,
-			})
-
-		}
-	}
+	// 	if wi.StrictSourceDest {
+	// 		rules = append(rules, &StaticMacEntry{
+	// 			Switch:  wi.Switch,
+	// 			Port:    wi.WorkloadPort,
+	// 			Segment: wi.Segment,
+	// 			MacAddr: wi.Mac,
+	// 		})
+	// 	}
+	// }
 
 	return rules
 }

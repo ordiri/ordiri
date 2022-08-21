@@ -15,7 +15,7 @@ func (ln *networkManager) subnet(nw api.Network, name string) (*managedNet, *man
 	}
 
 	for _, sn := range net.subnets {
-		if name == sn.sn.Name() {
+		if sn != nil && name == sn.sn.Name() {
 			return net, sn
 		}
 	}

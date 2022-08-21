@@ -18,6 +18,7 @@ import (
 	"github.com/ordiri/ordiri/pkg/network/dhcp"
 	"github.com/ordiri/ordiri/pkg/network/sdn"
 	"github.com/vishvananda/netlink"
+	"github.com/vishvananda/netns"
 )
 
 func metaMac() net.HardwareAddr {
@@ -212,7 +213,7 @@ func (ln *linuxDriver) installMetadataServer(ctx context.Context, nw api.Network
 	}
 
 	// startCmd := strings.Join(append([]string{"ip", "netns", "exec", namespace, "/usr/sbin/dnsmasq"}, dnsMasqOptions.Args()...), " ")
-	startCmd := strings.Join([]string{"/usr/local/bin/ordiri-metadata", "--network", nw.Name(), "--subnet", subnet.Name(), "server"}, " ")
+	startCmd := strings.Join([]string{"/usr/local/bin/ordiri-metadata", "--network", nw.Name(), "--subnet", subnet.Name(), "--cidr", subnet.Cidr().String(), "server"}, " ")
 	// create the systemd file to manage this metadata
 	unitName := metadataServerUnitName(subnet)
 	opts := []*unit.UnitOption{
@@ -260,20 +261,58 @@ func (ln *linuxDriver) installDhcp(ctx context.Context, nw api.Network, subnet a
 
 	dhcpCidr := subnet.Cidr()
 
-	dhcpAddr := dhcpCidr.IP().Next().Next()
+	routerAddr := dhcpCidr.IP().Next()
+	dhcpAddr := routerAddr.Next()
 
 	if err := setNsVethIp(namespace, fmt.Sprintf("%s/%d", dhcpAddr.String(), dhcpCidr.Bits()), cableName.Namespace()); err != nil {
 		return fmt.Errorf("unable to set dhcp ip on internal cable %s - %W", cableName, err)
 	}
 
+	curNs, err := netns.Get()
+	if err != nil {
+		return fmt.Errorf("unable to get current network ns - %w", err)
+	}
+	handle, err := netns.GetFromName(namespace)
+	if err != nil {
+		return fmt.Errorf("unable to get namespace for public gateway ns - %w", err)
+	}
+
+	result := make(chan error)
+
+	// in a way i'm suprised this works, i would think it would affect the
+	// pkgHandle used by the generic Netlink functions
+	go func(targetNs netns.NsHandle, curNs netns.NsHandle) {
+		closeNs, err := ExecuteInNetns(targetNs, curNs)
+		if err != nil {
+			return
+		}
+		defer closeNs()
+		if err := netlink.RouteReplace(&netlink.Route{
+			Gw:  routerAddr.IPAddr().IP,
+			Src: dhcpAddr.IPAddr().IP,
+		}); err != nil {
+			result <- fmt.Errorf("unable to set services namespace route - %w", err)
+		}
+		close(result)
+	}(handle, curNs)
+
+	if err := <-result; err != nil {
+		return fmt.Errorf("unable to set route for dhcp namespace - %w", err)
+	}
+
 	// create the dnsmasq config to provide dhcp for this subnet
 	baseDir := dhcpConfDir(subnet)
 	dhcpHostDir := dhcpHostMappingDir(subnet)
+	hostDir := hostMappingDir(nw)
 
-	dnsMasqOptions := dhcp.DnsMasqConfig(baseDir, subnet.Name(), subnet.Cidr(), dhcpHostDir)
+	dnsMasqOptions := dhcp.DnsMasqConfig(baseDir, subnet.Name(), subnet.Cidr(), hostDir, dhcpHostDir)
+	// easier to just make the host dir as it's deeper in the tree than the root conf dir
+	if err := os.MkdirAll(hostDir, os.ModePerm); err != nil {
+		return fmt.Errorf("unable to create hosts directory %s - %w", baseDir, err)
+	}
 	// easier to just make the host dir as it's deeper in the tree than the root conf dir
 	if err := os.MkdirAll(dhcpHostDir, os.ModePerm); err != nil {
-		return fmt.Errorf("unable to create directory %s - %w", baseDir, err)
+		return fmt.Errorf("unable to create dhcp directory %s - %w", baseDir, err)
 	}
 
 	hostFile := dhcpHostsFile(subnet)

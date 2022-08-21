@@ -67,6 +67,12 @@ export interface ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineSpec {
      * @type {string}
      * @memberof ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineSpec
      */
+    serviceAccountName?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineSpec
+     */
     state: string;
     /**
      * 
@@ -102,6 +108,7 @@ export function ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineSpecFro
         'networkInterfaces': !exists(json, 'networkInterfaces') ? undefined : ((json['networkInterfaces'] as Array<any>).map(ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterfaceFromJSON)),
         'node': !exists(json, 'node') ? undefined : json['node'],
         'role': json['role'],
+        'serviceAccountName': !exists(json, 'serviceAccountName') ? undefined : json['serviceAccountName'],
         'state': json['state'],
         'volumes': !exists(json, 'volumes') ? undefined : ((json['volumes'] as Array<any>).map(ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineVolumeFromJSON)),
     };
@@ -121,6 +128,7 @@ export function ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineSpecToJ
         'networkInterfaces': value.networkInterfaces === undefined ? undefined : ((value.networkInterfaces as Array<any>).map(ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterfaceToJSON)),
         'node': value.node,
         'role': value.role,
+        'serviceAccountName': value.serviceAccountName,
         'state': value.state,
         'volumes': value.volumes === undefined ? undefined : ((value.volumes as Array<any>).map(ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineVolumeToJSON)),
     };

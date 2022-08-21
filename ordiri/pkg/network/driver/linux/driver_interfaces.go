@@ -147,10 +147,18 @@ func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network
 	}
 
 	if len(iface.IP()) > 0 {
-		for _, addr := range iface.IP() {
-			dhcpHostDir := dhcpHostMappingDir(sn)
-			mapping := fmt.Sprintf("%s,%s", iface.Mac(), addr.String())
-			ioutil.WriteFile(filepath.Join(dhcpHostDir, "host_map_"+hash(addr.String())), []byte(mapping), fs.ModePerm)
+		// todo: This is pretty incorrect but it works for now
+		// it's incorrect because of the idea that hostnames are bound to an
+		// interface + ip in the vm_networking so here we would return
+		// the wrong ip for a multi ip interface
+		// post this comment the dns stuff was moved to the network to enable us
+		// to create dns records for the entire network
+		for idx, addr := range iface.IP() {
+			if idx == 0 {
+				dhcpHostDir := dhcpHostMappingDir(sn)
+				mapping := fmt.Sprintf("%s,%s", iface.Mac(), addr.String())
+				ioutil.WriteFile(filepath.Join(dhcpHostDir, "host_map_"+hash(iface.Mac().String()+addr.String())), []byte(mapping), fs.ModePerm)
+			}
 		}
 	}
 
@@ -200,7 +208,7 @@ func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network
 func (ln *linuxDriver) interfaceFlowRules(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface) ([]sdn.FlowRule, error) {
 	return []sdn.FlowRule{
 		&sdn.VirtualMachine{
-			Switch:           sdn.WorkloadSwitchName,
+			WorkloadSwitch:   sdn.WorkloadSwitchName,
 			WorkloadPort:     interfaceBridgeName(nw, sn, iface),
 			MetadataPort:     metadataCableName(nw, sn).Root(),
 			MetadataMac:      metaMac(),

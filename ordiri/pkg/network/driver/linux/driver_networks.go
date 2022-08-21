@@ -3,6 +3,11 @@ package linux
 import (
 	"context"
 	"fmt"
+	"io/fs"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/ordiri/ordiri/pkg/log"
 	"github.com/ordiri/ordiri/pkg/mac"
@@ -38,6 +43,14 @@ func (ln *linuxDriver) EnsureNetwork(ctx context.Context, nw api.Network) error 
 	log.V(5).Info("Ensuring network", "nw", nw)
 	if err := ln.installNetworkNat(ctx, nw); err != nil {
 		return err
+	}
+	hostDir := hostMappingDir(nw)
+	if len(nw.DnsRecords()) > 0 {
+		os.MkdirAll(hostDir, os.ModePerm)
+		for ip, hostnames := range nw.DnsRecords() {
+			mapping := fmt.Sprintf("%s %s", ip.String(), strings.Join(hostnames, " "))
+			ioutil.WriteFile(filepath.Join(hostDir, "host_map_"+hash(ip.String())), []byte(mapping), fs.ModePerm)
+		}
 	}
 
 	log.V(5).Info("Network ensured")

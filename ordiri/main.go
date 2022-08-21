@@ -32,6 +32,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
+	// authorizationcontrollers "github.com/ordiri/ordiri/controllers/authorization"
 	computecontrollers "github.com/ordiri/ordiri/controllers/compute"
 	corecontrollers "github.com/ordiri/ordiri/controllers/core"
 	networkcontrollers "github.com/ordiri/ordiri/controllers/network"
@@ -176,6 +177,27 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "VolumeClaim")
 		os.Exit(1)
 	}
+	// if err = (&authorizationcontrollers.ServiceAccountReconciler{
+	// 	Client: mgr.GetClient(),
+	// 	Scheme: mgr.GetScheme(),
+	// }).SetupWithManager(mgr); err != nil {
+	// 	setupLog.Error(err, "unable to create controller", "controller", "ServiceAccount")
+	// 	os.Exit(1)
+	// }
+	// if err = (&authorizationcontrollers.RoleReconciler{
+	// 	Client: mgr.GetClient(),
+	// 	Scheme: mgr.GetScheme(),
+	// }).SetupWithManager(mgr); err != nil {
+	// 	setupLog.Error(err, "unable to create controller", "controller", "Role")
+	// 	os.Exit(1)
+	// }
+	// if err = (&authorizationcontrollers.RoleBindingReconciler{
+	// 	Client: mgr.GetClient(),
+	// 	Scheme: mgr.GetScheme(),
+	// }).SetupWithManager(mgr); err != nil {
+	// 	setupLog.Error(err, "unable to create controller", "controller", "RoleBinding")
+	// 	os.Exit(1)
+	// }
 	//+kubebuilder:scaffold:builder
 
 	if err := mgr.AddHealthzCheck("healthz", healthz.Ping); err != nil {

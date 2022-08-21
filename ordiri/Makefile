@@ -57,7 +57,7 @@ manifests: controller-gen generate ## Generate WebhookConfiguration, ClusterRole
 	$(CONTROLLER_GEN) rbac:roleName=manager-role crd webhook paths="./pkg/apis/..." output:crd:artifacts:config=config/crd/bases
 
 .PHONY: generate
-generate: generate-controller generate-tsclient generate-openapi generate-client generate-lister generate-informer generate-defaulter
+generate: generate-controller generate-openapi generate-tsclient generate-client generate-lister generate-informer generate-defaulter
 
 clientset_name = versioned
 gendir = pkg/generated
@@ -155,11 +155,11 @@ run-debian-remote:  stop-debian deploy-debian-ordlet
 
 .PHONY: stop-mothership
 stop-mothership:
-	{ ssh mothership 'kill $$(pidof ordlet)' || true; }
+	{ ssh mothership 'kill $$(pidof ordlet); kill $$(pidof ordlet); kill $$(pidof ordlet)' || true; }
 
 .PHONY: stop-debian
 stop-debian: 
-	{ ssh root@10.0.1.109 'kill $$(pidof ordlet)' || true; }
+	{ ssh root@10.0.1.109 'kill $$(pidof ordlet); kill $$(pidof ordlet); kill $$(pidof ordlet)' || true; }
 
 .PHONY: start-all
 start-all: 

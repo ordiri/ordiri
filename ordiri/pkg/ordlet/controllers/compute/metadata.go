@@ -22,7 +22,7 @@ import (
 	"net/http"
 	"os"
 
-	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
+	computev1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
 	"github.com/ordiri/ordiri/pkg/metadata"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -41,18 +41,20 @@ type MachineMetadataController struct {
 
 // SetupWithManager sets up the controller with the Manager.
 func (r *MachineMetadataController) SetupWithManager(mgr ctrl.Manager) error {
-	machine := &corev1alpha1.Machine{}
-	mgr.GetFieldIndexer().IndexField(context.Background(), &corev1alpha1.Machine{}, "iptomachine", func(o client.Object) []string {
-
-		mp, err := machine.Properties()
-		if err != nil {
-			return nil
-		}
-		ip, ok := mp["ip"]
+	mgr.GetFieldIndexer().IndexField(context.Background(), &computev1alpha1.VirtualMachine{}, metadata.VirtualMachineByInterfaceIpKey, func(o client.Object) []string {
+		obj, ok := o.(*computev1alpha1.VirtualMachine)
 		if !ok {
 			return nil
 		}
-		return []string{ip}
+
+		keys := []string{}
+		for _, iface := range obj.Spec.NetworkInterfaces {
+			for _, ip := range iface.Ips {
+				keys = append(keys, metadata.KeyForVmInterface(iface.Network, iface.Subnet, ip))
+			}
+		}
+
+		return keys
 	})
 	return mgr.Add(manager.RunnableFunc(func(ctx context.Context) error {
 		log := log.FromContext(ctx).WithValues("name", "metadataserver")
@@ -60,7 +62,7 @@ func (r *MachineMetadataController) SetupWithManager(mgr ctrl.Manager) error {
 		metadataServer := metadata.NewServer(mgr.GetClient())
 
 		// Unconditionally remove the old socket
-		os.MkdirAll("/run/ordiri/metadata", os.ModeDir)
+		os.MkdirAll("/run/ordiri/metadata", os.ModePerm)
 		os.Remove("/run/ordiri/metadata/md-server.sock")
 
 		conn, err := net.Listen("unix", "/run/ordiri/metadata/md-server.sock")

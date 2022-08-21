@@ -112,12 +112,23 @@ func (r *VirtualMachineReplicaSetReconciler) Reconcile(ctx context.Context, req 
 		_, err := ctrl.CreateOrUpdate(ctx, r.Client, vm, func() error {
 			rs.Spec.Template.Spec.ScheduledNode = vm.Spec.ScheduledNode
 			vm2 := vm.DeepCopy()
+			// vm3 := vm.DeepCopy()
 			// todo: hack remove this
+			existingIfaces := map[string]*computev1alpha1.VirtualMachineNetworkInterface{}
 			for _, nw := range vm2.Spec.NetworkInterfaces {
+				existingIfaces[nw.Network+nw.Subnet] = nw.DeepCopy()
 				nw.Mac = ""
+				nw.Ips = nil
 			}
+
 			if !reflect.DeepEqual(vm2.Spec, rs.Spec.Template.Spec) {
 				vm.Spec = rs.Spec.Template.Spec
+				for _, nw := range vm.Spec.NetworkInterfaces {
+					if existing, ok := existingIfaces[nw.Network+nw.Subnet]; ok {
+						nw.Mac = existing.Mac
+						nw.Ips = existing.Ips
+					}
+				}
 			}
 			if vm.Annotations == nil {
 				vm.Annotations = map[string]string{}

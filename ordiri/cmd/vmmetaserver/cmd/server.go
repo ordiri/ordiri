@@ -8,6 +8,7 @@ import ( // "github.com/ordiri/ordiri/config"
 	// "k8s.io/client-go/tools/clientcmd"
 	// "github.com/ordiri/ordiri/config"
 	"context"
+	"fmt"
 	"log"
 	"net"
 	"net/url"
@@ -16,6 +17,7 @@ import ( // "github.com/ordiri/ordiri/config"
 	"net/http/httputil"
 
 	"github.com/spf13/cobra"
+	"inet.af/netaddr"
 )
 
 // serverCmd represents the server command
@@ -33,10 +35,50 @@ to quickly create a Cobra application.`,
 			Host:   "metadataserver",
 			Scheme: "http",
 		})
+		network, err := cmd.Flags().GetString("network")
+		if err != nil {
+			return err
+		}
+		subnet, err := cmd.Flags().GetString("subnet")
+		if err != nil {
+			return err
+		}
+		cidrFlag, err := cmd.Flags().GetString("cidr")
+		if err != nil {
+			return err
+		}
+		cidr, err := netaddr.ParseIPPrefix(cidrFlag)
+		if err != nil {
+			return fmt.Errorf("invalid cidr passed - %q - %w", cidrFlag, err)
+		}
+
 		proxy.Transport = &http.Transport{
 			DialContext: func(_ context.Context, _, _ string) (net.Conn, error) {
 				return net.Dial("unix", "/run/ordiri/metadata/md-server.sock")
 			},
+		}
+
+		origDirector := proxy.Director
+		proxy.Director = func(r *http.Request) {
+			parsedIp, err := netaddr.ParseIPPort(r.RemoteAddr)
+			if err != nil {
+				return
+			}
+
+			// should log and alert heavily here, this would be a huge concern
+			if !cidr.Contains(parsedIp.IP()) {
+				return
+			}
+			origDirector(r)
+			// spoofQuery := "=" +
+			// if r.URL.RawQuery == "" {
+			// 	r.URL.RawQuery = spoofQuery
+			// } else {
+			// 	r.URL.RawQuery = r.URL.RawQuery + "&" + spoofQuery
+			// }
+			r.Header.Set("X-Ordiri-Network", network)
+			r.Header.Set("X-Ordiri-Subnet", subnet)
+			r.Header.Set("X-Ordiri-Ip", parsedIp.IP().String())
 		}
 
 		log.Println("Starting proxy server on", ":80")
@@ -51,6 +93,7 @@ to quickly create a Cobra application.`,
 func init() {
 	rootCmd.AddCommand(serverCmd)
 
+	serverCmd.PersistentFlags().StringP("cidr", "a", "", "which cidr to pre-filter requests by")
 	serverCmd.PersistentFlags().StringP("network", "n", "", "which network")
 	serverCmd.PersistentFlags().StringP("subnet", "s", "", "which subnet to watch")
 

@@ -4,6 +4,8 @@
 README.md
 package.json
 src/apis/ApisApi.ts
+src/apis/AuthorizationOrdiriComApi.ts
+src/apis/AuthorizationOrdiriComV1alpha1Api.ts
 src/apis/ComputeOrdiriComApi.ts
 src/apis/ComputeOrdiriComV1alpha1Api.ts
 src/apis/CoreOrdiriComApi.ts
@@ -15,6 +17,12 @@ src/apis/StorageOrdiriComV1alpha1Api.ts
 src/apis/VersionApi.ts
 src/apis/index.ts
 src/index.ts
+src/models/ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1Role.ts
+src/models/ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBinding.ts
+src/models/ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBindingList.ts
+src/models/ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleList.ts
+src/models/ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccount.ts
+src/models/ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccountList.ts
 src/models/ComGithubOrdiriOrdiriPkgApisComputeV1alpha1HostLocalVolumeClaim.ts
 src/models/ComGithubOrdiriOrdiriPkgApisComputeV1alpha1Operation.ts
 src/models/ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine.ts

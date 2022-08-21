@@ -1,6 +1,8 @@
 /* tslint:disable */
 /* eslint-disable */
 export * from './ApisApi';
+export * from './AuthorizationOrdiriComApi';
+export * from './AuthorizationOrdiriComV1alpha1Api';
 export * from './ComputeOrdiriComApi';
 export * from './ComputeOrdiriComV1alpha1Api';
 export * from './CoreOrdiriComApi';

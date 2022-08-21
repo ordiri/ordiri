@@ -7,7 +7,7 @@ import (
 	"inet.af/netaddr"
 )
 
-func DnsMasqConfig(confDir, name string, network netaddr.IPPrefix, dhcpDir string) dnsmasq.Config {
+func DnsMasqConfig(confDir, name string, network netaddr.IPPrefix, hostDir, dhcpDir string) dnsmasq.Config {
 	routerAddr := network.IP().Next()
 	dhcpAddr := routerAddr.Next()
 
@@ -18,6 +18,7 @@ func DnsMasqConfig(confDir, name string, network netaddr.IPPrefix, dhcpDir strin
 		dnsmasq.WithOption("keep-in-foreground", ""),
 		// "domain-needed","",
 		dnsmasq.WithOption("bogus-priv", ""),
+		dnsmasq.WithOption("no-resolv", ""),
 		// "no-resolv","",
 		dnsmasq.WithOption("server", []string{"8.8.8.8", "8.8.4.4"}),
 		// "local",fmt.Sprintf("/%s.homelab.dmann.xyz/", name),
@@ -26,9 +27,10 @@ func DnsMasqConfig(confDir, name string, network netaddr.IPPrefix, dhcpDir strin
 		// "domain", fmt.Sprintf("%s.homelab.dmann.xyz", name),
 		dnsmasq.WithOption("dhcp-range", []string{dhcpAddr.String(), "static"}),
 		dnsmasq.WithOption("dhcp-hostsdir", dhcpDir),
+		dnsmasq.WithOption("hostsdir", hostDir),
 		dnsmasq.WithOption("dhcp-option", []string{
 			dnsmasq.DhcpOptionRouter.Option(routerAddr.String()),
-			dnsmasq.DhcpOptionDnsServer.Option("10.0.1.1"),
+			dnsmasq.DhcpOptionDnsServer.Option(dhcpAddr.String()),
 		}),
 		dnsmasq.WithOption("dhcp-authoritative", ""),
 

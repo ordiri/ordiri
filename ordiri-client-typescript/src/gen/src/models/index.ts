@@ -1,5 +1,11 @@
 /* tslint:disable */
 /* eslint-disable */
+export * from './ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1Role';
+export * from './ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBinding';
+export * from './ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBindingList';
+export * from './ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleList';
+export * from './ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccount';
+export * from './ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccountList';
 export * from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1HostLocalVolumeClaim';
 export * from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1Operation';
 export * from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine';

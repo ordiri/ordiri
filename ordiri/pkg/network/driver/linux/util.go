@@ -126,7 +126,13 @@ func dhcpHostsFile(subnet api.Subnet) string {
 func dhcpHostMappingDir(subnet api.Subnet) string {
 	return filepath.Join(dhcpConfDir(subnet), "/host-mappings")
 }
+func hostMappingDir(nw api.Network) string {
+	return filepath.Join(networkDhcpConfDir(nw), "/etc-hosts.d")
+}
 
 func dhcpConfDir(subnet api.Subnet) string {
 	return filepath.Join(confDir, "/subnets", subnet.Name(), "dhcp")
+}
+func networkDhcpConfDir(nw api.Network) string {
+	return filepath.Join(confDir, "/networks", nw.Name(), "dhcp")
 }

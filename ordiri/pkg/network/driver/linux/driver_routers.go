@@ -89,7 +89,7 @@ func (ld *linuxDriver) installRouter(ctx context.Context, nw api.Network, subnet
 	}
 
 	arpResponderFlow := &sdn.ArpResponder{
-		Switch: sdn.WorkloadSwitchName,
+		Switch: sdn.TunnelSwitchName,
 		Mac:    rtr.Mac(),
 		Ip:     rtr.IP().IP(),
 		VlanId: subnet.Segment(),
@@ -97,15 +97,15 @@ func (ld *linuxDriver) installRouter(ctx context.Context, nw api.Network, subnet
 	if err := arpResponderFlow.Install(ovsClient); err != nil {
 		return fmt.Errorf("unable to install arp responder flow for router")
 	}
-	staticEntryFlow := &sdn.StaticMacEntry{
-		Switch:  sdn.WorkloadSwitchName,
-		Port:    internalRouterCableName.Root(),
-		Segment: subnet.Segment(),
-		MacAddr: rtr.Mac(),
-	}
-	if err := staticEntryFlow.Install(ovsClient); err != nil {
-		return fmt.Errorf("unable to install static mac entry flow for router")
-	}
+	// staticEntryFlow := &sdn.StaticMacEntry{
+	// 	Switch:  sdn.TunnelSwitchName,
+	// 	Port:    internalRouterCableName.Root(),
+	// 	Segment: subnet.Segment(),
+	// 	MacAddr: rtr.Mac(),
+	// }
+	// if err := staticEntryFlow.Install(ovsClient); err != nil {
+	// 	return fmt.Errorf("unable to install static mac entry flow for router")
+	// }
 
 	ipt, err := sdn.Iptables(routerNetworkNamespace)
 	if err != nil {
