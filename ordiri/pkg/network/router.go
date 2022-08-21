@@ -10,16 +10,17 @@ import (
 
 type RouterOption func(*router) error
 
-func WithMac(mac net.HardwareAddr) RouterOption {
+func WithRouterMac(mac net.HardwareAddr) RouterOption {
 	return func(r *router) error {
 		r.mac = mac
 		return nil
 	}
 }
 
-func NewRouter(name string, opt ...RouterOption) (api.Router, error) {
+func NewRouter(name string, ip netaddr.IPPrefix, opt ...RouterOption) (api.Router, error) {
 	rtr := &router{
 		name: name,
+		ip:   ip,
 	}
 	for _, f := range opt {
 		if err := f(rtr); err != nil {
@@ -38,7 +39,7 @@ type router struct {
 	// The name for this network
 	name string
 	mac  net.HardwareAddr
-	ip   netaddr.IP
+	ip   netaddr.IPPrefix
 }
 
 func (rtr *router) Name() string {
@@ -49,7 +50,7 @@ func (rtr *router) Mac() net.HardwareAddr {
 	return rtr.mac
 }
 
-func (rtr *router) IP() netaddr.IP {
+func (rtr *router) IP() netaddr.IPPrefix {
 	return rtr.ip
 }
 

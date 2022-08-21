@@ -7,11 +7,9 @@ import (
 	"inet.af/netaddr"
 )
 
-func DnsMasqConfig(confDir, name string, network netaddr.IPPrefix) dnsmasq.Config {
+func DnsMasqConfig(confDir, name string, network netaddr.IPPrefix, dhcpDir string) dnsmasq.Config {
 	routerAddr := network.IP().Next()
 	dhcpAddr := routerAddr.Next()
-	rangeStart := dhcpAddr.Next()
-	rangeEnd := network.Range().To().Prior()
 
 	return dnsmasq.New(
 		// disable dns
@@ -26,7 +24,8 @@ func DnsMasqConfig(confDir, name string, network netaddr.IPPrefix) dnsmasq.Confi
 		dnsmasq.WithOption("listen-address", []string{"::1", "127.0.0.1", dhcpAddr.String()}),
 		// "expand-hosts", "",
 		// "domain", fmt.Sprintf("%s.homelab.dmann.xyz", name),
-		dnsmasq.WithOption("dhcp-range", []string{rangeStart.String(), rangeEnd.String(), "24h"}),
+		dnsmasq.WithOption("dhcp-range", []string{dhcpAddr.String(), "static"}),
+		dnsmasq.WithOption("dhcp-hostsdir", dhcpDir),
 		dnsmasq.WithOption("dhcp-option", []string{
 			dnsmasq.DhcpOptionRouter.Option(routerAddr.String()),
 			dnsmasq.DhcpOptionDnsServer.Option("10.0.1.1"),

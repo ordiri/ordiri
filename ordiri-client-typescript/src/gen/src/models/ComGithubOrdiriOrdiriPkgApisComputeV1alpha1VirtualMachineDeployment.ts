@@ -19,6 +19,12 @@ import {
     ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeploymentSpecFromJSONTyped,
     ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeploymentSpecToJSON,
 } from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeploymentSpec';
+import type { ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeploymentStatus } from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeploymentStatus';
+import {
+    ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeploymentStatusFromJSON,
+    ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeploymentStatusFromJSONTyped,
+    ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeploymentStatusToJSON,
+} from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeploymentStatus';
 import type { IoK8sApimachineryPkgApisMetaV1ObjectMeta } from './IoK8sApimachineryPkgApisMetaV1ObjectMeta';
 import {
     IoK8sApimachineryPkgApisMetaV1ObjectMetaFromJSON,
@@ -57,11 +63,11 @@ export interface ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeploy
      */
     spec?: ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeploymentSpec;
     /**
-     * VirtualMachineDeploymentStatus defines the observed state of VirtualMachineDeployment
-     * @type {object}
+     * 
+     * @type {ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeploymentStatus}
      * @memberof ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment
      */
-    status?: object;
+    status?: ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeploymentStatus;
 }
 
 /**
@@ -87,7 +93,7 @@ export function ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeploym
         'kind': !exists(json, 'kind') ? undefined : json['kind'],
         'metadata': !exists(json, 'metadata') ? undefined : IoK8sApimachineryPkgApisMetaV1ObjectMetaFromJSON(json['metadata']),
         'spec': !exists(json, 'spec') ? undefined : ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeploymentSpecFromJSON(json['spec']),
-        'status': !exists(json, 'status') ? undefined : json['status'],
+        'status': !exists(json, 'status') ? undefined : ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeploymentStatusFromJSON(json['status']),
     };
 }
 
@@ -104,7 +110,7 @@ export function ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeploym
         'kind': value.kind,
         'metadata': IoK8sApimachineryPkgApisMetaV1ObjectMetaToJSON(value.metadata),
         'spec': ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeploymentSpecToJSON(value.spec),
-        'status': value.status,
+        'status': ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeploymentStatusToJSON(value.status),
     };
 }
 

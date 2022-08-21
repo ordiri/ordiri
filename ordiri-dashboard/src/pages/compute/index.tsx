@@ -1,8 +1,6 @@
-import { ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine, ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineFromJSON, ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineVolume, ComputeOrdiriComV1alpha1Api } from '@ordiri/client-typescript';
+import { ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine, ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterface, ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineVolume, ComputeOrdiriComV1alpha1Api } from '@ordiri/client-typescript';
 import ordiriConfig from '../../ordiri-config';
 import { CreateResourcePage } from '../generic-resource';
-import IconApproved from "@mui/icons-material/Check"
-import IconRejected from "@mui/icons-material/Cancel"
 import { Button, Dialog, DialogContent, DialogTitle } from '@mui/material';
 import { VncScreen } from 'react-vnc';
 import { useState } from 'react';
@@ -75,14 +73,14 @@ const ComputeResourcesPage = (props: ComputeResourceProps) => {
                 }, nws: {
                     label: "Networks",
                     selector: "spec.networkInterfaces",
-                    formatter: (res: Array<{ mac: string, network: string, subnet: string }>) => {
+                    formatter: (res: Array<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterface>) => {
                         if (!Array.isArray(res)) {
                             return
                         }
 
                         return <>
                             {res.map(it => {
-                                return <div>{it.network}/{it.subnet}@{it.mac}</div>
+                                return <div>{it.network}/{it.subnet}@{it.mac} - {it.ip.join(", ")}</div>
                             })}
                         </>
                     }

@@ -4,6 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io/fs"
+	"io/ioutil"
+	"path/filepath"
 
 	"github.com/digitalocean/go-openvswitch/ovs"
 	"github.com/ordiri/ordiri/pkg/network/api"
@@ -143,6 +146,14 @@ func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network
 		return nil, fmt.Errorf("unknown error fetching existing tuntap device - %w", err)
 	}
 
+	if len(iface.IP()) > 0 {
+		for _, addr := range iface.IP() {
+			dhcpHostDir := dhcpHostMappingDir(sn)
+			mapping := fmt.Sprintf("%s,%s", iface.Mac(), addr.String())
+			ioutil.WriteFile(filepath.Join(dhcpHostDir, "host_map_"+hash(addr.String())), []byte(mapping), fs.ModePerm)
+		}
+	}
+
 	var tuntap *netlink.Tuntap
 	if nl != nil {
 		switch link := nl.(type) {
@@ -188,11 +199,15 @@ func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network
 }
 func (ln *linuxDriver) interfaceFlowRules(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface) ([]sdn.FlowRule, error) {
 	return []sdn.FlowRule{
-		&sdn.MetadataServer{
-			Switch:       sdn.WorkloadSwitchName,
-			WorkloadPort: interfaceBridgeName(nw, sn, iface),
-			MetadataPort: metadataCableName(nw, sn).Root(),
-			Mac:          metaMac(),
+		&sdn.VirtualMachine{
+			Switch:           sdn.WorkloadSwitchName,
+			WorkloadPort:     interfaceBridgeName(nw, sn, iface),
+			MetadataPort:     metadataCableName(nw, sn).Root(),
+			MetadataMac:      metaMac(),
+			Mac:              iface.Mac(),
+			Segment:          sn.Segment(),
+			Ips:              iface.IP(),
+			StrictSourceDest: true,
 		},
 	}, nil
 }

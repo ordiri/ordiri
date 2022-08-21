@@ -99,6 +99,8 @@ type VirtualMachineNetworkInterface struct {
 	Subnet  string `json:"subnet"`
 	// +optional
 	Mac string `json:"mac"`
+	// +optional
+	Ips []string `json:"ip"`
 }
 
 func (in *VirtualMachineNetworkInterface) Key() string {

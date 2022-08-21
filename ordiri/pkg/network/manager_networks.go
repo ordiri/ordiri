@@ -39,7 +39,11 @@ func (ln *networkManager) RemoveNetwork(ctx context.Context, name string) error 
 	}
 
 	if len(nw.subnets) > 0 {
-		return fmt.Errorf("network still has active subnets")
+		names := []string{}
+		for _, sn := range nw.subnets {
+			names = append(names, sn.sn.Name())
+		}
+		return fmt.Errorf("network still has active subnets - %+v", names)
 	}
 
 	if err := ln.driver.RemoveNetwork(ctx, nw.nw); err != nil {

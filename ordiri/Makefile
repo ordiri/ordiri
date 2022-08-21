@@ -57,7 +57,7 @@ manifests: controller-gen generate ## Generate WebhookConfiguration, ClusterRole
 	$(CONTROLLER_GEN) rbac:roleName=manager-role crd webhook paths="./pkg/apis/..." output:crd:artifacts:config=config/crd/bases
 
 .PHONY: generate
-generate: generate-controller generate-openapi generate-client generate-lister generate-informer generate-defaulter
+generate: generate-controller generate-tsclient generate-openapi generate-client generate-lister generate-informer generate-defaulter
 
 clientset_name = versioned
 gendir = pkg/generated
@@ -65,6 +65,8 @@ INPUT_DIRS = "$(PACKAGE_NAME)/pkg/apis/core/v1alpha1,$(PACKAGE_NAME)/pkg/apis/ne
 CLIENT_INPUTS = "pkg/apis/core/v1alpha1,pkg/apis/network/v1alpha1,pkg/apis/compute/v1alpha1,pkg/apis/storage/v1alpha1"
 generate-controller: $(CONTROLLER_GEN)
 	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./pkg/apis/..."
+generate-tsclient: $(CONTROLLER_GEN)
+	cd ../ordiri-client-typescript && ./client.sh
 
 generate-client: $(CLIENT_GEN)
 	$(CLIENT_GEN)  --clientset-name $(clientset_name) --input-base $(PACKAGE_NAME) --input $(CLIENT_INPUTS) --trim-path-prefix $(PACKAGE_NAME) --output-package $(PACKAGE_NAME)/$(gendir)/clientset --go-header-file ./hack/boilerplate.go.txt
@@ -145,10 +147,10 @@ deploy-mothership-md: linux-md
 run-remote: stop-mothership stop-debian run-debian-remote run-mothership-remote
 	@echo "starting"
 
-run-mothership-remote: stop-mothership deploy-mothership-md deploy-mothership-ordlet
+run-mothership-remote: stop-mothership deploy-mothership-ordlet
 	ssh mothership 'modprobe nf_nat_tftp nf_conntrack && KUBECONFIG=/etc/ordiri.conf /usr/local/bin/ordlet -zap-log-level=5 | tee /var/log/ordlet.conf' &
 
-run-debian-remote:  stop-debian deploy-debian-md deploy-debian-ordlet
+run-debian-remote:  stop-debian deploy-debian-ordlet
 	ssh root@debian 'modprobe nf_nat_tftp nf_conntrack && KUBECONFIG=/etc/ordiri.conf /usr/local/bin/ordlet -zap-log-level=5 | tee /var/log/ordlet.conf' &
 
 .PHONY: stop-mothership

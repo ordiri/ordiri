@@ -2,7 +2,6 @@ import ordiriConfig from '../../ordiri-config';
 import { CreateResourcePage } from '../generic-resource';
 import { ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostNetworkStatus, ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostSubnetStatus, NetworkOrdiriComV1alpha1Api } from '@ordiri/client-typescript';
 import { Chip } from '@mui/material';
-import { useState } from 'react';
 
 const PageTitle = "Network Services"
 

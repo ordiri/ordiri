@@ -12,4 +12,4 @@ rm -fr src/gen && openapi-generator-cli generate \
     -i ./swagger.json \
     -g typescript-fetch \
     -o src/gen \
-    --config client-oapi-gen.yaml
+    --config client-oapi-gen.yaml && npm run build

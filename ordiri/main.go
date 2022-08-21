@@ -119,6 +119,13 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "Subnet")
 		os.Exit(1)
 	}
+	if err = (&networkcontrollers.VmIpAllocator{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "VmIpAllocator")
+		os.Exit(1)
+	}
 	if err = (&networkcontrollers.RouterReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),

@@ -72,19 +72,39 @@ func (ld *linuxDriver) installRouter(ctx context.Context, nw api.Network, subnet
 		return fmt.Errorf("unable to create internal veth cable - %w", err)
 	}
 
-	if err := setNsVethIp(routerNetworkNamespace, subnet.Cidr().IP().Next().String()+"/"+fmt.Sprint(subnet.Cidr().Bits()), internalRouterCableName.Namespace()); err != nil {
+	if err := setNsVethIp(routerNetworkNamespace, rtr.IP().String(), internalRouterCableName.Namespace()); err != nil {
 		return fmt.Errorf("unable to set router address - %w", err)
 	}
+	ovsClient := sdn.Ovs()
 
 	// need to create flow rules taking this to the vxlan?
-	if err := sdn.Ovs().VSwitch.AddPort(sdn.WorkloadSwitchName, internalRouterCableName.Root()); err != nil {
+	if err := ovsClient.VSwitch.AddPort(sdn.WorkloadSwitchName, internalRouterCableName.Root()); err != nil {
 		return err
 	}
 
-	if err := sdn.Ovs().VSwitch.Set.Port(internalRouterCableName.Root(), ovs.PortOptions{
+	if err := ovsClient.VSwitch.Set.Port(internalRouterCableName.Root(), ovs.PortOptions{
 		Tag: subnet.Segment(),
 	}); err != nil {
 		return err
+	}
+
+	arpResponderFlow := &sdn.ArpResponder{
+		Switch: sdn.WorkloadSwitchName,
+		Mac:    rtr.Mac(),
+		Ip:     rtr.IP().IP(),
+		VlanId: subnet.Segment(),
+	}
+	if err := arpResponderFlow.Install(ovsClient); err != nil {
+		return fmt.Errorf("unable to install arp responder flow for router")
+	}
+	staticEntryFlow := &sdn.StaticMacEntry{
+		Switch:  sdn.WorkloadSwitchName,
+		Port:    internalRouterCableName.Root(),
+		Segment: subnet.Segment(),
+		MacAddr: rtr.Mac(),
+	}
+	if err := staticEntryFlow.Install(ovsClient); err != nil {
+		return fmt.Errorf("unable to install static mac entry flow for router")
 	}
 
 	ipt, err := sdn.Iptables(routerNetworkNamespace)

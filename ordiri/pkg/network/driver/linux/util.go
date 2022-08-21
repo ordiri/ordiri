@@ -5,6 +5,7 @@ import (
 	"hash/fnv"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -112,4 +113,20 @@ func setNsVethIp(namespace string, addr string, cableName string) error {
 	}
 
 	return nil
+}
+
+func dhcpLeaseFile(subnet api.Subnet) string {
+	baseDir := dhcpConfDir(subnet)
+	return filepath.Join(baseDir, "dnsmasq.leases")
+}
+func dhcpHostsFile(subnet api.Subnet) string {
+	baseDir := dhcpConfDir(subnet)
+	return filepath.Join(baseDir, "etc-hosts")
+}
+func dhcpHostMappingDir(subnet api.Subnet) string {
+	return filepath.Join(dhcpConfDir(subnet), "/host-mappings")
+}
+
+func dhcpConfDir(subnet api.Subnet) string {
+	return filepath.Join(confDir, "/subnets", subnet.Name(), "dhcp")
 }

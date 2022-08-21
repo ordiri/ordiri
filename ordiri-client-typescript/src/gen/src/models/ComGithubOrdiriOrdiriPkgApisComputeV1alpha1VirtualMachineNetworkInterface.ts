@@ -21,6 +21,12 @@ import { exists, mapValues } from '../runtime';
 export interface ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterface {
     /**
      * 
+     * @type {Array<string>}
+     * @memberof ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterface
+     */
+    ip: Array<string>;
+    /**
+     * 
      * @type {string}
      * @memberof ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterface
      */
@@ -44,6 +50,7 @@ export interface ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetwor
  */
 export function instanceOfComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterface(value: object): boolean {
     let isInstance = true;
+    isInstance = isInstance && "ip" in value;
     isInstance = isInstance && "network" in value;
     isInstance = isInstance && "subnet" in value;
 
@@ -60,6 +67,7 @@ export function ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetwork
     }
     return {
         
+        'ip': json['ip'],
         'mac': !exists(json, 'mac') ? undefined : json['mac'],
         'network': json['network'],
         'subnet': json['subnet'],
@@ -75,6 +83,7 @@ export function ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetwork
     }
     return {
         
+        'ip': value.ip,
         'mac': value.mac,
         'network': value.network,
         'subnet': value.subnet,

@@ -63,11 +63,11 @@ type Subnet interface {
 type Router interface {
 	Name() string
 	Mac() net.HardwareAddr
-	IP() netaddr.IP
+	IP() netaddr.IPPrefix
 }
 
 type Interface interface {
 	Name() string
 	Mac() net.HardwareAddr
-	IP() netaddr.IP
+	IP() []netaddr.IP
 }

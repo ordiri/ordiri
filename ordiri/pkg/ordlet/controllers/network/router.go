@@ -22,6 +22,7 @@ import (
 	"reflect"
 	"time"
 
+	"inet.af/netaddr"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
@@ -131,7 +132,9 @@ func (r *RouterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 				return ctrl.Result{}, fmt.Errorf("invalid mac address - %w", err)
 
 			}
-			rtr, err = network.NewRouter(router.Name, network.WithMac(macAddr))
+			// the router ip is always the first ip in the range (10.0.0.0/24 === router ip 10.0.0.1/24)
+			ip := netaddr.IPPrefixFrom(sn.Cidr().IP().Next(), sn.Cidr().Bits())
+			rtr, err = network.NewRouter(router.Name, ip, network.WithRouterMac(macAddr))
 			if err != nil {
 				return ctrl.Result{}, fmt.Errorf("unable to create router - %w", err)
 			}

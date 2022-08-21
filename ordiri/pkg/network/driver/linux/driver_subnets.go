@@ -82,7 +82,51 @@ func isPortNotExist(err error) bool {
 }
 
 func (ln *linuxDriver) removeMetadataServer(ctx context.Context, nw api.Network, subnet api.Subnet) error {
-	return fmt.Errorf("not implemented")
+	log := log.FromContext(ctx)
+	cableName := metadataCableName(nw, subnet)
+	unitName := metadataServerUnitName(subnet)
+
+	log.Info("Deleting port for metadata", "cableName", cableName)
+	// need to create flow rules taking this to the vxlan?
+	if err := sdn.Ovs().VSwitch.DeletePort(sdn.WorkloadSwitchName, cableName.Root()); err != nil && !isPortNotExist(err) {
+		return fmt.Errorf("unable to remove metadata port - %w", err)
+	}
+	log.Info("Deleting veth cable for metadata", "cableName", cableName)
+
+	if _, iface := ln.interfaces.search(cableName.Root()); iface != nil {
+		if err := netlink.LinkDel(iface.Link); err != nil && !errors.As(err, &netlink.LinkNotFoundError{}) {
+			return fmt.Errorf("error removing cable interface - %w", err)
+		}
+	}
+
+	// remove the metadata directory and the unit file
+	baseDir := filepath.Join(confDir, "/metadata", subnet.Name(), "ordiri-metedata")
+
+	if err := ln.dbus.ReloadContext(ctx); err != nil {
+		return fmt.Errorf("unabel to reload systemctl dbus ctx - %w", err)
+	}
+	units, err := ln.dbus.ListUnitsByNamesContext(ctx, []string{unitName})
+	if err != nil {
+		return fmt.Errorf("error getting systemctl unit names - %w", err)
+	}
+
+	if len(units) > 0 {
+		for _, unit := range units {
+			if unit.ActiveState == "active" {
+				ln.dbus.KillUnitContext(ctx, unit.Name, int32(syscall.SIGTERM))
+			}
+			if unit.LoadState != "not-found" {
+				if _, err := ln.dbus.DisableUnitFilesContext(ctx, []string{unit.Name}, true); err != nil {
+					return fmt.Errorf("unable to disable unit file %+v - %w", unit, err)
+				}
+			}
+		}
+	}
+
+	if err := os.RemoveAll(baseDir); err != nil {
+		return fmt.Errorf("unable to remove subnet runtime files - %w", err)
+	}
+	return nil
 }
 func (ln *linuxDriver) removeDhcp(ctx context.Context, nw api.Network, subnet api.Subnet) error {
 	cableName := dhcpCableName(nw, subnet)
@@ -132,10 +176,6 @@ func (ln *linuxDriver) removeDhcp(ctx context.Context, nw api.Network, subnet ap
 	}
 
 	log.Info("deleting the network namespace for DHCP ", "ns", namespace)
-
-	if err := deleteNetworkNs(namespace); err != nil {
-		return fmt.Errorf("unable to delete network namespace - %w", err)
-	}
 
 	return nil
 }
@@ -227,15 +267,17 @@ func (ln *linuxDriver) installDhcp(ctx context.Context, nw api.Network, subnet a
 	}
 
 	// create the dnsmasq config to provide dhcp for this subnet
-	baseDir := filepath.Join(confDir, "/subnets", subnet.Name(), "dhcp")
+	baseDir := dhcpConfDir(subnet)
+	dhcpHostDir := dhcpHostMappingDir(subnet)
 
-	dnsMasqOptions := dhcp.DnsMasqConfig(baseDir, subnet.Name(), subnet.Cidr())
-	if err := os.MkdirAll(baseDir, os.ModePerm); err != nil {
+	dnsMasqOptions := dhcp.DnsMasqConfig(baseDir, subnet.Name(), subnet.Cidr(), dhcpHostDir)
+	// easier to just make the host dir as it's deeper in the tree than the root conf dir
+	if err := os.MkdirAll(dhcpHostDir, os.ModePerm); err != nil {
 		return fmt.Errorf("unable to create directory %s - %w", baseDir, err)
 	}
 
-	hostFile := filepath.Join(baseDir, "etc-hosts")
-	leaseFile := filepath.Join(baseDir, "dnsmasq.leases")
+	hostFile := dhcpHostsFile(subnet)
+	leaseFile := dhcpLeaseFile(subnet)
 	if err := touchFiles(hostFile, leaseFile); err != nil {
 		return err
 	}

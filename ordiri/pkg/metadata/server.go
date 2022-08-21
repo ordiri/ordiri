@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/ordiri/ordiri/log"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
@@ -72,7 +71,8 @@ func (s *Server) HTTPHandler() http.Handler {
 			Properties: props,
 		}
 		path := strings.TrimPrefix(r.URL.EscapedPath(), mdBasePath)
-		spew.Dump(path)
+		// should probably do some sort of file based thing and could just store metadata in some namespace with a bunch of files
+		// and let the golang fileserver expose it
 		resolver, ok := resolvers[path]
 		if !ok {
 			errorResponse(w, r, fmt.Sprintf("invalid path %q", path), nil)

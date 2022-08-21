@@ -16,6 +16,12 @@ func InterfaceWithMac(mac net.HardwareAddr) InterfaceOption {
 		return nil
 	}
 }
+func InterfaceWithIps(ip ...netaddr.IP) InterfaceOption {
+	return func(ni *netInterface) error {
+		ni.ip = append(ni.ip, ip...)
+		return nil
+	}
+}
 
 func NewInterface(name string, opt ...InterfaceOption) (api.Interface, error) {
 	iface := &netInterface{
@@ -36,7 +42,7 @@ func NewInterface(name string, opt ...InterfaceOption) (api.Interface, error) {
 type netInterface struct {
 	name string
 	mac  net.HardwareAddr
-	ip   netaddr.IP
+	ip   []netaddr.IP
 }
 
 func (ni *netInterface) Name() string {
@@ -47,7 +53,7 @@ func (ni *netInterface) Mac() net.HardwareAddr {
 	return ni.mac
 }
 
-func (ni *netInterface) IP() netaddr.IP {
+func (ni *netInterface) IP() []netaddr.IP {
 	return ni.ip
 }
 

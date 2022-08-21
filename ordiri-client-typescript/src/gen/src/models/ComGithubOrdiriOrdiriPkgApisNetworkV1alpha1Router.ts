@@ -19,6 +19,12 @@ import {
     ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterSpecFromJSONTyped,
     ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterSpecToJSON,
 } from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterSpec';
+import type { ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterStatus } from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterStatus';
+import {
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterStatusFromJSON,
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterStatusFromJSONTyped,
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterStatusToJSON,
+} from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterStatus';
 import type { IoK8sApimachineryPkgApisMetaV1ObjectMeta } from './IoK8sApimachineryPkgApisMetaV1ObjectMeta';
 import {
     IoK8sApimachineryPkgApisMetaV1ObjectMetaFromJSON,
@@ -57,11 +63,11 @@ export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Router {
      */
     spec?: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterSpec;
     /**
-     * RouterStatus defines the observed state of Router
-     * @type {object}
+     * 
+     * @type {ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterStatus}
      * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Router
      */
-    status?: object;
+    status?: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterStatus;
 }
 
 /**
@@ -87,7 +93,7 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterFromJSONTyped(j
         'kind': !exists(json, 'kind') ? undefined : json['kind'],
         'metadata': !exists(json, 'metadata') ? undefined : IoK8sApimachineryPkgApisMetaV1ObjectMetaFromJSON(json['metadata']),
         'spec': !exists(json, 'spec') ? undefined : ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterSpecFromJSON(json['spec']),
-        'status': !exists(json, 'status') ? undefined : json['status'],
+        'status': !exists(json, 'status') ? undefined : ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterStatusFromJSON(json['status']),
     };
 }
 
@@ -104,7 +110,7 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterToJSON(value?: 
         'kind': value.kind,
         'metadata': IoK8sApimachineryPkgApisMetaV1ObjectMetaToJSON(value.metadata),
         'spec': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterSpecToJSON(value.spec),
-        'status': value.status,
+        'status': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterStatusToJSON(value.status),
     };
 }
 

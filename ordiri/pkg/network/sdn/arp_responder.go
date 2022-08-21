@@ -27,6 +27,7 @@ func (wi *ArpResponder) matches() []ovs.Match {
 func (wi *ArpResponder) Install(client *ovs.Client) error {
 	return client.OpenFlow.AddFlow(wi.Switch, &ovs.Flow{
 		Protocol: ovs.ProtocolARP,
+		Table:    OpenFlowTableArpResponder,
 		Matches:  wi.matches(),
 		Actions: []ovs.Action{
 			// ovs.ModVLANVID(wi.NodeLocalVlan),
@@ -54,6 +55,7 @@ func (wi *ArpResponder) Install(client *ovs.Client) error {
 func (wi *ArpResponder) Remove(client *ovs.Client) error {
 	return client.OpenFlow.DelFlows(wi.Switch, &ovs.MatchFlow{
 		Protocol: ovs.ProtocolARP,
+		Table:    OpenFlowTableArpResponder,
 		Matches: []ovs.Match{
 			ovs.NetworkDestination(wi.Ip.String()),
 		},
