@@ -10,6 +10,11 @@ const (
 )
 
 const (
+	OpenFlowPriorityArpResponder    = 10
+	OpenFlowPriorityStaticPortEntry = 10
+)
+
+const (
 	TunnelSwitchName   = "ordiri-internal"
 	WorkloadSwitchName = "ordiri-vms"
 	ExternalSwitchName = "ordiri-external"

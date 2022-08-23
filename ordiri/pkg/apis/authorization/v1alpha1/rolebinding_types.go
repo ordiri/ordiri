@@ -1,4 +1,3 @@
-
 /*
 Copyright 2022.
 
@@ -21,7 +20,7 @@ import (
 	"context"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/util/validation/field"
 	"sigs.k8s.io/apiserver-runtime/pkg/builder/resource"
@@ -29,6 +28,7 @@ import (
 )
 
 // +genclient
+// +genclient:nonNamespaced
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 // RoleBinding
@@ -44,7 +44,7 @@ type RoleBinding struct {
 // RoleBindingList
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 type RoleBindingList struct {
-	metav1.TypeMeta   `json:",inline"`
+	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
 
 	Items []RoleBinding `json:"items"`
@@ -95,6 +95,7 @@ var _ resource.ObjectList = &RoleBindingList{}
 func (in *RoleBindingList) GetListMeta() *metav1.ListMeta {
 	return &in.ListMeta
 }
+
 // RoleBindingStatus defines the observed state of RoleBinding
 type RoleBindingStatus struct {
 }

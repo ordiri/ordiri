@@ -1,0 +1,47 @@
+apiVersion: network.ordiri.com/v1alpha1
+kind: Subnet
+metadata:
+  name: kubevms-etcd
+spec:
+  cidr: 10.200.0.0/24
+  dhcp:
+    enabled: true
+  network:
+    name: kubevms
+  routeTables: []
+---
+apiVersion: network.ordiri.com/v1alpha1
+kind: Subnet
+metadata:
+  name: kubevms-masters
+spec:
+  cidr: 10.200.1.0/24
+  dhcp:
+    enabled: true
+  network:
+    name: kubevms
+  routeTables: []
+---
+apiVersion: network.ordiri.com/v1alpha1
+kind: Subnet
+metadata:
+  name: kubevms-workers
+spec:
+  cidr: 10.200.2.0/24
+  dhcp:
+    enabled: true
+  network:
+    name: kubevms
+  routeTables: []
+---
+apiVersion: network.ordiri.com/v1alpha1
+kind: Subnet
+metadata:
+  name: kubevms-public
+spec:
+  cidr: 10.250.0.0/24
+  dhcp:
+    enabled: true
+  network:
+    name: kubevms
+  routeTables: []

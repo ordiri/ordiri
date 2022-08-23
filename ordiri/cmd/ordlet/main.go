@@ -17,6 +17,7 @@ limitations under the License.
 package main
 
 import (
+	"context"
 	"flag"
 	"net"
 	"os"
@@ -34,6 +35,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
 	"github.com/ordiri/ordiri/pkg/apis"
+	"github.com/ordiri/ordiri/pkg/generated/clientset/versioned"
 	nwman "github.com/ordiri/ordiri/pkg/network"
 	"github.com/ordiri/ordiri/pkg/network/api"
 	"github.com/ordiri/ordiri/pkg/network/driver/linux"
@@ -102,7 +104,16 @@ func main() {
 
 	nodeRoles := strings.Split(nodeRole, ",")
 	nodeRunner := ordlet.NewNodeRunnable(mgmtNetwork, nodeName, nodeRoles)
-	mgr.Add(nodeRunner)
+	c, e := versioned.NewForConfig(mgr.GetConfig())
+	if e != nil {
+		setupLog.Error(err, "unable to start manager")
+		os.Exit(1)
+	}
+	nodeRunner.InjectClient(c)
+	nodeRunner.InjectLogger(mgr.GetLogger())
+	if err := nodeRunner.Start(context.Background()); err != nil {
+		panic(err.Error())
+	}
 
 	nwManager, err := getNetworkManager(networkDriver)
 	if err != nil {
@@ -169,7 +180,7 @@ func main() {
 	if err = (&compute.MachineMetadataController{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
-		Port: 9090,
+		Port:   9090,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "MachineMetadataController")
 		os.Exit(1)

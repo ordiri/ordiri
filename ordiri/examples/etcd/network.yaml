@@ -1,0 +1,8 @@
+apiVersion: network.ordiri.com/v1alpha1
+kind: Network
+metadata:
+  name: kubevms
+spec:
+  cidr: 10.128.0.0/9
+  nat:
+    nat: true # should be some sort of nat gateway object really so you can route at it per subnet

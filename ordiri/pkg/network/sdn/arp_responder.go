@@ -48,7 +48,7 @@ func (wi *ArpResponder) Install(client *ovs.Client) error {
 			// Send it where it came from
 			ovs.OutputField("in_port"),
 		},
-		Priority: 1000,
+		Priority: OpenFlowPriorityArpResponder,
 	})
 }
 

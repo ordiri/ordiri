@@ -28,7 +28,7 @@ type Driver interface {
 	EnsureSubnet(context.Context, api.Network, api.Subnet) error
 
 	RemoveNetwork(context.Context, api.Network) error
-	EnsureNetwork(context.Context, api.Network) error
+	EnsureNetwork(context.Context, api.Network, []api.Subnet) error
 }
 
 type RunnableDriver interface {

@@ -41,33 +41,32 @@ type VolumeClaimInformer interface {
 type volumeClaimInformer struct {
 	factory          internalinterfaces.SharedInformerFactory
 	tweakListOptions internalinterfaces.TweakListOptionsFunc
-	namespace        string
 }
 
 // NewVolumeClaimInformer constructs a new informer for VolumeClaim type.
 // Always prefer using an informer factory to get a shared informer instead of getting an independent
 // one. This reduces memory footprint and number of connections to the server.
-func NewVolumeClaimInformer(client versioned.Interface, namespace string, resyncPeriod time.Duration, indexers cache.Indexers) cache.SharedIndexInformer {
-	return NewFilteredVolumeClaimInformer(client, namespace, resyncPeriod, indexers, nil)
+func NewVolumeClaimInformer(client versioned.Interface, resyncPeriod time.Duration, indexers cache.Indexers) cache.SharedIndexInformer {
+	return NewFilteredVolumeClaimInformer(client, resyncPeriod, indexers, nil)
 }
 
 // NewFilteredVolumeClaimInformer constructs a new informer for VolumeClaim type.
 // Always prefer using an informer factory to get a shared informer instead of getting an independent
 // one. This reduces memory footprint and number of connections to the server.
-func NewFilteredVolumeClaimInformer(client versioned.Interface, namespace string, resyncPeriod time.Duration, indexers cache.Indexers, tweakListOptions internalinterfaces.TweakListOptionsFunc) cache.SharedIndexInformer {
+func NewFilteredVolumeClaimInformer(client versioned.Interface, resyncPeriod time.Duration, indexers cache.Indexers, tweakListOptions internalinterfaces.TweakListOptionsFunc) cache.SharedIndexInformer {
 	return cache.NewSharedIndexInformer(
 		&cache.ListWatch{
 			ListFunc: func(options v1.ListOptions) (runtime.Object, error) {
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
-				return client.StorageV1alpha1().VolumeClaims(namespace).List(context.TODO(), options)
+				return client.StorageV1alpha1().VolumeClaims().List(context.TODO(), options)
 			},
 			WatchFunc: func(options v1.ListOptions) (watch.Interface, error) {
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
-				return client.StorageV1alpha1().VolumeClaims(namespace).Watch(context.TODO(), options)
+				return client.StorageV1alpha1().VolumeClaims().Watch(context.TODO(), options)
 			},
 		},
 		&storagev1alpha1.VolumeClaim{},
@@ -77,7 +76,7 @@ func NewFilteredVolumeClaimInformer(client versioned.Interface, namespace string
 }
 
 func (f *volumeClaimInformer) defaultInformer(client versioned.Interface, resyncPeriod time.Duration) cache.SharedIndexInformer {
-	return NewFilteredVolumeClaimInformer(client, f.namespace, resyncPeriod, cache.Indexers{cache.NamespaceIndex: cache.MetaNamespaceIndexFunc}, f.tweakListOptions)
+	return NewFilteredVolumeClaimInformer(client, resyncPeriod, cache.Indexers{cache.NamespaceIndex: cache.MetaNamespaceIndexFunc}, f.tweakListOptions)
 }
 
 func (f *volumeClaimInformer) Informer() cache.SharedIndexInformer {

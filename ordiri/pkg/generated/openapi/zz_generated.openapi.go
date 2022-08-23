@@ -2638,8 +2638,15 @@ func schema_pkg_apis_network_v1alpha1_HostRouterStatus(ref common.ReferenceCallb
 							Format:  "",
 						},
 					},
+					"mac": {
+						SchemaProps: spec.SchemaProps{
+							Default: "",
+							Type:    []string{"string"},
+							Format:  "",
+						},
+					},
 				},
-				Required: []string{"subnet", "node"},
+				Required: []string{"subnet", "node", "mac"},
 			},
 		},
 	}

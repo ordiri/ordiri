@@ -88,17 +88,16 @@ func (ld *linuxDriver) installRouter(ctx context.Context, nw api.Network, subnet
 		return err
 	}
 
-	arpResponderFlow := &sdn.ArpResponder{
-		Switch: sdn.TunnelSwitchName,
-		Mac:    rtr.Mac(),
-		Ip:     rtr.IP().IP(),
-		VlanId: subnet.Segment(),
+	arpResponderFlow := &sdn.Router{
+		LocalMac:  rtr.Mac(),
+		GlobalMac: rtr.GlobalMac(),
 	}
+
 	if err := arpResponderFlow.Install(ovsClient); err != nil {
-		return fmt.Errorf("unable to install arp responder flow for router")
+		return fmt.Errorf("unable to install arp responder flow for router - %w", err)
 	}
-	// staticEntryFlow := &sdn.StaticMacEntry{
-	// 	Switch:  sdn.TunnelSwitchName,
+	// staticEntryFlow := &sdn.StaticPortEntry{
+	// 	Switch:  sdn.WorkloadSwitchName,
 	// 	Port:    internalRouterCableName.Root(),
 	// 	Segment: subnet.Segment(),
 	// 	MacAddr: rtr.Mac(),

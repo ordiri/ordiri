@@ -51,7 +51,11 @@ type Network interface {
 	Cidr() netaddr.IPPrefix
 	Segment() int64
 	DnsRecords() map[netaddr.IP][]string
+
+	MacAddrs() map[string][]netaddr.IP
+
 	WithDns(netaddr.IP, []string) bool
+	WithMacAddr(net.HardwareAddr, []netaddr.IP) bool
 }
 
 type Subnet interface {
@@ -62,6 +66,7 @@ type Subnet interface {
 
 type Router interface {
 	Name() string
+	GlobalMac() net.HardwareAddr
 	Mac() net.HardwareAddr
 	IP() netaddr.IPPrefix
 }

@@ -114,6 +114,7 @@ type RouterStatus struct {
 type HostRouterStatus struct {
 	Subnet string `json:"subnet"`
 	Node   string `json:"node"`
+	Mac    string `json:"mac"`
 }
 
 func (in RouterStatus) SubResourceName() string {

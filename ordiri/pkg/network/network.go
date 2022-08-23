@@ -1,6 +1,8 @@
 package network
 
 import (
+	"net"
+
 	"github.com/ordiri/ordiri/pkg/network/api"
 	"inet.af/netaddr"
 )
@@ -41,6 +43,7 @@ type network struct {
 	segment       int64
 	cidr          netaddr.IPPrefix
 	dnsRecordsets map[netaddr.IP][]string
+	knownMacs     map[string][]netaddr.IP
 }
 
 func (nw *network) Name() string {
@@ -55,6 +58,15 @@ func (nw *network) Cidr() netaddr.IPPrefix {
 	return nw.cidr.Masked()
 }
 
+func (nw *network) WithMacAddr(mac net.HardwareAddr, ips []netaddr.IP) bool {
+	if len(ips) == 0 {
+		delete(nw.knownMacs, mac.String())
+		return false
+	}
+	nw.knownMacs[mac.String()] = append(nw.knownMacs[mac.String()], ips...)
+	return true
+}
+
 func (nw *network) WithDns(ip netaddr.IP, hostnames []string) bool {
 	if len(hostnames) == 0 {
 		delete(nw.dnsRecordsets, ip)
@@ -66,6 +78,10 @@ func (nw *network) WithDns(ip netaddr.IP, hostnames []string) bool {
 
 func (nw *network) DnsRecords() map[netaddr.IP][]string {
 	return nw.dnsRecordsets
+}
+
+func (nw *network) MacAddrs() map[string][]netaddr.IP {
+	return nw.knownMacs
 }
 
 var _ api.Network = &network{}

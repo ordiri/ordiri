@@ -45,7 +45,7 @@ type NetworkReconciler struct {
 	Scheme *runtime.Scheme
 
 	Node           ordlet.NodeProvider
-	NetworkManager api.Manager
+	NetworkManager api.NetworkManager
 }
 
 // Controls internet gateway & floating ip etc ona node
@@ -75,14 +75,14 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 	}
 
 	var net api.Network
-	var err error
 	if r.NetworkManager.HasNetwork(nw.Name) {
 		net = r.NetworkManager.GetNetwork(nw.Name)
 	} else {
-		net, err = network.NewNetwork(nw.Name, nw.Spec.Cidr, nw.Status.Vni)
-	}
-	if err != nil {
-		return ctrl.Result{}, err
+		_net, err := network.NewNetwork(nw.Name, nw.Spec.Cidr, nw.Status.Vni)
+		if err != nil {
+			return ctrl.Result{}, err
+		}
+		net = _net
 	}
 
 	if !nodeWantsNetwork {
@@ -110,12 +110,11 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 		for _, vm := range vmsInNetwork.Items {
 			for _, iface := range vm.Spec.NetworkInterfaces {
 				for _, ip := range iface.Ips {
-					parsed, err := netaddr.ParseIP(ip)
+					parsedIp, err := netaddr.ParseIP(ip)
 					if err != nil {
 						return ctrl.Result{}, err
 					}
-
-					net.WithDns(parsed, []string{vm.Name})
+					net.WithDns(parsedIp, []string{vm.Name})
 				}
 			}
 		}

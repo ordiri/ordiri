@@ -153,12 +153,11 @@ func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network
 		// the wrong ip for a multi ip interface
 		// post this comment the dns stuff was moved to the network to enable us
 		// to create dns records for the entire network
-		for idx, addr := range iface.IP() {
-			if idx == 0 {
-				dhcpHostDir := dhcpHostMappingDir(sn)
-				mapping := fmt.Sprintf("%s,%s", iface.Mac(), addr.String())
-				ioutil.WriteFile(filepath.Join(dhcpHostDir, "host_map_"+hash(iface.Mac().String()+addr.String())), []byte(mapping), fs.ModePerm)
-			}
+		for _, addr := range iface.IP() {
+			dhcpHostDir := dhcpHostMappingDir(sn)
+			mapping := fmt.Sprintf("%s,%s", iface.Mac(), addr.String())
+			ioutil.WriteFile(filepath.Join(dhcpHostDir, "host_map_"+hash(iface.Mac().String()+addr.String())), []byte(mapping), fs.ModePerm)
+			break
 		}
 	}
 
@@ -188,6 +187,12 @@ func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network
 
 		if err := netlink.LinkAdd(tuntap); err != nil {
 			return nil, fmt.Errorf("unable to add new tuntap device for vm - %w", err)
+		}
+	}
+
+	if tuntap.Attrs().HardwareAddr.String() != iface.Mac().String() {
+		if err := netlink.LinkSetHardwareAddr(tuntap, iface.Mac()); err != nil {
+			return nil, fmt.Errorf("unable to set the tuntap %s ethernet address to %s - %w", tuntap.Name, iface.Mac().String(), err)
 		}
 	}
 

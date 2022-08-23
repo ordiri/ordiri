@@ -30,8 +30,9 @@ type VolumeClaimLister interface {
 	// List lists all VolumeClaims in the indexer.
 	// Objects returned here must be treated as read-only.
 	List(selector labels.Selector) (ret []*v1alpha1.VolumeClaim, err error)
-	// VolumeClaims returns an object that can list and get VolumeClaims.
-	VolumeClaims(namespace string) VolumeClaimNamespaceLister
+	// Get retrieves the VolumeClaim from the index for a given name.
+	// Objects returned here must be treated as read-only.
+	Get(name string) (*v1alpha1.VolumeClaim, error)
 	VolumeClaimListerExpansion
 }
 
@@ -53,41 +54,9 @@ func (s *volumeClaimLister) List(selector labels.Selector) (ret []*v1alpha1.Volu
 	return ret, err
 }
 
-// VolumeClaims returns an object that can list and get VolumeClaims.
-func (s *volumeClaimLister) VolumeClaims(namespace string) VolumeClaimNamespaceLister {
-	return volumeClaimNamespaceLister{indexer: s.indexer, namespace: namespace}
-}
-
-// VolumeClaimNamespaceLister helps list and get VolumeClaims.
-// All objects returned here must be treated as read-only.
-type VolumeClaimNamespaceLister interface {
-	// List lists all VolumeClaims in the indexer for a given namespace.
-	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.VolumeClaim, err error)
-	// Get retrieves the VolumeClaim from the indexer for a given namespace and name.
-	// Objects returned here must be treated as read-only.
-	Get(name string) (*v1alpha1.VolumeClaim, error)
-	VolumeClaimNamespaceListerExpansion
-}
-
-// volumeClaimNamespaceLister implements the VolumeClaimNamespaceLister
-// interface.
-type volumeClaimNamespaceLister struct {
-	indexer   cache.Indexer
-	namespace string
-}
-
-// List lists all VolumeClaims in the indexer for a given namespace.
-func (s volumeClaimNamespaceLister) List(selector labels.Selector) (ret []*v1alpha1.VolumeClaim, err error) {
-	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.VolumeClaim))
-	})
-	return ret, err
-}
-
-// Get retrieves the VolumeClaim from the indexer for a given namespace and name.
-func (s volumeClaimNamespaceLister) Get(name string) (*v1alpha1.VolumeClaim, error) {
-	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
+// Get retrieves the VolumeClaim from the index for a given name.
+func (s *volumeClaimLister) Get(name string) (*v1alpha1.VolumeClaim, error) {
+	obj, exists, err := s.indexer.GetByKey(name)
 	if err != nil {
 		return nil, err
 	}

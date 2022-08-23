@@ -28,7 +28,3 @@ type MachineProfileListerExpansion interface{}
 // NodeListerExpansion allows custom methods to be added to
 // NodeLister.
 type NodeListerExpansion interface{}
-
-// NodeNamespaceListerExpansion allows custom methods to be added to
-// NodeNamespaceLister.
-type NodeNamespaceListerExpansion interface{}

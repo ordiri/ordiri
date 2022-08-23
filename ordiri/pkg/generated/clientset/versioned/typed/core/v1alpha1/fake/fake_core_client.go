@@ -35,8 +35,8 @@ func (c *FakeCoreV1alpha1) MachineProfiles() v1alpha1.MachineProfileInterface {
 	return &FakeMachineProfiles{c}
 }
 
-func (c *FakeCoreV1alpha1) Nodes(namespace string) v1alpha1.NodeInterface {
-	return &FakeNodes{c, namespace}
+func (c *FakeCoreV1alpha1) Nodes() v1alpha1.NodeInterface {
+	return &FakeNodes{c}
 }
 
 // RESTClient returns a RESTClient that is used to communicate

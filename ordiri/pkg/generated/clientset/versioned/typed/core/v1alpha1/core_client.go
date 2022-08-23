@@ -45,8 +45,8 @@ func (c *CoreV1alpha1Client) MachineProfiles() MachineProfileInterface {
 	return newMachineProfiles(c)
 }
 
-func (c *CoreV1alpha1Client) Nodes(namespace string) NodeInterface {
-	return newNodes(c, namespace)
+func (c *CoreV1alpha1Client) Nodes() NodeInterface {
+	return newNodes(c)
 }
 
 // NewForConfig creates a new CoreV1alpha1Client for the given config.

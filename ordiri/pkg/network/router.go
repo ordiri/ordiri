@@ -10,14 +10,20 @@ import (
 
 type RouterOption func(*router) error
 
-func WithRouterMac(mac net.HardwareAddr) RouterOption {
+func WithDistributedMac(mac net.HardwareAddr) RouterOption {
 	return func(r *router) error {
-		r.mac = mac
+		r.distributedMac = mac
+		return nil
+	}
+}
+func WithLocalMac(mac net.HardwareAddr) RouterOption {
+	return func(r *router) error {
+		r.localMac = mac
 		return nil
 	}
 }
 
-func NewRouter(name string, ip netaddr.IPPrefix, opt ...RouterOption) (api.Router, error) {
+func NewRouter(name string, ip netaddr.IPPrefix, opt ...RouterOption) (*router, error) {
 	rtr := &router{
 		name: name,
 		ip:   ip,
@@ -28,8 +34,12 @@ func NewRouter(name string, ip netaddr.IPPrefix, opt ...RouterOption) (api.Route
 		}
 	}
 
-	if len(rtr.mac) == 0 {
-		rtr.mac = mac.Unicast()
+	if len(rtr.localMac) == 0 {
+		rtr.localMac = mac.Unicast()
+	}
+
+	if len(rtr.distributedMac) == 0 {
+		rtr.distributedMac = mac.Unicast()
 	}
 
 	return rtr, nil
@@ -37,9 +47,10 @@ func NewRouter(name string, ip netaddr.IPPrefix, opt ...RouterOption) (api.Route
 
 type router struct {
 	// The name for this network
-	name string
-	mac  net.HardwareAddr
-	ip   netaddr.IPPrefix
+	name           string
+	distributedMac net.HardwareAddr
+	localMac       net.HardwareAddr
+	ip             netaddr.IPPrefix
 }
 
 func (rtr *router) Name() string {
@@ -47,7 +58,10 @@ func (rtr *router) Name() string {
 }
 
 func (rtr *router) Mac() net.HardwareAddr {
-	return rtr.mac
+	return rtr.localMac
+}
+func (rtr *router) GlobalMac() net.HardwareAddr {
+	return rtr.distributedMac
 }
 
 func (rtr *router) IP() netaddr.IPPrefix {

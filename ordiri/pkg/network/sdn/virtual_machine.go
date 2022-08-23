@@ -30,21 +30,21 @@ func (wi *VirtualMachine) rules() []FlowRule {
 	}
 
 	// for _, ip := range wi.Ips {
-	// 	rules = append(rules, &ArpResponder{
-	// 		Switch: wi.TunnelSwitch,
-	// 		Mac:    wi.Mac,
-	// 		Ip:     ip,
-	// 		VlanId: wi.Segment,
-	// 	})
+	// 	// rules = append(rules, &ArpResponder{
+	// 	// 	Switch: wi.WorkloadSwitch,
+	// 	// 	Mac:    wi.Mac,
+	// 	// 	Ip:     ip,
+	// 	// 	VlanId: wi.Segment,
+	// 	// })
 
-	// 	if wi.StrictSourceDest {
-	// 		rules = append(rules, &StaticMacEntry{
-	// 			Switch:  wi.Switch,
-	// 			Port:    wi.WorkloadPort,
-	// 			Segment: wi.Segment,
-	// 			MacAddr: wi.Mac,
-	// 		})
-	// 	}
+	// 	// if wi.StrictSourceDest {
+	// 	// 	rules = append(rules, &StaticPortEntry{
+	// 	// 		Switch:  wi.WorkloadSwitch,
+	// 	// 		Port:    wi.WorkloadPort,
+	// 	// 		Segment: wi.Segment,
+	// 	// 		MacAddr: wi.Mac,
+	// 	// 	})
+	// 	// }
 	// }
 
 	return rules

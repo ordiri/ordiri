@@ -8,9 +8,9 @@ import (
 
 	"github.com/go-logr/logr"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
+	"github.com/ordiri/ordiri/pkg/generated/clientset/versioned"
 	"github.com/ordiri/ordiri/pkg/network/sdn"
-	"k8s.io/apimachinery/pkg/api/errors"
-	"sigs.k8s.io/controller-runtime/pkg/client"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/runtime/inject"
 )
@@ -47,7 +47,7 @@ func NewNodeRunnableWithNode(mgmtNet *net.IPNet, node *corev1alpha1.Node) *creat
 }
 
 type createLocalNodeRunnable struct {
-	client client.Client
+	client versioned.Interface
 	log    logr.Logger
 
 	Node    *corev1alpha1.Node
@@ -64,7 +64,13 @@ func (clnr *createLocalNodeRunnable) GetNode() *corev1alpha1.Node {
 }
 
 func (clnr *createLocalNodeRunnable) Refresh(ctx context.Context) error {
-	return clnr.client.Get(ctx, client.ObjectKeyFromObject(clnr.Node), clnr.Node)
+	node, err := clnr.client.CoreV1alpha1().Nodes().Get(ctx, clnr.Node.Name, v1.GetOptions{})
+	if err != nil {
+		return err
+	}
+	clnr.Node = node
+
+	return nil
 }
 
 func (clnr *createLocalNodeRunnable) Start(ctx context.Context) error {
@@ -74,17 +80,9 @@ func (clnr *createLocalNodeRunnable) Start(ctx context.Context) error {
 
 	log := clnr.log.WithValues("hostname", clnr.Node.Name)
 	log.Info("Starting local node runner")
-
-	err := clnr.Refresh(ctx)
-	if err != nil && errors.IsNotFound(err) {
-		if err := clnr.client.Create(ctx, clnr.Node); err != nil {
-			return fmt.Errorf("unable to create new node - %W", err)
-		}
-	} else if err != nil {
-		return fmt.Errorf("error fetching existing node - %w", err)
+	if err := clnr.Refresh(ctx); err != nil {
+		return err
 	}
-	node := clnr.Node
-	log.Info("found node")
 
 	ovs := sdn.Ovs()
 	if err := ovs.VSwitch.AddBridge(sdn.ExternalSwitchName); err != nil {
@@ -94,6 +92,15 @@ func (clnr *createLocalNodeRunnable) Start(ctx context.Context) error {
 		return err
 	}
 	if err := ovs.VSwitch.AddBridge(sdn.WorkloadSwitchName); err != nil {
+		return err
+	}
+
+	flowRules := &sdn.Node{
+		WorkloadSwitch: sdn.WorkloadSwitchName,
+		TunnelSwitch:   sdn.TunnelSwitchName,
+		ExternalSwitch: sdn.ExternalSwitchName,
+	}
+	if err := flowRules.Install(ovs); err != nil {
 		return err
 	}
 
@@ -116,26 +123,29 @@ func (clnr *createLocalNodeRunnable) Start(ctx context.Context) error {
 		return changed, nil
 	}
 
-	if _, err := updateAddrs(node); err != nil {
+	if _, err := updateAddrs(clnr.Node); err != nil {
 		return err
 	}
 
-	node.Spec.NodeRoles = []corev1alpha1.NodeRole{}
+	clnr.Node.Spec.NodeRoles = []corev1alpha1.NodeRole{}
 	for _, role := range clnr.roles {
-		node.Spec.NodeRoles = append(node.Spec.NodeRoles, corev1alpha1.NodeRole(role))
+		clnr.Node.Spec.NodeRoles = append(clnr.Node.Spec.NodeRoles, corev1alpha1.NodeRole(role))
 	}
 
-	if node.UID == "" {
+	if clnr.Node.UID == "" {
 		log.Info("creating node")
-		err := clnr.client.Create(ctx, node)
+		node, err := clnr.client.CoreV1alpha1().Nodes().Create(ctx, clnr.Node, v1.CreateOptions{})
 		if err != nil {
 			return err
 		}
+		clnr.Node = node
 	} else {
 		log.Info("updating existing node")
-		if err := clnr.client.Update(ctx, node); err != nil {
+		node, err := clnr.client.CoreV1alpha1().Nodes().Update(ctx, clnr.Node, v1.UpdateOptions{})
+		if err != nil {
 			return err
 		}
+		clnr.Node = node
 	}
 
 	log.Info("node runnable complette")
@@ -146,7 +156,7 @@ func (clnr *createLocalNodeRunnable) Start(ctx context.Context) error {
 func (clnr *createLocalNodeRunnable) NeedLeaderElection() bool {
 	return false
 }
-func (clnr *createLocalNodeRunnable) InjectClient(k8Client client.Client) error {
+func (clnr *createLocalNodeRunnable) InjectClient(k8Client versioned.Interface) error {
 	clnr.client = k8Client
 	return nil
 }
@@ -157,6 +167,5 @@ func (clnr *createLocalNodeRunnable) InjectLogger(log logr.Logger) error {
 
 var _ manager.Runnable = &createLocalNodeRunnable{}
 var _ manager.LeaderElectionRunnable = &createLocalNodeRunnable{}
-var _ inject.Client = &createLocalNodeRunnable{}
 var _ inject.Logger = &createLocalNodeRunnable{}
 var _ NodeProvider = &createLocalNodeRunnable{}

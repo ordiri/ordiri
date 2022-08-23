@@ -32,7 +32,6 @@ import (
 // FakeVolumeClaims implements VolumeClaimInterface
 type FakeVolumeClaims struct {
 	Fake *FakeStorageV1alpha1
-	ns   string
 }
 
 var volumeclaimsResource = schema.GroupVersionResource{Group: "storage.ordiri.com", Version: "v1alpha1", Resource: "volumeclaims"}
@@ -42,8 +41,7 @@ var volumeclaimsKind = schema.GroupVersionKind{Group: "storage.ordiri.com", Vers
 // Get takes name of the volumeClaim, and returns the corresponding volumeClaim object, and an error if there is any.
 func (c *FakeVolumeClaims) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.VolumeClaim, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewGetAction(volumeclaimsResource, c.ns, name), &v1alpha1.VolumeClaim{})
-
+		Invokes(testing.NewRootGetAction(volumeclaimsResource, name), &v1alpha1.VolumeClaim{})
 	if obj == nil {
 		return nil, err
 	}
@@ -53,8 +51,7 @@ func (c *FakeVolumeClaims) Get(ctx context.Context, name string, options v1.GetO
 // List takes label and field selectors, and returns the list of VolumeClaims that match those selectors.
 func (c *FakeVolumeClaims) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.VolumeClaimList, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewListAction(volumeclaimsResource, volumeclaimsKind, c.ns, opts), &v1alpha1.VolumeClaimList{})
-
+		Invokes(testing.NewRootListAction(volumeclaimsResource, volumeclaimsKind, opts), &v1alpha1.VolumeClaimList{})
 	if obj == nil {
 		return nil, err
 	}
@@ -75,15 +72,13 @@ func (c *FakeVolumeClaims) List(ctx context.Context, opts v1.ListOptions) (resul
 // Watch returns a watch.Interface that watches the requested volumeClaims.
 func (c *FakeVolumeClaims) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
 	return c.Fake.
-		InvokesWatch(testing.NewWatchAction(volumeclaimsResource, c.ns, opts))
-
+		InvokesWatch(testing.NewRootWatchAction(volumeclaimsResource, opts))
 }
 
 // Create takes the representation of a volumeClaim and creates it.  Returns the server's representation of the volumeClaim, and an error, if there is any.
 func (c *FakeVolumeClaims) Create(ctx context.Context, volumeClaim *v1alpha1.VolumeClaim, opts v1.CreateOptions) (result *v1alpha1.VolumeClaim, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewCreateAction(volumeclaimsResource, c.ns, volumeClaim), &v1alpha1.VolumeClaim{})
-
+		Invokes(testing.NewRootCreateAction(volumeclaimsResource, volumeClaim), &v1alpha1.VolumeClaim{})
 	if obj == nil {
 		return nil, err
 	}
@@ -93,8 +88,7 @@ func (c *FakeVolumeClaims) Create(ctx context.Context, volumeClaim *v1alpha1.Vol
 // Update takes the representation of a volumeClaim and updates it. Returns the server's representation of the volumeClaim, and an error, if there is any.
 func (c *FakeVolumeClaims) Update(ctx context.Context, volumeClaim *v1alpha1.VolumeClaim, opts v1.UpdateOptions) (result *v1alpha1.VolumeClaim, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateAction(volumeclaimsResource, c.ns, volumeClaim), &v1alpha1.VolumeClaim{})
-
+		Invokes(testing.NewRootUpdateAction(volumeclaimsResource, volumeClaim), &v1alpha1.VolumeClaim{})
 	if obj == nil {
 		return nil, err
 	}
@@ -105,8 +99,7 @@ func (c *FakeVolumeClaims) Update(ctx context.Context, volumeClaim *v1alpha1.Vol
 // Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
 func (c *FakeVolumeClaims) UpdateStatus(ctx context.Context, volumeClaim *v1alpha1.VolumeClaim, opts v1.UpdateOptions) (*v1alpha1.VolumeClaim, error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceAction(volumeclaimsResource, "status", c.ns, volumeClaim), &v1alpha1.VolumeClaim{})
-
+		Invokes(testing.NewRootUpdateSubresourceAction(volumeclaimsResource, "status", volumeClaim), &v1alpha1.VolumeClaim{})
 	if obj == nil {
 		return nil, err
 	}
@@ -116,14 +109,13 @@ func (c *FakeVolumeClaims) UpdateStatus(ctx context.Context, volumeClaim *v1alph
 // Delete takes name of the volumeClaim and deletes it. Returns an error if one occurs.
 func (c *FakeVolumeClaims) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
 	_, err := c.Fake.
-		Invokes(testing.NewDeleteActionWithOptions(volumeclaimsResource, c.ns, name, opts), &v1alpha1.VolumeClaim{})
-
+		Invokes(testing.NewRootDeleteActionWithOptions(volumeclaimsResource, name, opts), &v1alpha1.VolumeClaim{})
 	return err
 }
 
 // DeleteCollection deletes a collection of objects.
 func (c *FakeVolumeClaims) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewDeleteCollectionAction(volumeclaimsResource, c.ns, listOpts)
+	action := testing.NewRootDeleteCollectionAction(volumeclaimsResource, listOpts)
 
 	_, err := c.Fake.Invokes(action, &v1alpha1.VolumeClaimList{})
 	return err
@@ -132,8 +124,7 @@ func (c *FakeVolumeClaims) DeleteCollection(ctx context.Context, opts v1.DeleteO
 // Patch applies the patch and returns the patched volumeClaim.
 func (c *FakeVolumeClaims) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.VolumeClaim, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceAction(volumeclaimsResource, c.ns, name, pt, data, subresources...), &v1alpha1.VolumeClaim{})
-
+		Invokes(testing.NewRootPatchSubresourceAction(volumeclaimsResource, name, pt, data, subresources...), &v1alpha1.VolumeClaim{})
 	if obj == nil {
 		return nil, err
 	}

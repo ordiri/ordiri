@@ -32,7 +32,7 @@ import (
 // VolumesGetter has a method to return a VolumeInterface.
 // A group's client should implement this interface.
 type VolumesGetter interface {
-	Volumes(namespace string) VolumeInterface
+	Volumes() VolumeInterface
 }
 
 // VolumeInterface has methods to work with Volume resources.
@@ -52,14 +52,12 @@ type VolumeInterface interface {
 // volumes implements VolumeInterface
 type volumes struct {
 	client rest.Interface
-	ns     string
 }
 
 // newVolumes returns a Volumes
-func newVolumes(c *StorageV1alpha1Client, namespace string) *volumes {
+func newVolumes(c *StorageV1alpha1Client) *volumes {
 	return &volumes{
 		client: c.RESTClient(),
-		ns:     namespace,
 	}
 }
 
@@ -67,7 +65,6 @@ func newVolumes(c *StorageV1alpha1Client, namespace string) *volumes {
 func (c *volumes) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.Volume, err error) {
 	result = &v1alpha1.Volume{}
 	err = c.client.Get().
-		Namespace(c.ns).
 		Resource("volumes").
 		Name(name).
 		VersionedParams(&options, scheme.ParameterCodec).
@@ -84,7 +81,6 @@ func (c *volumes) List(ctx context.Context, opts v1.ListOptions) (result *v1alph
 	}
 	result = &v1alpha1.VolumeList{}
 	err = c.client.Get().
-		Namespace(c.ns).
 		Resource("volumes").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -101,7 +97,6 @@ func (c *volumes) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interfa
 	}
 	opts.Watch = true
 	return c.client.Get().
-		Namespace(c.ns).
 		Resource("volumes").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -112,7 +107,6 @@ func (c *volumes) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interfa
 func (c *volumes) Create(ctx context.Context, volume *v1alpha1.Volume, opts v1.CreateOptions) (result *v1alpha1.Volume, err error) {
 	result = &v1alpha1.Volume{}
 	err = c.client.Post().
-		Namespace(c.ns).
 		Resource("volumes").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Body(volume).
@@ -125,7 +119,6 @@ func (c *volumes) Create(ctx context.Context, volume *v1alpha1.Volume, opts v1.C
 func (c *volumes) Update(ctx context.Context, volume *v1alpha1.Volume, opts v1.UpdateOptions) (result *v1alpha1.Volume, err error) {
 	result = &v1alpha1.Volume{}
 	err = c.client.Put().
-		Namespace(c.ns).
 		Resource("volumes").
 		Name(volume.Name).
 		VersionedParams(&opts, scheme.ParameterCodec).
@@ -140,7 +133,6 @@ func (c *volumes) Update(ctx context.Context, volume *v1alpha1.Volume, opts v1.U
 func (c *volumes) UpdateStatus(ctx context.Context, volume *v1alpha1.Volume, opts v1.UpdateOptions) (result *v1alpha1.Volume, err error) {
 	result = &v1alpha1.Volume{}
 	err = c.client.Put().
-		Namespace(c.ns).
 		Resource("volumes").
 		Name(volume.Name).
 		SubResource("status").
@@ -154,7 +146,6 @@ func (c *volumes) UpdateStatus(ctx context.Context, volume *v1alpha1.Volume, opt
 // Delete takes name of the volume and deletes it. Returns an error if one occurs.
 func (c *volumes) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
 	return c.client.Delete().
-		Namespace(c.ns).
 		Resource("volumes").
 		Name(name).
 		Body(&opts).
@@ -169,7 +160,6 @@ func (c *volumes) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, l
 		timeout = time.Duration(*listOpts.TimeoutSeconds) * time.Second
 	}
 	return c.client.Delete().
-		Namespace(c.ns).
 		Resource("volumes").
 		VersionedParams(&listOpts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -182,7 +172,6 @@ func (c *volumes) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, l
 func (c *volumes) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.Volume, err error) {
 	result = &v1alpha1.Volume{}
 	err = c.client.Patch(pt).
-		Namespace(c.ns).
 		Resource("volumes").
 		Name(name).
 		SubResource(subresources...).

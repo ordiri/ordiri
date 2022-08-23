@@ -54,5 +54,5 @@ func (v *version) MachineProfiles() MachineProfileInformer {
 
 // Nodes returns a NodeInformer.
 func (v *version) Nodes() NodeInformer {
-	return &nodeInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
+	return &nodeInformer{factory: v.factory, tweakListOptions: v.tweakListOptions}
 }

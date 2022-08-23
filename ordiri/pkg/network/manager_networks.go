@@ -65,7 +65,14 @@ func (ln *networkManager) EnsureNetwork(ctx context.Context, nw api.Network) err
 	ln.l.Lock()
 	defer ln.l.Unlock()
 
-	if err := ln.driver.EnsureNetwork(ctx, nw); err != nil {
+	subnets := []api.Subnet{}
+	if mn := ln.network(nw.Name()); mn != nil {
+		for _, msn := range mn.subnets {
+			subnets = append(subnets, msn.sn)
+		}
+	}
+
+	if err := ln.driver.EnsureNetwork(ctx, nw, subnets); err != nil {
 		return err
 	}
 

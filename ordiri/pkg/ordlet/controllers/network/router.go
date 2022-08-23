@@ -19,6 +19,7 @@ package network
 import (
 	"context"
 	"fmt"
+	"net"
 	"reflect"
 	"time"
 
@@ -87,10 +88,16 @@ func (r *RouterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 		}
 
 		nodeHasRouter := false
+		nodeLocalMac := mac.Unicast()
 		for _, snh := range router.Status.Hosts {
 			if snh.Node == node.Name && snh.Subnet == selector.Name {
 				log.Info("node has router", "subnet", selector)
 				nodeHasRouter = true
+				nlc, err := net.ParseMAC(snh.Mac)
+				if err != nil {
+					return ctrl.Result{}, fmt.Errorf("node local mac was not a valid mac addr")
+				}
+				nodeLocalMac = nlc
 			}
 		}
 
@@ -134,7 +141,7 @@ func (r *RouterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 			}
 			// the router ip is always the first ip in the range (10.0.0.0/24 === router ip 10.0.0.1/24)
 			ip := netaddr.IPPrefixFrom(sn.Cidr().IP().Next(), sn.Cidr().Bits())
-			rtr, err = network.NewRouter(router.Name, ip, network.WithRouterMac(macAddr))
+			rtr, err = network.NewRouter(router.Name, ip, network.WithDistributedMac(macAddr), network.WithLocalMac(nodeLocalMac))
 			if err != nil {
 				return ctrl.Result{}, fmt.Errorf("unable to create router - %w", err)
 			}
@@ -150,7 +157,7 @@ func (r *RouterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 			}
 		} else {
 			log.Info("installing router", "subnet", subnet, "wants_router", nodeWantsRouter)
-			if err := r.addNodeSubnetToRouterStatus(ctx, subnet, router); err != nil {
+			if err := r.addNodeSubnetToRouterStatus(ctx, subnet, router, nodeLocalMac); err != nil {
 				return ctrl.Result{}, fmt.Errorf("aoeaoeao - %w", err)
 			}
 			if err := r.NetworkManager.EnsureRouter(ctx, net, sn, rtr); err != nil {
@@ -162,7 +169,7 @@ func (r *RouterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	return ctrl.Result{}, nil
 }
 
-func (r *RouterReconciler) addNodeSubnetToRouterStatus(ctx context.Context, subnet *networkv1alpha1.Subnet, rtr *networkv1alpha1.Router) error {
+func (r *RouterReconciler) addNodeSubnetToRouterStatus(ctx context.Context, subnet *networkv1alpha1.Subnet, rtr *networkv1alpha1.Router, nodeLocalMac net.HardwareAddr) error {
 	return retry.RetryOnConflict(retry.DefaultBackoff, func() error {
 		node := r.Node.GetNode()
 		router := &networkv1alpha1.Router{}
@@ -173,19 +180,28 @@ func (r *RouterReconciler) addNodeSubnetToRouterStatus(ctx context.Context, subn
 			return err
 		}
 
+		needsUpdate := false
 		routerContainsNodeSubnet := false
 		for _, hostBinding := range router.Status.Hosts {
 			if hostBinding.Node == node.Name && hostBinding.Subnet == subnet.Name {
 				routerContainsNodeSubnet = true
+				if hostBinding.Mac != nodeLocalMac.String() {
+					hostBinding.Mac = nodeLocalMac.String()
+					needsUpdate = true
+				}
 			}
 		}
 
 		if !routerContainsNodeSubnet {
+			needsUpdate = true
 			router.Status.Hosts = append(router.Status.Hosts, networkv1alpha1.HostRouterStatus{
 				Node:   node.Name,
 				Subnet: subnet.Name,
+				Mac:    nodeLocalMac.String(),
 			})
 
+		}
+		if needsUpdate {
 			if err := r.Client.Status().Update(ctx, router); err != nil {
 				return err
 			}

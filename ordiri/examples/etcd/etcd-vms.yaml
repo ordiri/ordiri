@@ -1,0 +1,113 @@
+apiVersion: compute.ordiri.com/v1alpha1
+kind: VirtualMachineDeployment
+metadata:
+  name: etcd
+spec:
+  replicas: 3
+  template:
+    metadata:
+      creationTimestamp: null
+    spec:
+      UserData: |
+        #!/bin/bash
+        CLUSTER_PORT=2380
+        CLIENT_PORT=2379
+        ETCD_VER=v3.5.4
+        DOWNLOAD_URL=https://storage.googleapis.com/etcd
+
+        set -eou pipefail
+        export PATH=$PATH:/usr/local/bin
+
+        cd $(mktemp -d)
+        apt-get update -y
+
+        curl -L ${DOWNLOAD_URL}/${ETCD_VER}/etcd-${ETCD_VER}-linux-amd64.tar.gz -o etcd-${ETCD_VER}-linux-amd64.tar.gz
+        tar xzvf etcd-${ETCD_VER}-linux-amd64.tar.gz --strip-components=1
+        rm -f etcd-${ETCD_VER}-linux-amd64.tar.gz
+
+        ./etcd --version
+        ./etcdctl version
+        mv ./{etcd,etcdctl} /usr/local/bin/.
+
+        local_ip=$(curl -XGET http://169.254.169.254/latest/meta-data/local-ipv4)
+        local_hostname=$(curl -XGET http://169.254.169.254/latest/meta-data/local-hostname)
+
+        # todo once dns is implemented properly, change this to use the subnet local dns records
+        peers=""
+        endpoints=""
+        for i in $(seq 0 2); do 
+          hn="etcd-${i}"
+          ip=$(dig +short "$hn")
+          if [[ -n "${ip}" ]]; then
+            if [[ -n "${peers}" ]]; then
+              peers="${peers},"
+              endpoints="${endpoints},"
+            fi
+            
+            peers="${peers}${hn}=https://${ip}:${CLUSTER_PORT}"
+            endpoints="${endpoints}https://${ip}:${CLIENT_PORT}"
+          fi
+        done
+
+        cat << EOF > /etc/systemd/system/etcd.service
+        [Unit]
+        Description=etcd key-value store
+        Documentation=https://github.com/etcd-io/etcd
+        After=network-online.target local-fs.target remote-fs.target time-sync.target
+        Wants=network-online.target local-fs.target remote-fs.target time-sync.target
+
+        [Service]
+        Type=notify
+        Environment=ETCD_DATA_DIR=/var/lib/etcd
+        Environment=ETCD_NAME=${local_hostname}
+        Environment=ETCD_INITIAL_ADVERTISE_PEER_URLS=https://${local_ip}:${CLUSTER_PORT}
+        Environment=ETCD_LISTEN_PEER_URLS=https://${local_ip}:${CLUSTER_PORT}
+        Environment=ETCD_LISTEN_CLIENT_URLS=https://${local_ip}:${CLIENT_PORT},https://127.0.0.1:${CLIENT_PORT}
+        Environment=ETCD_ADVERTISE_CLIENT_URLS=https://${local_ip}:${CLIENT_PORT}
+        Environment=ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster-1
+        Environment=ETCD_INITIAL_CLUSTER=${peers}
+        Environment=ETCD_INITIAL_CLUSTER_STATE=new
+        Environment=ETCD_AUTO_TLS=true
+        Environment=ETCD_PEER_AUTO_TLS=true
+
+        ExecStart=/usr/local/bin/etcd
+        Restart=always
+        RestartSec=10s
+        LimitNOFILE=40000
+
+        [Install]
+        WantedBy=multi-user.target
+        EOF
+
+        systemctl enable --now /etc/systemd/system/etcd.service
+
+        echo "export ETCDCTL_API=3
+        export ETCDCTL_ENDPOINTS=$endpoints
+        export ETCDCTL_INSECURE_TRANSPORT=false
+        export ETCDCTL_INSECURE_SKIP_TLS_VERIFY=true # todo: change this and ship tls certs via metadata server
+        " > $HOME/.etcdctl
+
+        echo "
+        # Etcd installed
+        #
+        # To test, please run
+        source $HOME/.etcdctl
+        etcdctl member list
+        "
+      bootDevices:
+      - hd
+      - network
+      networkInterfaces:
+      - mac: ""
+        network: kubevms
+        subnet: kubevms-etcd
+      node: ""
+      role: default
+      state: Running
+      volumes:
+      - device: vda
+        hostLocal:
+          poolName: etcd
+          size: 30Gi
+          volName: root
+        name: root

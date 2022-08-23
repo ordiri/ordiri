@@ -38,12 +38,13 @@ func (ln *linuxDriver) RemoveNetwork(ctx context.Context, nw api.Network) error 
 	return nil
 }
 
-func (ln *linuxDriver) EnsureNetwork(ctx context.Context, nw api.Network) error {
+func (ln *linuxDriver) EnsureNetwork(ctx context.Context, nw api.Network, sns []api.Subnet) error {
 	log := log.FromContext(ctx)
 	log.V(5).Info("Ensuring network", "nw", nw)
 	if err := ln.installNetworkNat(ctx, nw); err != nil {
 		return err
 	}
+
 	hostDir := hostMappingDir(nw)
 	if len(nw.DnsRecords()) > 0 {
 		os.MkdirAll(hostDir, os.ModePerm)
@@ -80,6 +81,7 @@ func (ln *linuxDriver) installNetworkNat(ctx context.Context, nw api.Network) er
 	if err != nil {
 		return err
 	}
+
 	log.V(5).Info("Apply IPTables Rules")
 	ruleSets := rulesets(cidr.String(), publicGwCableName.Namespace())
 	for _, ruleSet := range ruleSets {
@@ -100,6 +102,7 @@ func (ln *linuxDriver) installNetworkNat(ctx context.Context, nw api.Network) er
 	if err != nil {
 		return fmt.Errorf("unable to get namespace for public gateway ns - %w", err)
 	}
+
 	defer handle.Close()
 
 	errCh := make(chan error)
@@ -212,4 +215,42 @@ func rulesets(cidr string, publicInterface string) []iptRule {
 			},
 		},
 	}
+}
+
+func (ln *linuxDriver) networkFlows(ctx context.Context, nw api.Network) ([]sdn.FlowRule, error) {
+	return []sdn.FlowRule{}, nil
+}
+
+func (ln *linuxDriver) removeNetworkFlows(ctx context.Context, nw api.Network) error {
+	flows, err := ln.networkFlows(ctx, nw)
+	if err != nil {
+		return err
+	}
+	ovsClient := sdn.Ovs()
+
+	for _, flow := range flows {
+		if err := flow.Remove(ovsClient); err != nil {
+			return fmt.Errorf("error adding flow - %w", err)
+		}
+	}
+
+	return nil
+
+}
+
+func (ln *linuxDriver) installNetworkFlows(ctx context.Context, nw api.Network) error {
+	flows, err := ln.networkFlows(ctx, nw)
+	if err != nil {
+		return err
+	}
+	ovsClient := sdn.Ovs()
+
+	for _, flow := range flows {
+
+		if err := flow.Install(ovsClient); err != nil {
+			return fmt.Errorf("error adding flow - %w", err)
+		}
+	}
+
+	return nil
 }
