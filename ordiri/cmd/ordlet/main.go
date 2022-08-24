@@ -112,7 +112,8 @@ func main() {
 	nodeRunner.InjectClient(c)
 	nodeRunner.InjectLogger(mgr.GetLogger())
 	if err := nodeRunner.Start(context.Background()); err != nil {
-		panic(err.Error())
+		setupLog.Error(err, "unable to start node manager")
+		os.Exit(1)
 	}
 
 	nwManager, err := getNetworkManager(networkDriver)
