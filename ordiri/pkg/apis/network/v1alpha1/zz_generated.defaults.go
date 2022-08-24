@@ -34,7 +34,10 @@ func RegisterDefaults(scheme *runtime.Scheme) error {
 }
 
 func SetObjectDefaults_Router(in *Router) {
-	SetDefaults_RouterSpec(&in.Spec)
+	for i := range in.Spec.Subnets {
+		a := &in.Spec.Subnets[i]
+		SetDefaults_RouterSubnetReference(a)
+	}
 }
 
 func SetObjectDefaults_RouterList(in *RouterList) {

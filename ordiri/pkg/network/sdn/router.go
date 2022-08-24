@@ -3,15 +3,21 @@ package sdn
 import (
 	"fmt"
 	"net"
+	"strings"
 
 	"github.com/digitalocean/go-openvswitch/ovs"
+	"inet.af/netaddr"
 )
 
 type Router struct {
-	GlobalMac   net.HardwareAddr
-	LocalMac    net.HardwareAddr
-	SubnetPorts []string
-	TunnelPorts []string
+	IP      netaddr.IP
+	Segment int
+	// The mac on the local iface
+	DistributedMac net.HardwareAddr
+	// the mac we masquerade as
+	HostLocalMac net.HardwareAddr
+	SubnetPorts  []string
+	TunnelPorts  []string
 }
 
 func (wi *Router) rules() []FlowRule {
@@ -20,42 +26,82 @@ func (wi *Router) rules() []FlowRule {
 	return rules
 }
 
-func (wi *Router) Install(client *ovs.Client) error {
-	ingressActions := []ovs.Action{
-		ovs.ModDataLinkSource(wi.GlobalMac),
+// Purposefully swallows errors
+func (wi *Router) meshTunPorts(client *ovs.Client) []int {
+	ports, err := client.VSwitch.ListPorts(TunnelSwitchName)
+	if err != nil {
+		return nil
+	}
+	outputs := []int{}
+	for _, portName := range ports {
+		if strings.HasPrefix(portName, "mt-") {
+			port, err := client.OpenFlow.DumpPort(TunnelSwitchName, portName)
+			if err != nil {
+				return nil
+			}
+
+			outputs = append(outputs, port.PortID)
+		}
+	}
+
+	return outputs
+}
+func (wi *Router) installOutgoingRule(client *ovs.Client) error {
+
+	egressMatches := []ovs.Match{
+		ovs.DataLinkSource(wi.DistributedMac.String()),
 	}
 	egressActions := []ovs.Action{
-		ovs.ModDataLinkSource(wi.LocalMac),
+		ovs.ModDataLinkSource(wi.HostLocalMac),
+		ovs.Resubmit(0, OpenFlowTableTunnelEgressNodeUnicast),
 	}
-	if len(wi.SubnetPorts) == 0 {
-		ingressActions = append(egressActions, ovs.Normal())
-	}
-	if len(wi.TunnelPorts) == 0 {
-		egressActions = append(egressActions, ovs.Normal())
-	}
-	for _, p := range wi.SubnetPorts {
-		port, err := client.OpenFlow.DumpPort(WorkloadSwitchName, p)
-		if err != nil {
-			return err
-		}
-		ingressActions = append(ingressActions, ovs.Output(port.PortID))
-	}
-	if err := client.OpenFlow.AddFlow(TunnelSwitchName, &ovs.Flow{
-		Matches: []ovs.Match{
-			ovs.DataLinkSource(wi.LocalMac.String()),
-		},
-		Actions:  ingressActions,
-		Priority: 5,
-	}); err != nil {
-		return err
-	}
-	if err := client.OpenFlow.AddFlow(WorkloadSwitchName, &ovs.Flow{
-		Matches: []ovs.Match{
-			ovs.DataLinkSource(wi.GlobalMac.String()),
-		},
+
+	return client.OpenFlow.AddFlow(TunnelSwitchName, &ovs.Flow{
+		Table:    OpenFlowTableTunnelEgressNodeUnicast,
+		Matches:  egressMatches,
 		Actions:  egressActions,
 		Priority: 5,
-	}); err != nil {
+	})
+}
+
+func (wi *Router) installIncomingRule(client *ovs.Client) error {
+	ingressMatches := []ovs.Match{
+		ovs.DataLinkSource(wi.HostLocalMac.String()),
+	}
+	ingressActions := []ovs.Action{
+		ovs.ModDataLinkSource(wi.DistributedMac),
+		ovs.Normal(),
+	}
+	if len(wi.TunnelPorts) == 0 {
+		// ingressActions = append(ingressActions, ovs.ResubmitPort(1))
+	}
+	return client.OpenFlow.AddFlow(WorkloadSwitchName, &ovs.Flow{
+		Matches:  ingressMatches,
+		Actions:  ingressActions,
+		Table:    OpenFlowTableTunnelEgressNodeUnicast,
+		Priority: 5,
+	})
+}
+
+// func (wi *Router) installArpResponder(client *ovs.Client) error {
+// 	arpResponder := &ArpResponder{
+// 		Switch: TunnelSwitchName,
+// 		Mac:    wi.HostLocalMac,
+// 		Ip:     wi.IP,
+// 		VlanId: wi.Segment,
+// 	}
+
+// 	return arpResponder.Install(client)
+// }
+func (wi *Router) Install(client *ovs.Client) error {
+	// if err := wi.installArpResponder(client); err != nil {
+	// 	return err
+	// }
+	return nil
+	if err := wi.installOutgoingRule(client); err != nil {
+		return err
+	}
+	if err := wi.installIncomingRule(client); err != nil {
 		return err
 	}
 	for _, flow := range wi.rules() {

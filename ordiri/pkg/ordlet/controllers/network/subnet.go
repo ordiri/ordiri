@@ -37,7 +37,6 @@ import (
 	"github.com/ordiri/ordiri/pkg/network/api"
 
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
-	"github.com/ordiri/ordiri/pkg/network/sdn"
 	"github.com/ordiri/ordiri/pkg/ordlet"
 
 	"github.com/coreos/go-systemd/v22/dbus"
@@ -219,59 +218,6 @@ func (r *SubnetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 // 	}
 // 	return nil
 // }
-
-func (r *SubnetReconciler) installNat(ctx context.Context, subnet *networkv1alpha1.Subnet) error {
-	return nil
-	// return fmt.Errorf("not uimplemented")
-}
-
-func (r *SubnetReconciler) installDhcp(ctx context.Context, subnet *networkv1alpha1.Subnet) error {
-	return nil
-}
-
-func (r *SubnetReconciler) flows(ctx context.Context, nw *networkv1alpha1.Network, subnet *networkv1alpha1.Subnet, vlanId int) ([]sdn.FlowRule, error) {
-
-	return []sdn.FlowRule{
-		&sdn.NodeSubnetEgress{
-			Switch:        sdn.TunnelSwitchName,
-			NodeLocalVlan: vlanId,
-			TunnelId:      nw.Status.Vni,
-		},
-		&sdn.NodeSubnetIngress{
-			Switch:        sdn.TunnelSwitchName,
-			NodeLocalVlan: vlanId,
-			TunnelId:      nw.Status.Vni,
-		},
-	}, nil
-}
-
-func (r *SubnetReconciler) installFlows(ctx context.Context, subnet *networkv1alpha1.Subnet) error {
-	nw := &networkv1alpha1.Network{}
-	nw.Name = subnet.Spec.Network.Name
-	if err := r.Client.Get(ctx, client.ObjectKeyFromObject(nw), nw); err != nil {
-		return err
-	}
-
-	vlanId, err := r.Node.GetNode().SubnetVlanId(subnet.Name)
-	if err != nil {
-		return fmt.Errorf("unable to get VLAN id for %s - %w", subnet.Name, err)
-	}
-
-	flows, err := r.flows(ctx, nw, subnet, vlanId)
-	if err != nil {
-		return err
-	}
-	ovsClient := sdn.Ovs()
-
-	for _, flow := range flows {
-
-		if err := flow.Install(ovsClient); err != nil {
-			return fmt.Errorf("error adding flow - %w", err)
-		}
-	}
-
-	return nil
-}
 
 // SetupWithManager sets up the controller with the Manager.
 func (r *SubnetReconciler) SetupWithManager(mgr ctrl.Manager) error {

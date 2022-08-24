@@ -134,14 +134,14 @@ func (r *RouterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 		if r.NetworkManager.HasRouter(net, sn, router.Name) {
 			rtr = r.NetworkManager.GetRouter(net, sn, router.Name)
 		} else {
-			macAddr, err := mac.Parse(router.Spec.Mac)
+			macAddr, err := mac.Parse(selector.Mac)
 			if err != nil {
 				return ctrl.Result{}, fmt.Errorf("invalid mac address - %w", err)
-
 			}
+
 			// the router ip is always the first ip in the range (10.0.0.0/24 === router ip 10.0.0.1/24)
 			ip := netaddr.IPPrefixFrom(sn.Cidr().IP().Next(), sn.Cidr().Bits())
-			rtr, err = network.NewRouter(router.Name, ip, network.WithDistributedMac(macAddr), network.WithLocalMac(nodeLocalMac))
+			rtr, err = network.NewRouter(router.Name, ip, sn.Segment(), network.WithDistributedMac(macAddr), network.WithLocalMac(nodeLocalMac))
 			if err != nil {
 				return ctrl.Result{}, fmt.Errorf("unable to create router - %w", err)
 			}

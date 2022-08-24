@@ -78,9 +78,11 @@ func (r *MeshReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 	// df_default and local_ip
 	if !strings.EqualFold(thisNode.Name, node.Name) {
 		ovsClient := sdn.Ovs()
-		portName := "mesh-tun-" + node.Name
-		ovsClient.VSwitch.AddPort(sdn.TunnelSwitchName, portName)
-		ovsClient.VSwitch.Set.Interface(portName, ovs.InterfaceOptions{
+		portName := "mt-" + node.Name
+		if err := ovsClient.VSwitch.AddPort(sdn.TunnelSwitchName, portName); err != nil {
+			return ctrl.Result{}, err
+		}
+		if err := ovsClient.VSwitch.Set.Interface(portName, ovs.InterfaceOptions{
 			Type:     ovs.InterfaceTypeVXLAN,
 			RemoteIP: node.TunnelAddress(),
 			Key:      "",
@@ -94,6 +96,20 @@ func (r *MeshReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 				func() []string {
 					return []string{fmt.Sprintf("options:local_ip=%s", r.Node.GetNode().TunnelAddress())}
 				},
+			},
+		}); err != nil {
+			return ctrl.Result{}, err
+		}
+		port, err := ovsClient.OpenFlow.DumpPort(sdn.TunnelSwitchName, portName)
+		if err != nil {
+			return ctrl.Result{}, err
+		}
+		ovsClient.OpenFlow.AddFlow(sdn.TunnelSwitchName, &ovs.Flow{
+			Matches: []ovs.Match{
+				ovs.InPortMatch(port.PortID),
+			},
+			Actions: []ovs.Action{
+				ovs.Resubmit(0, sdn.OpenFlowTableTunnelIngressNodeEntrypoint),
 			},
 		})
 	}

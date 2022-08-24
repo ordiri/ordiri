@@ -20,7 +20,7 @@ import (
 	"github.com/ordiri/ordiri/pkg/mac"
 )
 
-func SetDefaults_RouterSpec(obj *RouterSpec) {
+func SetDefaults_RouterSubnetReference(obj *RouterSubnetReference) {
 	if obj.Mac == "" {
 		obj.Mac = mac.Unicast().String()
 	}

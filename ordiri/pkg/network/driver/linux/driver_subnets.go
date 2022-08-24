@@ -186,7 +186,7 @@ func (ln *linuxDriver) installMetadataServer(ctx context.Context, nw api.Network
 	namespace := namespaceForDhcp(nw, subnet)
 	cableName := metadataCableName(nw, subnet)
 
-	if err := ln.getOrCreateVeth(ctx, namespace, cableName, metaMac()); err != nil {
+	if err := ln.getOrCreateVeth(ctx, namespace, cableName, true, metaMac()); err != nil {
 		return fmt.Errorf("unable to create veth cable %s - %w", cableName, err)
 	}
 
@@ -243,7 +243,7 @@ func (ln *linuxDriver) installDhcp(ctx context.Context, nw api.Network, subnet a
 	log := log.FromContext(ctx)
 	namespace := namespaceForDhcp(nw, subnet)
 	cableName := dhcpCableName(nw, subnet)
-	if err := ln.getOrCreateVeth(ctx, namespace, cableName, mac.Unicast()); err != nil {
+	if err := ln.getOrCreateVeth(ctx, namespace, cableName, false, mac.Unicast()); err != nil {
 		return fmt.Errorf("unable to create veth cable %s - %w", cableName, err)
 	}
 
@@ -343,14 +343,13 @@ func (ln *linuxDriver) installDhcp(ctx context.Context, nw api.Network, subnet a
 func (ln *linuxDriver) flows(ctx context.Context, nw api.Network, subnet api.Subnet) ([]sdn.FlowRule, error) {
 	return []sdn.FlowRule{
 		&sdn.NodeSubnetEgress{
-			Switch:        sdn.TunnelSwitchName,
 			NodeLocalVlan: subnet.Segment(),
 			TunnelId:      nw.Segment(),
 		},
 		&sdn.NodeSubnetIngress{
-			Switch:        sdn.TunnelSwitchName,
 			NodeLocalVlan: subnet.Segment(),
 			TunnelId:      nw.Segment(),
+			Cidr:          subnet.Cidr(),
 		},
 	}, nil
 }

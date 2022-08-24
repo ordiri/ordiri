@@ -66,6 +66,7 @@ type Subnet interface {
 
 type Router interface {
 	Name() string
+	Segment() int
 	GlobalMac() net.HardwareAddr
 	Mac() net.HardwareAddr
 	IP() netaddr.IPPrefix

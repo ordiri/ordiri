@@ -23,10 +23,11 @@ func WithLocalMac(mac net.HardwareAddr) RouterOption {
 	}
 }
 
-func NewRouter(name string, ip netaddr.IPPrefix, opt ...RouterOption) (*router, error) {
+func NewRouter(name string, ip netaddr.IPPrefix, segment int, opt ...RouterOption) (*router, error) {
 	rtr := &router{
-		name: name,
-		ip:   ip,
+		name:    name,
+		ip:      ip,
+		segment: segment,
 	}
 	for _, f := range opt {
 		if err := f(rtr); err != nil {
@@ -50,6 +51,7 @@ type router struct {
 	name           string
 	distributedMac net.HardwareAddr
 	localMac       net.HardwareAddr
+	segment        int
 	ip             netaddr.IPPrefix
 }
 
@@ -66,6 +68,10 @@ func (rtr *router) GlobalMac() net.HardwareAddr {
 
 func (rtr *router) IP() netaddr.IPPrefix {
 	return rtr.ip
+}
+
+func (rtr *router) Segment() int {
+	return rtr.segment
 }
 
 var _ api.Router = &router{}

@@ -1,12 +1,23 @@
 package sdn
 
 const (
-	OpenFlowTableEntrypoint   = 0
-	OpenFlowTableUnicast      = 1
-	OpenFlowTableMulticast    = 2
-	OpenFlowTableBroadcast    = 3
-	OpenFlowTableArp          = 0
-	OpenFlowTableArpResponder = 0
+	OpenFlowTableTunnelEntrypoint = 0
+
+	// When a packet is entering the tunnel switch from a remote tunnel
+	OpenFlowTableTunnelEgressNodeEntrypoint = 1
+
+	// When a packet is entering the tunnel switch from the vm switch
+	OpenFlowTableTunnelIngressNodeEntrypoint = 2
+
+	OpenFlowTableTunnelEgressNodeArp       = 20
+	OpenFlowTableTunnelEgressNodeMulticast = 21
+	OpenFlowTableTunnelEgressNodeUnicast   = 22
+
+	OpenFlowTableTunnelEgressNodeVxlanTranslation = 30
+
+	OpenFlowTableTunnelArpResponder   = 31
+	OpenFlowTableTunnelRouterIncoming = 32
+	OpenFlowTableTunnelRouterOutgoing = 33
 )
 
 const (

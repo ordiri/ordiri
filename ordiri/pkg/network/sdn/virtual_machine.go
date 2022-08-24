@@ -51,6 +51,7 @@ func (wi *VirtualMachine) rules() []FlowRule {
 }
 
 func (wi *VirtualMachine) Install(client *ovs.Client) error {
+	return nil
 	for _, flow := range wi.rules() {
 		if err := flow.Install(client); err != nil {
 			return fmt.Errorf("error installing flow %v - %w", flow, err)

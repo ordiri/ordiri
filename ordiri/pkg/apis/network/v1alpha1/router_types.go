@@ -54,14 +54,14 @@ type RouterList struct {
 // RouterSpec defines the desired state of Router
 type RouterSpec struct {
 	// +optional
-	Mac string `json:"mac"`
-	// +optional
 	Subnets []RouterSubnetReference `json:"subnets,omitempty"`
 }
 
 type RouterSubnetReference struct {
 	v1.ObjectReference `json:",inline"`
 	IpAddr             string `json:"ipAddr"`
+	// +optional
+	Mac string `json:"mac"`
 }
 
 var _ resource.Object = &Router{}

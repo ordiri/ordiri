@@ -30,6 +30,7 @@ func (wi *MetadataServer) GetResponder() *ArpResponder {
 	}
 }
 func (wi *MetadataServer) Install(client *ovs.Client) error {
+	return nil
 	if err := wi.GetResponder().Install(client); err != nil {
 		return fmt.Errorf("error installing arp responder - %w", err)
 	}

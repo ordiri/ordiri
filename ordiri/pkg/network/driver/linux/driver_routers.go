@@ -68,7 +68,7 @@ func (ld *linuxDriver) installRouter(ctx context.Context, nw api.Network, subnet
 	}
 
 	internalRouterCableName := internalRouterCable(nw, subnet, rtr)
-	if err := ld.getOrCreateVeth(ctx, routerNetworkNamespace, internalRouterCableName, rtr.Mac()); err != nil {
+	if err := ld.getOrCreateVeth(ctx, routerNetworkNamespace, internalRouterCableName, true, rtr.GlobalMac()); err != nil {
 		return fmt.Errorf("unable to create internal veth cable - %w", err)
 	}
 
@@ -88,13 +88,15 @@ func (ld *linuxDriver) installRouter(ctx context.Context, nw api.Network, subnet
 		return err
 	}
 
-	arpResponderFlow := &sdn.Router{
-		LocalMac:  rtr.Mac(),
-		GlobalMac: rtr.GlobalMac(),
+	routerFlow := &sdn.Router{
+		DistributedMac: rtr.GlobalMac(),
+		HostLocalMac:   rtr.Mac(),
+		IP:             rtr.IP().IP(),
+		Segment:        rtr.Segment(),
 	}
 
-	if err := arpResponderFlow.Install(ovsClient); err != nil {
-		return fmt.Errorf("unable to install arp responder flow for router - %w", err)
+	if err := routerFlow.Install(ovsClient); err != nil {
+		return fmt.Errorf("unable to install flows for router - %w", err)
 	}
 	// staticEntryFlow := &sdn.StaticPortEntry{
 	// 	Switch:  sdn.WorkloadSwitchName,

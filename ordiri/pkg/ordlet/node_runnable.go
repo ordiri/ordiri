@@ -95,11 +95,7 @@ func (clnr *createLocalNodeRunnable) Start(ctx context.Context) error {
 		return err
 	}
 
-	flowRules := &sdn.Node{
-		WorkloadSwitch: sdn.WorkloadSwitchName,
-		TunnelSwitch:   sdn.TunnelSwitchName,
-		ExternalSwitch: sdn.ExternalSwitchName,
-	}
+	flowRules := &sdn.Node{}
 	if err := flowRules.Install(ovs); err != nil {
 		return err
 	}

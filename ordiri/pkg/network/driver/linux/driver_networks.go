@@ -68,7 +68,7 @@ func (ln *linuxDriver) installNetworkNat(ctx context.Context, nw api.Network) er
 		return fmt.Errorf("error creating network namespace for NAT")
 	}
 
-	if err := ln.getOrCreateVeth(ctx, namespace, publicGwCableName, mac.Unicast()); err != nil {
+	if err := ln.getOrCreateVeth(ctx, namespace, publicGwCableName, false, mac.Unicast()); err != nil {
 		return err
 	}
 
@@ -131,70 +131,6 @@ func (ln *linuxDriver) installNetworkNat(ctx context.Context, nw api.Network) er
 	}
 
 	log.V(5).Info("Network NAT configured")
-
-	// handle, err := netns.GetFromName(namespace)
-	// if err != nil {
-	// 	return fmt.Errorf("unable to get the network namespace handle - %w", err)
-	// }
-
-	// nft, err := nftables.New(nftables.WithNetNSFd(int(handle)))
-	// if err != nil {
-	// 	return fmt.Errorf("error getting nftables - %w", err)
-	// }
-
-	// natTable := nft.AddTable(&nftables.Table{
-	// 	Name: "ordiri-nat",
-	// })
-
-	// natChain := nft.AddChain(&nftables.Chain{
-	// 	Name:     "ordiri-nat",
-	// 	Table:    natTable,
-	// 	Type:     nftables.ChainTypeNAT,
-	// 	Hooknum:  nftables.ChainHookPostrouting,
-	// 	Priority: nftables.ChainPriorityNATSource,
-	// })
-
-	// nft.AddRule(&nftables.Rule{
-	// 	Table: natTable,
-	// 	Chain: natChain,
-	// 	Exprs: []expr.Any{
-	// 		&expr.Meta{Key: expr.MetaKeyOIFNAME, Register: 1}, // store the outgoing interface in reg1
-	// 		&expr.Cmp{ // if reg1(outgoing iface) is public router cable, masquerade
-	// 			Op:       expr.CmpOpEq,
-	// 			Register: 1,
-	// 			Data:     ifname(publicGwCableName.Namespace()),
-	// 		},
-	// 		&expr.Masq{},
-	// 	},
-	// })
-
-	// nft.AddRule(&nftables.Rule{
-	// 	Table: natTable,
-	// 	Chain: natChain,
-	// 	Exprs: []expr.Any{
-	// 		&expr.Meta{Key: expr.MetaKeyOIFNAME, Register: 1}, // store the outgoing interface in reg1
-	// 		&expr.Cmp{ // if reg1(outgoing iface) is public router cable, masquerade
-	// 			Op:       expr.CmpOpEq,
-	// 			Register: 1,
-	// 			Data:     ifname(publicGwCableName.Namespace()),
-	// 		},
-	// 		&expr.Masq{},
-	// 	},
-	// })
-	//
-	// nft.AddRule(&nftables.Rule{
-	// 	Table: natTable,
-	// 	Chain: natChain,
-	// 	Exprs: []expr.Any{
-	// 		&expr.Meta{Key: expr.MetaKeyOIFNAME, Register: 1}, // store the outgoing interface in reg1
-	// 		&expr.Cmp{ // if reg1(outgoing iface) is public router cable, masquerade
-	// 			Op:       expr.CmpOpEq,
-	// 			Register: 1,
-	// 			Data:     ifname(publicGwCableName.Namespace()),
-	// 		},
-	// 		&expr.Masq{},
-	// 	},
-	// })
 
 	return nil
 }

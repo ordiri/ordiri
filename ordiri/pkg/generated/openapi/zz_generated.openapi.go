@@ -3314,13 +3314,6 @@ func schema_pkg_apis_network_v1alpha1_RouterSpec(ref common.ReferenceCallback) c
 				Description: "RouterSpec defines the desired state of Router",
 				Type:        []string{"object"},
 				Properties: map[string]spec.Schema{
-					"mac": {
-						SchemaProps: spec.SchemaProps{
-							Default: "",
-							Type:    []string{"string"},
-							Format:  "",
-						},
-					},
 					"subnets": {
 						SchemaProps: spec.SchemaProps{
 							Type: []string{"array"},
@@ -3427,6 +3420,13 @@ func schema_pkg_apis_network_v1alpha1_RouterSubnetReference(ref common.Reference
 						},
 					},
 					"ipAddr": {
+						SchemaProps: spec.SchemaProps{
+							Default: "",
+							Type:    []string{"string"},
+							Format:  "",
+						},
+					},
+					"mac": {
 						SchemaProps: spec.SchemaProps{
 							Default: "",
 							Type:    []string{"string"},
