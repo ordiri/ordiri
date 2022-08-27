@@ -22,16 +22,25 @@ type NodeSubnetIngress struct {
 
 func (sti *NodeSubnetIngress) matches(client *ovs.Client) ([]ovs.Match, error) {
 	matches := []ovs.Match{
-		ovs.TunnelID(uint64(sti.TunnelId)),
 		ovs.NetworkDestination(sti.Cidr.String()),
+		ovs.TunnelID(uint64(sti.TunnelId)),
 	}
 
 	return matches, nil
 }
+
+// We do this because we want to route traffic for multiple subnets over a single tunnel
+// but each subnet is a seperate vlan (do we just make a single network share a vlan? was thinking)
+// it's good for extra isolation but is it really?
 func (sti *NodeSubnetIngress) Install(client *ovs.Client) error {
+	vmPort, err := client.OpenFlow.DumpPort(TunnelSwitchName, "patch-vms")
+	if err != nil {
+		return err
+	}
+
 	actions := []ovs.Action{
 		ovs.ModVLANVID(sti.NodeLocalVlan),
-		ovs.Normal(),
+		ovs.Output(vmPort.PortID),
 	}
 
 	matches, err := sti.matches(client)
@@ -39,12 +48,44 @@ func (sti *NodeSubnetIngress) Install(client *ovs.Client) error {
 		return err
 	}
 
-	return client.OpenFlow.AddFlow(TunnelSwitchName, &ovs.Flow{
-		Table:    OpenFlowTableTunnelIngressNodeEntrypoint,
+	if err := client.OpenFlow.AddFlow(TunnelSwitchName, &ovs.Flow{
+		Table:    OpenFlowTableTunnelIngressNodeVxlanTranslation,
 		Matches:  matches,
 		Actions:  actions,
-		Priority: 1,
-	})
+		Priority: 2,
+		Protocol: ovs.ProtocolIPv4,
+	}); err != nil {
+		return err
+	}
+
+	if err := client.OpenFlow.AddFlow(TunnelSwitchName, &ovs.Flow{
+		Table:    OpenFlowTableTunnelIngressNodeVxlanTranslation,
+		Matches:  matches,
+		Actions:  actions,
+		Priority: 2,
+		Protocol: ovs.ProtocolICMPv4,
+	}); err != nil {
+		return err
+	}
+	if err := client.OpenFlow.AddFlow(TunnelSwitchName, &ovs.Flow{
+		Table:    OpenFlowTableTunnelIngressNodeVxlanTranslation,
+		Matches:  matches,
+		Actions:  actions,
+		Priority: 2,
+		Protocol: ovs.ProtocolARP,
+	}); err != nil {
+		return err
+	}
+	if err := client.OpenFlow.AddFlow(TunnelSwitchName, &ovs.Flow{
+		Table:    OpenFlowTableTunnelIngressNodeVxlanTranslation,
+		Matches:  matches,
+		Actions:  actions,
+		Priority: 2,
+		Protocol: ovs.ProtocolUDPv4,
+	}); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (sti *NodeSubnetIngress) Remove(client *ovs.Client) error {
@@ -54,7 +95,7 @@ func (sti *NodeSubnetIngress) Remove(client *ovs.Client) error {
 		return err
 	}
 	return client.OpenFlow.DelFlows(TunnelSwitchName, &ovs.MatchFlow{
-		Table:   OpenFlowTableTunnelIngressNodeEntrypoint,
+		Table:   OpenFlowTableTunnelIngressNodeVxlanTranslation,
 		Matches: matches,
 	})
 }

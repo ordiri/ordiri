@@ -46,6 +46,8 @@ func NewRouter(name string, ip netaddr.IPPrefix, segment int, opt ...RouterOptio
 	return rtr, nil
 }
 
+// need to change so a router contains many "routers" beacuse this repreesnts a single subnet but need to
+// route to a subnet regardless of if the node has the subnet or not
 type router struct {
 	// The name for this network
 	name           string

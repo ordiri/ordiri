@@ -24,6 +24,12 @@ export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostRouterStatus {
      * @type {string}
      * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostRouterStatus
      */
+    mac: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostRouterStatus
+     */
     node: string;
     /**
      * 
@@ -38,6 +44,7 @@ export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostRouterStatus {
  */
 export function instanceOfComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostRouterStatus(value: object): boolean {
     let isInstance = true;
+    isInstance = isInstance && "mac" in value;
     isInstance = isInstance && "node" in value;
     isInstance = isInstance && "subnet" in value;
 
@@ -54,6 +61,7 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostRouterStatusFromJ
     }
     return {
         
+        'mac': json['mac'],
         'node': json['node'],
         'subnet': json['subnet'],
     };
@@ -68,6 +76,7 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostRouterStatusToJSO
     }
     return {
         
+        'mac': value.mac,
         'node': value.node,
         'subnet': value.subnet,
     };

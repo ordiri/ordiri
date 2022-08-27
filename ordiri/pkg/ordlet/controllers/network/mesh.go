@@ -82,6 +82,7 @@ func (r *MeshReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 		if err := ovsClient.VSwitch.AddPort(sdn.TunnelSwitchName, portName); err != nil {
 			return ctrl.Result{}, err
 		}
+
 		if err := ovsClient.VSwitch.Set.Interface(portName, ovs.InterfaceOptions{
 			Type:     ovs.InterfaceTypeVXLAN,
 			RemoteIP: node.TunnelAddress(),
@@ -100,6 +101,7 @@ func (r *MeshReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 		}); err != nil {
 			return ctrl.Result{}, err
 		}
+
 		port, err := ovsClient.OpenFlow.DumpPort(sdn.TunnelSwitchName, portName)
 		if err != nil {
 			return ctrl.Result{}, err

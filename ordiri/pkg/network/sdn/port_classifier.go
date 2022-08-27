@@ -20,7 +20,7 @@ type Classifier struct {
 func (c *Classifier) flows() []FlowRule {
 	return []FlowRule{
 		FlowRuleFunc(c.Switch, ovs.Flow{
-			Priority: 1,
+			Priority: 2,
 			Table:    c.Table,
 			Protocol: ovs.ProtocolARP,
 			Matches: []ovs.Match{
@@ -31,7 +31,7 @@ func (c *Classifier) flows() []FlowRule {
 			},
 		}),
 		FlowRuleFunc(c.Switch, ovs.Flow{
-			Priority: 1,
+			Priority: 2,
 			Table:    c.Table,
 			Matches: []ovs.Match{
 				ovs.DataLinkDestination("01:00:00:00:00:00/01:00:00:00:00:00"),
@@ -41,7 +41,7 @@ func (c *Classifier) flows() []FlowRule {
 			},
 		}),
 		FlowRuleFunc(c.Switch, ovs.Flow{
-			Priority: 1,
+			Priority: 2,
 			Table:    c.Table,
 			Matches: []ovs.Match{
 				ovs.DataLinkDestination("00:00:00:00:00:00/01:00:00:00:00:00"),

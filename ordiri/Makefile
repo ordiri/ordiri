@@ -155,11 +155,11 @@ run-debian-remote:  stop-debian deploy-debian-ordlet
 
 .PHONY: stop-mothership
 stop-mothership:
-	{ ssh mothership 'kill $$(pidof ordlet); kill $$(pidof ordlet); kill $$(pidof ordlet)' || true; }
+	{ ssh mothership 'kill $$(pidof ordlet); kill $$(pidof ordlet); kill $$(pidof ordlet)'; systemctl restart ovsdb-server.service ovs-vswitchd.service || true; }
 
 .PHONY: stop-debian
 stop-debian: 
-	{ ssh root@10.0.1.109 'kill $$(pidof ordlet); kill $$(pidof ordlet); kill $$(pidof ordlet)' || true; }
+	{ ssh root@10.0.1.109 'kill $$(pidof ordlet); kill $$(pidof ordlet); kill $$(pidof ordlet)'; systemctl restart ovsdb-server.service ovs-vswitchd.service || true; }
 
 .PHONY: start-all
 start-all: 

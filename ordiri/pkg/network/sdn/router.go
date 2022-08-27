@@ -53,7 +53,7 @@ func (wi *Router) installOutgoingRule(client *ovs.Client) error {
 	}
 	egressActions := []ovs.Action{
 		ovs.ModDataLinkSource(wi.HostLocalMac),
-		ovs.Resubmit(0, OpenFlowTableTunnelEgressNodeUnicast),
+		ovs.Resubmit(0, OpenFlowTableTunnelEgressNodeVxlanTranslation),
 	}
 
 	return client.OpenFlow.AddFlow(TunnelSwitchName, &ovs.Flow{
@@ -65,20 +65,25 @@ func (wi *Router) installOutgoingRule(client *ovs.Client) error {
 }
 
 func (wi *Router) installIncomingRule(client *ovs.Client) error {
+	vmPort, err := client.OpenFlow.DumpPort(TunnelSwitchName, "patch-vms")
+	if err != nil {
+		return err
+	}
 	ingressMatches := []ovs.Match{
 		ovs.DataLinkSource(wi.HostLocalMac.String()),
 	}
 	ingressActions := []ovs.Action{
+		ovs.ModVLANVID(wi.Segment),
 		ovs.ModDataLinkSource(wi.DistributedMac),
-		ovs.Normal(),
+		ovs.Output(vmPort.PortID),
 	}
-	if len(wi.TunnelPorts) == 0 {
-		// ingressActions = append(ingressActions, ovs.ResubmitPort(1))
-	}
-	return client.OpenFlow.AddFlow(WorkloadSwitchName, &ovs.Flow{
+	// if len(wi.TunnelPorts) == 0 {
+	// 	// ingressActions = append(ingressActions, ovs.ResubmitPort(1))
+	// }
+	return client.OpenFlow.AddFlow(TunnelSwitchName, &ovs.Flow{
 		Matches:  ingressMatches,
 		Actions:  ingressActions,
-		Table:    OpenFlowTableTunnelEgressNodeUnicast,
+		Table:    OpenFlowTableTunnelIngressNodeUnicast,
 		Priority: 5,
 	})
 }
@@ -97,13 +102,15 @@ func (wi *Router) Install(client *ovs.Client) error {
 	// if err := wi.installArpResponder(client); err != nil {
 	// 	return err
 	// }
-	return nil
+	// return nil
 	if err := wi.installOutgoingRule(client); err != nil {
 		return err
 	}
+
 	if err := wi.installIncomingRule(client); err != nil {
 		return err
 	}
+
 	for _, flow := range wi.rules() {
 		if err := flow.Install(client); err != nil {
 			return fmt.Errorf("error installing flow %v - %w", flow, err)

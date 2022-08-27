@@ -34,7 +34,7 @@ func (wi *Node) meshTunPorts(client *ovs.Client) []int {
 func (wi *Node) flows(inboundPort int) []FlowRule {
 	flows := []FlowRule{
 		FlowRuleFunc(WorkloadSwitchName, ovs.Flow{
-			// Priority: 0,
+			Priority: 1,
 			// Table:    OpenFlowTableEntrypoint,
 			Actions: []ovs.Action{
 				ovs.Normal(),
@@ -50,7 +50,7 @@ func (wi *Node) flows(inboundPort int) []FlowRule {
 		}),
 
 		FlowRuleFunc(TunnelSwitchName, ovs.Flow{
-			Priority: 1,
+			Priority: 2,
 			InPort:   inboundPort,
 			Table:    OpenFlowTableTunnelEntrypoint,
 			Actions: []ovs.Action{
@@ -67,7 +67,7 @@ func (wi *Node) flows(inboundPort int) []FlowRule {
 		},
 
 		FlowRuleFunc(TunnelSwitchName, ovs.Flow{
-			Priority: 0,
+			Priority: 1,
 			Table:    OpenFlowTableTunnelEgressNodeArp,
 			Actions: []ovs.Action{
 				// ovs.Resubmit(0, OpenFlowTableTunnelEgressNodeMulticast),
@@ -75,7 +75,7 @@ func (wi *Node) flows(inboundPort int) []FlowRule {
 			},
 		}),
 		FlowRuleFunc(TunnelSwitchName, ovs.Flow{
-			Priority: 0,
+			Priority: 1,
 			Table:    OpenFlowTableTunnelEgressNodeMulticast,
 			Matches:  []ovs.Match{},
 			Actions: []ovs.Action{
@@ -84,11 +84,45 @@ func (wi *Node) flows(inboundPort int) []FlowRule {
 			},
 		}),
 		FlowRuleFunc(TunnelSwitchName, ovs.Flow{
-			Priority: 0,
+			Priority: 1,
 			Table:    OpenFlowTableTunnelEgressNodeUnicast,
 			Matches:  []ovs.Match{},
 			Actions: []ovs.Action{
 				ovs.Resubmit(0, OpenFlowTableTunnelEgressNodeVxlanTranslation),
+			},
+		}),
+
+		&Classifier{
+			Switch:         TunnelSwitchName,
+			Table:          OpenFlowTableTunnelIngressNodeEntrypoint,
+			ArpTable:       OpenFlowTableTunnelIngressNodeArp,
+			UnicastTable:   OpenFlowTableTunnelIngressNodeUnicast,
+			MulticastTable: OpenFlowTableTunnelIngressNodeMulticast,
+		},
+
+		FlowRuleFunc(TunnelSwitchName, ovs.Flow{
+			Priority: 1,
+			Table:    OpenFlowTableTunnelIngressNodeArp,
+			Actions: []ovs.Action{
+				// ovs.Resubmit(0, OpenFlowTableTunnelIngressNodeMulticast),
+				ovs.Resubmit(0, OpenFlowTableTunnelIngressNodeVxlanTranslation),
+			},
+		}),
+		FlowRuleFunc(TunnelSwitchName, ovs.Flow{
+			Priority: 1,
+			Table:    OpenFlowTableTunnelIngressNodeMulticast,
+			Matches:  []ovs.Match{},
+			Actions: []ovs.Action{
+				// ovs.Resubmit(0, OpenFlowTableTunnelIngressNodeUnicast),
+				ovs.Resubmit(0, OpenFlowTableTunnelIngressNodeVxlanTranslation),
+			},
+		}),
+		FlowRuleFunc(TunnelSwitchName, ovs.Flow{
+			Priority: 1,
+			Table:    OpenFlowTableTunnelIngressNodeUnicast,
+			Matches:  []ovs.Match{},
+			Actions: []ovs.Action{
+				ovs.Resubmit(0, OpenFlowTableTunnelIngressNodeVxlanTranslation),
 			},
 		}),
 	}

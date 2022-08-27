@@ -30,12 +30,14 @@ func (wi *VirtualMachine) rules() []FlowRule {
 	}
 
 	// for _, ip := range wi.Ips {
-	// 	// rules = append(rules, &ArpResponder{
-	// 	// 	Switch: wi.WorkloadSwitch,
-	// 	// 	Mac:    wi.Mac,
-	// 	// 	Ip:     ip,
-	// 	// 	VlanId: wi.Segment,
-	// 	// })
+	// 	rules = append(rules, &ArpResponder{
+	// 		Priority: 10,
+	// 		Switch:   wi.WorkloadSwitch,
+	// 		Mac:      wi.Mac,
+	// 		Ip:       ip,
+	// 		VlanId:   wi.Segment,
+	// 	})
+	// }
 
 	// 	// if wi.StrictSourceDest {
 	// 	// 	rules = append(rules, &StaticPortEntry{
@@ -51,7 +53,6 @@ func (wi *VirtualMachine) rules() []FlowRule {
 }
 
 func (wi *VirtualMachine) Install(client *ovs.Client) error {
-	return nil
 	for _, flow := range wi.rules() {
 		if err := flow.Install(client); err != nil {
 			return fmt.Errorf("error installing flow %v - %w", flow, err)

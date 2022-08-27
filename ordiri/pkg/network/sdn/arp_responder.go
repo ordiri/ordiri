@@ -9,10 +9,12 @@ import (
 )
 
 type ArpResponder struct {
-	Switch string
-	Mac    net.HardwareAddr
-	Ip     netaddr.IP
-	VlanId int
+	Switch   string
+	Mac      net.HardwareAddr
+	Ip       netaddr.IP
+	VlanId   int
+	Table    int
+	Priority int
 }
 
 func (wi *ArpResponder) matches() []ovs.Match {
@@ -25,11 +27,13 @@ func (wi *ArpResponder) matches() []ovs.Match {
 	return matches
 }
 func (wi *ArpResponder) Install(client *ovs.Client) error {
-
-	return nil
+	priority := 0
+	if wi.Priority > 0 {
+		priority = wi.Priority
+	}
 	return client.OpenFlow.AddFlow(wi.Switch, &ovs.Flow{
 		Protocol: ovs.ProtocolARP,
-		Table:    OpenFlowTableTunnelArpResponder,
+		Table:    wi.Table,
 		Matches:  wi.matches(),
 		Actions: []ovs.Action{
 			// ovs.ModVLANVID(wi.NodeLocalVlan),
@@ -50,14 +54,14 @@ func (wi *ArpResponder) Install(client *ovs.Client) error {
 			// Send it where it came from
 			ovs.OutputField("in_port"),
 		},
-		Priority: OpenFlowPriorityArpResponder,
+		Priority: priority,
 	})
 }
 
 func (wi *ArpResponder) Remove(client *ovs.Client) error {
 	return client.OpenFlow.DelFlows(wi.Switch, &ovs.MatchFlow{
 		Protocol: ovs.ProtocolARP,
-		Table:    OpenFlowTableTunnelArpResponder,
+		// Table:    OpenFlowTableTunnelArpResponder,
 		Matches: []ovs.Match{
 			ovs.NetworkDestination(wi.Ip.String()),
 		},

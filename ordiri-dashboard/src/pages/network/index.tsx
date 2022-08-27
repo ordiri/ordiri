@@ -35,7 +35,10 @@ const NetworkResourcesPage = (props: NetworkResourceProps) => {
                 hosts: {
                     label: "Hosts",
                     selector: "status.hosts",
-                    formatter: (hosts: Array<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostNetworkStatus>) => {
+                    formatter: (hosts?: Array<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostNetworkStatus>) => {
+                        if (!hosts) {
+                            return "N/A"
+                        }
                         return hosts.map(it => <Chip key={it.node} label={it.node} size="small" />)
                     }
                 }
@@ -55,7 +58,10 @@ const NetworkResourcesPage = (props: NetworkResourceProps) => {
                 hosts: {
                     label: "Hosts",
                     selector: "status.hosts",
-                    formatter: (hosts: Array<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostSubnetStatus>) => {
+                    formatter: (hosts?: Array<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostSubnetStatus>) => {
+                        if (!hosts) {
+                            return "N/A"
+                        }
                         const grouped = hosts.reduce((all, it) => {
                             const key = it.vlanId
                             if(!all[key]) {

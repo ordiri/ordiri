@@ -349,7 +349,7 @@ func (ln *linuxDriver) flows(ctx context.Context, nw api.Network, subnet api.Sub
 		&sdn.NodeSubnetIngress{
 			NodeLocalVlan: subnet.Segment(),
 			TunnelId:      nw.Segment(),
-			Cidr:          subnet.Cidr(),
+			Cidr:          subnet.Cidr().Masked(),
 		},
 	}, nil
 }

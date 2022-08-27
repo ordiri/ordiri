@@ -48,7 +48,7 @@ func (ste *NodeSubnetEgress) Install(client *ovs.Client) error {
 		Table:    OpenFlowTableTunnelEgressNodeVxlanTranslation,
 		Matches:  matches,
 		Actions:  outputs,
-		Priority: 1,
+		Priority: 2,
 	})
 }
 
