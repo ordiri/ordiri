@@ -7,7 +7,7 @@ import (
 	"inet.af/netaddr"
 )
 
-func DnsMasqConfig(confDir, name string, network netaddr.IPPrefix, hostDir, dhcpDir string) dnsmasq.Config {
+func DnsMasqConfig(confDir, name, ifaceName string, network netaddr.IPPrefix, hostDir, dhcpDir string) dnsmasq.Config {
 	routerAddr := network.IP().Next()
 	dhcpAddr := routerAddr.Next()
 
@@ -18,6 +18,7 @@ func DnsMasqConfig(confDir, name string, network netaddr.IPPrefix, hostDir, dhcp
 		dnsmasq.WithOption("keep-in-foreground", ""),
 		// "domain-needed","",
 		dnsmasq.WithOption("bogus-priv", ""),
+		dnsmasq.WithOption("interface", ifaceName),
 		dnsmasq.WithOption("no-resolv", ""),
 		// "no-resolv","",
 		dnsmasq.WithOption("server", []string{"8.8.8.8", "8.8.4.4"}),

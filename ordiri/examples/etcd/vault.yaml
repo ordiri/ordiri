@@ -1,0 +1,77 @@
+apiVersion: storage.ordiri.com/v1alpha1
+kind: Volume
+metadata:
+  name: vault-root
+spec:
+  size: 10Gi
+  storageClassName: default
+  ClaimRef:
+    kind: VolumeClaim
+    apiVersion: storage.ordiri.com/v1alpha1
+    name: vault-root
+
+---
+apiVersion: storage.ordiri.com/v1alpha1
+kind: VolumeClaim
+metadata:
+  name: vault-root
+spec:
+  size: 10Gi
+  storageClassName: default
+  volumeName: vault-root
+---
+apiVersion: compute.ordiri.com/v1alpha1
+kind: VirtualMachineDeployment
+metadata:
+  name: vault-root
+spec:
+  replicas: 1
+  template:
+    metadata:
+      creationTimestamp: null
+    spec:
+      bootDevices:
+      - hd
+      - network
+      networkInterfaces:
+      - network: kubevms
+        subnet: kubevms-vault
+      role: default
+      state: Running
+      volumes:
+      - device: vda
+        hostLocal:
+          poolName: vault
+          size: 5Gi
+          volName: root
+        name: root
+      - device: vdb
+        volumeClaim:
+          claimName: vault-root
+        name: vault-root
+#---
+#apiVersion: compute.ordiri.com/v1alpha1
+#kind: VirtualMachineDeployment
+#metadata:
+#  name: vault
+#spec:
+#  replicas: 3
+#  template:
+#    metadata:
+#      creationTimestamp: null
+#    spec:
+#      bootDevices:
+#      - hd
+#      - network
+#      networkInterfaces:
+#      - network: kubevms
+#        subnet: kubevms-vault
+#      role: default
+#      state: Running
+#      volumes:
+#      - device: vda
+#        hostLocal:
+#          poolName: vault
+#          size: 30gi
+#          volName: root
+#        name: root

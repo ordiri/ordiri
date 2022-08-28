@@ -155,7 +155,7 @@ func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network
 		// to create dns records for the entire network
 		for _, addr := range iface.IP() {
 			dhcpHostDir := dhcpHostMappingDir(sn)
-			mapping := fmt.Sprintf("%s,%s", iface.Mac(), addr.String())
+			mapping := fmt.Sprintf("%s,%s,%s", iface.Mac(), addr.String(), iface.Hostnames()[0])
 			ioutil.WriteFile(filepath.Join(dhcpHostDir, "host_map_"+hash(iface.Mac().String()+addr.String())), []byte(mapping), fs.ModePerm)
 			break
 		}

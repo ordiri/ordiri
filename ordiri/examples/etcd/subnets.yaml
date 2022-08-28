@@ -33,6 +33,20 @@ spec:
   network:
     name: kubevms
   routeTables: []
+
+---
+apiVersion: network.ordiri.com/v1alpha1
+kind: Subnet
+metadata:
+  name: kubevms-vault
+spec:
+  cidr: 10.200.3.0/24
+  dhcp:
+    enabled: true
+  network:
+    name: kubevms
+  routeTables: []
+
 ---
 apiVersion: network.ordiri.com/v1alpha1
 kind: Subnet

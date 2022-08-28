@@ -123,27 +123,33 @@ func (r *NodeSubnetVlanAllocator) Reconcile(ctx context.Context, req ctrl.Reques
 					changed = true
 				}
 			}
+			subnets := &networkv1alpha1.SubnetList{}
+			if err := r.Client.List(ctx, subnets, client.MatchingFields{SubnetByNetworkKey: iface.Network}); err != nil {
+				return ctrl.Result{}, err
+			}
 
-			if _, ok := hostSubnets[iface.Subnet]; !ok {
-				if _, ok := previouslyAllocatedSubnets[iface.Subnet]; ok {
-					hostSubnets[iface.Subnet] = previouslyAllocatedSubnets[iface.Subnet]
-					delete(previouslyAllocatedSubnets, iface.Subnet)
-				} else {
-					subnet := &networkv1alpha1.Subnet{}
-					subnet.Name = iface.Subnet
-					if err := r.Client.Get(ctx, client.ObjectKeyFromObject(subnet), subnet); err != nil {
-						return ctrl.Result{}, err
+			for _, sn := range subnets.Items {
+				if _, ok := hostSubnets[sn.Name]; !ok {
+					if _, ok := previouslyAllocatedSubnets[sn.Name]; ok {
+						hostSubnets[sn.Name] = previouslyAllocatedSubnets[sn.Name]
+						delete(previouslyAllocatedSubnets, sn.Name)
+					} else {
+						subnet := &networkv1alpha1.Subnet{}
+						subnet.Name = sn.Name
+						if err := r.Client.Get(ctx, client.ObjectKeyFromObject(subnet), subnet); err != nil {
+							return ctrl.Result{}, err
+						}
+						hostSubnets[sn.Name] = corev1alpha1.NodeSubnetStatus{
+							ObjectReference: v1.ObjectReference{
+								Kind:       subnet.Kind,
+								Name:       subnet.Name,
+								UID:        subnet.UID,
+								APIVersion: subnet.APIVersion,
+							},
+							VlanId: getNextUnallocatedVlan(),
+						}
+						changed = true
 					}
-					hostSubnets[iface.Subnet] = corev1alpha1.NodeSubnetStatus{
-						ObjectReference: v1.ObjectReference{
-							Kind:       subnet.Kind,
-							Name:       subnet.Name,
-							UID:        subnet.UID,
-							APIVersion: subnet.APIVersion,
-						},
-						VlanId: getNextUnallocatedVlan(),
-					}
-					changed = true
 				}
 			}
 		}

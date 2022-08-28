@@ -305,7 +305,7 @@ func (ln *linuxDriver) installDhcp(ctx context.Context, nw api.Network, subnet a
 	dhcpHostDir := dhcpHostMappingDir(subnet)
 	hostDir := hostMappingDir(nw)
 
-	dnsMasqOptions := dhcp.DnsMasqConfig(baseDir, subnet.Name(), subnet.Cidr(), hostDir, dhcpHostDir)
+	dnsMasqOptions := dhcp.DnsMasqConfig(baseDir, subnet.Name(), cableName.Namespace(), subnet.Cidr(), hostDir, dhcpHostDir)
 	// easier to just make the host dir as it's deeper in the tree than the root conf dir
 	if err := os.MkdirAll(hostDir, os.ModePerm); err != nil {
 		return fmt.Errorf("unable to create hosts directory %s - %w", baseDir, err)
