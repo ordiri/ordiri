@@ -44,10 +44,12 @@ func RegisterDefaults(scheme *runtime.Scheme) error {
 func SetObjectDefaults_VirtualMachine(in *VirtualMachine) {
 	SetDefaults_VirtualMachine(in)
 	SetDefaults_VirtualMachineSpec(&in.Spec)
+	SetDefaults_VirtualMachineResources(&in.Spec.Resources)
 }
 
 func SetObjectDefaults_VirtualMachineDeployment(in *VirtualMachineDeployment) {
 	SetDefaults_VirtualMachineSpec(&in.Spec.Template.Spec)
+	SetDefaults_VirtualMachineResources(&in.Spec.Template.Spec.Resources)
 }
 
 func SetObjectDefaults_VirtualMachineDeploymentList(in *VirtualMachineDeploymentList) {
@@ -66,6 +68,7 @@ func SetObjectDefaults_VirtualMachineList(in *VirtualMachineList) {
 
 func SetObjectDefaults_VirtualMachineReplicaSet(in *VirtualMachineReplicaSet) {
 	SetDefaults_VirtualMachineSpec(&in.Spec.Template.Spec)
+	SetDefaults_VirtualMachineResources(&in.Spec.Template.Spec.Resources)
 }
 
 func SetObjectDefaults_VirtualMachineReplicaSetList(in *VirtualMachineReplicaSetList) {

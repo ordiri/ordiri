@@ -52,10 +52,7 @@ type Network interface {
 	Segment() int64
 	DnsRecords() map[netaddr.IP][]string
 
-	MacAddrs() map[string][]netaddr.IP
-
 	WithDns(netaddr.IP, []string) bool
-	WithMacAddr(net.HardwareAddr, []netaddr.IP) bool
 }
 
 type Subnet interface {
@@ -70,6 +67,8 @@ type Router interface {
 	GlobalMac() net.HardwareAddr
 	Mac() net.HardwareAddr
 	IP() netaddr.IPPrefix
+	KnownMacs() map[netaddr.IP]net.HardwareAddr
+	RegisterMac(netaddr.IP, net.HardwareAddr) bool
 }
 
 type Interface interface {

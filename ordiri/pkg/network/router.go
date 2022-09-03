@@ -42,6 +42,9 @@ func NewRouter(name string, ip netaddr.IPPrefix, segment int, opt ...RouterOptio
 	if len(rtr.distributedMac) == 0 {
 		rtr.distributedMac = mac.Unicast()
 	}
+	if len(rtr.knownMacs) == 0 {
+		rtr.knownMacs = map[netaddr.IP]net.HardwareAddr{}
+	}
 
 	return rtr, nil
 }
@@ -55,6 +58,7 @@ type router struct {
 	localMac       net.HardwareAddr
 	segment        int
 	ip             netaddr.IPPrefix
+	knownMacs      map[netaddr.IP]net.HardwareAddr
 }
 
 func (rtr *router) Name() string {
@@ -66,6 +70,16 @@ func (rtr *router) Mac() net.HardwareAddr {
 }
 func (rtr *router) GlobalMac() net.HardwareAddr {
 	return rtr.distributedMac
+}
+func (rtr *router) KnownMacs() map[netaddr.IP]net.HardwareAddr {
+	return rtr.knownMacs
+}
+func (rtr *router) RegisterMac(ip netaddr.IP, mac net.HardwareAddr) bool {
+	existing, ok := rtr.knownMacs[ip]
+
+	rtr.knownMacs[ip] = mac
+
+	return !ok || existing.String() != mac.String()
 }
 
 func (rtr *router) IP() netaddr.IPPrefix {

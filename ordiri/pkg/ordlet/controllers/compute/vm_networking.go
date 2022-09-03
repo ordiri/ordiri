@@ -44,7 +44,7 @@ func (r *VirtualMachineReconciler) ensureNetworkInterface(ctx context.Context, v
 
 	hostnames := []string{
 		vm.Name,
-		vm.Name + ".ordiri.local",
+		vm.Name + ".ordiri",
 	}
 	opts := []network.InterfaceOption{
 		network.InterfaceWithMac(mac),
@@ -57,7 +57,7 @@ func (r *VirtualMachineReconciler) ensureNetworkInterface(ctx context.Context, v
 		opts = append(opts, network.InterfaceWithIps(ipAddr))
 		dnsIp := strings.ReplaceAll(ipAddr.String(), ".", "-")
 		hostnames = append(hostnames, dnsIp)
-		hostnames = append(hostnames, dnsIp+".ordiri.local")
+		hostnames = append(hostnames, dnsIp+".ordiri")
 
 	}
 	opts = append(opts, network.InterfaceWithHostnames(hostnames...))

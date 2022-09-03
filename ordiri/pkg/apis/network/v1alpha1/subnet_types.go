@@ -109,7 +109,12 @@ func (in *SubnetList) GetListMeta() *metav1.ListMeta {
 
 // SubnetStatus defines the observed state of Subnet
 type SubnetStatus struct {
-	Hosts []HostSubnetStatus `json:"hosts"`
+	Hosts          []HostSubnetStatus   `json:"hosts"`
+	MetadataServer MetadataSubnetStatus `json:"metadataServer"`
+}
+
+type MetadataSubnetStatus struct {
+	Mac string `json:"mac"`
 }
 
 type HostSubnetStatus struct {

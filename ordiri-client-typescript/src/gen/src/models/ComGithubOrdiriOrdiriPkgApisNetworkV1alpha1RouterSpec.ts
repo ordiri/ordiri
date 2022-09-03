@@ -28,12 +28,6 @@ import {
 export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterSpec {
     /**
      * 
-     * @type {string}
-     * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterSpec
-     */
-    mac?: string;
-    /**
-     * 
      * @type {Array<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterSubnetReference>}
      * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterSpec
      */
@@ -59,7 +53,6 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterSpecFromJSONTyp
     }
     return {
         
-        'mac': !exists(json, 'mac') ? undefined : json['mac'],
         'subnets': !exists(json, 'subnets') ? undefined : ((json['subnets'] as Array<any>).map(ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterSubnetReferenceFromJSON)),
     };
 }
@@ -73,7 +66,6 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterSpecToJSON(valu
     }
     return {
         
-        'mac': value.mac,
         'subnets': value.subnets === undefined ? undefined : ((value.subnets as Array<any>).map(ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterSubnetReferenceToJSON)),
     };
 }

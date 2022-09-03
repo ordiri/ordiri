@@ -34,12 +34,6 @@ import {
 export interface ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineSpec {
     /**
      * 
-     * @type {string}
-     * @memberof ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineSpec
-     */
-    UserData?: string;
-    /**
-     * 
      * @type {Array<string>}
      * @memberof ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineSpec
      */
@@ -76,6 +70,12 @@ export interface ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineSpec {
     state: string;
     /**
      * 
+     * @type {string}
+     * @memberof ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineSpec
+     */
+    userData?: string;
+    /**
+     * 
      * @type {Array<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineVolume>}
      * @memberof ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineSpec
      */
@@ -103,13 +103,13 @@ export function ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineSpecFro
     }
     return {
         
-        'UserData': !exists(json, 'UserData') ? undefined : json['UserData'],
         'bootDevices': !exists(json, 'bootDevices') ? undefined : json['bootDevices'],
         'networkInterfaces': !exists(json, 'networkInterfaces') ? undefined : ((json['networkInterfaces'] as Array<any>).map(ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterfaceFromJSON)),
         'node': !exists(json, 'node') ? undefined : json['node'],
         'role': json['role'],
         'serviceAccountName': !exists(json, 'serviceAccountName') ? undefined : json['serviceAccountName'],
         'state': json['state'],
+        'userData': !exists(json, 'userData') ? undefined : json['userData'],
         'volumes': !exists(json, 'volumes') ? undefined : ((json['volumes'] as Array<any>).map(ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineVolumeFromJSON)),
     };
 }
@@ -123,13 +123,13 @@ export function ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineSpecToJ
     }
     return {
         
-        'UserData': value.UserData,
         'bootDevices': value.bootDevices,
         'networkInterfaces': value.networkInterfaces === undefined ? undefined : ((value.networkInterfaces as Array<any>).map(ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterfaceToJSON)),
         'node': value.node,
         'role': value.role,
         'serviceAccountName': value.serviceAccountName,
         'state': value.state,
+        'userData': value.userData,
         'volumes': value.volumes === undefined ? undefined : ((value.volumes as Array<any>).map(ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineVolumeToJSON)),
     };
 }

@@ -57,6 +57,7 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineReplicaSetList":         schema_pkg_apis_compute_v1alpha1_VirtualMachineReplicaSetList(ref),
 		"github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineReplicaSetSpec":         schema_pkg_apis_compute_v1alpha1_VirtualMachineReplicaSetSpec(ref),
 		"github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineReplicaSetStatus":       schema_pkg_apis_compute_v1alpha1_VirtualMachineReplicaSetStatus(ref),
+		"github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineResources":              schema_pkg_apis_compute_v1alpha1_VirtualMachineResources(ref),
 		"github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineRestart":                schema_pkg_apis_compute_v1alpha1_VirtualMachineRestart(ref),
 		"github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineSpec":                   schema_pkg_apis_compute_v1alpha1_VirtualMachineSpec(ref),
 		"github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineStatus":                 schema_pkg_apis_compute_v1alpha1_VirtualMachineStatus(ref),
@@ -89,9 +90,11 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.HostNetworkStatus":                    schema_pkg_apis_network_v1alpha1_HostNetworkStatus(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.HostRouterStatus":                     schema_pkg_apis_network_v1alpha1_HostRouterStatus(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.HostSubnetStatus":                     schema_pkg_apis_network_v1alpha1_HostSubnetStatus(ref),
+		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.MetadataSubnetStatus":                 schema_pkg_apis_network_v1alpha1_MetadataSubnetStatus(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.Network":                              schema_pkg_apis_network_v1alpha1_Network(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkList":                          schema_pkg_apis_network_v1alpha1_NetworkList(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkNatSpec":                       schema_pkg_apis_network_v1alpha1_NetworkNatSpec(ref),
+		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkPublicSpec":                    schema_pkg_apis_network_v1alpha1_NetworkPublicSpec(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkSelector":                      schema_pkg_apis_network_v1alpha1_NetworkSelector(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkSpec":                          schema_pkg_apis_network_v1alpha1_NetworkSpec(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkStatus":                        schema_pkg_apis_network_v1alpha1_NetworkStatus(ref),
@@ -1098,6 +1101,13 @@ func schema_pkg_apis_compute_v1alpha1_VirtualMachineNetworkInterface(ref common.
 							Format:  "",
 						},
 					},
+					"public": {
+						SchemaProps: spec.SchemaProps{
+							Default: false,
+							Type:    []string{"boolean"},
+							Format:  "",
+						},
+					},
 					"mac": {
 						SchemaProps: spec.SchemaProps{
 							Default: "",
@@ -1299,6 +1309,34 @@ func schema_pkg_apis_compute_v1alpha1_VirtualMachineReplicaSetStatus(ref common.
 	}
 }
 
+func schema_pkg_apis_compute_v1alpha1_VirtualMachineResources(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"cpu": {
+						SchemaProps: spec.SchemaProps{
+							Default: 0,
+							Type:    []string{"integer"},
+							Format:  "int32",
+						},
+					},
+					"memory": {
+						SchemaProps: spec.SchemaProps{
+							Default: map[string]interface{}{},
+							Ref:     ref("k8s.io/apimachinery/pkg/api/resource.Quantity"),
+						},
+					},
+				},
+				Required: []string{"cpu", "memory"},
+			},
+		},
+		Dependencies: []string{
+			"k8s.io/apimachinery/pkg/api/resource.Quantity"},
+	}
+}
+
 func schema_pkg_apis_compute_v1alpha1_VirtualMachineRestart(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
@@ -1363,6 +1401,12 @@ func schema_pkg_apis_compute_v1alpha1_VirtualMachineSpec(ref common.ReferenceCal
 							Format:  "",
 						},
 					},
+					"resources": {
+						SchemaProps: spec.SchemaProps{
+							Default: map[string]interface{}{},
+							Ref:     ref("github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineResources"),
+						},
+					},
 					"serviceAccountName": {
 						SchemaProps: spec.SchemaProps{
 							Default: "",
@@ -1384,11 +1428,10 @@ func schema_pkg_apis_compute_v1alpha1_VirtualMachineSpec(ref common.ReferenceCal
 							Format:  "",
 						},
 					},
-					"UserData": {
+					"userData": {
 						SchemaProps: spec.SchemaProps{
-							Default: "",
-							Type:    []string{"string"},
-							Format:  "",
+							Type:   []string{"string"},
+							Format: "",
 						},
 					},
 					"bootDevices": {
@@ -1430,11 +1473,11 @@ func schema_pkg_apis_compute_v1alpha1_VirtualMachineSpec(ref common.ReferenceCal
 						},
 					},
 				},
-				Required: []string{"role", "state"},
+				Required: []string{"role", "resources", "state"},
 			},
 		},
 		Dependencies: []string{
-			"github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineNetworkInterface", "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineVolume"},
+			"github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineNetworkInterface", "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineResources", "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1.VirtualMachineVolume"},
 	}
 }
 
@@ -2356,8 +2399,15 @@ func schema_pkg_apis_core_v1alpha1_NodeSpec(ref common.ReferenceCallback) common
 							},
 						},
 					},
+					"publicCidr": {
+						SchemaProps: spec.SchemaProps{
+							Default: "",
+							Type:    []string{"string"},
+							Format:  "",
+						},
+					},
 				},
-				Required: []string{"nodeRoles", "managementAddresses"},
+				Required: []string{"nodeRoles", "managementAddresses", "publicCidr"},
 			},
 		},
 	}
@@ -2679,6 +2729,26 @@ func schema_pkg_apis_network_v1alpha1_HostSubnetStatus(ref common.ReferenceCallb
 	}
 }
 
+func schema_pkg_apis_network_v1alpha1_MetadataSubnetStatus(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"mac": {
+						SchemaProps: spec.SchemaProps{
+							Default: "",
+							Type:    []string{"string"},
+							Format:  "",
+						},
+					},
+				},
+				Required: []string{"mac"},
+			},
+		},
+	}
+}
+
 func schema_pkg_apis_network_v1alpha1_Network(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
@@ -2795,6 +2865,26 @@ func schema_pkg_apis_network_v1alpha1_NetworkNatSpec(ref common.ReferenceCallbac
 	}
 }
 
+func schema_pkg_apis_network_v1alpha1_NetworkPublicSpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"nat": {
+						SchemaProps: spec.SchemaProps{
+							Default: false,
+							Type:    []string{"boolean"},
+							Format:  "",
+						},
+					},
+				},
+				Required: []string{"nat"},
+			},
+		},
+	}
+}
+
 func schema_pkg_apis_network_v1alpha1_NetworkSelector(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
@@ -2837,6 +2927,12 @@ func schema_pkg_apis_network_v1alpha1_NetworkSpec(ref common.ReferenceCallback) 
 							Ref:         ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkNatSpec"),
 						},
 					},
+					"public": {
+						SchemaProps: spec.SchemaProps{
+							Default: map[string]interface{}{},
+							Ref:     ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkPublicSpec"),
+						},
+					},
 					"routeTables": {
 						SchemaProps: spec.SchemaProps{
 							Type: []string{"array"},
@@ -2851,11 +2947,11 @@ func schema_pkg_apis_network_v1alpha1_NetworkSpec(ref common.ReferenceCallback) 
 						},
 					},
 				},
-				Required: []string{"cidr", "nat"},
+				Required: []string{"cidr"},
 			},
 		},
 		Dependencies: []string{
-			"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkNatSpec", "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.RouteTableSelector"},
+			"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkNatSpec", "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkPublicSpec", "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.RouteTableSelector"},
 	}
 }
 
@@ -3604,12 +3700,18 @@ func schema_pkg_apis_network_v1alpha1_SubnetStatus(ref common.ReferenceCallback)
 							},
 						},
 					},
+					"metadataServer": {
+						SchemaProps: spec.SchemaProps{
+							Default: map[string]interface{}{},
+							Ref:     ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.MetadataSubnetStatus"),
+						},
+					},
 				},
-				Required: []string{"hosts"},
+				Required: []string{"hosts", "metadataServer"},
 			},
 		},
 		Dependencies: []string{
-			"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.HostSubnetStatus"},
+			"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.HostSubnetStatus", "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.MetadataSubnetStatus"},
 	}
 }
 

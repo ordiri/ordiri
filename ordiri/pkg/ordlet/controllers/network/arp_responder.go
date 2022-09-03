@@ -29,7 +29,6 @@ import (
 	"github.com/ordiri/ordiri/pkg/ordlet"
 
 	computev1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
-	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
 )
 
 // ArpResponderReconciler reconciles a VirtualMachine object
@@ -65,16 +64,12 @@ func (r *ArpResponderReconciler) Reconcile(ctx context.Context, req ctrl.Request
 		return ctrl.Result{}, err
 	}
 
-	if scheduledOn, _ := vm.ScheduledNode(); scheduledOn != r.Node.GetNode().Name {
-		return ctrl.Result{}, nil
-	}
-
 	return ctrl.Result{}, nil
 }
 
 func (r *ArpResponderReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		Named("mesh").
-		For(&corev1alpha1.Node{}).
+		For(&computev1alpha1.VirtualMachine{}).
 		Complete(r)
 }

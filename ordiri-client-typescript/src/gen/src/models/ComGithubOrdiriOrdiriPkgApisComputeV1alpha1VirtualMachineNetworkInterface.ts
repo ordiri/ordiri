@@ -39,6 +39,12 @@ export interface ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetwor
     network: string;
     /**
      * 
+     * @type {boolean}
+     * @memberof ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterface
+     */
+    _public?: boolean;
+    /**
+     * 
      * @type {string}
      * @memberof ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterface
      */
@@ -69,6 +75,7 @@ export function ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetwork
         'ip': !exists(json, 'ip') ? undefined : json['ip'],
         'mac': !exists(json, 'mac') ? undefined : json['mac'],
         'network': json['network'],
+        '_public': !exists(json, 'public') ? undefined : json['public'],
         'subnet': json['subnet'],
     };
 }
@@ -85,6 +92,7 @@ export function ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetwork
         'ip': value.ip,
         'mac': value.mac,
         'network': value.network,
+        'public': value._public,
         'subnet': value.subnet,
     };
 }

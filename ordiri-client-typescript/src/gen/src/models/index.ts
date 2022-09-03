@@ -49,6 +49,7 @@ export * from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostSubnetStatus';
 export * from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network';
 export * from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkList';
 export * from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkNatSpec';
+export * from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkPublicSpec';
 export * from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSelector';
 export * from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSpec';
 export * from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkStatus';

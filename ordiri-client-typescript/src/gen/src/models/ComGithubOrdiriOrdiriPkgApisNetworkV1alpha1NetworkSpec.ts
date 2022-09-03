@@ -19,6 +19,12 @@ import {
     ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkNatSpecFromJSONTyped,
     ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkNatSpecToJSON,
 } from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkNatSpec';
+import type { ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkPublicSpec } from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkPublicSpec';
+import {
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkPublicSpecFromJSON,
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkPublicSpecFromJSONTyped,
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkPublicSpecToJSON,
+} from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkPublicSpec';
 import type { ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableSelector } from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableSelector';
 import {
     ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableSelectorFromJSON,
@@ -43,7 +49,13 @@ export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSpec {
      * @type {ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkNatSpec}
      * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSpec
      */
-    nat: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkNatSpec;
+    nat?: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkNatSpec;
+    /**
+     * 
+     * @type {ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkPublicSpec}
+     * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSpec
+     */
+    _public?: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkPublicSpec;
     /**
      * 
      * @type {Array<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableSelector>}
@@ -58,7 +70,6 @@ export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSpec {
 export function instanceOfComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSpec(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "cidr" in value;
-    isInstance = isInstance && "nat" in value;
 
     return isInstance;
 }
@@ -74,7 +85,8 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSpecFromJSONTy
     return {
         
         'cidr': json['cidr'],
-        'nat': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkNatSpecFromJSON(json['nat']),
+        'nat': !exists(json, 'nat') ? undefined : ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkNatSpecFromJSON(json['nat']),
+        '_public': !exists(json, 'public') ? undefined : ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkPublicSpecFromJSON(json['public']),
         'routeTables': !exists(json, 'routeTables') ? undefined : ((json['routeTables'] as Array<any>).map(ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableSelectorFromJSON)),
     };
 }
@@ -90,6 +102,7 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSpecToJSON(val
         
         'cidr': value.cidr,
         'nat': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkNatSpecToJSON(value.nat),
+        'public': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkPublicSpecToJSON(value._public),
         'routeTables': value.routeTables === undefined ? undefined : ((value.routeTables as Array<any>).map(ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableSelectorToJSON)),
     };
 }

@@ -8,6 +8,13 @@ spec:
     metadata:
       creationTimestamp: null
     spec:
+      userData: |
+        #!/bin/bash
+        set -eou pipefail
+        echo 1 > /proc/sys/net/bridge/bridge-nf-call-iptable
+        curl -k -s -L -XGET https://vault-root-0.ordiri:8200/v1/pki_int/ca_chain | awk 'BEGIN {c=0;} /BEGIN CERT/{c++} { print > "/usr/local/share/ca-certificates/vault-root." c ".pem"}'
+        update-ca-certificates
+
       bootDevices:
       - hd
       - network

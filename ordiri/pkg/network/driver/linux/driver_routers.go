@@ -88,6 +88,43 @@ func (ld *linuxDriver) installRouter(ctx context.Context, nw api.Network, subnet
 		return err
 	}
 
+	curNs, err := netns.Get()
+	if err != nil {
+		return fmt.Errorf("unable to get current network ns - %w", err)
+	}
+	handle, err := netns.GetFromName(routerNetworkNamespace)
+	if err != nil {
+		return fmt.Errorf("unable to get namespace for public gateway ns - %w", err)
+	}
+
+	defer handle.Close()
+	ctx, cancel := context.WithCancel(context.Background())
+	// only in a goroutine to keep it away from other namespaces
+	go func(targetNs netns.NsHandle, curNs netns.NsHandle) {
+		defer cancel()
+		handle, err := netlink.NewHandleAt(handle)
+		if err != nil {
+			panic(err.Error())
+		}
+		iface, err := handle.LinkByName(internalRouterCableName.Namespace())
+		if err != nil {
+			panic(err.Error())
+		}
+		for ip, mac := range rtr.KnownMacs() {
+
+			err := handle.NeighSet(&netlink.Neigh{
+				LinkIndex:    iface.Attrs().Index,
+				State:        netlink.NUD_PERMANENT,
+				IP:           ip.IPAddr().IP,
+				HardwareAddr: mac,
+			})
+			if err != nil {
+				panic(err)
+			}
+		}
+	}(handle, curNs)
+	<-ctx.Done()
+
 	routerFlow := &sdn.Router{
 		DistributedMac: rtr.GlobalMac(),
 		HostLocalMac:   rtr.Mac(),

@@ -35,6 +35,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 
+	"github.com/davecgh/go-spew/spew"
+	computev1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
 	"github.com/ordiri/ordiri/pkg/mac"
@@ -160,6 +162,31 @@ func (r *RouterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 			if err := r.addNodeSubnetToRouterStatus(ctx, subnet, router, nodeLocalMac); err != nil {
 				return ctrl.Result{}, fmt.Errorf("aoeaoeao - %w", err)
 			}
+
+			vms := &computev1alpha1.VirtualMachineList{}
+			if err := r.Client.List(ctx, vms, client.MatchingFields{"VmsToSubnetIndex": nw.Name + subnet.Name}); err != nil {
+				return ctrl.Result{}, fmt.Errorf("aoe - %w", err)
+			}
+			for _, vm := range vms.Items {
+				for _, iface := range vm.Spec.NetworkInterfaces {
+					if len(iface.Ips) == 0 {
+						return ctrl.Result{}, fmt.Errorf("vm %q, interface %+v has no ip yet", vm.Name, iface)
+					}
+					macAddr, err := mac.Parse(iface.Mac)
+					if err != nil {
+						return ctrl.Result{}, fmt.Errorf("aoe - %w", err)
+					}
+					ip, err := netaddr.ParseIP(iface.Ips[0])
+					if err != nil {
+						return ctrl.Result{}, fmt.Errorf("aoe - %w", err)
+					}
+
+					rtr.RegisterMac(ip, macAddr)
+				}
+			}
+
+			spew.Dump(rtr)
+
 			if err := r.NetworkManager.EnsureRouter(ctx, net, sn, rtr); err != nil {
 				return ctrl.Result{}, fmt.Errorf("aoeaoeao - %w", err)
 			}
@@ -256,18 +283,24 @@ func (r *RouterReconciler) SetupWithManager(mgr ctrl.Manager) error {
 					},
 				})
 			}
-			for _, iface := range obj.Status.Hosts {
+		case *networkv1alpha1.Network:
+			rtrs := &networkv1alpha1.RouterList{}
+			if err := r.Client.List(context.Background(), rtrs, client.MatchingFields{"RouterToNetworkIndex": o.GetName()}); err != nil {
+				fmt.Printf("got error listing routers - %s", err.Error())
+				return nil
+			}
+			for _, rtr := range rtrs.Items {
 				reqs = append(reqs, reconcile.Request{
 					NamespacedName: types.NamespacedName{
-						Name: "router-" + iface.Node,
+						Name: rtr.Name,
 					},
 				})
 			}
-		case *networkv1alpha1.Network:
-			for _, iface := range obj.Status.Hosts {
+		case *computev1alpha1.VirtualMachine:
+			for _, iface := range obj.Spec.NetworkInterfaces {
 				reqs = append(reqs, reconcile.Request{
 					NamespacedName: types.NamespacedName{
-						Name: "router-" + iface.Node,
+						Name: "router-" + iface.Network,
 					},
 				})
 			}
@@ -296,11 +329,29 @@ func (r *RouterReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		return reqs
 	})
 
+	mgr.GetFieldIndexer().IndexField(context.Background(), &computev1alpha1.VirtualMachine{}, "VmsToSubnetIndex", func(o client.Object) []string {
+		obj := o.(*computev1alpha1.VirtualMachine)
+		keys := []string{}
+		for _, sn := range obj.Spec.NetworkInterfaces {
+			keys = append(keys, sn.Network+sn.Subnet)
+		}
+		return keys
+	})
 	mgr.GetFieldIndexer().IndexField(context.Background(), &networkv1alpha1.Router{}, "RouterToSubnetIndex", func(o client.Object) []string {
 		obj := o.(*networkv1alpha1.Router)
 		keys := []string{}
 		for _, sn := range obj.Spec.Subnets {
 			keys = append(keys, sn.Name)
+		}
+		return keys
+	})
+	mgr.GetFieldIndexer().IndexField(context.Background(), &networkv1alpha1.Router{}, "RouterToNetworkIndex", func(o client.Object) []string {
+		obj := o.(*networkv1alpha1.Router)
+		keys := []string{}
+		for _, sn := range obj.OwnerReferences {
+			if sn.Kind == "Network" && sn.APIVersion == "network.ordiri.com/v1alpha1" {
+				keys = append(keys, sn.Name)
+			}
 		}
 		return keys
 	})
@@ -316,6 +367,7 @@ func (r *RouterReconciler) SetupWithManager(mgr ctrl.Manager) error {
 
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&networkv1alpha1.Router{}).
+		Watches(&source.Kind{Type: &computev1alpha1.VirtualMachine{}}, enqueueRequestForRouter).
 		Watches(&source.Kind{Type: &networkv1alpha1.Subnet{}}, enqueueRequestForRouter).
 		Watches(&source.Kind{Type: &networkv1alpha1.Network{}}, enqueueRequestForRouter).
 		Watches(&source.Kind{Type: &corev1alpha1.Node{}}, enqueueRequestForRouter).

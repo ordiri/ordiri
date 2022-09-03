@@ -19,6 +19,7 @@ package v1alpha1
 import (
 	"github.com/ordiri/ordiri/pkg/mac"
 	"github.com/ordiri/ordiri/pkg/volume"
+	"k8s.io/apimachinery/pkg/api/resource"
 )
 
 func SetDefaults_VirtualMachineSpec(obj *VirtualMachineSpec) {
@@ -64,5 +65,16 @@ func SetDefaults_VirtualMachine(obj *VirtualMachine) {
 		if nw.Mac == "" {
 			nw.Mac = mac.Unicast().String()
 		}
+	}
+}
+
+// We do this explicitly on the VM to prevent templated
+// resources which directly embed the VirtualMachineSpec
+func SetDefaults_VirtualMachineResources(obj *VirtualMachineResources) {
+	if obj.CPU == 0 {
+		obj.CPU = 1
+	}
+	if obj.Memory.IsZero() {
+		obj.Memory = resource.MustParse("1Gi")
 	}
 }

@@ -45,8 +45,34 @@ func (r *VmIpAllocator) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 		return ctrl.Result{}, err
 	}
 	for _, iface := range vm.Spec.NetworkInterfaces {
-		if len(iface.Ips) == 0 {
-			nextIp, err := r.getNextIp(ctx, iface)
+		sn := &networkv1alpha1.Subnet{}
+		sn.Name = iface.Subnet
+		if err := r.Client.Get(ctx, client.ObjectKeyFromObject(sn), sn); err != nil {
+			if errors.IsNotFound(err) {
+				return ctrl.Result{}, fmt.Errorf("no such subnet")
+			}
+			return ctrl.Result{}, err
+		}
+
+		network, err := netaddr.ParseIPPrefix(sn.Spec.Cidr)
+		if err != nil {
+			return ctrl.Result{}, fmt.Errorf("unable to parse subnet cidr - %q - %w", sn.Spec.Cidr, err)
+		}
+		found := false
+		for _, ip := range iface.Ips {
+			parsedIp, err := netaddr.ParseIP(ip)
+			if err != nil {
+				return ctrl.Result{}, fmt.Errorf("unable to parse subnet cidr - %q - %w", sn.Spec.Cidr, err)
+			}
+
+			if network.Contains(parsedIp) {
+				found = true
+				break
+			}
+		}
+
+		if !found {
+			nextIp, err := r.getNextIp(ctx, sn, iface)
 			if err != nil {
 				return ctrl.Result{}, err
 			}
@@ -60,15 +86,7 @@ func (r *VmIpAllocator) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 	return ctrl.Result{}, nil
 }
 
-func (r *VmIpAllocator) getNextIp(ctx context.Context, iface *computev1alpha1.VirtualMachineNetworkInterface) (netaddr.IP, error) {
-	sn := &networkv1alpha1.Subnet{}
-	sn.Name = iface.Subnet
-	if err := r.Client.Get(ctx, client.ObjectKeyFromObject(sn), sn); err != nil {
-		if errors.IsNotFound(err) {
-			return netaddr.IP{}, fmt.Errorf("no such subnet")
-		}
-		return netaddr.IP{}, err
-	}
+func (r *VmIpAllocator) getNextIp(ctx context.Context, sn *networkv1alpha1.Subnet, iface *computev1alpha1.VirtualMachineNetworkInterface) (netaddr.IP, error) {
 
 	vmsInSubnet := &computev1alpha1.VirtualMachineList{}
 	if err := r.Client.List(ctx, vmsInSubnet); err != nil {

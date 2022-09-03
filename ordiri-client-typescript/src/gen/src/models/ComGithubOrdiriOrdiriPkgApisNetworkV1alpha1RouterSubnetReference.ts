@@ -44,6 +44,12 @@ export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterSubnetReferenc
      */
     kind?: string;
     /**
+     * 
+     * @type {string}
+     * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterSubnetReference
+     */
+    mac?: string;
+    /**
      * Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
      * @type {string}
      * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterSubnetReference
@@ -93,6 +99,7 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterSubnetReference
         'fieldPath': !exists(json, 'fieldPath') ? undefined : json['fieldPath'],
         'ipAddr': json['ipAddr'],
         'kind': !exists(json, 'kind') ? undefined : json['kind'],
+        'mac': !exists(json, 'mac') ? undefined : json['mac'],
         'name': !exists(json, 'name') ? undefined : json['name'],
         'namespace': !exists(json, 'namespace') ? undefined : json['namespace'],
         'resourceVersion': !exists(json, 'resourceVersion') ? undefined : json['resourceVersion'],
@@ -113,6 +120,7 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterSubnetReference
         'fieldPath': value.fieldPath,
         'ipAddr': value.ipAddr,
         'kind': value.kind,
+        'mac': value.mac,
         'name': value.name,
         'namespace': value.namespace,
         'resourceVersion': value.resourceVersion,

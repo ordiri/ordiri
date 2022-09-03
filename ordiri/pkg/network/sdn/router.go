@@ -46,9 +46,45 @@ func (wi *Router) meshTunPorts(client *ovs.Client) []int {
 
 	return outputs
 }
-func (wi *Router) installOutgoingRule(client *ovs.Client) error {
 
+// need cross host l4 populater
+func (wi *Router) installCrossTunnelBlockArpRule(client *ovs.Client) error {
+	return nil
 	egressMatches := []ovs.Match{
+		ovs.DataLinkVLAN(wi.Segment),
+		ovs.ARPTargetProtocolAddress(wi.IP.String()),
+	}
+	egressActions := []ovs.Action{
+		ovs.Drop(),
+	}
+
+	return client.OpenFlow.AddFlow(TunnelSwitchName, &ovs.Flow{
+		Table:    OpenFlowTableTunnelEgressNodeUnicast,
+		Matches:  egressMatches,
+		Actions:  egressActions,
+		Protocol: ovs.ProtocolARP,
+		Priority: 10,
+	})
+}
+func (wi *Router) installCrossTunnelBlockTrafficRule(client *ovs.Client) error {
+	egressMatches := []ovs.Match{
+		ovs.DataLinkVLAN(wi.Segment),
+		ovs.DataLinkDestination(wi.DistributedMac.String()),
+	}
+	egressActions := []ovs.Action{
+		ovs.Drop(),
+	}
+
+	return client.OpenFlow.AddFlow(TunnelSwitchName, &ovs.Flow{
+		Table:    OpenFlowTableTunnelEgressNodeUnicast,
+		Matches:  egressMatches,
+		Actions:  egressActions,
+		Priority: 10,
+	})
+}
+func (wi *Router) installOutgoingRule(client *ovs.Client) error {
+	egressMatches := []ovs.Match{
+		ovs.DataLinkVLAN(wi.Segment),
 		ovs.DataLinkSource(wi.DistributedMac.String()),
 	}
 	egressActions := []ovs.Action{
@@ -108,6 +144,14 @@ func (wi *Router) Install(client *ovs.Client) error {
 	}
 
 	if err := wi.installIncomingRule(client); err != nil {
+		return err
+	}
+
+	if err := wi.installCrossTunnelBlockArpRule(client); err != nil {
+		return err
+	}
+
+	if err := wi.installCrossTunnelBlockTrafficRule(client); err != nil {
 		return err
 	}
 

@@ -58,9 +58,18 @@ type NetworkSpec struct {
 	Cidr string `json:"cidr"`
 
 	// Cidr address to represent this network
+	// +optional
 	Nat NetworkNatSpec `json:"nat"`
 
+	// +optional
+	Public NetworkPublicSpec `json:"public,omitempty"`
+
+	// +optional
 	RouteTables []RouteTableSelector `json:"routeTables,omitempty"`
+}
+
+type NetworkPublicSpec struct {
+	Enabled bool `json:"nat"`
 }
 
 type NetworkNatSpec struct {

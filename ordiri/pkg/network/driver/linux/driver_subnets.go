@@ -223,6 +223,7 @@ func (ln *linuxDriver) installMetadataServer(ctx context.Context, nw api.Network
 		unit.NewUnitOption("Service", "NetworkNamespacePath", namespacePath(namespace)),
 		unit.NewUnitOption("Service", "Environment", "KUBECONFIG=/etc/ordiri.conf"),
 		unit.NewUnitOption("Service", "ExecStart", startCmd),
+		unit.NewUnitOption("Service", "Restart", "on-failure"),
 	}
 
 	return ln.enableUnitFile(ctx, baseDir, unitName, opts)
@@ -335,6 +336,7 @@ func (ln *linuxDriver) installDhcp(ctx context.Context, nw api.Network, subnet a
 		}, " ")),
 		unit.NewUnitOption("Service", "NetworkNamespacePath", namespacePath(namespace)),
 		unit.NewUnitOption("Service", "ExecStart", startCmd),
+		unit.NewUnitOption("Service", "Restart", "on-failure"),
 	}
 
 	return ln.enableUnitFile(ctx, baseDir, unitName, opts)

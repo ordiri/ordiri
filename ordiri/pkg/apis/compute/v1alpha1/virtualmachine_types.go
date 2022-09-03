@@ -21,7 +21,7 @@ import (
 	"fmt"
 
 	k8res "k8s.io/apimachinery/pkg/api/resource"
-	resourcev1 "k8s.io/apimachinery/pkg/api/resource"
+
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -76,6 +76,8 @@ const (
 type VirtualMachineSpec struct {
 	Role string `json:"role"`
 
+	Resources VirtualMachineResources `json:"resources"`
+
 	// +optional
 	ServiceAccountName string `json:"serviceAccountName"`
 
@@ -85,7 +87,7 @@ type VirtualMachineSpec struct {
 	State VirtualMachineState `json:"state"`
 
 	// +optional
-	UserData string `jsonn:"userData,omitempty"`
+	UserData string `json:"userData,omitempty"`
 
 	// +optional
 	BootDevices []string `json:"bootDevices"`
@@ -97,9 +99,16 @@ type VirtualMachineSpec struct {
 	NetworkInterfaces []*VirtualMachineNetworkInterface `json:"networkInterfaces"`
 }
 
+type VirtualMachineResources struct {
+	CPU    int            `json:"cpu"`
+	Memory k8res.Quantity `json:"memory"`
+}
+
 type VirtualMachineNetworkInterface struct {
 	Network string `json:"network"`
 	Subnet  string `json:"subnet"`
+	// +optional
+	Public bool `json:"public"`
 	// +optional
 	Mac string `json:"mac"`
 	// +optional
@@ -125,9 +134,9 @@ type VirtualMachineVolumeClaim struct {
 }
 
 type HostLocalVolumeClaim struct {
-	PoolName string              `json:"poolName"`
-	VolName  string              `json:"volName"`
-	Size     resourcev1.Quantity `json:"size"`
+	PoolName string         `json:"poolName"`
+	VolName  string         `json:"volName"`
+	Size     k8res.Quantity `json:"size"`
 }
 
 var _ resource.Object = &VirtualMachine{}

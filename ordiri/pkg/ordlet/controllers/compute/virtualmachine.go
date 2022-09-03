@@ -80,6 +80,15 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	log = log.WithValues("vm", vm.Name)
 	scheduledNode, scheduled := vm.ScheduledNode()
 
+	// if scheduled {
+	// 	for _, iface := range vm.Spec.NetworkInterfaces {
+	// 		ifaceStatus, ifaceOption, err := r.ensureMacKnown(ctx, vm, iface)
+	// 		if err != nil {
+	// 			return ctrl.Result{}, fmt.Errorf("error ensuring mac is known - %w", err)
+	// 		}
+	// 	}
+	// }
+
 	if !scheduled || scheduledNode != r.Node.GetNode().Name {
 		log.V(5).Info("Not scheduled on this node")
 		return ctrl.Result{}, nil
