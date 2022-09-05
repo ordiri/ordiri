@@ -7,10 +7,11 @@ This project is an attepmt to solve my own personal problems when playing in my 
 
 Currently it supports the 3 main areas you would care about - compute, storage and network - and is able to provision overlapping tenant isolated networks which span multiple physical hosts by using VXLan tunnels and linux namespaces, launch a virtual machine and provide it with both host level or distributed (Rados) block storage.
 
-
-
 # [Ordiri](./ordiri)
 Main code base for the per-node ordlet as well as the control plane apiserver
+
+## [Kubernetes Example](./ordiri/examples/)
+The API Server uses the Kubernetes API server packages to provide a kubernetes style api
 
 ## [API Server](./ordiri/cmd/apiserver)
 The API Server uses the Kubernetes API server packages to provide a kubernetes style api
@@ -25,13 +26,8 @@ A React UI for interacting with the API Server
 Open API client for use in a browser
 
 # Todo
-Security is the next big hurdle, need to come up with a story around vault or ory etc
-currently no auth on control plane so no "true" tenant isolation
-https://github.com/novnc/noVNC
-
-Can have an iso that is shipped to phys ordlet nodes which registers them in idp and does anything else
-
-need tenant logins and security key/kms/ca - finally a legit use for my yubi key :)
+Need tenant API logins and API auth, lots of hard coded stuff to support tenant isolation, search "tenant1"
+Currently do a bunch of l3 routing in openflow rules but it's really inneficent and it all stems from a seperate vlan per subnet instead of per network.
 
 
 ----

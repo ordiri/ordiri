@@ -262,7 +262,7 @@ func WithCephVolume(name, device string) DomainOption {
 				Username: "libvirt",
 				Secret: &libvirtxml.DomainDiskSecret{
 					Type: "ceph",
-					UUID: "4eadcf35-dc7d-4d80-a7fe-5f599d1ec49f",
+					UUID: "4eadcf35-dc7d-4d80-a7fe-5f599d1ec49f", // todo: bring from somewhere else
 				},
 			},
 			Target: &libvirtxml.DomainDiskTarget{
