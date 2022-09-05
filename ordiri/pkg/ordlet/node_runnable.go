@@ -6,6 +6,7 @@ import (
 	"net"
 	"reflect"
 
+	"github.com/digitalocean/go-openvswitch/ovs"
 	"github.com/go-logr/logr"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
 	"github.com/ordiri/ordiri/pkg/generated/clientset/versioned"
@@ -84,19 +85,34 @@ func (clnr *createLocalNodeRunnable) Start(ctx context.Context) error {
 		return err
 	}
 
-	ovs := sdn.Ovs()
-	if err := ovs.VSwitch.AddBridge(sdn.ExternalSwitchName); err != nil {
+	ovsClient := sdn.Ovs()
+	if err := ovsClient.VSwitch.AddBridge(sdn.ExternalSwitchName); err != nil {
 		return err
 	}
-	if err := ovs.VSwitch.AddBridge(sdn.TunnelSwitchName); err != nil {
+	if err := ovsClient.VSwitch.Set.Interface(sdn.ExternalSwitchName, ovs.InterfaceOptions{
+		MTURequest: sdn.UnderlayMTU,
+	}); err != nil {
 		return err
 	}
-	if err := ovs.VSwitch.AddBridge(sdn.WorkloadSwitchName); err != nil {
+	if err := ovsClient.VSwitch.AddBridge(sdn.TunnelSwitchName); err != nil {
+		return err
+	}
+	if err := ovsClient.VSwitch.Set.Interface(sdn.TunnelSwitchName, ovs.InterfaceOptions{
+		MTURequest: sdn.UnderlayMTU,
+	}); err != nil {
+		return err
+	}
+	if err := ovsClient.VSwitch.AddBridge(sdn.WorkloadSwitchName); err != nil {
+		return err
+	}
+	if err := ovsClient.VSwitch.Set.Interface(sdn.WorkloadSwitchName, ovs.InterfaceOptions{
+		MTURequest: sdn.UnderlayMTU,
+	}); err != nil {
 		return err
 	}
 
 	flowRules := &sdn.Node{}
-	if err := flowRules.Install(ovs); err != nil {
+	if err := flowRules.Install(ovsClient); err != nil {
 		return err
 	}
 

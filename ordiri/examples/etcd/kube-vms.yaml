@@ -3,7 +3,7 @@ kind: VirtualMachineDeployment
 metadata:
   name: kube-master
 spec:
-  replicas: 1
+  replicas: 3
   template:
     metadata:
       creationTimestamp: null
@@ -11,10 +11,159 @@ spec:
       userData: |
         #!/bin/bash
         set -eou pipefail
-        echo 1 > /proc/sys/net/bridge/bridge-nf-call-iptable
-        curl -k -s -L -XGET https://vault-root-0.ordiri:8200/v1/pki_int/ca_chain | awk 'BEGIN {c=0;} /BEGIN CERT/{c++} { print > "/usr/local/share/ca-certificates/vault-root." c ".pem"}'
+
+        cd $(mktemp -d)
+        apt update && apt install -y gpg jq wget curl ca-certificates
+
+        modprobe br-netfilter overlay bridge
+        sysctl -w net.bridge.bridge-nf-call-iptables=1
+        sysctl -w net.ipv4.ip_forward=1
+        echo "br-netfilter
+        bridge
+        overlay " > /etc/modules-load.d/modules.conf
+
+        # We do this in 2 stages because the first curl imports the root which issues the second
+        curl -k -s -L -XGET https://vault-root-0.ordiri:8200/v1/pki_int/ca_chain | awk 'BEGIN {c=0;} /BEGIN CERT/{c++} { print > "/usr/local/share/ca-certificates/vault-root." c ".crt"}'
         update-ca-certificates
 
+        curl -s -L -XGET https://vault-2.ordiri:8200/v1/pki/ca_chain  | awk 'BEGIN {c=0;} /BEGIN CERT/{c++} { print > "/usr/local/share/ca-certificates/vault." c ".crt"}'
+        update-ca-certificates
+        
+        local_ip=$(curl 169.254.169.254/latest/meta-data/local-ipv4)
+
+        wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | tee /usr/share/keyrings/hashicorp-archive-keyring.gpg >/dev/null
+        if [[ -z "$(gpg --no-default-keyring --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg --fingerprint | grep "E8A0 32E0 94D8 EB4E A189  D270 DA41 8C88 A321 9F7B")" ]]; then
+          echo "gpp fingerprint was not valid"
+          exit 2
+        fi
+       
+        echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com bullseye main" | tee /etc/apt/sources.list.d/hashicorp.list
+        apt update && apt install vault
+        
+        tee /usr/bin/vault-cert <<'EOF'
+        #!/usr/bin/env bash
+
+        tmp=$(mktemp)
+
+        export local_hostname=$(curl 169.254.169.254/latest/meta-data/local-hostname)
+        export local_ip=$(curl 169.254.169.254/latest/meta-data/local-ipv4)
+
+        VAULT_TOKEN=$(vault write auth/approle/login role_id=$VAULT_ROLE_ID -format=json | jq -r '.auth.client_token') \
+          vault write --format=json $VAULT_PATH \
+            common_name="${local_hostname}.homelab.dmann.xyz" \
+            ip_sans="${local_ip}" \
+            alt_names="${local_hostname}.ordiri" \
+            ttl="24h" > $tmp
+
+
+        cat $tmp | jq -r '.data.ca_chain | join("\n")' > $CA_LOCATION
+        cat $tmp | jq -r '.data.certificate' > $CERT_LOCATION
+        cat $tmp | jq -r '.data.private_key' > $KEY_LOCATION
+        EOF
+
+        chmod +x /usr/bin/vault-cert
+
+        tee /etc/systemd/system/cert-renewer@.service <<'EOF'
+        [Unit]
+        Description=Certificate renewer for %I
+        After=network-online.target
+        Documentation=https://github.com/smallstep/cli/blob/005920ad4122fa5838c338b567d6584fcc33c1cc/systemd/cert-renewer@.service
+        StartLimitIntervalSec=0
+
+        [Service]
+        Type=oneshot
+        User=root
+
+        Environment=CA_LOCATION=/etc/ssl/certs/%i-ca.crt
+        Environment=CERT_LOCATION=/etc/ssl/certs/%i.crt
+        Environment=KEY_LOCATION=/etc/ssl/private/%i.key
+        Environment=VAULT_SKIP_VERIFY=true
+        Environment=VAULT_ROLE_ID=kube-master-node
+        Environment=VAULT_ADDR=https://vault-0.ordiri:8200
+        Environment=VAULT_PATH=pki/issue/homelab-default
+
+        ExecCondition=/usr/bin/env sh -c "! test -f ${CERT_LOCATION} || ! /usr/bin/openssl x509 -checkend 1500 -noout -in ${CERT_LOCATION}"
+
+        ; ExecStart renews the certificate, if ExecStartPre was successful.
+        ExecStart=/usr/bin/vault-cert
+
+        ; Try to reload or restart the systemd service that relies on this cert-renewer
+        ; If the relying service doesn't exist, forge ahead.
+        ; (In systemd <229, use `reload-or-try-restart` instead of `try-reload-or-restart`)
+        ExecStartPost=/usr/bin/env sh -c "! systemctl --quiet is-enabled %i.service || systemctl try-reload-or-restart %i"
+        [Install]
+        WantedBy=multi-user.target
+        EOF
+
+        tee /etc/systemd/system/cert-renewer@.timer <<'EOF'
+        [Unit]
+        Description=Timer for certificate renewal of %I
+        Documentation=https://smallstep.com/docs/step-ca/certificate-authority-server-production
+        Documentation=https://github.com/smallstep/cli/blob/005920ad4122fa5838c338b567d6584fcc33c1cc/systemd/cert-renewer%40.timer
+
+        [Timer]
+        Persistent=true
+
+        ; Run the timer unit every 15 minutes.
+        OnCalendar=*:1/15
+
+        ; Always run the timer on time.
+        AccuracySec=1us
+
+        ; Add jitter to prevent a "thundering hurd" of simultaneous certificate renewals.
+        RandomizedDelaySec=5m
+
+        [Install]
+        WantedBy=timers.target
+        EOF
+
+        systemctl daemon-reload
+        systemctl enable --now cert-renewer@etcd.timer
+        systemctl enable --now cert-renewer@etcd.service
+        systemctl enable --now cert-renewer@kube-master.timer
+        systemctl enable --now cert-renewer@kube-master.service
+        sleep 5
+
+        local_ip=$(curl 169.254.169.254/latest/meta-data/local-ipv4)
+        local_hostname=$(curl 169.254.169.254/latest/meta-data/local-hostname)
+        echo "here"
+        export local_ip
+        export local_hostname # Export these so we can use them in envsubst call below
+
+
+        curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+        echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
+        apt-get update
+        apt-get install -y kubelet kubeadm kubectl
+        apt-mark hold kubelet kubeadm kubectl
+
+        echo "deb [signed-by=/usr/share/keyrings/libcontainers-archive-keyring.gpg] https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_11/ /" > /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+        echo "deb [signed-by=/usr/share/keyrings/libcontainers-crio-archive-keyring.gpg] https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.25/Debian_11/ /" > /etc/apt/sources.list.d/devel:kubic:libcontainers:stable:cri-o:1.25.list
+
+        mkdir -p /usr/share/keyrings
+        curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_11/Release.key | gpg --dearmor -o /usr/share/keyrings/libcontainers-archive-keyring.gpg
+        curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.25/Debian_11/Release.key | gpg --dearmor -o /usr/share/keyrings/libcontainers-crio-archive-keyring.gpg
+
+        apt-get update
+        apt-get install cri-o cri-o-runc
+
+        systemctl enable --now crio
+        sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+        swapoff -a
+
+        # if [[ "$local_hostname" == "kube-master-0"]]; then
+        #   kubeadm init --config kubeadmn.yaml --upload-certs
+        # else
+        #   while true; do
+        #     token=$(vault read bootstrap token)
+        #     if [[ ! -z "$token" ]]; then 
+        #       kubeadm join cluster.homelab.dmann.xyz:6443 --token $token \
+        #       --discovery-token-ca-cert-hash sha256:6e74a6c7fecb2c9571348552d83a0fdefeb1ea1390881e0cd0c3d37041d54484 \
+        #       --control-plane 
+
+        #     fi
+        #   done
+        # fi
       bootDevices:
       - hd
       - network

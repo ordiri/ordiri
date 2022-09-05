@@ -54,9 +54,53 @@ spec:
             echo 'type=83' | sfdisk  /dev/vdb
             mkfs -t ext4 /dev/vdb1
         fi
-        mkdir -p /vault-root /vault-root/vault-tls
-        if [[ -z "$(cat /proc/mounts | grep "/dev/vdb1 ")" ]]; then
-          mount /dev/vdb1 /vault-root
+        mkdir -p /vault/root 
+        eval $(blkid /dev/vdb1 --output export)
+        echo "[Unit]
+        Description=Vault root mount
+        After=network.target
+
+        [Mount]
+        What=/dev/disk/by-uuid/$UUID
+        Where=/vault/root
+        Type=ext4
+        Options=defaults
+
+        [Install]
+        WantedBy=multi-user.target" > /etc/systemd/system/vault-root.mount
+
+        systemctl enable --now vault-root.mount
+
+        mkdir -p /vault/root/vault-tls
+
+        if [[ ! -f /vault/root/vault-tls/vault.key ]]; then
+
+          echo "[req]
+        distinguished_name = req_distinguished_name
+        req_extensions = req_ext
+        x509_extensions = v3_req
+        prompt = no
+
+        [req_distinguished_name]
+        C = AU
+        ST = NSW
+        L = Sydney
+        O = Ordiri
+        OU = Cloud
+        CN = vault.homelab.dmann.xyz
+
+        [v3_req]
+        keyUsage = keyEncipherment, dataEncipherment
+        extendedKeyUsage = serverAuth
+        subjectAltName = @alt_names
+        [req_ext]
+        subjectAltName = @alt_names
+
+        [alt_names]
+        DNS.1 = ${local_hostname}.homelab.dmann.xyz
+        DNS.2 = ${local_hostname}.ordiri
+        IP.1 = ${local_ip}" > /vault/root/vault-tls/vault.conf
+          openssl req -x509 -nodes -days 730 -newkey rsa:4096 -keyout /vault/root/vault-tls/vault.key -out /vault/root/vault-tls/vault.crt -config /vault/root/vault-tls/vault.conf
         fi
 
         echo 'disable_mlock = true
@@ -64,43 +108,37 @@ spec:
         ui = true
 
         storage "file" {
-          path = "/vault-root/vault-data"
+          path = "/vault/root/vault-data"
         }
 
         # HTTPS listener
         listener "tcp" {
           address       = "0.0.0.0:8200"
-          tls_cert_file = "/vault-root/vault-tls/tls.crt"
-          tls_key_file  = "/vault-root/vault-tls/tls.key"
+          tls_cert_file = "/vault/root/vault-tls/vault.crt"
+          tls_key_file  = "/vault/root/vault-tls/vault.key"
         }' > /etc/vault.d/vault.hcl
 
+        chown -Rf vault:vault /vault/root 
 
-        if [ ! -f "/vault-root/vault-tls/tls.key" ]; then
-            cp /var/lib/vault/tls/tls.key /vault-root/vault-tls/tls.key
-        fi
-
-        if [ ! -f "/vault-root/vault-tls/tls.crt" ]; then
-            cp /var/lib/vault/tls/tls.crt /vault-root/vault-tls/tls.crt
-        fi  
-
-        chown -Rf vault:vault /vault-root 
+        systemctl daemon-reload
+        systemctl restart vault
 
         export VAULT_SKIP_VERIFY=true
-        if [[ "vault status --format=json | jq -r '.initialized'" == "false" ]]; then
-          vault operator init --format=json | tee /vault-root/vault-operator-init.log
+        if [[ "$(vault status --format=json | jq -r '.initialized')" == "false" ]]; then
+          vault operator init --format=json | tee /vault/root/vault-operator-init.log
         fi
 
-        if [[ "vault status --format=json | jq -r '.sealed'" == "true" ]]; then
+        if [[ "$(vault status --format=json | jq -r '.sealed')" == "true" ]]; then
           # Minus 1 to make the looping easier
-          threshold=$(cat /vault-root/vault-operator-init.log | jq -r '.unseal_threshold - 1')
+          threshold=$(cat /vault/root/vault-operator-init.log | jq -r '.unseal_threshold - 1')
           for idx in $(seq 0 $threshold); do
-            vault operator unseal $(cat /vault-root/vault-operator-init.log | jq --arg idx "$idx" -r '.unseal_keys_hex[$idx | tonumber]')
+            vault operator unseal $(cat /vault/root/vault-operator-init.log | jq --arg idx "$idx" -r '.unseal_keys_hex[$idx | tonumber]')
           done
         fi
         
-        cat /vault-root/vault-operator-init.log | jq -r '.root_token' | vault login  -
+        cat /vault/root/vault-operator-init.log | jq -r '.root_token' | vault login  -
         if ! vault audit list -format json | jq -e '.["file/"]'; then
-          vault audit enable file file_path=/vault-root/audit.log
+          vault audit enable file file_path=/vault/root/audit.log
         fi
 
         # Setup the transit engine we'll use to seal/unseal the cluster

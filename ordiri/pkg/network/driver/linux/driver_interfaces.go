@@ -106,10 +106,16 @@ func (ln *linuxDriver) createInterfaceBridge(ctx context.Context, nw api.Network
 	if bridge == nil {
 		la := netlink.NewLinkAttrs()
 		la.Name = bridgeName
+		la.MTU = sdn.OverlayMTU
 		bridge = &netlink.Bridge{LinkAttrs: la}
 
 		if err := netlink.LinkAdd(bridge); err != nil {
 			return nil, fmt.Errorf("unable to add new bridge for vm - %w", err)
+		}
+	}
+	if bridge.MTU != sdn.OverlayMTU {
+		if err := netlink.LinkSetMTU(bridge, sdn.OverlayMTU); err != nil {
+			return nil, fmt.Errorf("unable to set mtu - %w", err)
 		}
 	}
 
@@ -177,6 +183,8 @@ func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network
 		la := netlink.NewLinkAttrs()
 		la.Name = tuntapName
 		la.HardwareAddr = iface.Mac()
+
+		la.MTU = sdn.OverlayMTU
 		tuntap = &netlink.Tuntap{
 			LinkAttrs:  la,
 			Mode:       netlink.TUNTAP_MODE_TAP,
@@ -187,6 +195,11 @@ func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network
 
 		if err := netlink.LinkAdd(tuntap); err != nil {
 			return nil, fmt.Errorf("unable to add new tuntap device for vm - %w", err)
+		}
+	}
+	if tuntap.MTU != sdn.OverlayMTU {
+		if err := netlink.LinkSetMTU(tuntap, sdn.OverlayMTU); err != nil {
+			return nil, fmt.Errorf("unable to set mtu - %w", err)
 		}
 	}
 

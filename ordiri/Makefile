@@ -130,15 +130,15 @@ linux-md:
 
 .PHONY: deploy-debian-ordlet deploy-mothership-ordlet
 deploy-debian-ordlet: linux-ordlet
-	scp bin/ordlet-amd64-linux root@10.0.1.109:/usr/local/bin/ordlet
-	scp kubeconfig root@10.0.1.109:/etc/ordiri.conf
+	scp bin/ordlet-amd64-linux root@debian:/usr/local/bin/ordlet
+	scp kubeconfig root@debian:/etc/ordiri.conf
 
 deploy-mothership-ordlet: linux-ordlet
 	scp bin/ordlet-amd64-linux mothership:/usr/local/bin/ordlet
 	scp kubeconfig mothership:/etc/ordiri.conf
 
 deploy-debian-md: linux-md
-	scp bin/metadata-amd64-linux root@10.0.1.109:/usr/local/bin/ordiri-metadata
+	scp bin/metadata-amd64-linux root@debian:/usr/local/bin/ordiri-metadata
 
 deploy-mothership-md: linux-md
 	scp bin/metadata-amd64-linux mothership:/usr/local/bin/ordiri-metadata
@@ -159,7 +159,7 @@ stop-mothership:
 
 .PHONY: stop-debian
 stop-debian: 
-	{ ssh root@10.0.1.109 'kill $$(pidof ordlet); kill $$(pidof ordlet); kill $$(pidof ordlet)'; systemctl restart ovsdb-server.service ovs-vswitchd.service || true; }
+	{ ssh root@debian 'kill $$(pidof ordlet); kill $$(pidof ordlet); kill $$(pidof ordlet)'; systemctl restart ovsdb-server.service ovs-vswitchd.service || true; }
 
 .PHONY: start-all
 start-all: 

@@ -6,6 +6,7 @@ import (
 	"net"
 
 	"github.com/ordiri/ordiri/pkg/log"
+	"github.com/ordiri/ordiri/pkg/network/sdn"
 	"github.com/vishvananda/netlink"
 	"github.com/vishvananda/netns"
 	"golang.org/x/sys/unix"
@@ -37,6 +38,7 @@ func (ln *linuxDriver) getOrCreateVeth(ctx context.Context, namespace string, ca
 				Namespace:    netlink.NsFd(handle),
 				Flags:        net.FlagUp,
 				HardwareAddr: macAddr,
+				MTU:          sdn.OverlayMTU,
 			},
 			PeerName: cableName.Root(),
 		}
@@ -58,17 +60,39 @@ func (ln *linuxDriver) getOrCreateVeth(ctx context.Context, namespace string, ca
 		log.V(5).Info("found existing veth cable", "namespace", namespace, "cableName", cableName)
 	}
 
+	handle, err := netns.GetFromName(namespace)
+	if err != nil {
+		return fmt.Errorf("unable to get namespace for public gateway ns - %w", err)
+	}
+	nlhandle, err := netlink.NewHandleAt(handle)
+	if err != nil {
+		return fmt.Errorf("unable to get namespace for public gateway ns - %w", err)
+	}
+
+	namespaceLink, err := nlhandle.LinkByName(cableName.Namespace())
+	if err != nil {
+		return fmt.Errorf("error fetching link - %w", err)
+	}
+	if namespaceLink.Attrs().MTU != sdn.OverlayMTU {
+		if err := nlhandle.LinkSetMTU(namespaceLink, sdn.OverlayMTU); err != nil {
+			return fmt.Errorf("unable to set mtu - %w", err)
+		}
+	}
+
+	if enforceMac && namespaceLink.Attrs().HardwareAddr.String() != macAddr.String() {
+		if err := nlhandle.LinkSetHardwareAddr(namespaceLink, macAddr); err != nil {
+			return fmt.Errorf("unable to set the mac address - %w", err)
+		}
+	}
 	link, err := netlink.LinkByName(cableName.Root())
 	if err != nil {
 		return fmt.Errorf("error fetching link - %w", err)
 	}
-
-	// if enforceMac && link.Attrs().HardwareAddr.String() != macAddr.String() {
-	// 	if err := netlink.LinkSetHardwareAddr(link, macAddr); err != nil {
-	// 		return fmt.Errorf("unable to set the mac address - %w", err)
-	// 	}
-	// }
-
+	if link.Attrs().MTU != sdn.OverlayMTU {
+		if err := netlink.LinkSetMTU(link, sdn.OverlayMTU); err != nil {
+			return fmt.Errorf("unable to set mtu - %w", err)
+		}
+	}
 	log.V(5).Info("ensuring link up", "namespace", namespace, "cableName", cableName)
 	if err := netlink.LinkSetUp(link); err != nil {
 		return fmt.Errorf("unable to set link up - %w", err)

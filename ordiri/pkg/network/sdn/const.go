@@ -1,6 +1,10 @@
 package sdn
 
 const (
+	UnderlayMTU = 9000
+	OverlayMTU  = 1500
+)
+const (
 	OpenFlowTableTunnelEntrypoint = 0
 
 	// When a packet is entering the tunnel switch from the VM port

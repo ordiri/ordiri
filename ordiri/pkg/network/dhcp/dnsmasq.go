@@ -14,7 +14,7 @@ func DnsMasqConfig(confDir, name, ifaceName string, network netaddr.IPPrefix, ho
 	return dnsmasq.New(
 		// disable dns
 		dnsmasq.WithOption("log-dhcp", ""),
-		dnsmasq.WithOption("dhcp-boot", "ipxe.kpxe,boothost,10.0.2.118"),
+		dnsmasq.WithOption("dhcp-boot", "ipxe.kpxe,boothost,10.0.1.196"),
 		dnsmasq.WithOption("keep-in-foreground", ""),
 		// "domain-needed","", # we want the name of a vm to resolve without a domain
 		dnsmasq.WithOption("bogus-priv", ""),
