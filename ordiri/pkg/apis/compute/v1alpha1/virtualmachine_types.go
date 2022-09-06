@@ -31,7 +31,6 @@ import (
 )
 
 // +genclient
-// +genclient:nonNamespaced
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 // +genclient:method=Restart,verb=update,subresource=restart,input=VirtualMachineRestart,result=VirtualMachineRestart
 // VirtualMachine
@@ -180,7 +179,7 @@ func (in *VirtualMachine) GetObjectMeta() *metav1.ObjectMeta {
 }
 
 func (in *VirtualMachine) NamespaceScoped() bool {
-	return false
+	return true
 }
 
 func (in *VirtualMachine) New() runtime.Object {

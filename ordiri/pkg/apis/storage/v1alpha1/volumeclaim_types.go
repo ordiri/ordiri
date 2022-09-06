@@ -29,7 +29,6 @@ import (
 )
 
 // +genclient
-// +genclient:nonNamespaced
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 // VolumeClaim
@@ -67,7 +66,7 @@ func (in *VolumeClaim) GetObjectMeta() *metav1.ObjectMeta {
 }
 
 func (in *VolumeClaim) NamespaceScoped() bool {
-	return false
+	return true
 }
 
 func (in *VolumeClaim) New() runtime.Object {

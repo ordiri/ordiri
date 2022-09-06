@@ -28,7 +28,6 @@ import (
 )
 
 // +genclient
-// +genclient:nonNamespaced
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 // Subnet
@@ -77,7 +76,7 @@ func (in *Subnet) GetObjectMeta() *metav1.ObjectMeta {
 }
 
 func (in *Subnet) NamespaceScoped() bool {
-	return false
+	return true
 }
 
 func (in *Subnet) New() runtime.Object {

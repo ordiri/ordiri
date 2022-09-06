@@ -28,7 +28,6 @@ import (
 )
 
 // +genclient
-// +genclient:nonNamespaced
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 // VirtualMachineDeployment
@@ -64,7 +63,7 @@ func (in *VirtualMachineDeployment) GetObjectMeta() *metav1.ObjectMeta {
 }
 
 func (in *VirtualMachineDeployment) NamespaceScoped() bool {
-	return false
+	return true
 }
 
 func (in *VirtualMachineDeployment) New() runtime.Object {

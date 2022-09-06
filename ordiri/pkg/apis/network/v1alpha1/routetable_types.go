@@ -28,7 +28,6 @@ import (
 )
 
 // +genclient
-// +genclient:nonNamespaced
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 // RouteTable
@@ -67,7 +66,7 @@ func (in *RouteTable) GetObjectMeta() *metav1.ObjectMeta {
 }
 
 func (in *RouteTable) NamespaceScoped() bool {
-	return false
+	return true
 }
 
 func (in *RouteTable) New() runtime.Object {

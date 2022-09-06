@@ -30,7 +30,6 @@ import (
 )
 
 // +genclient
-// +genclient:nonNamespaced
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 // Node
@@ -118,7 +117,7 @@ func (in *Node) GetObjectMeta() *metav1.ObjectMeta {
 }
 
 func (in *Node) NamespaceScoped() bool {
-	return false
+	return true
 }
 
 func (in *Node) New() runtime.Object {

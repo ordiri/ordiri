@@ -28,7 +28,6 @@ import (
 )
 
 // +genclient
-// +genclient:nonNamespaced
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 // MachineProfile
@@ -70,7 +69,7 @@ func (in *MachineProfile) GetObjectMeta() *metav1.ObjectMeta {
 }
 
 func (in *MachineProfile) NamespaceScoped() bool {
-	return false
+	return true
 }
 
 func (in *MachineProfile) New() runtime.Object {

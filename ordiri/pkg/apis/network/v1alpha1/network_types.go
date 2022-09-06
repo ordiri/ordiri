@@ -29,7 +29,6 @@ import (
 )
 
 // +genclient
-// +genclient:nonNamespaced
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 // Network
@@ -106,7 +105,7 @@ func (in *Network) NatEnabled() bool {
 	return true
 }
 func (in *Network) NamespaceScoped() bool {
-	return false
+	return true
 }
 
 func (in *Network) New() runtime.Object {

@@ -29,7 +29,6 @@ import (
 )
 
 // +genclient
-// +genclient:nonNamespaced
 // +genclient:method=PutReview,verb=update,subresource=review,input=MachineReview,result=MachineReview
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 // Machine
@@ -103,7 +102,7 @@ func (in *Machine) GetObjectMeta() *metav1.ObjectMeta {
 }
 
 func (in *Machine) NamespaceScoped() bool {
-	return false
+	return true
 }
 
 func (in *Machine) New() runtime.Object {

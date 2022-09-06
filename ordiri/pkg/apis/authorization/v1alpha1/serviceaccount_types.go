@@ -28,7 +28,6 @@ import (
 )
 
 // +genclient
-// +genclient:nonNamespaced
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 // ServiceAccount
@@ -62,7 +61,7 @@ func (in *ServiceAccount) GetObjectMeta() *metav1.ObjectMeta {
 }
 
 func (in *ServiceAccount) NamespaceScoped() bool {
-	return false
+	return true
 }
 
 func (in *ServiceAccount) New() runtime.Object {
