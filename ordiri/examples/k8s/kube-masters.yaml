@@ -15,6 +15,11 @@ spec:
         cd $(mktemp -d)
         apt update && apt install -y gpg jq wget curl ca-certificates
 
+        while [[ "$(curl -s -X GET https://vault-0.ordiri:8200/v1/sys/health | jq -e '.sealed')" != "false" ]]; do
+          echo "Waiting for Vault to become initialized..."
+          sleep 10
+        done
+
         modprobe br-netfilter overlay bridge
         sysctl -w net.bridge.bridge-nf-call-iptables=1
         sysctl -w net.ipv4.ip_forward=1
@@ -26,7 +31,7 @@ spec:
         curl -k -s -L -XGET https://vault-root-0.ordiri:8200/v1/pki_int/ca_chain | awk 'BEGIN {c=0;} /BEGIN CERT/{c++} { print > "/usr/local/share/ca-certificates/vault-root." c ".crt"}'
         update-ca-certificates
 
-        curl -s -L -XGET https://vault-2.ordiri:8200/v1/pki/ca_chain  | awk 'BEGIN {c=0;} /BEGIN CERT/{c++} { print > "/usr/local/share/ca-certificates/vault." c ".crt"}'
+        curl -s -L -XGET https://vault-0.ordiri:8200/v1/pki/ca_chain  | awk 'BEGIN {c=0;} /BEGIN CERT/{c++} { print > "/usr/local/share/ca-certificates/vault." c ".crt"}'
         update-ca-certificates
         
         local_ip=$(curl 169.254.169.254/latest/meta-data/local-ipv4)
@@ -55,7 +60,6 @@ spec:
             alt_names="${local_hostname}.ordiri" \
             ttl="24h" > $tmp
 
-
         cat $tmp | jq -r '.data.ca_chain | join("\n")' > $CA_LOCATION
         cat $tmp | jq -r '.data.certificate' > $CERT_LOCATION
         cat $tmp | jq -r '.data.private_key' > $KEY_LOCATION
@@ -77,7 +81,6 @@ spec:
         Environment=CA_LOCATION=/etc/ssl/certs/%i-ca.crt
         Environment=CERT_LOCATION=/etc/ssl/certs/%i.crt
         Environment=KEY_LOCATION=/etc/ssl/private/%i.key
-        Environment=VAULT_SKIP_VERIFY=true
         Environment=VAULT_ROLE_ID=kube-master-node
         Environment=VAULT_ADDR=https://vault-0.ordiri:8200
         Environment=VAULT_PATH=pki/issue/homelab-default
@@ -151,19 +154,34 @@ spec:
         sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
         swapoff -a
 
-        # if [[ "$local_hostname" == "kube-master-0"]]; then
-        #   kubeadm init --config kubeadmn.yaml --upload-certs
-        # else
-        #   while true; do
-        #     token=$(vault read bootstrap token)
-        #     if [[ ! -z "$token" ]]; then 
-        #       kubeadm join cluster.homelab.dmann.xyz:6443 --token $token \
-        #       --discovery-token-ca-cert-hash sha256:6e74a6c7fecb2c9571348552d83a0fdefeb1ea1390881e0cd0c3d37041d54484 \
-        #       --control-plane 
+        export VAULT_ADDR=https://vault-0.ordiri:8200
+        export VAULT_TOKEN=$(vault write auth/approle/login role_id=kube-master-node -format=json | jq -r '.auth.client_token')
+          
+        if [[ ! -f "/etc/kubernetes/admin.conf" ]]; then
+          if [[ "$local_hostname" == "kube-master-0"]]; then
+            kubeadm init --config kubeadmn.yaml --upload-certs
+            cert_hash=$(openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt \
+              | openssl rsa -pubin -outform der 2>/dev/null \
+              | openssl dgst -sha256 -hex \
+              | sed 's/^.* //')
 
-        #     fi
-        #   done
-        # fi
+
+            kubeadm token create --print-join-command --certificate-key="${cert_hash}" | vault kv put secret/k8s/master/join-command command=-
+            kubeadm token create --print-join-command | vault kv put secret/k8s/worker/join-command command=-
+          else
+            while true; do
+              command=$(vault kv get -field=command secret/k8s/master/join-command)
+              if [[ ! -z "$command" ]]; then 
+                bash -c "$command"
+                break
+              fi
+
+              echo "Waiting for kube-master-0 to provision join commands"
+              sleep 10
+            done
+          fi
+        fi
+
       bootDevices:
       - hd
       - network

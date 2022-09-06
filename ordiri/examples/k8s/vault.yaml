@@ -17,6 +17,11 @@ spec:
         cd $(mktemp -d)
         apt update && apt install -y gpg jq wget curl ca-certificates ssl-cert
 
+        while [[ "$(curl -s -k -X GET https://vault-root-0.ordiri:8200/v1/sys/health | jq -e '.sealed')" != "false" ]]; do
+          echo "Waiting for Root Vault to become initialized..."
+          sleep 10
+        done
+
         # We do this in 2 stages because the first curl imports the root which issues the second
         curl -k -s -L -XGET https://vault-root-0.ordiri:8200/v1/pki_int/ca_chain | awk 'BEGIN {c=0;} /BEGIN CERT/{c++} { print > "/usr/local/share/ca-certificates/vault-root." c ".crt"}'
         update-ca-certificates
@@ -106,6 +111,7 @@ spec:
         cat $tmp | jq -r '.data.ca_chain | join("\n")' > $CA_LOCATION
         cat $tmp | jq -r '.data.certificate' > $CERT_LOCATION
         cat $tmp | jq -r '.data.private_key' > $KEY_LOCATION
+        rm -f $tmp || true # should be in a trap
         EOF
 
         chmod +x /usr/bin/vault-cert
@@ -124,7 +130,6 @@ spec:
         Environment=CA_LOCATION=/etc/ssl/certs/%i-ca.crt
         Environment=CERT_LOCATION=/etc/ssl/certs/%i.crt
         Environment=KEY_LOCATION=/etc/ssl/private/%i.key
-        Environment=VAULT_SKIP_VERIFY=true
         Environment=VAULT_ROLE_ID=vault-ca-bootstrap
         Environment=VAULT_ADDR=https://vault-root-0.ordiri:8200
         Environment=VAULT_PATH=pki_int/issue/dmann-default
@@ -200,6 +205,9 @@ spec:
           if ! vault audit list -format json | jq -e '.["file/"]'; then
             vault audit enable file file_path=/var/lib/vault/audit.log
           fi
+          if ! vault secrets list -format json | jq -e '.["secret/"]'; then
+            vault secrets enable -path=secret kv-v2
+          fi
 
           if ! vault secrets list -format json | jq -e '.["pki/"]'; then
             vault secrets enable pki
@@ -230,13 +238,26 @@ spec:
             allow_subdomains=true \
             max_ttl="720h"
 
-          tee generate-homelab-cert.hcl <<EOF
+          vault policy write generate-homelab-cert - <<EOF
           path "pki/issue/homelab-default" {
             capabilities = [ "update" ]
           }
         EOF
 
-          vault policy write generate-homelab-cert generate-homelab-cert.hcl
+          vault policy write k8-master - <<EOF
+          path "secret/data/k8s/master/*" {
+            capabilities = [ "update", "create", "read", "patch" ]
+          }
+          path "secret/data/k8s/worker/*" {
+            capabilities = [ "update", "create", "read", "patch" ]
+          }
+        EOF
+          vault policy write k8-worker - <<EOF
+          path "secret/data/k8s/worker/*" {
+            capabilities = [ "read" ]
+          }
+        EOF
+
           if ! vault auth list -format json | jq -e '.["approle/"]'; then
             vault auth enable approle
           fi
@@ -248,7 +269,7 @@ spec:
           vault write auth/approle/role/etcd-node/role-id role_id=etcd-node 
 
           kube_masters="10.200.1.0/24"
-          vault write auth/approle/role/kube-master-node token_policies="generate-homelab-cert" \
+          vault write auth/approle/role/kube-master-node token_policies="generate-homelab-cert,k8-master" \
             token_ttl=5m token_max_ttl=10m bind_secret_id=false token_bound_cidrs=${kube_masters}
           # make it possible to login with a simple id
           vault write auth/approle/role/kube-master-node/role-id role_id=kube-master-node 
@@ -269,7 +290,6 @@ spec:
             break
           fi
         done
-        rm -f $tmp || true
       bootDevices:
       - hd
       - network

@@ -45,6 +45,7 @@ func main() {
 		}).
 
 		// +kubebuilder:scaffold:resource-register
+		WithResource(&networkv1alpha1.LoadBalancer{}).
 		WithResource(&authorizationv1alpha1.RoleBinding{}).
 		WithResource(&authorizationv1alpha1.Role{}).
 		WithResource(&authorizationv1alpha1.ServiceAccount{}).

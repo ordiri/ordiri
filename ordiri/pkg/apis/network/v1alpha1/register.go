@@ -34,6 +34,11 @@ var AddToScheme = func(scheme *runtime.Scheme) error {
 	scheme.AddKnownTypes(schema.GroupVersion{
 		Group:   "network.ordiri.com",
 		Version: "v1alpha1",
+	}, &LoadBalancer{}, &LoadBalancerList{})
+
+	scheme.AddKnownTypes(schema.GroupVersion{
+		Group:   "network.ordiri.com",
+		Version: "v1alpha1",
 	}, &Router{}, &RouterList{})
 
 	scheme.AddKnownTypes(SchemeGroupVersion, &Network{}, &NetworkList{}, &Subnet{}, &SubnetList{}, &RouteTable{}, &RouteTableList{}, &Route{}, &RouteList{})

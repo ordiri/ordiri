@@ -196,6 +196,8 @@ run-manager:
 	go build -o ./bin/controller-manager ./cmd/manager
 	./bin/controller-manager --kubeconfig=kubeconfig
 
+run-vault: 
+	vault server idp.hcl
 run-ipxe: 
 	killall bootserver || true
 	go build -o bin/bootserver ./cmd/bootserver
