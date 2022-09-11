@@ -52,28 +52,32 @@ import {
     IoK8sApimachineryPkgApisMetaV1WatchEventToJSON,
 } from '../models';
 
-export interface CreateComputeOrdiriComV1alpha1VirtualMachineRequest {
+export interface CreateComputeOrdiriComV1alpha1NamespacedVirtualMachineRequest {
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface CreateComputeOrdiriComV1alpha1VirtualMachineDeploymentRequest {
+export interface CreateComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRequest {
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface CreateComputeOrdiriComV1alpha1VirtualMachineReplicaSetRequest {
+export interface CreateComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRequest {
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface DeleteComputeOrdiriComV1alpha1CollectionVirtualMachineRequest {
+export interface DeleteComputeOrdiriComV1alpha1CollectionNamespacedVirtualMachineRequest {
+    namespace: string;
     pretty?: string;
     _continue?: string;
     dryRun?: string;
@@ -89,7 +93,8 @@ export interface DeleteComputeOrdiriComV1alpha1CollectionVirtualMachineRequest {
     body?: IoK8sApimachineryPkgApisMetaV1DeleteOptions;
 }
 
-export interface DeleteComputeOrdiriComV1alpha1CollectionVirtualMachineDeploymentRequest {
+export interface DeleteComputeOrdiriComV1alpha1CollectionNamespacedVirtualMachineDeploymentRequest {
+    namespace: string;
     pretty?: string;
     _continue?: string;
     dryRun?: string;
@@ -105,7 +110,8 @@ export interface DeleteComputeOrdiriComV1alpha1CollectionVirtualMachineDeploymen
     body?: IoK8sApimachineryPkgApisMetaV1DeleteOptions;
 }
 
-export interface DeleteComputeOrdiriComV1alpha1CollectionVirtualMachineReplicaSetRequest {
+export interface DeleteComputeOrdiriComV1alpha1CollectionNamespacedVirtualMachineReplicaSetRequest {
+    namespace: string;
     pretty?: string;
     _continue?: string;
     dryRun?: string;
@@ -121,8 +127,9 @@ export interface DeleteComputeOrdiriComV1alpha1CollectionVirtualMachineReplicaSe
     body?: IoK8sApimachineryPkgApisMetaV1DeleteOptions;
 }
 
-export interface DeleteComputeOrdiriComV1alpha1VirtualMachineRequest {
+export interface DeleteComputeOrdiriComV1alpha1NamespacedVirtualMachineRequest {
     name: string;
+    namespace: string;
     pretty?: string;
     dryRun?: string;
     gracePeriodSeconds?: number;
@@ -131,8 +138,9 @@ export interface DeleteComputeOrdiriComV1alpha1VirtualMachineRequest {
     body?: IoK8sApimachineryPkgApisMetaV1DeleteOptions;
 }
 
-export interface DeleteComputeOrdiriComV1alpha1VirtualMachineDeploymentRequest {
+export interface DeleteComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRequest {
     name: string;
+    namespace: string;
     pretty?: string;
     dryRun?: string;
     gracePeriodSeconds?: number;
@@ -141,8 +149,9 @@ export interface DeleteComputeOrdiriComV1alpha1VirtualMachineDeploymentRequest {
     body?: IoK8sApimachineryPkgApisMetaV1DeleteOptions;
 }
 
-export interface DeleteComputeOrdiriComV1alpha1VirtualMachineReplicaSetRequest {
+export interface DeleteComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRequest {
     name: string;
+    namespace: string;
     pretty?: string;
     dryRun?: string;
     gracePeriodSeconds?: number;
@@ -151,7 +160,8 @@ export interface DeleteComputeOrdiriComV1alpha1VirtualMachineReplicaSetRequest {
     body?: IoK8sApimachineryPkgApisMetaV1DeleteOptions;
 }
 
-export interface ListComputeOrdiriComV1alpha1VirtualMachineRequest {
+export interface ListComputeOrdiriComV1alpha1NamespacedVirtualMachineRequest {
+    namespace: string;
     pretty?: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
@@ -164,7 +174,8 @@ export interface ListComputeOrdiriComV1alpha1VirtualMachineRequest {
     watch?: boolean;
 }
 
-export interface ListComputeOrdiriComV1alpha1VirtualMachineDeploymentRequest {
+export interface ListComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRequest {
+    namespace: string;
     pretty?: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
@@ -177,7 +188,8 @@ export interface ListComputeOrdiriComV1alpha1VirtualMachineDeploymentRequest {
     watch?: boolean;
 }
 
-export interface ListComputeOrdiriComV1alpha1VirtualMachineReplicaSetRequest {
+export interface ListComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRequest {
+    namespace: string;
     pretty?: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
@@ -190,8 +202,48 @@ export interface ListComputeOrdiriComV1alpha1VirtualMachineReplicaSetRequest {
     watch?: boolean;
 }
 
-export interface PatchComputeOrdiriComV1alpha1VirtualMachineRequest {
+export interface ListComputeOrdiriComV1alpha1VirtualMachineDeploymentForAllNamespacesRequest {
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface ListComputeOrdiriComV1alpha1VirtualMachineForAllNamespacesRequest {
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface ListComputeOrdiriComV1alpha1VirtualMachineReplicaSetForAllNamespacesRequest {
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface PatchComputeOrdiriComV1alpha1NamespacedVirtualMachineRequest {
     name: string;
+    namespace: string;
     body: object;
     pretty?: string;
     dryRun?: string;
@@ -199,8 +251,9 @@ export interface PatchComputeOrdiriComV1alpha1VirtualMachineRequest {
     force?: boolean;
 }
 
-export interface PatchComputeOrdiriComV1alpha1VirtualMachineDeploymentRequest {
+export interface PatchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRequest {
     name: string;
+    namespace: string;
     body: object;
     pretty?: string;
     dryRun?: string;
@@ -208,8 +261,9 @@ export interface PatchComputeOrdiriComV1alpha1VirtualMachineDeploymentRequest {
     force?: boolean;
 }
 
-export interface PatchComputeOrdiriComV1alpha1VirtualMachineDeploymentScaleRequest {
+export interface PatchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentScaleRequest {
     name: string;
+    namespace: string;
     body: object;
     pretty?: string;
     dryRun?: string;
@@ -217,8 +271,9 @@ export interface PatchComputeOrdiriComV1alpha1VirtualMachineDeploymentScaleReque
     force?: boolean;
 }
 
-export interface PatchComputeOrdiriComV1alpha1VirtualMachineDeploymentStatusRequest {
+export interface PatchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentStatusRequest {
     name: string;
+    namespace: string;
     body: object;
     pretty?: string;
     dryRun?: string;
@@ -226,8 +281,9 @@ export interface PatchComputeOrdiriComV1alpha1VirtualMachineDeploymentStatusRequ
     force?: boolean;
 }
 
-export interface PatchComputeOrdiriComV1alpha1VirtualMachineReplicaSetRequest {
+export interface PatchComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRequest {
     name: string;
+    namespace: string;
     body: object;
     pretty?: string;
     dryRun?: string;
@@ -235,8 +291,9 @@ export interface PatchComputeOrdiriComV1alpha1VirtualMachineReplicaSetRequest {
     force?: boolean;
 }
 
-export interface PatchComputeOrdiriComV1alpha1VirtualMachineReplicaSetStatusRequest {
+export interface PatchComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetStatusRequest {
     name: string;
+    namespace: string;
     body: object;
     pretty?: string;
     dryRun?: string;
@@ -244,8 +301,9 @@ export interface PatchComputeOrdiriComV1alpha1VirtualMachineReplicaSetStatusRequ
     force?: boolean;
 }
 
-export interface PatchComputeOrdiriComV1alpha1VirtualMachineRestartRequest {
+export interface PatchComputeOrdiriComV1alpha1NamespacedVirtualMachineRestartRequest {
     name: string;
+    namespace: string;
     body: object;
     pretty?: string;
     dryRun?: string;
@@ -253,8 +311,9 @@ export interface PatchComputeOrdiriComV1alpha1VirtualMachineRestartRequest {
     force?: boolean;
 }
 
-export interface PatchComputeOrdiriComV1alpha1VirtualMachineStatusRequest {
+export interface PatchComputeOrdiriComV1alpha1NamespacedVirtualMachineStatusRequest {
     name: string;
+    namespace: string;
     body: object;
     pretty?: string;
     dryRun?: string;
@@ -262,112 +321,129 @@ export interface PatchComputeOrdiriComV1alpha1VirtualMachineStatusRequest {
     force?: boolean;
 }
 
-export interface ReadComputeOrdiriComV1alpha1VirtualMachineRequest {
+export interface ReadComputeOrdiriComV1alpha1NamespacedVirtualMachineRequest {
     name: string;
+    namespace: string;
     pretty?: string;
 }
 
-export interface ReadComputeOrdiriComV1alpha1VirtualMachineDeploymentRequest {
+export interface ReadComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRequest {
     name: string;
+    namespace: string;
     pretty?: string;
 }
 
-export interface ReadComputeOrdiriComV1alpha1VirtualMachineDeploymentScaleRequest {
+export interface ReadComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentScaleRequest {
     name: string;
+    namespace: string;
     pretty?: string;
 }
 
-export interface ReadComputeOrdiriComV1alpha1VirtualMachineDeploymentStatusRequest {
+export interface ReadComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentStatusRequest {
     name: string;
+    namespace: string;
     pretty?: string;
 }
 
-export interface ReadComputeOrdiriComV1alpha1VirtualMachineReplicaSetRequest {
+export interface ReadComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRequest {
     name: string;
+    namespace: string;
     pretty?: string;
 }
 
-export interface ReadComputeOrdiriComV1alpha1VirtualMachineReplicaSetStatusRequest {
+export interface ReadComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetStatusRequest {
     name: string;
+    namespace: string;
     pretty?: string;
 }
 
-export interface ReadComputeOrdiriComV1alpha1VirtualMachineRestartRequest {
+export interface ReadComputeOrdiriComV1alpha1NamespacedVirtualMachineRestartRequest {
     name: string;
+    namespace: string;
     pretty?: string;
 }
 
-export interface ReadComputeOrdiriComV1alpha1VirtualMachineStatusRequest {
+export interface ReadComputeOrdiriComV1alpha1NamespacedVirtualMachineStatusRequest {
     name: string;
+    namespace: string;
     pretty?: string;
 }
 
-export interface ReplaceComputeOrdiriComV1alpha1VirtualMachineRequest {
+export interface ReplaceComputeOrdiriComV1alpha1NamespacedVirtualMachineRequest {
     name: string;
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface ReplaceComputeOrdiriComV1alpha1VirtualMachineDeploymentRequest {
+export interface ReplaceComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRequest {
     name: string;
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface ReplaceComputeOrdiriComV1alpha1VirtualMachineDeploymentScaleRequest {
+export interface ReplaceComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentScaleRequest {
     name: string;
+    namespace: string;
     body: IoK8sApiAutoscalingV1Scale;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface ReplaceComputeOrdiriComV1alpha1VirtualMachineDeploymentStatusRequest {
+export interface ReplaceComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentStatusRequest {
     name: string;
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface ReplaceComputeOrdiriComV1alpha1VirtualMachineReplicaSetRequest {
+export interface ReplaceComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRequest {
     name: string;
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface ReplaceComputeOrdiriComV1alpha1VirtualMachineReplicaSetStatusRequest {
+export interface ReplaceComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetStatusRequest {
     name: string;
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface ReplaceComputeOrdiriComV1alpha1VirtualMachineRestartRequest {
+export interface ReplaceComputeOrdiriComV1alpha1NamespacedVirtualMachineRestartRequest {
     name: string;
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface ReplaceComputeOrdiriComV1alpha1VirtualMachineStatusRequest {
+export interface ReplaceComputeOrdiriComV1alpha1NamespacedVirtualMachineStatusRequest {
     name: string;
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface WatchComputeOrdiriComV1alpha1VirtualMachineRequest {
+export interface WatchComputeOrdiriComV1alpha1NamespacedVirtualMachineRequest {
     name: string;
+    namespace: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
     fieldSelector?: string;
@@ -380,8 +456,9 @@ export interface WatchComputeOrdiriComV1alpha1VirtualMachineRequest {
     watch?: boolean;
 }
 
-export interface WatchComputeOrdiriComV1alpha1VirtualMachineDeploymentRequest {
+export interface WatchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRequest {
     name: string;
+    namespace: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
     fieldSelector?: string;
@@ -394,7 +471,8 @@ export interface WatchComputeOrdiriComV1alpha1VirtualMachineDeploymentRequest {
     watch?: boolean;
 }
 
-export interface WatchComputeOrdiriComV1alpha1VirtualMachineDeploymentListRequest {
+export interface WatchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentListRequest {
+    namespace: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
     fieldSelector?: string;
@@ -407,7 +485,8 @@ export interface WatchComputeOrdiriComV1alpha1VirtualMachineDeploymentListReques
     watch?: boolean;
 }
 
-export interface WatchComputeOrdiriComV1alpha1VirtualMachineListRequest {
+export interface WatchComputeOrdiriComV1alpha1NamespacedVirtualMachineListRequest {
+    namespace: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
     fieldSelector?: string;
@@ -420,8 +499,9 @@ export interface WatchComputeOrdiriComV1alpha1VirtualMachineListRequest {
     watch?: boolean;
 }
 
-export interface WatchComputeOrdiriComV1alpha1VirtualMachineReplicaSetRequest {
+export interface WatchComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRequest {
     name: string;
+    namespace: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
     fieldSelector?: string;
@@ -434,7 +514,47 @@ export interface WatchComputeOrdiriComV1alpha1VirtualMachineReplicaSetRequest {
     watch?: boolean;
 }
 
-export interface WatchComputeOrdiriComV1alpha1VirtualMachineReplicaSetListRequest {
+export interface WatchComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetListRequest {
+    namespace: string;
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface WatchComputeOrdiriComV1alpha1VirtualMachineDeploymentListForAllNamespacesRequest {
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface WatchComputeOrdiriComV1alpha1VirtualMachineListForAllNamespacesRequest {
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface WatchComputeOrdiriComV1alpha1VirtualMachineReplicaSetListForAllNamespacesRequest {
     allowWatchBookmarks?: boolean;
     _continue?: string;
     fieldSelector?: string;
@@ -455,9 +575,13 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * create a VirtualMachine
      */
-    async createComputeOrdiriComV1alpha1VirtualMachineRaw(requestParameters: CreateComputeOrdiriComV1alpha1VirtualMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine>> {
+    async createComputeOrdiriComV1alpha1NamespacedVirtualMachineRaw(requestParameters: CreateComputeOrdiriComV1alpha1NamespacedVirtualMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling createComputeOrdiriComV1alpha1NamespacedVirtualMachine.');
+        }
+
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling createComputeOrdiriComV1alpha1VirtualMachine.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling createComputeOrdiriComV1alpha1NamespacedVirtualMachine.');
         }
 
         const queryParameters: any = {};
@@ -479,7 +603,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachines`,
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachines`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -492,17 +616,21 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * create a VirtualMachine
      */
-    async createComputeOrdiriComV1alpha1VirtualMachine(requestParameters: CreateComputeOrdiriComV1alpha1VirtualMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine> {
-        const response = await this.createComputeOrdiriComV1alpha1VirtualMachineRaw(requestParameters, initOverrides);
+    async createComputeOrdiriComV1alpha1NamespacedVirtualMachine(requestParameters: CreateComputeOrdiriComV1alpha1NamespacedVirtualMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine> {
+        const response = await this.createComputeOrdiriComV1alpha1NamespacedVirtualMachineRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * create a VirtualMachineDeployment
      */
-    async createComputeOrdiriComV1alpha1VirtualMachineDeploymentRaw(requestParameters: CreateComputeOrdiriComV1alpha1VirtualMachineDeploymentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment>> {
+    async createComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRaw(requestParameters: CreateComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling createComputeOrdiriComV1alpha1NamespacedVirtualMachineDeployment.');
+        }
+
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling createComputeOrdiriComV1alpha1VirtualMachineDeployment.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling createComputeOrdiriComV1alpha1NamespacedVirtualMachineDeployment.');
         }
 
         const queryParameters: any = {};
@@ -524,7 +652,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachinedeployments`,
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachinedeployments`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -537,17 +665,21 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * create a VirtualMachineDeployment
      */
-    async createComputeOrdiriComV1alpha1VirtualMachineDeployment(requestParameters: CreateComputeOrdiriComV1alpha1VirtualMachineDeploymentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment> {
-        const response = await this.createComputeOrdiriComV1alpha1VirtualMachineDeploymentRaw(requestParameters, initOverrides);
+    async createComputeOrdiriComV1alpha1NamespacedVirtualMachineDeployment(requestParameters: CreateComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment> {
+        const response = await this.createComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * create a VirtualMachineReplicaSet
      */
-    async createComputeOrdiriComV1alpha1VirtualMachineReplicaSetRaw(requestParameters: CreateComputeOrdiriComV1alpha1VirtualMachineReplicaSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet>> {
+    async createComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRaw(requestParameters: CreateComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling createComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSet.');
+        }
+
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling createComputeOrdiriComV1alpha1VirtualMachineReplicaSet.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling createComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSet.');
         }
 
         const queryParameters: any = {};
@@ -569,7 +701,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachinereplicasets`,
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachinereplicasets`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -582,15 +714,19 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * create a VirtualMachineReplicaSet
      */
-    async createComputeOrdiriComV1alpha1VirtualMachineReplicaSet(requestParameters: CreateComputeOrdiriComV1alpha1VirtualMachineReplicaSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet> {
-        const response = await this.createComputeOrdiriComV1alpha1VirtualMachineReplicaSetRaw(requestParameters, initOverrides);
+    async createComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSet(requestParameters: CreateComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet> {
+        const response = await this.createComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * delete collection of VirtualMachine
      */
-    async deleteComputeOrdiriComV1alpha1CollectionVirtualMachineRaw(requestParameters: DeleteComputeOrdiriComV1alpha1CollectionVirtualMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+    async deleteComputeOrdiriComV1alpha1CollectionNamespacedVirtualMachineRaw(requestParameters: DeleteComputeOrdiriComV1alpha1CollectionNamespacedVirtualMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling deleteComputeOrdiriComV1alpha1CollectionNamespacedVirtualMachine.');
+        }
+
         const queryParameters: any = {};
 
         if (requestParameters.pretty !== undefined) {
@@ -646,7 +782,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachines`,
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachines`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -659,15 +795,19 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * delete collection of VirtualMachine
      */
-    async deleteComputeOrdiriComV1alpha1CollectionVirtualMachine(requestParameters: DeleteComputeOrdiriComV1alpha1CollectionVirtualMachineRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
-        const response = await this.deleteComputeOrdiriComV1alpha1CollectionVirtualMachineRaw(requestParameters, initOverrides);
+    async deleteComputeOrdiriComV1alpha1CollectionNamespacedVirtualMachine(requestParameters: DeleteComputeOrdiriComV1alpha1CollectionNamespacedVirtualMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
+        const response = await this.deleteComputeOrdiriComV1alpha1CollectionNamespacedVirtualMachineRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * delete collection of VirtualMachineDeployment
      */
-    async deleteComputeOrdiriComV1alpha1CollectionVirtualMachineDeploymentRaw(requestParameters: DeleteComputeOrdiriComV1alpha1CollectionVirtualMachineDeploymentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+    async deleteComputeOrdiriComV1alpha1CollectionNamespacedVirtualMachineDeploymentRaw(requestParameters: DeleteComputeOrdiriComV1alpha1CollectionNamespacedVirtualMachineDeploymentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling deleteComputeOrdiriComV1alpha1CollectionNamespacedVirtualMachineDeployment.');
+        }
+
         const queryParameters: any = {};
 
         if (requestParameters.pretty !== undefined) {
@@ -723,7 +863,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachinedeployments`,
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachinedeployments`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -736,15 +876,19 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * delete collection of VirtualMachineDeployment
      */
-    async deleteComputeOrdiriComV1alpha1CollectionVirtualMachineDeployment(requestParameters: DeleteComputeOrdiriComV1alpha1CollectionVirtualMachineDeploymentRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
-        const response = await this.deleteComputeOrdiriComV1alpha1CollectionVirtualMachineDeploymentRaw(requestParameters, initOverrides);
+    async deleteComputeOrdiriComV1alpha1CollectionNamespacedVirtualMachineDeployment(requestParameters: DeleteComputeOrdiriComV1alpha1CollectionNamespacedVirtualMachineDeploymentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
+        const response = await this.deleteComputeOrdiriComV1alpha1CollectionNamespacedVirtualMachineDeploymentRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * delete collection of VirtualMachineReplicaSet
      */
-    async deleteComputeOrdiriComV1alpha1CollectionVirtualMachineReplicaSetRaw(requestParameters: DeleteComputeOrdiriComV1alpha1CollectionVirtualMachineReplicaSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+    async deleteComputeOrdiriComV1alpha1CollectionNamespacedVirtualMachineReplicaSetRaw(requestParameters: DeleteComputeOrdiriComV1alpha1CollectionNamespacedVirtualMachineReplicaSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling deleteComputeOrdiriComV1alpha1CollectionNamespacedVirtualMachineReplicaSet.');
+        }
+
         const queryParameters: any = {};
 
         if (requestParameters.pretty !== undefined) {
@@ -800,7 +944,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachinereplicasets`,
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachinereplicasets`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -813,17 +957,21 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * delete collection of VirtualMachineReplicaSet
      */
-    async deleteComputeOrdiriComV1alpha1CollectionVirtualMachineReplicaSet(requestParameters: DeleteComputeOrdiriComV1alpha1CollectionVirtualMachineReplicaSetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
-        const response = await this.deleteComputeOrdiriComV1alpha1CollectionVirtualMachineReplicaSetRaw(requestParameters, initOverrides);
+    async deleteComputeOrdiriComV1alpha1CollectionNamespacedVirtualMachineReplicaSet(requestParameters: DeleteComputeOrdiriComV1alpha1CollectionNamespacedVirtualMachineReplicaSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
+        const response = await this.deleteComputeOrdiriComV1alpha1CollectionNamespacedVirtualMachineReplicaSetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * delete a VirtualMachine
      */
-    async deleteComputeOrdiriComV1alpha1VirtualMachineRaw(requestParameters: DeleteComputeOrdiriComV1alpha1VirtualMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+    async deleteComputeOrdiriComV1alpha1NamespacedVirtualMachineRaw(requestParameters: DeleteComputeOrdiriComV1alpha1NamespacedVirtualMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling deleteComputeOrdiriComV1alpha1VirtualMachine.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling deleteComputeOrdiriComV1alpha1NamespacedVirtualMachine.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling deleteComputeOrdiriComV1alpha1NamespacedVirtualMachine.');
         }
 
         const queryParameters: any = {};
@@ -853,7 +1001,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachines/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachines/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -866,17 +1014,21 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * delete a VirtualMachine
      */
-    async deleteComputeOrdiriComV1alpha1VirtualMachine(requestParameters: DeleteComputeOrdiriComV1alpha1VirtualMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
-        const response = await this.deleteComputeOrdiriComV1alpha1VirtualMachineRaw(requestParameters, initOverrides);
+    async deleteComputeOrdiriComV1alpha1NamespacedVirtualMachine(requestParameters: DeleteComputeOrdiriComV1alpha1NamespacedVirtualMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
+        const response = await this.deleteComputeOrdiriComV1alpha1NamespacedVirtualMachineRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * delete a VirtualMachineDeployment
      */
-    async deleteComputeOrdiriComV1alpha1VirtualMachineDeploymentRaw(requestParameters: DeleteComputeOrdiriComV1alpha1VirtualMachineDeploymentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+    async deleteComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRaw(requestParameters: DeleteComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling deleteComputeOrdiriComV1alpha1VirtualMachineDeployment.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling deleteComputeOrdiriComV1alpha1NamespacedVirtualMachineDeployment.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling deleteComputeOrdiriComV1alpha1NamespacedVirtualMachineDeployment.');
         }
 
         const queryParameters: any = {};
@@ -906,7 +1058,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachinedeployments/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachinedeployments/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -919,17 +1071,21 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * delete a VirtualMachineDeployment
      */
-    async deleteComputeOrdiriComV1alpha1VirtualMachineDeployment(requestParameters: DeleteComputeOrdiriComV1alpha1VirtualMachineDeploymentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
-        const response = await this.deleteComputeOrdiriComV1alpha1VirtualMachineDeploymentRaw(requestParameters, initOverrides);
+    async deleteComputeOrdiriComV1alpha1NamespacedVirtualMachineDeployment(requestParameters: DeleteComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
+        const response = await this.deleteComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * delete a VirtualMachineReplicaSet
      */
-    async deleteComputeOrdiriComV1alpha1VirtualMachineReplicaSetRaw(requestParameters: DeleteComputeOrdiriComV1alpha1VirtualMachineReplicaSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+    async deleteComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRaw(requestParameters: DeleteComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling deleteComputeOrdiriComV1alpha1VirtualMachineReplicaSet.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling deleteComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSet.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling deleteComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSet.');
         }
 
         const queryParameters: any = {};
@@ -959,7 +1115,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachinereplicasets/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachinereplicasets/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -972,8 +1128,8 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * delete a VirtualMachineReplicaSet
      */
-    async deleteComputeOrdiriComV1alpha1VirtualMachineReplicaSet(requestParameters: DeleteComputeOrdiriComV1alpha1VirtualMachineReplicaSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
-        const response = await this.deleteComputeOrdiriComV1alpha1VirtualMachineReplicaSetRaw(requestParameters, initOverrides);
+    async deleteComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSet(requestParameters: DeleteComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
+        const response = await this.deleteComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -1006,7 +1162,11 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * list or watch objects of kind VirtualMachine
      */
-    async listComputeOrdiriComV1alpha1VirtualMachineRaw(requestParameters: ListComputeOrdiriComV1alpha1VirtualMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineList>> {
+    async listComputeOrdiriComV1alpha1NamespacedVirtualMachineRaw(requestParameters: ListComputeOrdiriComV1alpha1NamespacedVirtualMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineList>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling listComputeOrdiriComV1alpha1NamespacedVirtualMachine.');
+        }
+
         const queryParameters: any = {};
 
         if (requestParameters.pretty !== undefined) {
@@ -1052,7 +1212,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachines`,
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachines`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -1064,15 +1224,19 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * list or watch objects of kind VirtualMachine
      */
-    async listComputeOrdiriComV1alpha1VirtualMachine(requestParameters: ListComputeOrdiriComV1alpha1VirtualMachineRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineList> {
-        const response = await this.listComputeOrdiriComV1alpha1VirtualMachineRaw(requestParameters, initOverrides);
+    async listComputeOrdiriComV1alpha1NamespacedVirtualMachine(requestParameters: ListComputeOrdiriComV1alpha1NamespacedVirtualMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineList> {
+        const response = await this.listComputeOrdiriComV1alpha1NamespacedVirtualMachineRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * list or watch objects of kind VirtualMachineDeployment
      */
-    async listComputeOrdiriComV1alpha1VirtualMachineDeploymentRaw(requestParameters: ListComputeOrdiriComV1alpha1VirtualMachineDeploymentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeploymentList>> {
+    async listComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRaw(requestParameters: ListComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeploymentList>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling listComputeOrdiriComV1alpha1NamespacedVirtualMachineDeployment.');
+        }
+
         const queryParameters: any = {};
 
         if (requestParameters.pretty !== undefined) {
@@ -1097,6 +1261,142 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
 
         if (requestParameters.limit !== undefined) {
             queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachinedeployments`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeploymentListFromJSON(jsonValue));
+    }
+
+    /**
+     * list or watch objects of kind VirtualMachineDeployment
+     */
+    async listComputeOrdiriComV1alpha1NamespacedVirtualMachineDeployment(requestParameters: ListComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeploymentList> {
+        const response = await this.listComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * list or watch objects of kind VirtualMachineReplicaSet
+     */
+    async listComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRaw(requestParameters: ListComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSetList>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling listComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSet.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachinereplicasets`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSetListFromJSON(jsonValue));
+    }
+
+    /**
+     * list or watch objects of kind VirtualMachineReplicaSet
+     */
+    async listComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSet(requestParameters: ListComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSetList> {
+        const response = await this.listComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * list or watch objects of kind VirtualMachineDeployment
+     */
+    async listComputeOrdiriComV1alpha1VirtualMachineDeploymentForAllNamespacesRaw(requestParameters: ListComputeOrdiriComV1alpha1VirtualMachineDeploymentForAllNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeploymentList>> {
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
         }
 
         if (requestParameters.resourceVersion !== undefined) {
@@ -1130,20 +1430,16 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * list or watch objects of kind VirtualMachineDeployment
      */
-    async listComputeOrdiriComV1alpha1VirtualMachineDeployment(requestParameters: ListComputeOrdiriComV1alpha1VirtualMachineDeploymentRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeploymentList> {
-        const response = await this.listComputeOrdiriComV1alpha1VirtualMachineDeploymentRaw(requestParameters, initOverrides);
+    async listComputeOrdiriComV1alpha1VirtualMachineDeploymentForAllNamespaces(requestParameters: ListComputeOrdiriComV1alpha1VirtualMachineDeploymentForAllNamespacesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeploymentList> {
+        const response = await this.listComputeOrdiriComV1alpha1VirtualMachineDeploymentForAllNamespacesRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
-     * list or watch objects of kind VirtualMachineReplicaSet
+     * list or watch objects of kind VirtualMachine
      */
-    async listComputeOrdiriComV1alpha1VirtualMachineReplicaSetRaw(requestParameters: ListComputeOrdiriComV1alpha1VirtualMachineReplicaSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSetList>> {
+    async listComputeOrdiriComV1alpha1VirtualMachineForAllNamespacesRaw(requestParameters: ListComputeOrdiriComV1alpha1VirtualMachineForAllNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineList>> {
         const queryParameters: any = {};
-
-        if (requestParameters.pretty !== undefined) {
-            queryParameters['pretty'] = requestParameters.pretty;
-        }
 
         if (requestParameters.allowWatchBookmarks !== undefined) {
             queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
@@ -1163,6 +1459,76 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
 
         if (requestParameters.limit !== undefined) {
             queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachines`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineListFromJSON(jsonValue));
+    }
+
+    /**
+     * list or watch objects of kind VirtualMachine
+     */
+    async listComputeOrdiriComV1alpha1VirtualMachineForAllNamespaces(requestParameters: ListComputeOrdiriComV1alpha1VirtualMachineForAllNamespacesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineList> {
+        const response = await this.listComputeOrdiriComV1alpha1VirtualMachineForAllNamespacesRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * list or watch objects of kind VirtualMachineReplicaSet
+     */
+    async listComputeOrdiriComV1alpha1VirtualMachineReplicaSetForAllNamespacesRaw(requestParameters: ListComputeOrdiriComV1alpha1VirtualMachineReplicaSetForAllNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSetList>> {
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
         }
 
         if (requestParameters.resourceVersion !== undefined) {
@@ -1196,21 +1562,25 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * list or watch objects of kind VirtualMachineReplicaSet
      */
-    async listComputeOrdiriComV1alpha1VirtualMachineReplicaSet(requestParameters: ListComputeOrdiriComV1alpha1VirtualMachineReplicaSetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSetList> {
-        const response = await this.listComputeOrdiriComV1alpha1VirtualMachineReplicaSetRaw(requestParameters, initOverrides);
+    async listComputeOrdiriComV1alpha1VirtualMachineReplicaSetForAllNamespaces(requestParameters: ListComputeOrdiriComV1alpha1VirtualMachineReplicaSetForAllNamespacesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSetList> {
+        const response = await this.listComputeOrdiriComV1alpha1VirtualMachineReplicaSetForAllNamespacesRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * partially update the specified VirtualMachine
      */
-    async patchComputeOrdiriComV1alpha1VirtualMachineRaw(requestParameters: PatchComputeOrdiriComV1alpha1VirtualMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine>> {
+    async patchComputeOrdiriComV1alpha1NamespacedVirtualMachineRaw(requestParameters: PatchComputeOrdiriComV1alpha1NamespacedVirtualMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchComputeOrdiriComV1alpha1VirtualMachine.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchComputeOrdiriComV1alpha1NamespacedVirtualMachine.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchComputeOrdiriComV1alpha1NamespacedVirtualMachine.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchComputeOrdiriComV1alpha1VirtualMachine.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchComputeOrdiriComV1alpha1NamespacedVirtualMachine.');
         }
 
         const queryParameters: any = {};
@@ -1236,7 +1606,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json-patch+json';
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachines/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachines/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -1249,21 +1619,25 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update the specified VirtualMachine
      */
-    async patchComputeOrdiriComV1alpha1VirtualMachine(requestParameters: PatchComputeOrdiriComV1alpha1VirtualMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine> {
-        const response = await this.patchComputeOrdiriComV1alpha1VirtualMachineRaw(requestParameters, initOverrides);
+    async patchComputeOrdiriComV1alpha1NamespacedVirtualMachine(requestParameters: PatchComputeOrdiriComV1alpha1NamespacedVirtualMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine> {
+        const response = await this.patchComputeOrdiriComV1alpha1NamespacedVirtualMachineRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * partially update the specified VirtualMachineDeployment
      */
-    async patchComputeOrdiriComV1alpha1VirtualMachineDeploymentRaw(requestParameters: PatchComputeOrdiriComV1alpha1VirtualMachineDeploymentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment>> {
+    async patchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRaw(requestParameters: PatchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchComputeOrdiriComV1alpha1VirtualMachineDeployment.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeployment.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeployment.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchComputeOrdiriComV1alpha1VirtualMachineDeployment.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeployment.');
         }
 
         const queryParameters: any = {};
@@ -1289,7 +1663,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json-patch+json';
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachinedeployments/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachinedeployments/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -1302,21 +1676,25 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update the specified VirtualMachineDeployment
      */
-    async patchComputeOrdiriComV1alpha1VirtualMachineDeployment(requestParameters: PatchComputeOrdiriComV1alpha1VirtualMachineDeploymentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment> {
-        const response = await this.patchComputeOrdiriComV1alpha1VirtualMachineDeploymentRaw(requestParameters, initOverrides);
+    async patchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeployment(requestParameters: PatchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment> {
+        const response = await this.patchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * partially update scale of the specified VirtualMachineDeployment
      */
-    async patchComputeOrdiriComV1alpha1VirtualMachineDeploymentScaleRaw(requestParameters: PatchComputeOrdiriComV1alpha1VirtualMachineDeploymentScaleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApiAutoscalingV1Scale>> {
+    async patchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentScaleRaw(requestParameters: PatchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentScaleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApiAutoscalingV1Scale>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchComputeOrdiriComV1alpha1VirtualMachineDeploymentScale.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentScale.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentScale.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchComputeOrdiriComV1alpha1VirtualMachineDeploymentScale.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentScale.');
         }
 
         const queryParameters: any = {};
@@ -1342,7 +1720,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json-patch+json';
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachinedeployments/{name}/scale`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachinedeployments/{name}/scale`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -1355,21 +1733,25 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update scale of the specified VirtualMachineDeployment
      */
-    async patchComputeOrdiriComV1alpha1VirtualMachineDeploymentScale(requestParameters: PatchComputeOrdiriComV1alpha1VirtualMachineDeploymentScaleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApiAutoscalingV1Scale> {
-        const response = await this.patchComputeOrdiriComV1alpha1VirtualMachineDeploymentScaleRaw(requestParameters, initOverrides);
+    async patchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentScale(requestParameters: PatchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentScaleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApiAutoscalingV1Scale> {
+        const response = await this.patchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentScaleRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * partially update status of the specified VirtualMachineDeployment
      */
-    async patchComputeOrdiriComV1alpha1VirtualMachineDeploymentStatusRaw(requestParameters: PatchComputeOrdiriComV1alpha1VirtualMachineDeploymentStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment>> {
+    async patchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentStatusRaw(requestParameters: PatchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchComputeOrdiriComV1alpha1VirtualMachineDeploymentStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentStatus.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchComputeOrdiriComV1alpha1VirtualMachineDeploymentStatus.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentStatus.');
         }
 
         const queryParameters: any = {};
@@ -1395,7 +1777,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json-patch+json';
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachinedeployments/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachinedeployments/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -1408,21 +1790,25 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update status of the specified VirtualMachineDeployment
      */
-    async patchComputeOrdiriComV1alpha1VirtualMachineDeploymentStatus(requestParameters: PatchComputeOrdiriComV1alpha1VirtualMachineDeploymentStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment> {
-        const response = await this.patchComputeOrdiriComV1alpha1VirtualMachineDeploymentStatusRaw(requestParameters, initOverrides);
+    async patchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentStatus(requestParameters: PatchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment> {
+        const response = await this.patchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * partially update the specified VirtualMachineReplicaSet
      */
-    async patchComputeOrdiriComV1alpha1VirtualMachineReplicaSetRaw(requestParameters: PatchComputeOrdiriComV1alpha1VirtualMachineReplicaSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet>> {
+    async patchComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRaw(requestParameters: PatchComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchComputeOrdiriComV1alpha1VirtualMachineReplicaSet.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSet.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSet.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchComputeOrdiriComV1alpha1VirtualMachineReplicaSet.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSet.');
         }
 
         const queryParameters: any = {};
@@ -1448,7 +1834,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json-patch+json';
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachinereplicasets/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachinereplicasets/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -1461,21 +1847,25 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update the specified VirtualMachineReplicaSet
      */
-    async patchComputeOrdiriComV1alpha1VirtualMachineReplicaSet(requestParameters: PatchComputeOrdiriComV1alpha1VirtualMachineReplicaSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet> {
-        const response = await this.patchComputeOrdiriComV1alpha1VirtualMachineReplicaSetRaw(requestParameters, initOverrides);
+    async patchComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSet(requestParameters: PatchComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet> {
+        const response = await this.patchComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * partially update status of the specified VirtualMachineReplicaSet
      */
-    async patchComputeOrdiriComV1alpha1VirtualMachineReplicaSetStatusRaw(requestParameters: PatchComputeOrdiriComV1alpha1VirtualMachineReplicaSetStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet>> {
+    async patchComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetStatusRaw(requestParameters: PatchComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchComputeOrdiriComV1alpha1VirtualMachineReplicaSetStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetStatus.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchComputeOrdiriComV1alpha1VirtualMachineReplicaSetStatus.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetStatus.');
         }
 
         const queryParameters: any = {};
@@ -1501,7 +1891,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json-patch+json';
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachinereplicasets/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachinereplicasets/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -1514,21 +1904,25 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update status of the specified VirtualMachineReplicaSet
      */
-    async patchComputeOrdiriComV1alpha1VirtualMachineReplicaSetStatus(requestParameters: PatchComputeOrdiriComV1alpha1VirtualMachineReplicaSetStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet> {
-        const response = await this.patchComputeOrdiriComV1alpha1VirtualMachineReplicaSetStatusRaw(requestParameters, initOverrides);
+    async patchComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetStatus(requestParameters: PatchComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet> {
+        const response = await this.patchComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * partially update restart of the specified VirtualMachine
      */
-    async patchComputeOrdiriComV1alpha1VirtualMachineRestartRaw(requestParameters: PatchComputeOrdiriComV1alpha1VirtualMachineRestartRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine>> {
+    async patchComputeOrdiriComV1alpha1NamespacedVirtualMachineRestartRaw(requestParameters: PatchComputeOrdiriComV1alpha1NamespacedVirtualMachineRestartRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchComputeOrdiriComV1alpha1VirtualMachineRestart.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchComputeOrdiriComV1alpha1NamespacedVirtualMachineRestart.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchComputeOrdiriComV1alpha1NamespacedVirtualMachineRestart.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchComputeOrdiriComV1alpha1VirtualMachineRestart.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchComputeOrdiriComV1alpha1NamespacedVirtualMachineRestart.');
         }
 
         const queryParameters: any = {};
@@ -1554,7 +1948,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json-patch+json';
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachines/{name}/restart`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachines/{name}/restart`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -1567,21 +1961,25 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update restart of the specified VirtualMachine
      */
-    async patchComputeOrdiriComV1alpha1VirtualMachineRestart(requestParameters: PatchComputeOrdiriComV1alpha1VirtualMachineRestartRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine> {
-        const response = await this.patchComputeOrdiriComV1alpha1VirtualMachineRestartRaw(requestParameters, initOverrides);
+    async patchComputeOrdiriComV1alpha1NamespacedVirtualMachineRestart(requestParameters: PatchComputeOrdiriComV1alpha1NamespacedVirtualMachineRestartRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine> {
+        const response = await this.patchComputeOrdiriComV1alpha1NamespacedVirtualMachineRestartRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * partially update status of the specified VirtualMachine
      */
-    async patchComputeOrdiriComV1alpha1VirtualMachineStatusRaw(requestParameters: PatchComputeOrdiriComV1alpha1VirtualMachineStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine>> {
+    async patchComputeOrdiriComV1alpha1NamespacedVirtualMachineStatusRaw(requestParameters: PatchComputeOrdiriComV1alpha1NamespacedVirtualMachineStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchComputeOrdiriComV1alpha1VirtualMachineStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchComputeOrdiriComV1alpha1NamespacedVirtualMachineStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchComputeOrdiriComV1alpha1NamespacedVirtualMachineStatus.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchComputeOrdiriComV1alpha1VirtualMachineStatus.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchComputeOrdiriComV1alpha1NamespacedVirtualMachineStatus.');
         }
 
         const queryParameters: any = {};
@@ -1607,7 +2005,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json-patch+json';
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachines/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachines/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -1620,17 +2018,21 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update status of the specified VirtualMachine
      */
-    async patchComputeOrdiriComV1alpha1VirtualMachineStatus(requestParameters: PatchComputeOrdiriComV1alpha1VirtualMachineStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine> {
-        const response = await this.patchComputeOrdiriComV1alpha1VirtualMachineStatusRaw(requestParameters, initOverrides);
+    async patchComputeOrdiriComV1alpha1NamespacedVirtualMachineStatus(requestParameters: PatchComputeOrdiriComV1alpha1NamespacedVirtualMachineStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine> {
+        const response = await this.patchComputeOrdiriComV1alpha1NamespacedVirtualMachineStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * read the specified VirtualMachine
      */
-    async readComputeOrdiriComV1alpha1VirtualMachineRaw(requestParameters: ReadComputeOrdiriComV1alpha1VirtualMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine>> {
+    async readComputeOrdiriComV1alpha1NamespacedVirtualMachineRaw(requestParameters: ReadComputeOrdiriComV1alpha1NamespacedVirtualMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readComputeOrdiriComV1alpha1VirtualMachine.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readComputeOrdiriComV1alpha1NamespacedVirtualMachine.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readComputeOrdiriComV1alpha1NamespacedVirtualMachine.');
         }
 
         const queryParameters: any = {};
@@ -1642,7 +2044,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachines/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachines/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -1654,17 +2056,21 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read the specified VirtualMachine
      */
-    async readComputeOrdiriComV1alpha1VirtualMachine(requestParameters: ReadComputeOrdiriComV1alpha1VirtualMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine> {
-        const response = await this.readComputeOrdiriComV1alpha1VirtualMachineRaw(requestParameters, initOverrides);
+    async readComputeOrdiriComV1alpha1NamespacedVirtualMachine(requestParameters: ReadComputeOrdiriComV1alpha1NamespacedVirtualMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine> {
+        const response = await this.readComputeOrdiriComV1alpha1NamespacedVirtualMachineRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * read the specified VirtualMachineDeployment
      */
-    async readComputeOrdiriComV1alpha1VirtualMachineDeploymentRaw(requestParameters: ReadComputeOrdiriComV1alpha1VirtualMachineDeploymentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment>> {
+    async readComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRaw(requestParameters: ReadComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readComputeOrdiriComV1alpha1VirtualMachineDeployment.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readComputeOrdiriComV1alpha1NamespacedVirtualMachineDeployment.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readComputeOrdiriComV1alpha1NamespacedVirtualMachineDeployment.');
         }
 
         const queryParameters: any = {};
@@ -1676,7 +2082,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachinedeployments/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachinedeployments/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -1688,17 +2094,21 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read the specified VirtualMachineDeployment
      */
-    async readComputeOrdiriComV1alpha1VirtualMachineDeployment(requestParameters: ReadComputeOrdiriComV1alpha1VirtualMachineDeploymentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment> {
-        const response = await this.readComputeOrdiriComV1alpha1VirtualMachineDeploymentRaw(requestParameters, initOverrides);
+    async readComputeOrdiriComV1alpha1NamespacedVirtualMachineDeployment(requestParameters: ReadComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment> {
+        const response = await this.readComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * read scale of the specified VirtualMachineDeployment
      */
-    async readComputeOrdiriComV1alpha1VirtualMachineDeploymentScaleRaw(requestParameters: ReadComputeOrdiriComV1alpha1VirtualMachineDeploymentScaleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApiAutoscalingV1Scale>> {
+    async readComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentScaleRaw(requestParameters: ReadComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentScaleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApiAutoscalingV1Scale>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readComputeOrdiriComV1alpha1VirtualMachineDeploymentScale.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentScale.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentScale.');
         }
 
         const queryParameters: any = {};
@@ -1710,7 +2120,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachinedeployments/{name}/scale`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachinedeployments/{name}/scale`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -1722,17 +2132,21 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read scale of the specified VirtualMachineDeployment
      */
-    async readComputeOrdiriComV1alpha1VirtualMachineDeploymentScale(requestParameters: ReadComputeOrdiriComV1alpha1VirtualMachineDeploymentScaleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApiAutoscalingV1Scale> {
-        const response = await this.readComputeOrdiriComV1alpha1VirtualMachineDeploymentScaleRaw(requestParameters, initOverrides);
+    async readComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentScale(requestParameters: ReadComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentScaleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApiAutoscalingV1Scale> {
+        const response = await this.readComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentScaleRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * read status of the specified VirtualMachineDeployment
      */
-    async readComputeOrdiriComV1alpha1VirtualMachineDeploymentStatusRaw(requestParameters: ReadComputeOrdiriComV1alpha1VirtualMachineDeploymentStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment>> {
+    async readComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentStatusRaw(requestParameters: ReadComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readComputeOrdiriComV1alpha1VirtualMachineDeploymentStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentStatus.');
         }
 
         const queryParameters: any = {};
@@ -1744,7 +2158,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachinedeployments/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachinedeployments/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -1756,17 +2170,21 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read status of the specified VirtualMachineDeployment
      */
-    async readComputeOrdiriComV1alpha1VirtualMachineDeploymentStatus(requestParameters: ReadComputeOrdiriComV1alpha1VirtualMachineDeploymentStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment> {
-        const response = await this.readComputeOrdiriComV1alpha1VirtualMachineDeploymentStatusRaw(requestParameters, initOverrides);
+    async readComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentStatus(requestParameters: ReadComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment> {
+        const response = await this.readComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * read the specified VirtualMachineReplicaSet
      */
-    async readComputeOrdiriComV1alpha1VirtualMachineReplicaSetRaw(requestParameters: ReadComputeOrdiriComV1alpha1VirtualMachineReplicaSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet>> {
+    async readComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRaw(requestParameters: ReadComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readComputeOrdiriComV1alpha1VirtualMachineReplicaSet.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSet.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSet.');
         }
 
         const queryParameters: any = {};
@@ -1778,7 +2196,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachinereplicasets/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachinereplicasets/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -1790,17 +2208,21 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read the specified VirtualMachineReplicaSet
      */
-    async readComputeOrdiriComV1alpha1VirtualMachineReplicaSet(requestParameters: ReadComputeOrdiriComV1alpha1VirtualMachineReplicaSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet> {
-        const response = await this.readComputeOrdiriComV1alpha1VirtualMachineReplicaSetRaw(requestParameters, initOverrides);
+    async readComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSet(requestParameters: ReadComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet> {
+        const response = await this.readComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * read status of the specified VirtualMachineReplicaSet
      */
-    async readComputeOrdiriComV1alpha1VirtualMachineReplicaSetStatusRaw(requestParameters: ReadComputeOrdiriComV1alpha1VirtualMachineReplicaSetStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet>> {
+    async readComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetStatusRaw(requestParameters: ReadComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readComputeOrdiriComV1alpha1VirtualMachineReplicaSetStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetStatus.');
         }
 
         const queryParameters: any = {};
@@ -1812,7 +2234,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachinereplicasets/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachinereplicasets/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -1824,17 +2246,21 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read status of the specified VirtualMachineReplicaSet
      */
-    async readComputeOrdiriComV1alpha1VirtualMachineReplicaSetStatus(requestParameters: ReadComputeOrdiriComV1alpha1VirtualMachineReplicaSetStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet> {
-        const response = await this.readComputeOrdiriComV1alpha1VirtualMachineReplicaSetStatusRaw(requestParameters, initOverrides);
+    async readComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetStatus(requestParameters: ReadComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet> {
+        const response = await this.readComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * read restart of the specified VirtualMachine
      */
-    async readComputeOrdiriComV1alpha1VirtualMachineRestartRaw(requestParameters: ReadComputeOrdiriComV1alpha1VirtualMachineRestartRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine>> {
+    async readComputeOrdiriComV1alpha1NamespacedVirtualMachineRestartRaw(requestParameters: ReadComputeOrdiriComV1alpha1NamespacedVirtualMachineRestartRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readComputeOrdiriComV1alpha1VirtualMachineRestart.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readComputeOrdiriComV1alpha1NamespacedVirtualMachineRestart.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readComputeOrdiriComV1alpha1NamespacedVirtualMachineRestart.');
         }
 
         const queryParameters: any = {};
@@ -1846,7 +2272,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachines/{name}/restart`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachines/{name}/restart`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -1858,17 +2284,21 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read restart of the specified VirtualMachine
      */
-    async readComputeOrdiriComV1alpha1VirtualMachineRestart(requestParameters: ReadComputeOrdiriComV1alpha1VirtualMachineRestartRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine> {
-        const response = await this.readComputeOrdiriComV1alpha1VirtualMachineRestartRaw(requestParameters, initOverrides);
+    async readComputeOrdiriComV1alpha1NamespacedVirtualMachineRestart(requestParameters: ReadComputeOrdiriComV1alpha1NamespacedVirtualMachineRestartRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine> {
+        const response = await this.readComputeOrdiriComV1alpha1NamespacedVirtualMachineRestartRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * read status of the specified VirtualMachine
      */
-    async readComputeOrdiriComV1alpha1VirtualMachineStatusRaw(requestParameters: ReadComputeOrdiriComV1alpha1VirtualMachineStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine>> {
+    async readComputeOrdiriComV1alpha1NamespacedVirtualMachineStatusRaw(requestParameters: ReadComputeOrdiriComV1alpha1NamespacedVirtualMachineStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readComputeOrdiriComV1alpha1VirtualMachineStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readComputeOrdiriComV1alpha1NamespacedVirtualMachineStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readComputeOrdiriComV1alpha1NamespacedVirtualMachineStatus.');
         }
 
         const queryParameters: any = {};
@@ -1880,7 +2310,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachines/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachines/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -1892,21 +2322,25 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read status of the specified VirtualMachine
      */
-    async readComputeOrdiriComV1alpha1VirtualMachineStatus(requestParameters: ReadComputeOrdiriComV1alpha1VirtualMachineStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine> {
-        const response = await this.readComputeOrdiriComV1alpha1VirtualMachineStatusRaw(requestParameters, initOverrides);
+    async readComputeOrdiriComV1alpha1NamespacedVirtualMachineStatus(requestParameters: ReadComputeOrdiriComV1alpha1NamespacedVirtualMachineStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine> {
+        const response = await this.readComputeOrdiriComV1alpha1NamespacedVirtualMachineStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * replace the specified VirtualMachine
      */
-    async replaceComputeOrdiriComV1alpha1VirtualMachineRaw(requestParameters: ReplaceComputeOrdiriComV1alpha1VirtualMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine>> {
+    async replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineRaw(requestParameters: ReplaceComputeOrdiriComV1alpha1NamespacedVirtualMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceComputeOrdiriComV1alpha1VirtualMachine.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceComputeOrdiriComV1alpha1NamespacedVirtualMachine.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceComputeOrdiriComV1alpha1NamespacedVirtualMachine.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceComputeOrdiriComV1alpha1VirtualMachine.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceComputeOrdiriComV1alpha1NamespacedVirtualMachine.');
         }
 
         const queryParameters: any = {};
@@ -1928,7 +2362,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachines/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachines/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -1941,21 +2375,25 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace the specified VirtualMachine
      */
-    async replaceComputeOrdiriComV1alpha1VirtualMachine(requestParameters: ReplaceComputeOrdiriComV1alpha1VirtualMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine> {
-        const response = await this.replaceComputeOrdiriComV1alpha1VirtualMachineRaw(requestParameters, initOverrides);
+    async replaceComputeOrdiriComV1alpha1NamespacedVirtualMachine(requestParameters: ReplaceComputeOrdiriComV1alpha1NamespacedVirtualMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine> {
+        const response = await this.replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * replace the specified VirtualMachineDeployment
      */
-    async replaceComputeOrdiriComV1alpha1VirtualMachineDeploymentRaw(requestParameters: ReplaceComputeOrdiriComV1alpha1VirtualMachineDeploymentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment>> {
+    async replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRaw(requestParameters: ReplaceComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceComputeOrdiriComV1alpha1VirtualMachineDeployment.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineDeployment.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineDeployment.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceComputeOrdiriComV1alpha1VirtualMachineDeployment.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineDeployment.');
         }
 
         const queryParameters: any = {};
@@ -1977,7 +2415,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachinedeployments/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachinedeployments/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -1990,21 +2428,25 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace the specified VirtualMachineDeployment
      */
-    async replaceComputeOrdiriComV1alpha1VirtualMachineDeployment(requestParameters: ReplaceComputeOrdiriComV1alpha1VirtualMachineDeploymentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment> {
-        const response = await this.replaceComputeOrdiriComV1alpha1VirtualMachineDeploymentRaw(requestParameters, initOverrides);
+    async replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineDeployment(requestParameters: ReplaceComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment> {
+        const response = await this.replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * replace scale of the specified VirtualMachineDeployment
      */
-    async replaceComputeOrdiriComV1alpha1VirtualMachineDeploymentScaleRaw(requestParameters: ReplaceComputeOrdiriComV1alpha1VirtualMachineDeploymentScaleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApiAutoscalingV1Scale>> {
+    async replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentScaleRaw(requestParameters: ReplaceComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentScaleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApiAutoscalingV1Scale>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceComputeOrdiriComV1alpha1VirtualMachineDeploymentScale.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentScale.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentScale.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceComputeOrdiriComV1alpha1VirtualMachineDeploymentScale.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentScale.');
         }
 
         const queryParameters: any = {};
@@ -2026,7 +2468,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachinedeployments/{name}/scale`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachinedeployments/{name}/scale`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -2039,21 +2481,25 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace scale of the specified VirtualMachineDeployment
      */
-    async replaceComputeOrdiriComV1alpha1VirtualMachineDeploymentScale(requestParameters: ReplaceComputeOrdiriComV1alpha1VirtualMachineDeploymentScaleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApiAutoscalingV1Scale> {
-        const response = await this.replaceComputeOrdiriComV1alpha1VirtualMachineDeploymentScaleRaw(requestParameters, initOverrides);
+    async replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentScale(requestParameters: ReplaceComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentScaleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApiAutoscalingV1Scale> {
+        const response = await this.replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentScaleRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * replace status of the specified VirtualMachineDeployment
      */
-    async replaceComputeOrdiriComV1alpha1VirtualMachineDeploymentStatusRaw(requestParameters: ReplaceComputeOrdiriComV1alpha1VirtualMachineDeploymentStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment>> {
+    async replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentStatusRaw(requestParameters: ReplaceComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceComputeOrdiriComV1alpha1VirtualMachineDeploymentStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentStatus.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceComputeOrdiriComV1alpha1VirtualMachineDeploymentStatus.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentStatus.');
         }
 
         const queryParameters: any = {};
@@ -2075,7 +2521,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachinedeployments/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachinedeployments/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -2088,21 +2534,25 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace status of the specified VirtualMachineDeployment
      */
-    async replaceComputeOrdiriComV1alpha1VirtualMachineDeploymentStatus(requestParameters: ReplaceComputeOrdiriComV1alpha1VirtualMachineDeploymentStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment> {
-        const response = await this.replaceComputeOrdiriComV1alpha1VirtualMachineDeploymentStatusRaw(requestParameters, initOverrides);
+    async replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentStatus(requestParameters: ReplaceComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeployment> {
+        const response = await this.replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * replace the specified VirtualMachineReplicaSet
      */
-    async replaceComputeOrdiriComV1alpha1VirtualMachineReplicaSetRaw(requestParameters: ReplaceComputeOrdiriComV1alpha1VirtualMachineReplicaSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet>> {
+    async replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRaw(requestParameters: ReplaceComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceComputeOrdiriComV1alpha1VirtualMachineReplicaSet.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSet.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSet.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceComputeOrdiriComV1alpha1VirtualMachineReplicaSet.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSet.');
         }
 
         const queryParameters: any = {};
@@ -2124,7 +2574,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachinereplicasets/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachinereplicasets/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -2137,21 +2587,25 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace the specified VirtualMachineReplicaSet
      */
-    async replaceComputeOrdiriComV1alpha1VirtualMachineReplicaSet(requestParameters: ReplaceComputeOrdiriComV1alpha1VirtualMachineReplicaSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet> {
-        const response = await this.replaceComputeOrdiriComV1alpha1VirtualMachineReplicaSetRaw(requestParameters, initOverrides);
+    async replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSet(requestParameters: ReplaceComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet> {
+        const response = await this.replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * replace status of the specified VirtualMachineReplicaSet
      */
-    async replaceComputeOrdiriComV1alpha1VirtualMachineReplicaSetStatusRaw(requestParameters: ReplaceComputeOrdiriComV1alpha1VirtualMachineReplicaSetStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet>> {
+    async replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetStatusRaw(requestParameters: ReplaceComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceComputeOrdiriComV1alpha1VirtualMachineReplicaSetStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetStatus.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceComputeOrdiriComV1alpha1VirtualMachineReplicaSetStatus.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetStatus.');
         }
 
         const queryParameters: any = {};
@@ -2173,7 +2627,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachinereplicasets/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachinereplicasets/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -2186,21 +2640,25 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace status of the specified VirtualMachineReplicaSet
      */
-    async replaceComputeOrdiriComV1alpha1VirtualMachineReplicaSetStatus(requestParameters: ReplaceComputeOrdiriComV1alpha1VirtualMachineReplicaSetStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet> {
-        const response = await this.replaceComputeOrdiriComV1alpha1VirtualMachineReplicaSetStatusRaw(requestParameters, initOverrides);
+    async replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetStatus(requestParameters: ReplaceComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSet> {
+        const response = await this.replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * replace restart of the specified VirtualMachine
      */
-    async replaceComputeOrdiriComV1alpha1VirtualMachineRestartRaw(requestParameters: ReplaceComputeOrdiriComV1alpha1VirtualMachineRestartRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine>> {
+    async replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineRestartRaw(requestParameters: ReplaceComputeOrdiriComV1alpha1NamespacedVirtualMachineRestartRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceComputeOrdiriComV1alpha1VirtualMachineRestart.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineRestart.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineRestart.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceComputeOrdiriComV1alpha1VirtualMachineRestart.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineRestart.');
         }
 
         const queryParameters: any = {};
@@ -2222,7 +2680,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachines/{name}/restart`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachines/{name}/restart`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -2235,21 +2693,25 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace restart of the specified VirtualMachine
      */
-    async replaceComputeOrdiriComV1alpha1VirtualMachineRestart(requestParameters: ReplaceComputeOrdiriComV1alpha1VirtualMachineRestartRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine> {
-        const response = await this.replaceComputeOrdiriComV1alpha1VirtualMachineRestartRaw(requestParameters, initOverrides);
+    async replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineRestart(requestParameters: ReplaceComputeOrdiriComV1alpha1NamespacedVirtualMachineRestartRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine> {
+        const response = await this.replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineRestartRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * replace status of the specified VirtualMachine
      */
-    async replaceComputeOrdiriComV1alpha1VirtualMachineStatusRaw(requestParameters: ReplaceComputeOrdiriComV1alpha1VirtualMachineStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine>> {
+    async replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineStatusRaw(requestParameters: ReplaceComputeOrdiriComV1alpha1NamespacedVirtualMachineStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceComputeOrdiriComV1alpha1VirtualMachineStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineStatus.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceComputeOrdiriComV1alpha1VirtualMachineStatus.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineStatus.');
         }
 
         const queryParameters: any = {};
@@ -2271,7 +2733,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/virtualmachines/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/compute.ordiri.com/v1alpha1/namespaces/{namespace}/virtualmachines/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -2284,17 +2746,21 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace status of the specified VirtualMachine
      */
-    async replaceComputeOrdiriComV1alpha1VirtualMachineStatus(requestParameters: ReplaceComputeOrdiriComV1alpha1VirtualMachineStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine> {
-        const response = await this.replaceComputeOrdiriComV1alpha1VirtualMachineStatusRaw(requestParameters, initOverrides);
+    async replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineStatus(requestParameters: ReplaceComputeOrdiriComV1alpha1NamespacedVirtualMachineStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine> {
+        const response = await this.replaceComputeOrdiriComV1alpha1NamespacedVirtualMachineStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * watch changes to an object of kind VirtualMachine. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
      */
-    async watchComputeOrdiriComV1alpha1VirtualMachineRaw(requestParameters: WatchComputeOrdiriComV1alpha1VirtualMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+    async watchComputeOrdiriComV1alpha1NamespacedVirtualMachineRaw(requestParameters: WatchComputeOrdiriComV1alpha1NamespacedVirtualMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling watchComputeOrdiriComV1alpha1VirtualMachine.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling watchComputeOrdiriComV1alpha1NamespacedVirtualMachine.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling watchComputeOrdiriComV1alpha1NamespacedVirtualMachine.');
         }
 
         const queryParameters: any = {};
@@ -2342,7 +2808,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/watch/virtualmachines/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/compute.ordiri.com/v1alpha1/watch/namespaces/{namespace}/virtualmachines/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -2354,17 +2820,21 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * watch changes to an object of kind VirtualMachine. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
      */
-    async watchComputeOrdiriComV1alpha1VirtualMachine(requestParameters: WatchComputeOrdiriComV1alpha1VirtualMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
-        const response = await this.watchComputeOrdiriComV1alpha1VirtualMachineRaw(requestParameters, initOverrides);
+    async watchComputeOrdiriComV1alpha1NamespacedVirtualMachine(requestParameters: WatchComputeOrdiriComV1alpha1NamespacedVirtualMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchComputeOrdiriComV1alpha1NamespacedVirtualMachineRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * watch changes to an object of kind VirtualMachineDeployment. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
      */
-    async watchComputeOrdiriComV1alpha1VirtualMachineDeploymentRaw(requestParameters: WatchComputeOrdiriComV1alpha1VirtualMachineDeploymentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+    async watchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRaw(requestParameters: WatchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling watchComputeOrdiriComV1alpha1VirtualMachineDeployment.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling watchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeployment.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling watchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeployment.');
         }
 
         const queryParameters: any = {};
@@ -2412,7 +2882,7 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/watch/virtualmachinedeployments/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/compute.ordiri.com/v1alpha1/watch/namespaces/{namespace}/virtualmachinedeployments/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -2424,15 +2894,299 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * watch changes to an object of kind VirtualMachineDeployment. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
      */
-    async watchComputeOrdiriComV1alpha1VirtualMachineDeployment(requestParameters: WatchComputeOrdiriComV1alpha1VirtualMachineDeploymentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
-        const response = await this.watchComputeOrdiriComV1alpha1VirtualMachineDeploymentRaw(requestParameters, initOverrides);
+    async watchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeployment(requestParameters: WatchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * watch individual changes to a list of VirtualMachineDeployment. deprecated: use the \'watch\' parameter with a list operation instead.
      */
-    async watchComputeOrdiriComV1alpha1VirtualMachineDeploymentListRaw(requestParameters: WatchComputeOrdiriComV1alpha1VirtualMachineDeploymentListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+    async watchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentListRaw(requestParameters: WatchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling watchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentList.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/compute.ordiri.com/v1alpha1/watch/namespaces/{namespace}/virtualmachinedeployments`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
+    }
+
+    /**
+     * watch individual changes to a list of VirtualMachineDeployment. deprecated: use the \'watch\' parameter with a list operation instead.
+     */
+    async watchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentList(requestParameters: WatchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchComputeOrdiriComV1alpha1NamespacedVirtualMachineDeploymentListRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * watch individual changes to a list of VirtualMachine. deprecated: use the \'watch\' parameter with a list operation instead.
+     */
+    async watchComputeOrdiriComV1alpha1NamespacedVirtualMachineListRaw(requestParameters: WatchComputeOrdiriComV1alpha1NamespacedVirtualMachineListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling watchComputeOrdiriComV1alpha1NamespacedVirtualMachineList.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/compute.ordiri.com/v1alpha1/watch/namespaces/{namespace}/virtualmachines`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
+    }
+
+    /**
+     * watch individual changes to a list of VirtualMachine. deprecated: use the \'watch\' parameter with a list operation instead.
+     */
+    async watchComputeOrdiriComV1alpha1NamespacedVirtualMachineList(requestParameters: WatchComputeOrdiriComV1alpha1NamespacedVirtualMachineListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchComputeOrdiriComV1alpha1NamespacedVirtualMachineListRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * watch changes to an object of kind VirtualMachineReplicaSet. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
+     */
+    async watchComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRaw(requestParameters: WatchComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+        if (requestParameters.name === null || requestParameters.name === undefined) {
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling watchComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSet.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling watchComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSet.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/compute.ordiri.com/v1alpha1/watch/namespaces/{namespace}/virtualmachinereplicasets/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
+    }
+
+    /**
+     * watch changes to an object of kind VirtualMachineReplicaSet. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
+     */
+    async watchComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSet(requestParameters: WatchComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * watch individual changes to a list of VirtualMachineReplicaSet. deprecated: use the \'watch\' parameter with a list operation instead.
+     */
+    async watchComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetListRaw(requestParameters: WatchComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling watchComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetList.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/compute.ordiri.com/v1alpha1/watch/namespaces/{namespace}/virtualmachinereplicasets`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
+    }
+
+    /**
+     * watch individual changes to a list of VirtualMachineReplicaSet. deprecated: use the \'watch\' parameter with a list operation instead.
+     */
+    async watchComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetList(requestParameters: WatchComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchComputeOrdiriComV1alpha1NamespacedVirtualMachineReplicaSetListRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * watch individual changes to a list of VirtualMachineDeployment. deprecated: use the \'watch\' parameter with a list operation instead.
+     */
+    async watchComputeOrdiriComV1alpha1VirtualMachineDeploymentListForAllNamespacesRaw(requestParameters: WatchComputeOrdiriComV1alpha1VirtualMachineDeploymentListForAllNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
         const queryParameters: any = {};
 
         if (requestParameters.allowWatchBookmarks !== undefined) {
@@ -2490,15 +3244,15 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * watch individual changes to a list of VirtualMachineDeployment. deprecated: use the \'watch\' parameter with a list operation instead.
      */
-    async watchComputeOrdiriComV1alpha1VirtualMachineDeploymentList(requestParameters: WatchComputeOrdiriComV1alpha1VirtualMachineDeploymentListRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
-        const response = await this.watchComputeOrdiriComV1alpha1VirtualMachineDeploymentListRaw(requestParameters, initOverrides);
+    async watchComputeOrdiriComV1alpha1VirtualMachineDeploymentListForAllNamespaces(requestParameters: WatchComputeOrdiriComV1alpha1VirtualMachineDeploymentListForAllNamespacesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchComputeOrdiriComV1alpha1VirtualMachineDeploymentListForAllNamespacesRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * watch individual changes to a list of VirtualMachine. deprecated: use the \'watch\' parameter with a list operation instead.
      */
-    async watchComputeOrdiriComV1alpha1VirtualMachineListRaw(requestParameters: WatchComputeOrdiriComV1alpha1VirtualMachineListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+    async watchComputeOrdiriComV1alpha1VirtualMachineListForAllNamespacesRaw(requestParameters: WatchComputeOrdiriComV1alpha1VirtualMachineListForAllNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
         const queryParameters: any = {};
 
         if (requestParameters.allowWatchBookmarks !== undefined) {
@@ -2556,85 +3310,15 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * watch individual changes to a list of VirtualMachine. deprecated: use the \'watch\' parameter with a list operation instead.
      */
-    async watchComputeOrdiriComV1alpha1VirtualMachineList(requestParameters: WatchComputeOrdiriComV1alpha1VirtualMachineListRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
-        const response = await this.watchComputeOrdiriComV1alpha1VirtualMachineListRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * watch changes to an object of kind VirtualMachineReplicaSet. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
-     */
-    async watchComputeOrdiriComV1alpha1VirtualMachineReplicaSetRaw(requestParameters: WatchComputeOrdiriComV1alpha1VirtualMachineReplicaSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
-        if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling watchComputeOrdiriComV1alpha1VirtualMachineReplicaSet.');
-        }
-
-        const queryParameters: any = {};
-
-        if (requestParameters.allowWatchBookmarks !== undefined) {
-            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
-        }
-
-        if (requestParameters._continue !== undefined) {
-            queryParameters['continue'] = requestParameters._continue;
-        }
-
-        if (requestParameters.fieldSelector !== undefined) {
-            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
-        }
-
-        if (requestParameters.labelSelector !== undefined) {
-            queryParameters['labelSelector'] = requestParameters.labelSelector;
-        }
-
-        if (requestParameters.limit !== undefined) {
-            queryParameters['limit'] = requestParameters.limit;
-        }
-
-        if (requestParameters.pretty !== undefined) {
-            queryParameters['pretty'] = requestParameters.pretty;
-        }
-
-        if (requestParameters.resourceVersion !== undefined) {
-            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
-        }
-
-        if (requestParameters.resourceVersionMatch !== undefined) {
-            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
-        }
-
-        if (requestParameters.timeoutSeconds !== undefined) {
-            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
-        }
-
-        if (requestParameters.watch !== undefined) {
-            queryParameters['watch'] = requestParameters.watch;
-        }
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/apis/compute.ordiri.com/v1alpha1/watch/virtualmachinereplicasets/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
-    }
-
-    /**
-     * watch changes to an object of kind VirtualMachineReplicaSet. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
-     */
-    async watchComputeOrdiriComV1alpha1VirtualMachineReplicaSet(requestParameters: WatchComputeOrdiriComV1alpha1VirtualMachineReplicaSetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
-        const response = await this.watchComputeOrdiriComV1alpha1VirtualMachineReplicaSetRaw(requestParameters, initOverrides);
+    async watchComputeOrdiriComV1alpha1VirtualMachineListForAllNamespaces(requestParameters: WatchComputeOrdiriComV1alpha1VirtualMachineListForAllNamespacesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchComputeOrdiriComV1alpha1VirtualMachineListForAllNamespacesRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * watch individual changes to a list of VirtualMachineReplicaSet. deprecated: use the \'watch\' parameter with a list operation instead.
      */
-    async watchComputeOrdiriComV1alpha1VirtualMachineReplicaSetListRaw(requestParameters: WatchComputeOrdiriComV1alpha1VirtualMachineReplicaSetListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+    async watchComputeOrdiriComV1alpha1VirtualMachineReplicaSetListForAllNamespacesRaw(requestParameters: WatchComputeOrdiriComV1alpha1VirtualMachineReplicaSetListForAllNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
         const queryParameters: any = {};
 
         if (requestParameters.allowWatchBookmarks !== undefined) {
@@ -2692,8 +3376,8 @@ export class ComputeOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * watch individual changes to a list of VirtualMachineReplicaSet. deprecated: use the \'watch\' parameter with a list operation instead.
      */
-    async watchComputeOrdiriComV1alpha1VirtualMachineReplicaSetList(requestParameters: WatchComputeOrdiriComV1alpha1VirtualMachineReplicaSetListRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
-        const response = await this.watchComputeOrdiriComV1alpha1VirtualMachineReplicaSetListRaw(requestParameters, initOverrides);
+    async watchComputeOrdiriComV1alpha1VirtualMachineReplicaSetListForAllNamespaces(requestParameters: WatchComputeOrdiriComV1alpha1VirtualMachineReplicaSetListForAllNamespacesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchComputeOrdiriComV1alpha1VirtualMachineReplicaSetListForAllNamespacesRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

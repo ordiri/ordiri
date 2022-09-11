@@ -43,21 +43,24 @@ import {
     IoK8sApimachineryPkgApisMetaV1WatchEventToJSON,
 } from '../models';
 
-export interface CreateStorageOrdiriComV1alpha1VolumeRequest {
+export interface CreateStorageOrdiriComV1alpha1NamespacedVolumeRequest {
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisStorageV1alpha1Volume;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface CreateStorageOrdiriComV1alpha1VolumeClaimRequest {
+export interface CreateStorageOrdiriComV1alpha1NamespacedVolumeClaimRequest {
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaim;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface DeleteStorageOrdiriComV1alpha1CollectionVolumeRequest {
+export interface DeleteStorageOrdiriComV1alpha1CollectionNamespacedVolumeRequest {
+    namespace: string;
     pretty?: string;
     _continue?: string;
     dryRun?: string;
@@ -73,7 +76,8 @@ export interface DeleteStorageOrdiriComV1alpha1CollectionVolumeRequest {
     body?: IoK8sApimachineryPkgApisMetaV1DeleteOptions;
 }
 
-export interface DeleteStorageOrdiriComV1alpha1CollectionVolumeClaimRequest {
+export interface DeleteStorageOrdiriComV1alpha1CollectionNamespacedVolumeClaimRequest {
+    namespace: string;
     pretty?: string;
     _continue?: string;
     dryRun?: string;
@@ -89,8 +93,9 @@ export interface DeleteStorageOrdiriComV1alpha1CollectionVolumeClaimRequest {
     body?: IoK8sApimachineryPkgApisMetaV1DeleteOptions;
 }
 
-export interface DeleteStorageOrdiriComV1alpha1VolumeRequest {
+export interface DeleteStorageOrdiriComV1alpha1NamespacedVolumeRequest {
     name: string;
+    namespace: string;
     pretty?: string;
     dryRun?: string;
     gracePeriodSeconds?: number;
@@ -99,8 +104,9 @@ export interface DeleteStorageOrdiriComV1alpha1VolumeRequest {
     body?: IoK8sApimachineryPkgApisMetaV1DeleteOptions;
 }
 
-export interface DeleteStorageOrdiriComV1alpha1VolumeClaimRequest {
+export interface DeleteStorageOrdiriComV1alpha1NamespacedVolumeClaimRequest {
     name: string;
+    namespace: string;
     pretty?: string;
     dryRun?: string;
     gracePeriodSeconds?: number;
@@ -109,7 +115,8 @@ export interface DeleteStorageOrdiriComV1alpha1VolumeClaimRequest {
     body?: IoK8sApimachineryPkgApisMetaV1DeleteOptions;
 }
 
-export interface ListStorageOrdiriComV1alpha1VolumeRequest {
+export interface ListStorageOrdiriComV1alpha1NamespacedVolumeRequest {
+    namespace: string;
     pretty?: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
@@ -122,7 +129,8 @@ export interface ListStorageOrdiriComV1alpha1VolumeRequest {
     watch?: boolean;
 }
 
-export interface ListStorageOrdiriComV1alpha1VolumeClaimRequest {
+export interface ListStorageOrdiriComV1alpha1NamespacedVolumeClaimRequest {
+    namespace: string;
     pretty?: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
@@ -135,8 +143,35 @@ export interface ListStorageOrdiriComV1alpha1VolumeClaimRequest {
     watch?: boolean;
 }
 
-export interface PatchStorageOrdiriComV1alpha1VolumeRequest {
+export interface ListStorageOrdiriComV1alpha1VolumeClaimForAllNamespacesRequest {
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface ListStorageOrdiriComV1alpha1VolumeForAllNamespacesRequest {
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface PatchStorageOrdiriComV1alpha1NamespacedVolumeRequest {
     name: string;
+    namespace: string;
     body: object;
     pretty?: string;
     dryRun?: string;
@@ -144,8 +179,9 @@ export interface PatchStorageOrdiriComV1alpha1VolumeRequest {
     force?: boolean;
 }
 
-export interface PatchStorageOrdiriComV1alpha1VolumeClaimRequest {
+export interface PatchStorageOrdiriComV1alpha1NamespacedVolumeClaimRequest {
     name: string;
+    namespace: string;
     body: object;
     pretty?: string;
     dryRun?: string;
@@ -153,8 +189,9 @@ export interface PatchStorageOrdiriComV1alpha1VolumeClaimRequest {
     force?: boolean;
 }
 
-export interface PatchStorageOrdiriComV1alpha1VolumeClaimStatusRequest {
+export interface PatchStorageOrdiriComV1alpha1NamespacedVolumeClaimStatusRequest {
     name: string;
+    namespace: string;
     body: object;
     pretty?: string;
     dryRun?: string;
@@ -162,8 +199,9 @@ export interface PatchStorageOrdiriComV1alpha1VolumeClaimStatusRequest {
     force?: boolean;
 }
 
-export interface PatchStorageOrdiriComV1alpha1VolumeStatusRequest {
+export interface PatchStorageOrdiriComV1alpha1NamespacedVolumeStatusRequest {
     name: string;
+    namespace: string;
     body: object;
     pretty?: string;
     dryRun?: string;
@@ -171,60 +209,69 @@ export interface PatchStorageOrdiriComV1alpha1VolumeStatusRequest {
     force?: boolean;
 }
 
-export interface ReadStorageOrdiriComV1alpha1VolumeRequest {
+export interface ReadStorageOrdiriComV1alpha1NamespacedVolumeRequest {
     name: string;
+    namespace: string;
     pretty?: string;
 }
 
-export interface ReadStorageOrdiriComV1alpha1VolumeClaimRequest {
+export interface ReadStorageOrdiriComV1alpha1NamespacedVolumeClaimRequest {
     name: string;
+    namespace: string;
     pretty?: string;
 }
 
-export interface ReadStorageOrdiriComV1alpha1VolumeClaimStatusRequest {
+export interface ReadStorageOrdiriComV1alpha1NamespacedVolumeClaimStatusRequest {
     name: string;
+    namespace: string;
     pretty?: string;
 }
 
-export interface ReadStorageOrdiriComV1alpha1VolumeStatusRequest {
+export interface ReadStorageOrdiriComV1alpha1NamespacedVolumeStatusRequest {
     name: string;
+    namespace: string;
     pretty?: string;
 }
 
-export interface ReplaceStorageOrdiriComV1alpha1VolumeRequest {
+export interface ReplaceStorageOrdiriComV1alpha1NamespacedVolumeRequest {
     name: string;
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisStorageV1alpha1Volume;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface ReplaceStorageOrdiriComV1alpha1VolumeClaimRequest {
+export interface ReplaceStorageOrdiriComV1alpha1NamespacedVolumeClaimRequest {
     name: string;
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaim;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface ReplaceStorageOrdiriComV1alpha1VolumeClaimStatusRequest {
+export interface ReplaceStorageOrdiriComV1alpha1NamespacedVolumeClaimStatusRequest {
     name: string;
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaim;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface ReplaceStorageOrdiriComV1alpha1VolumeStatusRequest {
+export interface ReplaceStorageOrdiriComV1alpha1NamespacedVolumeStatusRequest {
     name: string;
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisStorageV1alpha1Volume;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface WatchStorageOrdiriComV1alpha1VolumeRequest {
+export interface WatchStorageOrdiriComV1alpha1NamespacedVolumeRequest {
     name: string;
+    namespace: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
     fieldSelector?: string;
@@ -237,8 +284,9 @@ export interface WatchStorageOrdiriComV1alpha1VolumeRequest {
     watch?: boolean;
 }
 
-export interface WatchStorageOrdiriComV1alpha1VolumeClaimRequest {
+export interface WatchStorageOrdiriComV1alpha1NamespacedVolumeClaimRequest {
     name: string;
+    namespace: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
     fieldSelector?: string;
@@ -251,7 +299,8 @@ export interface WatchStorageOrdiriComV1alpha1VolumeClaimRequest {
     watch?: boolean;
 }
 
-export interface WatchStorageOrdiriComV1alpha1VolumeClaimListRequest {
+export interface WatchStorageOrdiriComV1alpha1NamespacedVolumeClaimListRequest {
+    namespace: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
     fieldSelector?: string;
@@ -264,7 +313,34 @@ export interface WatchStorageOrdiriComV1alpha1VolumeClaimListRequest {
     watch?: boolean;
 }
 
-export interface WatchStorageOrdiriComV1alpha1VolumeListRequest {
+export interface WatchStorageOrdiriComV1alpha1NamespacedVolumeListRequest {
+    namespace: string;
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface WatchStorageOrdiriComV1alpha1VolumeClaimListForAllNamespacesRequest {
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface WatchStorageOrdiriComV1alpha1VolumeListForAllNamespacesRequest {
     allowWatchBookmarks?: boolean;
     _continue?: string;
     fieldSelector?: string;
@@ -285,9 +361,13 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * create a Volume
      */
-    async createStorageOrdiriComV1alpha1VolumeRaw(requestParameters: CreateStorageOrdiriComV1alpha1VolumeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1Volume>> {
+    async createStorageOrdiriComV1alpha1NamespacedVolumeRaw(requestParameters: CreateStorageOrdiriComV1alpha1NamespacedVolumeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1Volume>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling createStorageOrdiriComV1alpha1NamespacedVolume.');
+        }
+
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling createStorageOrdiriComV1alpha1Volume.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling createStorageOrdiriComV1alpha1NamespacedVolume.');
         }
 
         const queryParameters: any = {};
@@ -309,7 +389,7 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/storage.ordiri.com/v1alpha1/volumes`,
+            path: `/apis/storage.ordiri.com/v1alpha1/namespaces/{namespace}/volumes`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -322,17 +402,21 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * create a Volume
      */
-    async createStorageOrdiriComV1alpha1Volume(requestParameters: CreateStorageOrdiriComV1alpha1VolumeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1Volume> {
-        const response = await this.createStorageOrdiriComV1alpha1VolumeRaw(requestParameters, initOverrides);
+    async createStorageOrdiriComV1alpha1NamespacedVolume(requestParameters: CreateStorageOrdiriComV1alpha1NamespacedVolumeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1Volume> {
+        const response = await this.createStorageOrdiriComV1alpha1NamespacedVolumeRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * create a VolumeClaim
      */
-    async createStorageOrdiriComV1alpha1VolumeClaimRaw(requestParameters: CreateStorageOrdiriComV1alpha1VolumeClaimRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaim>> {
+    async createStorageOrdiriComV1alpha1NamespacedVolumeClaimRaw(requestParameters: CreateStorageOrdiriComV1alpha1NamespacedVolumeClaimRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaim>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling createStorageOrdiriComV1alpha1NamespacedVolumeClaim.');
+        }
+
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling createStorageOrdiriComV1alpha1VolumeClaim.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling createStorageOrdiriComV1alpha1NamespacedVolumeClaim.');
         }
 
         const queryParameters: any = {};
@@ -354,7 +438,7 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/storage.ordiri.com/v1alpha1/volumeclaims`,
+            path: `/apis/storage.ordiri.com/v1alpha1/namespaces/{namespace}/volumeclaims`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -367,15 +451,19 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * create a VolumeClaim
      */
-    async createStorageOrdiriComV1alpha1VolumeClaim(requestParameters: CreateStorageOrdiriComV1alpha1VolumeClaimRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaim> {
-        const response = await this.createStorageOrdiriComV1alpha1VolumeClaimRaw(requestParameters, initOverrides);
+    async createStorageOrdiriComV1alpha1NamespacedVolumeClaim(requestParameters: CreateStorageOrdiriComV1alpha1NamespacedVolumeClaimRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaim> {
+        const response = await this.createStorageOrdiriComV1alpha1NamespacedVolumeClaimRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * delete collection of Volume
      */
-    async deleteStorageOrdiriComV1alpha1CollectionVolumeRaw(requestParameters: DeleteStorageOrdiriComV1alpha1CollectionVolumeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+    async deleteStorageOrdiriComV1alpha1CollectionNamespacedVolumeRaw(requestParameters: DeleteStorageOrdiriComV1alpha1CollectionNamespacedVolumeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling deleteStorageOrdiriComV1alpha1CollectionNamespacedVolume.');
+        }
+
         const queryParameters: any = {};
 
         if (requestParameters.pretty !== undefined) {
@@ -431,7 +519,7 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/storage.ordiri.com/v1alpha1/volumes`,
+            path: `/apis/storage.ordiri.com/v1alpha1/namespaces/{namespace}/volumes`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -444,15 +532,19 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * delete collection of Volume
      */
-    async deleteStorageOrdiriComV1alpha1CollectionVolume(requestParameters: DeleteStorageOrdiriComV1alpha1CollectionVolumeRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
-        const response = await this.deleteStorageOrdiriComV1alpha1CollectionVolumeRaw(requestParameters, initOverrides);
+    async deleteStorageOrdiriComV1alpha1CollectionNamespacedVolume(requestParameters: DeleteStorageOrdiriComV1alpha1CollectionNamespacedVolumeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
+        const response = await this.deleteStorageOrdiriComV1alpha1CollectionNamespacedVolumeRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * delete collection of VolumeClaim
      */
-    async deleteStorageOrdiriComV1alpha1CollectionVolumeClaimRaw(requestParameters: DeleteStorageOrdiriComV1alpha1CollectionVolumeClaimRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+    async deleteStorageOrdiriComV1alpha1CollectionNamespacedVolumeClaimRaw(requestParameters: DeleteStorageOrdiriComV1alpha1CollectionNamespacedVolumeClaimRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling deleteStorageOrdiriComV1alpha1CollectionNamespacedVolumeClaim.');
+        }
+
         const queryParameters: any = {};
 
         if (requestParameters.pretty !== undefined) {
@@ -508,7 +600,7 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/storage.ordiri.com/v1alpha1/volumeclaims`,
+            path: `/apis/storage.ordiri.com/v1alpha1/namespaces/{namespace}/volumeclaims`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -521,17 +613,21 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * delete collection of VolumeClaim
      */
-    async deleteStorageOrdiriComV1alpha1CollectionVolumeClaim(requestParameters: DeleteStorageOrdiriComV1alpha1CollectionVolumeClaimRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
-        const response = await this.deleteStorageOrdiriComV1alpha1CollectionVolumeClaimRaw(requestParameters, initOverrides);
+    async deleteStorageOrdiriComV1alpha1CollectionNamespacedVolumeClaim(requestParameters: DeleteStorageOrdiriComV1alpha1CollectionNamespacedVolumeClaimRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
+        const response = await this.deleteStorageOrdiriComV1alpha1CollectionNamespacedVolumeClaimRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * delete a Volume
      */
-    async deleteStorageOrdiriComV1alpha1VolumeRaw(requestParameters: DeleteStorageOrdiriComV1alpha1VolumeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+    async deleteStorageOrdiriComV1alpha1NamespacedVolumeRaw(requestParameters: DeleteStorageOrdiriComV1alpha1NamespacedVolumeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling deleteStorageOrdiriComV1alpha1Volume.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling deleteStorageOrdiriComV1alpha1NamespacedVolume.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling deleteStorageOrdiriComV1alpha1NamespacedVolume.');
         }
 
         const queryParameters: any = {};
@@ -561,7 +657,7 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/storage.ordiri.com/v1alpha1/volumes/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/storage.ordiri.com/v1alpha1/namespaces/{namespace}/volumes/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -574,17 +670,21 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * delete a Volume
      */
-    async deleteStorageOrdiriComV1alpha1Volume(requestParameters: DeleteStorageOrdiriComV1alpha1VolumeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
-        const response = await this.deleteStorageOrdiriComV1alpha1VolumeRaw(requestParameters, initOverrides);
+    async deleteStorageOrdiriComV1alpha1NamespacedVolume(requestParameters: DeleteStorageOrdiriComV1alpha1NamespacedVolumeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
+        const response = await this.deleteStorageOrdiriComV1alpha1NamespacedVolumeRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * delete a VolumeClaim
      */
-    async deleteStorageOrdiriComV1alpha1VolumeClaimRaw(requestParameters: DeleteStorageOrdiriComV1alpha1VolumeClaimRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+    async deleteStorageOrdiriComV1alpha1NamespacedVolumeClaimRaw(requestParameters: DeleteStorageOrdiriComV1alpha1NamespacedVolumeClaimRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling deleteStorageOrdiriComV1alpha1VolumeClaim.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling deleteStorageOrdiriComV1alpha1NamespacedVolumeClaim.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling deleteStorageOrdiriComV1alpha1NamespacedVolumeClaim.');
         }
 
         const queryParameters: any = {};
@@ -614,7 +714,7 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/storage.ordiri.com/v1alpha1/volumeclaims/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/storage.ordiri.com/v1alpha1/namespaces/{namespace}/volumeclaims/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -627,8 +727,8 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * delete a VolumeClaim
      */
-    async deleteStorageOrdiriComV1alpha1VolumeClaim(requestParameters: DeleteStorageOrdiriComV1alpha1VolumeClaimRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
-        const response = await this.deleteStorageOrdiriComV1alpha1VolumeClaimRaw(requestParameters, initOverrides);
+    async deleteStorageOrdiriComV1alpha1NamespacedVolumeClaim(requestParameters: DeleteStorageOrdiriComV1alpha1NamespacedVolumeClaimRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
+        const response = await this.deleteStorageOrdiriComV1alpha1NamespacedVolumeClaimRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -661,7 +761,11 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * list or watch objects of kind Volume
      */
-    async listStorageOrdiriComV1alpha1VolumeRaw(requestParameters: ListStorageOrdiriComV1alpha1VolumeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeList>> {
+    async listStorageOrdiriComV1alpha1NamespacedVolumeRaw(requestParameters: ListStorageOrdiriComV1alpha1NamespacedVolumeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeList>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling listStorageOrdiriComV1alpha1NamespacedVolume.');
+        }
+
         const queryParameters: any = {};
 
         if (requestParameters.pretty !== undefined) {
@@ -707,7 +811,7 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/storage.ordiri.com/v1alpha1/volumes`,
+            path: `/apis/storage.ordiri.com/v1alpha1/namespaces/{namespace}/volumes`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -719,15 +823,19 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * list or watch objects of kind Volume
      */
-    async listStorageOrdiriComV1alpha1Volume(requestParameters: ListStorageOrdiriComV1alpha1VolumeRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeList> {
-        const response = await this.listStorageOrdiriComV1alpha1VolumeRaw(requestParameters, initOverrides);
+    async listStorageOrdiriComV1alpha1NamespacedVolume(requestParameters: ListStorageOrdiriComV1alpha1NamespacedVolumeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeList> {
+        const response = await this.listStorageOrdiriComV1alpha1NamespacedVolumeRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * list or watch objects of kind VolumeClaim
      */
-    async listStorageOrdiriComV1alpha1VolumeClaimRaw(requestParameters: ListStorageOrdiriComV1alpha1VolumeClaimRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaimList>> {
+    async listStorageOrdiriComV1alpha1NamespacedVolumeClaimRaw(requestParameters: ListStorageOrdiriComV1alpha1NamespacedVolumeClaimRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaimList>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling listStorageOrdiriComV1alpha1NamespacedVolumeClaim.');
+        }
+
         const queryParameters: any = {};
 
         if (requestParameters.pretty !== undefined) {
@@ -752,6 +860,72 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
 
         if (requestParameters.limit !== undefined) {
             queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/storage.ordiri.com/v1alpha1/namespaces/{namespace}/volumeclaims`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaimListFromJSON(jsonValue));
+    }
+
+    /**
+     * list or watch objects of kind VolumeClaim
+     */
+    async listStorageOrdiriComV1alpha1NamespacedVolumeClaim(requestParameters: ListStorageOrdiriComV1alpha1NamespacedVolumeClaimRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaimList> {
+        const response = await this.listStorageOrdiriComV1alpha1NamespacedVolumeClaimRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * list or watch objects of kind VolumeClaim
+     */
+    async listStorageOrdiriComV1alpha1VolumeClaimForAllNamespacesRaw(requestParameters: ListStorageOrdiriComV1alpha1VolumeClaimForAllNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaimList>> {
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
         }
 
         if (requestParameters.resourceVersion !== undefined) {
@@ -785,21 +959,91 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * list or watch objects of kind VolumeClaim
      */
-    async listStorageOrdiriComV1alpha1VolumeClaim(requestParameters: ListStorageOrdiriComV1alpha1VolumeClaimRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaimList> {
-        const response = await this.listStorageOrdiriComV1alpha1VolumeClaimRaw(requestParameters, initOverrides);
+    async listStorageOrdiriComV1alpha1VolumeClaimForAllNamespaces(requestParameters: ListStorageOrdiriComV1alpha1VolumeClaimForAllNamespacesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaimList> {
+        const response = await this.listStorageOrdiriComV1alpha1VolumeClaimForAllNamespacesRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * list or watch objects of kind Volume
+     */
+    async listStorageOrdiriComV1alpha1VolumeForAllNamespacesRaw(requestParameters: ListStorageOrdiriComV1alpha1VolumeForAllNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeList>> {
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/storage.ordiri.com/v1alpha1/volumes`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeListFromJSON(jsonValue));
+    }
+
+    /**
+     * list or watch objects of kind Volume
+     */
+    async listStorageOrdiriComV1alpha1VolumeForAllNamespaces(requestParameters: ListStorageOrdiriComV1alpha1VolumeForAllNamespacesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeList> {
+        const response = await this.listStorageOrdiriComV1alpha1VolumeForAllNamespacesRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * partially update the specified Volume
      */
-    async patchStorageOrdiriComV1alpha1VolumeRaw(requestParameters: PatchStorageOrdiriComV1alpha1VolumeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1Volume>> {
+    async patchStorageOrdiriComV1alpha1NamespacedVolumeRaw(requestParameters: PatchStorageOrdiriComV1alpha1NamespacedVolumeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1Volume>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchStorageOrdiriComV1alpha1Volume.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchStorageOrdiriComV1alpha1NamespacedVolume.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchStorageOrdiriComV1alpha1NamespacedVolume.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchStorageOrdiriComV1alpha1Volume.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchStorageOrdiriComV1alpha1NamespacedVolume.');
         }
 
         const queryParameters: any = {};
@@ -825,7 +1069,7 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json-patch+json';
 
         const response = await this.request({
-            path: `/apis/storage.ordiri.com/v1alpha1/volumes/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/storage.ordiri.com/v1alpha1/namespaces/{namespace}/volumes/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -838,21 +1082,25 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update the specified Volume
      */
-    async patchStorageOrdiriComV1alpha1Volume(requestParameters: PatchStorageOrdiriComV1alpha1VolumeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1Volume> {
-        const response = await this.patchStorageOrdiriComV1alpha1VolumeRaw(requestParameters, initOverrides);
+    async patchStorageOrdiriComV1alpha1NamespacedVolume(requestParameters: PatchStorageOrdiriComV1alpha1NamespacedVolumeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1Volume> {
+        const response = await this.patchStorageOrdiriComV1alpha1NamespacedVolumeRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * partially update the specified VolumeClaim
      */
-    async patchStorageOrdiriComV1alpha1VolumeClaimRaw(requestParameters: PatchStorageOrdiriComV1alpha1VolumeClaimRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaim>> {
+    async patchStorageOrdiriComV1alpha1NamespacedVolumeClaimRaw(requestParameters: PatchStorageOrdiriComV1alpha1NamespacedVolumeClaimRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaim>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchStorageOrdiriComV1alpha1VolumeClaim.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchStorageOrdiriComV1alpha1NamespacedVolumeClaim.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchStorageOrdiriComV1alpha1NamespacedVolumeClaim.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchStorageOrdiriComV1alpha1VolumeClaim.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchStorageOrdiriComV1alpha1NamespacedVolumeClaim.');
         }
 
         const queryParameters: any = {};
@@ -878,7 +1126,7 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json-patch+json';
 
         const response = await this.request({
-            path: `/apis/storage.ordiri.com/v1alpha1/volumeclaims/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/storage.ordiri.com/v1alpha1/namespaces/{namespace}/volumeclaims/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -891,21 +1139,25 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update the specified VolumeClaim
      */
-    async patchStorageOrdiriComV1alpha1VolumeClaim(requestParameters: PatchStorageOrdiriComV1alpha1VolumeClaimRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaim> {
-        const response = await this.patchStorageOrdiriComV1alpha1VolumeClaimRaw(requestParameters, initOverrides);
+    async patchStorageOrdiriComV1alpha1NamespacedVolumeClaim(requestParameters: PatchStorageOrdiriComV1alpha1NamespacedVolumeClaimRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaim> {
+        const response = await this.patchStorageOrdiriComV1alpha1NamespacedVolumeClaimRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * partially update status of the specified VolumeClaim
      */
-    async patchStorageOrdiriComV1alpha1VolumeClaimStatusRaw(requestParameters: PatchStorageOrdiriComV1alpha1VolumeClaimStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaim>> {
+    async patchStorageOrdiriComV1alpha1NamespacedVolumeClaimStatusRaw(requestParameters: PatchStorageOrdiriComV1alpha1NamespacedVolumeClaimStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaim>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchStorageOrdiriComV1alpha1VolumeClaimStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchStorageOrdiriComV1alpha1NamespacedVolumeClaimStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchStorageOrdiriComV1alpha1NamespacedVolumeClaimStatus.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchStorageOrdiriComV1alpha1VolumeClaimStatus.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchStorageOrdiriComV1alpha1NamespacedVolumeClaimStatus.');
         }
 
         const queryParameters: any = {};
@@ -931,7 +1183,7 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json-patch+json';
 
         const response = await this.request({
-            path: `/apis/storage.ordiri.com/v1alpha1/volumeclaims/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/storage.ordiri.com/v1alpha1/namespaces/{namespace}/volumeclaims/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -944,21 +1196,25 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update status of the specified VolumeClaim
      */
-    async patchStorageOrdiriComV1alpha1VolumeClaimStatus(requestParameters: PatchStorageOrdiriComV1alpha1VolumeClaimStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaim> {
-        const response = await this.patchStorageOrdiriComV1alpha1VolumeClaimStatusRaw(requestParameters, initOverrides);
+    async patchStorageOrdiriComV1alpha1NamespacedVolumeClaimStatus(requestParameters: PatchStorageOrdiriComV1alpha1NamespacedVolumeClaimStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaim> {
+        const response = await this.patchStorageOrdiriComV1alpha1NamespacedVolumeClaimStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * partially update status of the specified Volume
      */
-    async patchStorageOrdiriComV1alpha1VolumeStatusRaw(requestParameters: PatchStorageOrdiriComV1alpha1VolumeStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1Volume>> {
+    async patchStorageOrdiriComV1alpha1NamespacedVolumeStatusRaw(requestParameters: PatchStorageOrdiriComV1alpha1NamespacedVolumeStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1Volume>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchStorageOrdiriComV1alpha1VolumeStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchStorageOrdiriComV1alpha1NamespacedVolumeStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchStorageOrdiriComV1alpha1NamespacedVolumeStatus.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchStorageOrdiriComV1alpha1VolumeStatus.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchStorageOrdiriComV1alpha1NamespacedVolumeStatus.');
         }
 
         const queryParameters: any = {};
@@ -984,7 +1240,7 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json-patch+json';
 
         const response = await this.request({
-            path: `/apis/storage.ordiri.com/v1alpha1/volumes/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/storage.ordiri.com/v1alpha1/namespaces/{namespace}/volumes/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -997,17 +1253,21 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update status of the specified Volume
      */
-    async patchStorageOrdiriComV1alpha1VolumeStatus(requestParameters: PatchStorageOrdiriComV1alpha1VolumeStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1Volume> {
-        const response = await this.patchStorageOrdiriComV1alpha1VolumeStatusRaw(requestParameters, initOverrides);
+    async patchStorageOrdiriComV1alpha1NamespacedVolumeStatus(requestParameters: PatchStorageOrdiriComV1alpha1NamespacedVolumeStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1Volume> {
+        const response = await this.patchStorageOrdiriComV1alpha1NamespacedVolumeStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * read the specified Volume
      */
-    async readStorageOrdiriComV1alpha1VolumeRaw(requestParameters: ReadStorageOrdiriComV1alpha1VolumeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1Volume>> {
+    async readStorageOrdiriComV1alpha1NamespacedVolumeRaw(requestParameters: ReadStorageOrdiriComV1alpha1NamespacedVolumeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1Volume>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readStorageOrdiriComV1alpha1Volume.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readStorageOrdiriComV1alpha1NamespacedVolume.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readStorageOrdiriComV1alpha1NamespacedVolume.');
         }
 
         const queryParameters: any = {};
@@ -1019,7 +1279,7 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/storage.ordiri.com/v1alpha1/volumes/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/storage.ordiri.com/v1alpha1/namespaces/{namespace}/volumes/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -1031,17 +1291,21 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read the specified Volume
      */
-    async readStorageOrdiriComV1alpha1Volume(requestParameters: ReadStorageOrdiriComV1alpha1VolumeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1Volume> {
-        const response = await this.readStorageOrdiriComV1alpha1VolumeRaw(requestParameters, initOverrides);
+    async readStorageOrdiriComV1alpha1NamespacedVolume(requestParameters: ReadStorageOrdiriComV1alpha1NamespacedVolumeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1Volume> {
+        const response = await this.readStorageOrdiriComV1alpha1NamespacedVolumeRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * read the specified VolumeClaim
      */
-    async readStorageOrdiriComV1alpha1VolumeClaimRaw(requestParameters: ReadStorageOrdiriComV1alpha1VolumeClaimRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaim>> {
+    async readStorageOrdiriComV1alpha1NamespacedVolumeClaimRaw(requestParameters: ReadStorageOrdiriComV1alpha1NamespacedVolumeClaimRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaim>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readStorageOrdiriComV1alpha1VolumeClaim.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readStorageOrdiriComV1alpha1NamespacedVolumeClaim.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readStorageOrdiriComV1alpha1NamespacedVolumeClaim.');
         }
 
         const queryParameters: any = {};
@@ -1053,7 +1317,7 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/storage.ordiri.com/v1alpha1/volumeclaims/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/storage.ordiri.com/v1alpha1/namespaces/{namespace}/volumeclaims/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -1065,17 +1329,21 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read the specified VolumeClaim
      */
-    async readStorageOrdiriComV1alpha1VolumeClaim(requestParameters: ReadStorageOrdiriComV1alpha1VolumeClaimRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaim> {
-        const response = await this.readStorageOrdiriComV1alpha1VolumeClaimRaw(requestParameters, initOverrides);
+    async readStorageOrdiriComV1alpha1NamespacedVolumeClaim(requestParameters: ReadStorageOrdiriComV1alpha1NamespacedVolumeClaimRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaim> {
+        const response = await this.readStorageOrdiriComV1alpha1NamespacedVolumeClaimRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * read status of the specified VolumeClaim
      */
-    async readStorageOrdiriComV1alpha1VolumeClaimStatusRaw(requestParameters: ReadStorageOrdiriComV1alpha1VolumeClaimStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaim>> {
+    async readStorageOrdiriComV1alpha1NamespacedVolumeClaimStatusRaw(requestParameters: ReadStorageOrdiriComV1alpha1NamespacedVolumeClaimStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaim>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readStorageOrdiriComV1alpha1VolumeClaimStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readStorageOrdiriComV1alpha1NamespacedVolumeClaimStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readStorageOrdiriComV1alpha1NamespacedVolumeClaimStatus.');
         }
 
         const queryParameters: any = {};
@@ -1087,7 +1355,7 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/storage.ordiri.com/v1alpha1/volumeclaims/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/storage.ordiri.com/v1alpha1/namespaces/{namespace}/volumeclaims/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -1099,17 +1367,21 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read status of the specified VolumeClaim
      */
-    async readStorageOrdiriComV1alpha1VolumeClaimStatus(requestParameters: ReadStorageOrdiriComV1alpha1VolumeClaimStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaim> {
-        const response = await this.readStorageOrdiriComV1alpha1VolumeClaimStatusRaw(requestParameters, initOverrides);
+    async readStorageOrdiriComV1alpha1NamespacedVolumeClaimStatus(requestParameters: ReadStorageOrdiriComV1alpha1NamespacedVolumeClaimStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaim> {
+        const response = await this.readStorageOrdiriComV1alpha1NamespacedVolumeClaimStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * read status of the specified Volume
      */
-    async readStorageOrdiriComV1alpha1VolumeStatusRaw(requestParameters: ReadStorageOrdiriComV1alpha1VolumeStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1Volume>> {
+    async readStorageOrdiriComV1alpha1NamespacedVolumeStatusRaw(requestParameters: ReadStorageOrdiriComV1alpha1NamespacedVolumeStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1Volume>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readStorageOrdiriComV1alpha1VolumeStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readStorageOrdiriComV1alpha1NamespacedVolumeStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readStorageOrdiriComV1alpha1NamespacedVolumeStatus.');
         }
 
         const queryParameters: any = {};
@@ -1121,7 +1393,7 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/storage.ordiri.com/v1alpha1/volumes/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/storage.ordiri.com/v1alpha1/namespaces/{namespace}/volumes/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -1133,21 +1405,25 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read status of the specified Volume
      */
-    async readStorageOrdiriComV1alpha1VolumeStatus(requestParameters: ReadStorageOrdiriComV1alpha1VolumeStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1Volume> {
-        const response = await this.readStorageOrdiriComV1alpha1VolumeStatusRaw(requestParameters, initOverrides);
+    async readStorageOrdiriComV1alpha1NamespacedVolumeStatus(requestParameters: ReadStorageOrdiriComV1alpha1NamespacedVolumeStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1Volume> {
+        const response = await this.readStorageOrdiriComV1alpha1NamespacedVolumeStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * replace the specified Volume
      */
-    async replaceStorageOrdiriComV1alpha1VolumeRaw(requestParameters: ReplaceStorageOrdiriComV1alpha1VolumeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1Volume>> {
+    async replaceStorageOrdiriComV1alpha1NamespacedVolumeRaw(requestParameters: ReplaceStorageOrdiriComV1alpha1NamespacedVolumeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1Volume>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceStorageOrdiriComV1alpha1Volume.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceStorageOrdiriComV1alpha1NamespacedVolume.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceStorageOrdiriComV1alpha1NamespacedVolume.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceStorageOrdiriComV1alpha1Volume.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceStorageOrdiriComV1alpha1NamespacedVolume.');
         }
 
         const queryParameters: any = {};
@@ -1169,7 +1445,7 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/storage.ordiri.com/v1alpha1/volumes/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/storage.ordiri.com/v1alpha1/namespaces/{namespace}/volumes/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -1182,21 +1458,25 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace the specified Volume
      */
-    async replaceStorageOrdiriComV1alpha1Volume(requestParameters: ReplaceStorageOrdiriComV1alpha1VolumeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1Volume> {
-        const response = await this.replaceStorageOrdiriComV1alpha1VolumeRaw(requestParameters, initOverrides);
+    async replaceStorageOrdiriComV1alpha1NamespacedVolume(requestParameters: ReplaceStorageOrdiriComV1alpha1NamespacedVolumeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1Volume> {
+        const response = await this.replaceStorageOrdiriComV1alpha1NamespacedVolumeRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * replace the specified VolumeClaim
      */
-    async replaceStorageOrdiriComV1alpha1VolumeClaimRaw(requestParameters: ReplaceStorageOrdiriComV1alpha1VolumeClaimRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaim>> {
+    async replaceStorageOrdiriComV1alpha1NamespacedVolumeClaimRaw(requestParameters: ReplaceStorageOrdiriComV1alpha1NamespacedVolumeClaimRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaim>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceStorageOrdiriComV1alpha1VolumeClaim.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceStorageOrdiriComV1alpha1NamespacedVolumeClaim.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceStorageOrdiriComV1alpha1NamespacedVolumeClaim.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceStorageOrdiriComV1alpha1VolumeClaim.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceStorageOrdiriComV1alpha1NamespacedVolumeClaim.');
         }
 
         const queryParameters: any = {};
@@ -1218,7 +1498,7 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/storage.ordiri.com/v1alpha1/volumeclaims/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/storage.ordiri.com/v1alpha1/namespaces/{namespace}/volumeclaims/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -1231,21 +1511,25 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace the specified VolumeClaim
      */
-    async replaceStorageOrdiriComV1alpha1VolumeClaim(requestParameters: ReplaceStorageOrdiriComV1alpha1VolumeClaimRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaim> {
-        const response = await this.replaceStorageOrdiriComV1alpha1VolumeClaimRaw(requestParameters, initOverrides);
+    async replaceStorageOrdiriComV1alpha1NamespacedVolumeClaim(requestParameters: ReplaceStorageOrdiriComV1alpha1NamespacedVolumeClaimRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaim> {
+        const response = await this.replaceStorageOrdiriComV1alpha1NamespacedVolumeClaimRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * replace status of the specified VolumeClaim
      */
-    async replaceStorageOrdiriComV1alpha1VolumeClaimStatusRaw(requestParameters: ReplaceStorageOrdiriComV1alpha1VolumeClaimStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaim>> {
+    async replaceStorageOrdiriComV1alpha1NamespacedVolumeClaimStatusRaw(requestParameters: ReplaceStorageOrdiriComV1alpha1NamespacedVolumeClaimStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaim>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceStorageOrdiriComV1alpha1VolumeClaimStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceStorageOrdiriComV1alpha1NamespacedVolumeClaimStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceStorageOrdiriComV1alpha1NamespacedVolumeClaimStatus.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceStorageOrdiriComV1alpha1VolumeClaimStatus.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceStorageOrdiriComV1alpha1NamespacedVolumeClaimStatus.');
         }
 
         const queryParameters: any = {};
@@ -1267,7 +1551,7 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/storage.ordiri.com/v1alpha1/volumeclaims/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/storage.ordiri.com/v1alpha1/namespaces/{namespace}/volumeclaims/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -1280,21 +1564,25 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace status of the specified VolumeClaim
      */
-    async replaceStorageOrdiriComV1alpha1VolumeClaimStatus(requestParameters: ReplaceStorageOrdiriComV1alpha1VolumeClaimStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaim> {
-        const response = await this.replaceStorageOrdiriComV1alpha1VolumeClaimStatusRaw(requestParameters, initOverrides);
+    async replaceStorageOrdiriComV1alpha1NamespacedVolumeClaimStatus(requestParameters: ReplaceStorageOrdiriComV1alpha1NamespacedVolumeClaimStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1VolumeClaim> {
+        const response = await this.replaceStorageOrdiriComV1alpha1NamespacedVolumeClaimStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * replace status of the specified Volume
      */
-    async replaceStorageOrdiriComV1alpha1VolumeStatusRaw(requestParameters: ReplaceStorageOrdiriComV1alpha1VolumeStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1Volume>> {
+    async replaceStorageOrdiriComV1alpha1NamespacedVolumeStatusRaw(requestParameters: ReplaceStorageOrdiriComV1alpha1NamespacedVolumeStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1Volume>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceStorageOrdiriComV1alpha1VolumeStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceStorageOrdiriComV1alpha1NamespacedVolumeStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceStorageOrdiriComV1alpha1NamespacedVolumeStatus.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceStorageOrdiriComV1alpha1VolumeStatus.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceStorageOrdiriComV1alpha1NamespacedVolumeStatus.');
         }
 
         const queryParameters: any = {};
@@ -1316,7 +1604,7 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/storage.ordiri.com/v1alpha1/volumes/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/storage.ordiri.com/v1alpha1/namespaces/{namespace}/volumes/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -1329,17 +1617,21 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace status of the specified Volume
      */
-    async replaceStorageOrdiriComV1alpha1VolumeStatus(requestParameters: ReplaceStorageOrdiriComV1alpha1VolumeStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1Volume> {
-        const response = await this.replaceStorageOrdiriComV1alpha1VolumeStatusRaw(requestParameters, initOverrides);
+    async replaceStorageOrdiriComV1alpha1NamespacedVolumeStatus(requestParameters: ReplaceStorageOrdiriComV1alpha1NamespacedVolumeStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisStorageV1alpha1Volume> {
+        const response = await this.replaceStorageOrdiriComV1alpha1NamespacedVolumeStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * watch changes to an object of kind Volume. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
      */
-    async watchStorageOrdiriComV1alpha1VolumeRaw(requestParameters: WatchStorageOrdiriComV1alpha1VolumeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+    async watchStorageOrdiriComV1alpha1NamespacedVolumeRaw(requestParameters: WatchStorageOrdiriComV1alpha1NamespacedVolumeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling watchStorageOrdiriComV1alpha1Volume.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling watchStorageOrdiriComV1alpha1NamespacedVolume.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling watchStorageOrdiriComV1alpha1NamespacedVolume.');
         }
 
         const queryParameters: any = {};
@@ -1387,7 +1679,7 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/storage.ordiri.com/v1alpha1/watch/volumes/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/storage.ordiri.com/v1alpha1/watch/namespaces/{namespace}/volumes/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -1399,17 +1691,21 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * watch changes to an object of kind Volume. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
      */
-    async watchStorageOrdiriComV1alpha1Volume(requestParameters: WatchStorageOrdiriComV1alpha1VolumeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
-        const response = await this.watchStorageOrdiriComV1alpha1VolumeRaw(requestParameters, initOverrides);
+    async watchStorageOrdiriComV1alpha1NamespacedVolume(requestParameters: WatchStorageOrdiriComV1alpha1NamespacedVolumeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchStorageOrdiriComV1alpha1NamespacedVolumeRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * watch changes to an object of kind VolumeClaim. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
      */
-    async watchStorageOrdiriComV1alpha1VolumeClaimRaw(requestParameters: WatchStorageOrdiriComV1alpha1VolumeClaimRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+    async watchStorageOrdiriComV1alpha1NamespacedVolumeClaimRaw(requestParameters: WatchStorageOrdiriComV1alpha1NamespacedVolumeClaimRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling watchStorageOrdiriComV1alpha1VolumeClaim.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling watchStorageOrdiriComV1alpha1NamespacedVolumeClaim.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling watchStorageOrdiriComV1alpha1NamespacedVolumeClaim.');
         }
 
         const queryParameters: any = {};
@@ -1457,7 +1753,7 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/storage.ordiri.com/v1alpha1/watch/volumeclaims/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/storage.ordiri.com/v1alpha1/watch/namespaces/{namespace}/volumeclaims/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -1469,15 +1765,155 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * watch changes to an object of kind VolumeClaim. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
      */
-    async watchStorageOrdiriComV1alpha1VolumeClaim(requestParameters: WatchStorageOrdiriComV1alpha1VolumeClaimRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
-        const response = await this.watchStorageOrdiriComV1alpha1VolumeClaimRaw(requestParameters, initOverrides);
+    async watchStorageOrdiriComV1alpha1NamespacedVolumeClaim(requestParameters: WatchStorageOrdiriComV1alpha1NamespacedVolumeClaimRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchStorageOrdiriComV1alpha1NamespacedVolumeClaimRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * watch individual changes to a list of VolumeClaim. deprecated: use the \'watch\' parameter with a list operation instead.
      */
-    async watchStorageOrdiriComV1alpha1VolumeClaimListRaw(requestParameters: WatchStorageOrdiriComV1alpha1VolumeClaimListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+    async watchStorageOrdiriComV1alpha1NamespacedVolumeClaimListRaw(requestParameters: WatchStorageOrdiriComV1alpha1NamespacedVolumeClaimListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling watchStorageOrdiriComV1alpha1NamespacedVolumeClaimList.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/storage.ordiri.com/v1alpha1/watch/namespaces/{namespace}/volumeclaims`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
+    }
+
+    /**
+     * watch individual changes to a list of VolumeClaim. deprecated: use the \'watch\' parameter with a list operation instead.
+     */
+    async watchStorageOrdiriComV1alpha1NamespacedVolumeClaimList(requestParameters: WatchStorageOrdiriComV1alpha1NamespacedVolumeClaimListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchStorageOrdiriComV1alpha1NamespacedVolumeClaimListRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * watch individual changes to a list of Volume. deprecated: use the \'watch\' parameter with a list operation instead.
+     */
+    async watchStorageOrdiriComV1alpha1NamespacedVolumeListRaw(requestParameters: WatchStorageOrdiriComV1alpha1NamespacedVolumeListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling watchStorageOrdiriComV1alpha1NamespacedVolumeList.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/storage.ordiri.com/v1alpha1/watch/namespaces/{namespace}/volumes`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
+    }
+
+    /**
+     * watch individual changes to a list of Volume. deprecated: use the \'watch\' parameter with a list operation instead.
+     */
+    async watchStorageOrdiriComV1alpha1NamespacedVolumeList(requestParameters: WatchStorageOrdiriComV1alpha1NamespacedVolumeListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchStorageOrdiriComV1alpha1NamespacedVolumeListRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * watch individual changes to a list of VolumeClaim. deprecated: use the \'watch\' parameter with a list operation instead.
+     */
+    async watchStorageOrdiriComV1alpha1VolumeClaimListForAllNamespacesRaw(requestParameters: WatchStorageOrdiriComV1alpha1VolumeClaimListForAllNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
         const queryParameters: any = {};
 
         if (requestParameters.allowWatchBookmarks !== undefined) {
@@ -1535,15 +1971,15 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * watch individual changes to a list of VolumeClaim. deprecated: use the \'watch\' parameter with a list operation instead.
      */
-    async watchStorageOrdiriComV1alpha1VolumeClaimList(requestParameters: WatchStorageOrdiriComV1alpha1VolumeClaimListRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
-        const response = await this.watchStorageOrdiriComV1alpha1VolumeClaimListRaw(requestParameters, initOverrides);
+    async watchStorageOrdiriComV1alpha1VolumeClaimListForAllNamespaces(requestParameters: WatchStorageOrdiriComV1alpha1VolumeClaimListForAllNamespacesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchStorageOrdiriComV1alpha1VolumeClaimListForAllNamespacesRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * watch individual changes to a list of Volume. deprecated: use the \'watch\' parameter with a list operation instead.
      */
-    async watchStorageOrdiriComV1alpha1VolumeListRaw(requestParameters: WatchStorageOrdiriComV1alpha1VolumeListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+    async watchStorageOrdiriComV1alpha1VolumeListForAllNamespacesRaw(requestParameters: WatchStorageOrdiriComV1alpha1VolumeListForAllNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
         const queryParameters: any = {};
 
         if (requestParameters.allowWatchBookmarks !== undefined) {
@@ -1601,8 +2037,8 @@ export class StorageOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * watch individual changes to a list of Volume. deprecated: use the \'watch\' parameter with a list operation instead.
      */
-    async watchStorageOrdiriComV1alpha1VolumeList(requestParameters: WatchStorageOrdiriComV1alpha1VolumeListRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
-        const response = await this.watchStorageOrdiriComV1alpha1VolumeListRaw(requestParameters, initOverrides);
+    async watchStorageOrdiriComV1alpha1VolumeListForAllNamespaces(requestParameters: WatchStorageOrdiriComV1alpha1VolumeListForAllNamespacesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchStorageOrdiriComV1alpha1VolumeListForAllNamespacesRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

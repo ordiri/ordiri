@@ -19,6 +19,12 @@ import {
     ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterfaceFromJSONTyped,
     ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterfaceToJSON,
 } from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterface';
+import type { ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineResources } from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineResources';
+import {
+    ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineResourcesFromJSON,
+    ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineResourcesFromJSONTyped,
+    ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineResourcesToJSON,
+} from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineResources';
 import type { ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineVolume } from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineVolume';
 import {
     ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineVolumeFromJSON,
@@ -50,6 +56,12 @@ export interface ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineSpec {
      * @memberof ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineSpec
      */
     node?: string;
+    /**
+     * 
+     * @type {ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineResources}
+     * @memberof ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineSpec
+     */
+    resources: ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineResources;
     /**
      * 
      * @type {string}
@@ -87,6 +99,7 @@ export interface ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineSpec {
  */
 export function instanceOfComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineSpec(value: object): boolean {
     let isInstance = true;
+    isInstance = isInstance && "resources" in value;
     isInstance = isInstance && "role" in value;
     isInstance = isInstance && "state" in value;
 
@@ -106,6 +119,7 @@ export function ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineSpecFro
         'bootDevices': !exists(json, 'bootDevices') ? undefined : json['bootDevices'],
         'networkInterfaces': !exists(json, 'networkInterfaces') ? undefined : ((json['networkInterfaces'] as Array<any>).map(ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterfaceFromJSON)),
         'node': !exists(json, 'node') ? undefined : json['node'],
+        'resources': ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineResourcesFromJSON(json['resources']),
         'role': json['role'],
         'serviceAccountName': !exists(json, 'serviceAccountName') ? undefined : json['serviceAccountName'],
         'state': json['state'],
@@ -126,6 +140,7 @@ export function ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineSpecToJ
         'bootDevices': value.bootDevices,
         'networkInterfaces': value.networkInterfaces === undefined ? undefined : ((value.networkInterfaces as Array<any>).map(ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterfaceToJSON)),
         'node': value.node,
+        'resources': ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineResourcesToJSON(value.resources),
         'role': value.role,
         'serviceAccountName': value.serviceAccountName,
         'state': value.state,

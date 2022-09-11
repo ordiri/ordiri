@@ -49,28 +49,32 @@ import {
     IoK8sApimachineryPkgApisMetaV1WatchEventToJSON,
 } from '../models';
 
-export interface CreateAuthorizationOrdiriComV1alpha1RoleRequest {
+export interface CreateAuthorizationOrdiriComV1alpha1NamespacedRoleRequest {
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1Role;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface CreateAuthorizationOrdiriComV1alpha1RoleBindingRequest {
+export interface CreateAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRequest {
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBinding;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface CreateAuthorizationOrdiriComV1alpha1ServiceAccountRequest {
+export interface CreateAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRequest {
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccount;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface DeleteAuthorizationOrdiriComV1alpha1CollectionRoleRequest {
+export interface DeleteAuthorizationOrdiriComV1alpha1CollectionNamespacedRoleRequest {
+    namespace: string;
     pretty?: string;
     _continue?: string;
     dryRun?: string;
@@ -86,7 +90,8 @@ export interface DeleteAuthorizationOrdiriComV1alpha1CollectionRoleRequest {
     body?: IoK8sApimachineryPkgApisMetaV1DeleteOptions;
 }
 
-export interface DeleteAuthorizationOrdiriComV1alpha1CollectionRoleBindingRequest {
+export interface DeleteAuthorizationOrdiriComV1alpha1CollectionNamespacedRoleBindingRequest {
+    namespace: string;
     pretty?: string;
     _continue?: string;
     dryRun?: string;
@@ -102,7 +107,8 @@ export interface DeleteAuthorizationOrdiriComV1alpha1CollectionRoleBindingReques
     body?: IoK8sApimachineryPkgApisMetaV1DeleteOptions;
 }
 
-export interface DeleteAuthorizationOrdiriComV1alpha1CollectionServiceAccountRequest {
+export interface DeleteAuthorizationOrdiriComV1alpha1CollectionNamespacedServiceAccountRequest {
+    namespace: string;
     pretty?: string;
     _continue?: string;
     dryRun?: string;
@@ -118,8 +124,9 @@ export interface DeleteAuthorizationOrdiriComV1alpha1CollectionServiceAccountReq
     body?: IoK8sApimachineryPkgApisMetaV1DeleteOptions;
 }
 
-export interface DeleteAuthorizationOrdiriComV1alpha1RoleRequest {
+export interface DeleteAuthorizationOrdiriComV1alpha1NamespacedRoleRequest {
     name: string;
+    namespace: string;
     pretty?: string;
     dryRun?: string;
     gracePeriodSeconds?: number;
@@ -128,8 +135,9 @@ export interface DeleteAuthorizationOrdiriComV1alpha1RoleRequest {
     body?: IoK8sApimachineryPkgApisMetaV1DeleteOptions;
 }
 
-export interface DeleteAuthorizationOrdiriComV1alpha1RoleBindingRequest {
+export interface DeleteAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRequest {
     name: string;
+    namespace: string;
     pretty?: string;
     dryRun?: string;
     gracePeriodSeconds?: number;
@@ -138,8 +146,9 @@ export interface DeleteAuthorizationOrdiriComV1alpha1RoleBindingRequest {
     body?: IoK8sApimachineryPkgApisMetaV1DeleteOptions;
 }
 
-export interface DeleteAuthorizationOrdiriComV1alpha1ServiceAccountRequest {
+export interface DeleteAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRequest {
     name: string;
+    namespace: string;
     pretty?: string;
     dryRun?: string;
     gracePeriodSeconds?: number;
@@ -148,7 +157,8 @@ export interface DeleteAuthorizationOrdiriComV1alpha1ServiceAccountRequest {
     body?: IoK8sApimachineryPkgApisMetaV1DeleteOptions;
 }
 
-export interface ListAuthorizationOrdiriComV1alpha1RoleRequest {
+export interface ListAuthorizationOrdiriComV1alpha1NamespacedRoleRequest {
+    namespace: string;
     pretty?: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
@@ -161,7 +171,8 @@ export interface ListAuthorizationOrdiriComV1alpha1RoleRequest {
     watch?: boolean;
 }
 
-export interface ListAuthorizationOrdiriComV1alpha1RoleBindingRequest {
+export interface ListAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRequest {
+    namespace: string;
     pretty?: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
@@ -174,7 +185,8 @@ export interface ListAuthorizationOrdiriComV1alpha1RoleBindingRequest {
     watch?: boolean;
 }
 
-export interface ListAuthorizationOrdiriComV1alpha1ServiceAccountRequest {
+export interface ListAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRequest {
+    namespace: string;
     pretty?: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
@@ -187,8 +199,48 @@ export interface ListAuthorizationOrdiriComV1alpha1ServiceAccountRequest {
     watch?: boolean;
 }
 
-export interface PatchAuthorizationOrdiriComV1alpha1RoleRequest {
+export interface ListAuthorizationOrdiriComV1alpha1RoleBindingForAllNamespacesRequest {
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface ListAuthorizationOrdiriComV1alpha1RoleForAllNamespacesRequest {
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface ListAuthorizationOrdiriComV1alpha1ServiceAccountForAllNamespacesRequest {
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface PatchAuthorizationOrdiriComV1alpha1NamespacedRoleRequest {
     name: string;
+    namespace: string;
     body: object;
     pretty?: string;
     dryRun?: string;
@@ -196,8 +248,9 @@ export interface PatchAuthorizationOrdiriComV1alpha1RoleRequest {
     force?: boolean;
 }
 
-export interface PatchAuthorizationOrdiriComV1alpha1RoleBindingRequest {
+export interface PatchAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRequest {
     name: string;
+    namespace: string;
     body: object;
     pretty?: string;
     dryRun?: string;
@@ -205,8 +258,9 @@ export interface PatchAuthorizationOrdiriComV1alpha1RoleBindingRequest {
     force?: boolean;
 }
 
-export interface PatchAuthorizationOrdiriComV1alpha1RoleBindingStatusRequest {
+export interface PatchAuthorizationOrdiriComV1alpha1NamespacedRoleBindingStatusRequest {
     name: string;
+    namespace: string;
     body: object;
     pretty?: string;
     dryRun?: string;
@@ -214,8 +268,9 @@ export interface PatchAuthorizationOrdiriComV1alpha1RoleBindingStatusRequest {
     force?: boolean;
 }
 
-export interface PatchAuthorizationOrdiriComV1alpha1RoleStatusRequest {
+export interface PatchAuthorizationOrdiriComV1alpha1NamespacedRoleStatusRequest {
     name: string;
+    namespace: string;
     body: object;
     pretty?: string;
     dryRun?: string;
@@ -223,8 +278,9 @@ export interface PatchAuthorizationOrdiriComV1alpha1RoleStatusRequest {
     force?: boolean;
 }
 
-export interface PatchAuthorizationOrdiriComV1alpha1ServiceAccountRequest {
+export interface PatchAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRequest {
     name: string;
+    namespace: string;
     body: object;
     pretty?: string;
     dryRun?: string;
@@ -232,8 +288,9 @@ export interface PatchAuthorizationOrdiriComV1alpha1ServiceAccountRequest {
     force?: boolean;
 }
 
-export interface PatchAuthorizationOrdiriComV1alpha1ServiceAccountStatusRequest {
+export interface PatchAuthorizationOrdiriComV1alpha1NamespacedServiceAccountStatusRequest {
     name: string;
+    namespace: string;
     body: object;
     pretty?: string;
     dryRun?: string;
@@ -241,86 +298,99 @@ export interface PatchAuthorizationOrdiriComV1alpha1ServiceAccountStatusRequest 
     force?: boolean;
 }
 
-export interface ReadAuthorizationOrdiriComV1alpha1RoleRequest {
+export interface ReadAuthorizationOrdiriComV1alpha1NamespacedRoleRequest {
     name: string;
+    namespace: string;
     pretty?: string;
 }
 
-export interface ReadAuthorizationOrdiriComV1alpha1RoleBindingRequest {
+export interface ReadAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRequest {
     name: string;
+    namespace: string;
     pretty?: string;
 }
 
-export interface ReadAuthorizationOrdiriComV1alpha1RoleBindingStatusRequest {
+export interface ReadAuthorizationOrdiriComV1alpha1NamespacedRoleBindingStatusRequest {
     name: string;
+    namespace: string;
     pretty?: string;
 }
 
-export interface ReadAuthorizationOrdiriComV1alpha1RoleStatusRequest {
+export interface ReadAuthorizationOrdiriComV1alpha1NamespacedRoleStatusRequest {
     name: string;
+    namespace: string;
     pretty?: string;
 }
 
-export interface ReadAuthorizationOrdiriComV1alpha1ServiceAccountRequest {
+export interface ReadAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRequest {
     name: string;
+    namespace: string;
     pretty?: string;
 }
 
-export interface ReadAuthorizationOrdiriComV1alpha1ServiceAccountStatusRequest {
+export interface ReadAuthorizationOrdiriComV1alpha1NamespacedServiceAccountStatusRequest {
     name: string;
+    namespace: string;
     pretty?: string;
 }
 
-export interface ReplaceAuthorizationOrdiriComV1alpha1RoleRequest {
+export interface ReplaceAuthorizationOrdiriComV1alpha1NamespacedRoleRequest {
     name: string;
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1Role;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface ReplaceAuthorizationOrdiriComV1alpha1RoleBindingRequest {
+export interface ReplaceAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRequest {
     name: string;
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBinding;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface ReplaceAuthorizationOrdiriComV1alpha1RoleBindingStatusRequest {
+export interface ReplaceAuthorizationOrdiriComV1alpha1NamespacedRoleBindingStatusRequest {
     name: string;
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBinding;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface ReplaceAuthorizationOrdiriComV1alpha1RoleStatusRequest {
+export interface ReplaceAuthorizationOrdiriComV1alpha1NamespacedRoleStatusRequest {
     name: string;
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1Role;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface ReplaceAuthorizationOrdiriComV1alpha1ServiceAccountRequest {
+export interface ReplaceAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRequest {
     name: string;
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccount;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface ReplaceAuthorizationOrdiriComV1alpha1ServiceAccountStatusRequest {
+export interface ReplaceAuthorizationOrdiriComV1alpha1NamespacedServiceAccountStatusRequest {
     name: string;
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccount;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface WatchAuthorizationOrdiriComV1alpha1RoleRequest {
+export interface WatchAuthorizationOrdiriComV1alpha1NamespacedRoleRequest {
     name: string;
+    namespace: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
     fieldSelector?: string;
@@ -333,8 +403,9 @@ export interface WatchAuthorizationOrdiriComV1alpha1RoleRequest {
     watch?: boolean;
 }
 
-export interface WatchAuthorizationOrdiriComV1alpha1RoleBindingRequest {
+export interface WatchAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRequest {
     name: string;
+    namespace: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
     fieldSelector?: string;
@@ -347,7 +418,8 @@ export interface WatchAuthorizationOrdiriComV1alpha1RoleBindingRequest {
     watch?: boolean;
 }
 
-export interface WatchAuthorizationOrdiriComV1alpha1RoleBindingListRequest {
+export interface WatchAuthorizationOrdiriComV1alpha1NamespacedRoleBindingListRequest {
+    namespace: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
     fieldSelector?: string;
@@ -360,7 +432,8 @@ export interface WatchAuthorizationOrdiriComV1alpha1RoleBindingListRequest {
     watch?: boolean;
 }
 
-export interface WatchAuthorizationOrdiriComV1alpha1RoleListRequest {
+export interface WatchAuthorizationOrdiriComV1alpha1NamespacedRoleListRequest {
+    namespace: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
     fieldSelector?: string;
@@ -373,8 +446,9 @@ export interface WatchAuthorizationOrdiriComV1alpha1RoleListRequest {
     watch?: boolean;
 }
 
-export interface WatchAuthorizationOrdiriComV1alpha1ServiceAccountRequest {
+export interface WatchAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRequest {
     name: string;
+    namespace: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
     fieldSelector?: string;
@@ -387,7 +461,47 @@ export interface WatchAuthorizationOrdiriComV1alpha1ServiceAccountRequest {
     watch?: boolean;
 }
 
-export interface WatchAuthorizationOrdiriComV1alpha1ServiceAccountListRequest {
+export interface WatchAuthorizationOrdiriComV1alpha1NamespacedServiceAccountListRequest {
+    namespace: string;
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface WatchAuthorizationOrdiriComV1alpha1RoleBindingListForAllNamespacesRequest {
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface WatchAuthorizationOrdiriComV1alpha1RoleListForAllNamespacesRequest {
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface WatchAuthorizationOrdiriComV1alpha1ServiceAccountListForAllNamespacesRequest {
     allowWatchBookmarks?: boolean;
     _continue?: string;
     fieldSelector?: string;
@@ -408,9 +522,13 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * create a Role
      */
-    async createAuthorizationOrdiriComV1alpha1RoleRaw(requestParameters: CreateAuthorizationOrdiriComV1alpha1RoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1Role>> {
+    async createAuthorizationOrdiriComV1alpha1NamespacedRoleRaw(requestParameters: CreateAuthorizationOrdiriComV1alpha1NamespacedRoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1Role>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling createAuthorizationOrdiriComV1alpha1NamespacedRole.');
+        }
+
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling createAuthorizationOrdiriComV1alpha1Role.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling createAuthorizationOrdiriComV1alpha1NamespacedRole.');
         }
 
         const queryParameters: any = {};
@@ -432,7 +550,7 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/authorization.ordiri.com/v1alpha1/roles`,
+            path: `/apis/authorization.ordiri.com/v1alpha1/namespaces/{namespace}/roles`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -445,17 +563,21 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * create a Role
      */
-    async createAuthorizationOrdiriComV1alpha1Role(requestParameters: CreateAuthorizationOrdiriComV1alpha1RoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1Role> {
-        const response = await this.createAuthorizationOrdiriComV1alpha1RoleRaw(requestParameters, initOverrides);
+    async createAuthorizationOrdiriComV1alpha1NamespacedRole(requestParameters: CreateAuthorizationOrdiriComV1alpha1NamespacedRoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1Role> {
+        const response = await this.createAuthorizationOrdiriComV1alpha1NamespacedRoleRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * create a RoleBinding
      */
-    async createAuthorizationOrdiriComV1alpha1RoleBindingRaw(requestParameters: CreateAuthorizationOrdiriComV1alpha1RoleBindingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBinding>> {
+    async createAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRaw(requestParameters: CreateAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBinding>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling createAuthorizationOrdiriComV1alpha1NamespacedRoleBinding.');
+        }
+
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling createAuthorizationOrdiriComV1alpha1RoleBinding.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling createAuthorizationOrdiriComV1alpha1NamespacedRoleBinding.');
         }
 
         const queryParameters: any = {};
@@ -477,7 +599,7 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/authorization.ordiri.com/v1alpha1/rolebindings`,
+            path: `/apis/authorization.ordiri.com/v1alpha1/namespaces/{namespace}/rolebindings`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -490,17 +612,21 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * create a RoleBinding
      */
-    async createAuthorizationOrdiriComV1alpha1RoleBinding(requestParameters: CreateAuthorizationOrdiriComV1alpha1RoleBindingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBinding> {
-        const response = await this.createAuthorizationOrdiriComV1alpha1RoleBindingRaw(requestParameters, initOverrides);
+    async createAuthorizationOrdiriComV1alpha1NamespacedRoleBinding(requestParameters: CreateAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBinding> {
+        const response = await this.createAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * create a ServiceAccount
      */
-    async createAuthorizationOrdiriComV1alpha1ServiceAccountRaw(requestParameters: CreateAuthorizationOrdiriComV1alpha1ServiceAccountRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccount>> {
+    async createAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRaw(requestParameters: CreateAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccount>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling createAuthorizationOrdiriComV1alpha1NamespacedServiceAccount.');
+        }
+
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling createAuthorizationOrdiriComV1alpha1ServiceAccount.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling createAuthorizationOrdiriComV1alpha1NamespacedServiceAccount.');
         }
 
         const queryParameters: any = {};
@@ -522,7 +648,7 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/authorization.ordiri.com/v1alpha1/serviceaccounts`,
+            path: `/apis/authorization.ordiri.com/v1alpha1/namespaces/{namespace}/serviceaccounts`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -535,15 +661,19 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * create a ServiceAccount
      */
-    async createAuthorizationOrdiriComV1alpha1ServiceAccount(requestParameters: CreateAuthorizationOrdiriComV1alpha1ServiceAccountRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccount> {
-        const response = await this.createAuthorizationOrdiriComV1alpha1ServiceAccountRaw(requestParameters, initOverrides);
+    async createAuthorizationOrdiriComV1alpha1NamespacedServiceAccount(requestParameters: CreateAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccount> {
+        const response = await this.createAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * delete collection of Role
      */
-    async deleteAuthorizationOrdiriComV1alpha1CollectionRoleRaw(requestParameters: DeleteAuthorizationOrdiriComV1alpha1CollectionRoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+    async deleteAuthorizationOrdiriComV1alpha1CollectionNamespacedRoleRaw(requestParameters: DeleteAuthorizationOrdiriComV1alpha1CollectionNamespacedRoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling deleteAuthorizationOrdiriComV1alpha1CollectionNamespacedRole.');
+        }
+
         const queryParameters: any = {};
 
         if (requestParameters.pretty !== undefined) {
@@ -599,7 +729,7 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/authorization.ordiri.com/v1alpha1/roles`,
+            path: `/apis/authorization.ordiri.com/v1alpha1/namespaces/{namespace}/roles`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -612,15 +742,19 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * delete collection of Role
      */
-    async deleteAuthorizationOrdiriComV1alpha1CollectionRole(requestParameters: DeleteAuthorizationOrdiriComV1alpha1CollectionRoleRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
-        const response = await this.deleteAuthorizationOrdiriComV1alpha1CollectionRoleRaw(requestParameters, initOverrides);
+    async deleteAuthorizationOrdiriComV1alpha1CollectionNamespacedRole(requestParameters: DeleteAuthorizationOrdiriComV1alpha1CollectionNamespacedRoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
+        const response = await this.deleteAuthorizationOrdiriComV1alpha1CollectionNamespacedRoleRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * delete collection of RoleBinding
      */
-    async deleteAuthorizationOrdiriComV1alpha1CollectionRoleBindingRaw(requestParameters: DeleteAuthorizationOrdiriComV1alpha1CollectionRoleBindingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+    async deleteAuthorizationOrdiriComV1alpha1CollectionNamespacedRoleBindingRaw(requestParameters: DeleteAuthorizationOrdiriComV1alpha1CollectionNamespacedRoleBindingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling deleteAuthorizationOrdiriComV1alpha1CollectionNamespacedRoleBinding.');
+        }
+
         const queryParameters: any = {};
 
         if (requestParameters.pretty !== undefined) {
@@ -676,7 +810,7 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/authorization.ordiri.com/v1alpha1/rolebindings`,
+            path: `/apis/authorization.ordiri.com/v1alpha1/namespaces/{namespace}/rolebindings`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -689,15 +823,19 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * delete collection of RoleBinding
      */
-    async deleteAuthorizationOrdiriComV1alpha1CollectionRoleBinding(requestParameters: DeleteAuthorizationOrdiriComV1alpha1CollectionRoleBindingRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
-        const response = await this.deleteAuthorizationOrdiriComV1alpha1CollectionRoleBindingRaw(requestParameters, initOverrides);
+    async deleteAuthorizationOrdiriComV1alpha1CollectionNamespacedRoleBinding(requestParameters: DeleteAuthorizationOrdiriComV1alpha1CollectionNamespacedRoleBindingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
+        const response = await this.deleteAuthorizationOrdiriComV1alpha1CollectionNamespacedRoleBindingRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * delete collection of ServiceAccount
      */
-    async deleteAuthorizationOrdiriComV1alpha1CollectionServiceAccountRaw(requestParameters: DeleteAuthorizationOrdiriComV1alpha1CollectionServiceAccountRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+    async deleteAuthorizationOrdiriComV1alpha1CollectionNamespacedServiceAccountRaw(requestParameters: DeleteAuthorizationOrdiriComV1alpha1CollectionNamespacedServiceAccountRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling deleteAuthorizationOrdiriComV1alpha1CollectionNamespacedServiceAccount.');
+        }
+
         const queryParameters: any = {};
 
         if (requestParameters.pretty !== undefined) {
@@ -753,7 +891,7 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/authorization.ordiri.com/v1alpha1/serviceaccounts`,
+            path: `/apis/authorization.ordiri.com/v1alpha1/namespaces/{namespace}/serviceaccounts`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -766,17 +904,21 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * delete collection of ServiceAccount
      */
-    async deleteAuthorizationOrdiriComV1alpha1CollectionServiceAccount(requestParameters: DeleteAuthorizationOrdiriComV1alpha1CollectionServiceAccountRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
-        const response = await this.deleteAuthorizationOrdiriComV1alpha1CollectionServiceAccountRaw(requestParameters, initOverrides);
+    async deleteAuthorizationOrdiriComV1alpha1CollectionNamespacedServiceAccount(requestParameters: DeleteAuthorizationOrdiriComV1alpha1CollectionNamespacedServiceAccountRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
+        const response = await this.deleteAuthorizationOrdiriComV1alpha1CollectionNamespacedServiceAccountRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * delete a Role
      */
-    async deleteAuthorizationOrdiriComV1alpha1RoleRaw(requestParameters: DeleteAuthorizationOrdiriComV1alpha1RoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+    async deleteAuthorizationOrdiriComV1alpha1NamespacedRoleRaw(requestParameters: DeleteAuthorizationOrdiriComV1alpha1NamespacedRoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling deleteAuthorizationOrdiriComV1alpha1Role.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling deleteAuthorizationOrdiriComV1alpha1NamespacedRole.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling deleteAuthorizationOrdiriComV1alpha1NamespacedRole.');
         }
 
         const queryParameters: any = {};
@@ -806,7 +948,7 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/authorization.ordiri.com/v1alpha1/roles/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/authorization.ordiri.com/v1alpha1/namespaces/{namespace}/roles/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -819,17 +961,21 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * delete a Role
      */
-    async deleteAuthorizationOrdiriComV1alpha1Role(requestParameters: DeleteAuthorizationOrdiriComV1alpha1RoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
-        const response = await this.deleteAuthorizationOrdiriComV1alpha1RoleRaw(requestParameters, initOverrides);
+    async deleteAuthorizationOrdiriComV1alpha1NamespacedRole(requestParameters: DeleteAuthorizationOrdiriComV1alpha1NamespacedRoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
+        const response = await this.deleteAuthorizationOrdiriComV1alpha1NamespacedRoleRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * delete a RoleBinding
      */
-    async deleteAuthorizationOrdiriComV1alpha1RoleBindingRaw(requestParameters: DeleteAuthorizationOrdiriComV1alpha1RoleBindingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+    async deleteAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRaw(requestParameters: DeleteAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling deleteAuthorizationOrdiriComV1alpha1RoleBinding.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling deleteAuthorizationOrdiriComV1alpha1NamespacedRoleBinding.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling deleteAuthorizationOrdiriComV1alpha1NamespacedRoleBinding.');
         }
 
         const queryParameters: any = {};
@@ -859,7 +1005,7 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/authorization.ordiri.com/v1alpha1/rolebindings/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/authorization.ordiri.com/v1alpha1/namespaces/{namespace}/rolebindings/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -872,17 +1018,21 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * delete a RoleBinding
      */
-    async deleteAuthorizationOrdiriComV1alpha1RoleBinding(requestParameters: DeleteAuthorizationOrdiriComV1alpha1RoleBindingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
-        const response = await this.deleteAuthorizationOrdiriComV1alpha1RoleBindingRaw(requestParameters, initOverrides);
+    async deleteAuthorizationOrdiriComV1alpha1NamespacedRoleBinding(requestParameters: DeleteAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
+        const response = await this.deleteAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * delete a ServiceAccount
      */
-    async deleteAuthorizationOrdiriComV1alpha1ServiceAccountRaw(requestParameters: DeleteAuthorizationOrdiriComV1alpha1ServiceAccountRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+    async deleteAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRaw(requestParameters: DeleteAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling deleteAuthorizationOrdiriComV1alpha1ServiceAccount.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling deleteAuthorizationOrdiriComV1alpha1NamespacedServiceAccount.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling deleteAuthorizationOrdiriComV1alpha1NamespacedServiceAccount.');
         }
 
         const queryParameters: any = {};
@@ -912,7 +1062,7 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/authorization.ordiri.com/v1alpha1/serviceaccounts/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/authorization.ordiri.com/v1alpha1/namespaces/{namespace}/serviceaccounts/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -925,8 +1075,8 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * delete a ServiceAccount
      */
-    async deleteAuthorizationOrdiriComV1alpha1ServiceAccount(requestParameters: DeleteAuthorizationOrdiriComV1alpha1ServiceAccountRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
-        const response = await this.deleteAuthorizationOrdiriComV1alpha1ServiceAccountRaw(requestParameters, initOverrides);
+    async deleteAuthorizationOrdiriComV1alpha1NamespacedServiceAccount(requestParameters: DeleteAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
+        const response = await this.deleteAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -959,7 +1109,11 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * list or watch objects of kind Role
      */
-    async listAuthorizationOrdiriComV1alpha1RoleRaw(requestParameters: ListAuthorizationOrdiriComV1alpha1RoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleList>> {
+    async listAuthorizationOrdiriComV1alpha1NamespacedRoleRaw(requestParameters: ListAuthorizationOrdiriComV1alpha1NamespacedRoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleList>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling listAuthorizationOrdiriComV1alpha1NamespacedRole.');
+        }
+
         const queryParameters: any = {};
 
         if (requestParameters.pretty !== undefined) {
@@ -1005,7 +1159,7 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/authorization.ordiri.com/v1alpha1/roles`,
+            path: `/apis/authorization.ordiri.com/v1alpha1/namespaces/{namespace}/roles`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -1017,15 +1171,19 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * list or watch objects of kind Role
      */
-    async listAuthorizationOrdiriComV1alpha1Role(requestParameters: ListAuthorizationOrdiriComV1alpha1RoleRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleList> {
-        const response = await this.listAuthorizationOrdiriComV1alpha1RoleRaw(requestParameters, initOverrides);
+    async listAuthorizationOrdiriComV1alpha1NamespacedRole(requestParameters: ListAuthorizationOrdiriComV1alpha1NamespacedRoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleList> {
+        const response = await this.listAuthorizationOrdiriComV1alpha1NamespacedRoleRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * list or watch objects of kind RoleBinding
      */
-    async listAuthorizationOrdiriComV1alpha1RoleBindingRaw(requestParameters: ListAuthorizationOrdiriComV1alpha1RoleBindingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBindingList>> {
+    async listAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRaw(requestParameters: ListAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBindingList>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling listAuthorizationOrdiriComV1alpha1NamespacedRoleBinding.');
+        }
+
         const queryParameters: any = {};
 
         if (requestParameters.pretty !== undefined) {
@@ -1050,6 +1208,142 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
 
         if (requestParameters.limit !== undefined) {
             queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/authorization.ordiri.com/v1alpha1/namespaces/{namespace}/rolebindings`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBindingListFromJSON(jsonValue));
+    }
+
+    /**
+     * list or watch objects of kind RoleBinding
+     */
+    async listAuthorizationOrdiriComV1alpha1NamespacedRoleBinding(requestParameters: ListAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBindingList> {
+        const response = await this.listAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * list or watch objects of kind ServiceAccount
+     */
+    async listAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRaw(requestParameters: ListAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccountList>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling listAuthorizationOrdiriComV1alpha1NamespacedServiceAccount.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/authorization.ordiri.com/v1alpha1/namespaces/{namespace}/serviceaccounts`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccountListFromJSON(jsonValue));
+    }
+
+    /**
+     * list or watch objects of kind ServiceAccount
+     */
+    async listAuthorizationOrdiriComV1alpha1NamespacedServiceAccount(requestParameters: ListAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccountList> {
+        const response = await this.listAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * list or watch objects of kind RoleBinding
+     */
+    async listAuthorizationOrdiriComV1alpha1RoleBindingForAllNamespacesRaw(requestParameters: ListAuthorizationOrdiriComV1alpha1RoleBindingForAllNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBindingList>> {
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
         }
 
         if (requestParameters.resourceVersion !== undefined) {
@@ -1083,20 +1377,16 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * list or watch objects of kind RoleBinding
      */
-    async listAuthorizationOrdiriComV1alpha1RoleBinding(requestParameters: ListAuthorizationOrdiriComV1alpha1RoleBindingRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBindingList> {
-        const response = await this.listAuthorizationOrdiriComV1alpha1RoleBindingRaw(requestParameters, initOverrides);
+    async listAuthorizationOrdiriComV1alpha1RoleBindingForAllNamespaces(requestParameters: ListAuthorizationOrdiriComV1alpha1RoleBindingForAllNamespacesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBindingList> {
+        const response = await this.listAuthorizationOrdiriComV1alpha1RoleBindingForAllNamespacesRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
-     * list or watch objects of kind ServiceAccount
+     * list or watch objects of kind Role
      */
-    async listAuthorizationOrdiriComV1alpha1ServiceAccountRaw(requestParameters: ListAuthorizationOrdiriComV1alpha1ServiceAccountRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccountList>> {
+    async listAuthorizationOrdiriComV1alpha1RoleForAllNamespacesRaw(requestParameters: ListAuthorizationOrdiriComV1alpha1RoleForAllNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleList>> {
         const queryParameters: any = {};
-
-        if (requestParameters.pretty !== undefined) {
-            queryParameters['pretty'] = requestParameters.pretty;
-        }
 
         if (requestParameters.allowWatchBookmarks !== undefined) {
             queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
@@ -1116,6 +1406,76 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
 
         if (requestParameters.limit !== undefined) {
             queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/authorization.ordiri.com/v1alpha1/roles`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleListFromJSON(jsonValue));
+    }
+
+    /**
+     * list or watch objects of kind Role
+     */
+    async listAuthorizationOrdiriComV1alpha1RoleForAllNamespaces(requestParameters: ListAuthorizationOrdiriComV1alpha1RoleForAllNamespacesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleList> {
+        const response = await this.listAuthorizationOrdiriComV1alpha1RoleForAllNamespacesRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * list or watch objects of kind ServiceAccount
+     */
+    async listAuthorizationOrdiriComV1alpha1ServiceAccountForAllNamespacesRaw(requestParameters: ListAuthorizationOrdiriComV1alpha1ServiceAccountForAllNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccountList>> {
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
         }
 
         if (requestParameters.resourceVersion !== undefined) {
@@ -1149,21 +1509,25 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * list or watch objects of kind ServiceAccount
      */
-    async listAuthorizationOrdiriComV1alpha1ServiceAccount(requestParameters: ListAuthorizationOrdiriComV1alpha1ServiceAccountRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccountList> {
-        const response = await this.listAuthorizationOrdiriComV1alpha1ServiceAccountRaw(requestParameters, initOverrides);
+    async listAuthorizationOrdiriComV1alpha1ServiceAccountForAllNamespaces(requestParameters: ListAuthorizationOrdiriComV1alpha1ServiceAccountForAllNamespacesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccountList> {
+        const response = await this.listAuthorizationOrdiriComV1alpha1ServiceAccountForAllNamespacesRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * partially update the specified Role
      */
-    async patchAuthorizationOrdiriComV1alpha1RoleRaw(requestParameters: PatchAuthorizationOrdiriComV1alpha1RoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1Role>> {
+    async patchAuthorizationOrdiriComV1alpha1NamespacedRoleRaw(requestParameters: PatchAuthorizationOrdiriComV1alpha1NamespacedRoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1Role>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchAuthorizationOrdiriComV1alpha1Role.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchAuthorizationOrdiriComV1alpha1NamespacedRole.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchAuthorizationOrdiriComV1alpha1NamespacedRole.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchAuthorizationOrdiriComV1alpha1Role.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchAuthorizationOrdiriComV1alpha1NamespacedRole.');
         }
 
         const queryParameters: any = {};
@@ -1189,7 +1553,7 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json-patch+json';
 
         const response = await this.request({
-            path: `/apis/authorization.ordiri.com/v1alpha1/roles/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/authorization.ordiri.com/v1alpha1/namespaces/{namespace}/roles/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -1202,21 +1566,25 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update the specified Role
      */
-    async patchAuthorizationOrdiriComV1alpha1Role(requestParameters: PatchAuthorizationOrdiriComV1alpha1RoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1Role> {
-        const response = await this.patchAuthorizationOrdiriComV1alpha1RoleRaw(requestParameters, initOverrides);
+    async patchAuthorizationOrdiriComV1alpha1NamespacedRole(requestParameters: PatchAuthorizationOrdiriComV1alpha1NamespacedRoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1Role> {
+        const response = await this.patchAuthorizationOrdiriComV1alpha1NamespacedRoleRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * partially update the specified RoleBinding
      */
-    async patchAuthorizationOrdiriComV1alpha1RoleBindingRaw(requestParameters: PatchAuthorizationOrdiriComV1alpha1RoleBindingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBinding>> {
+    async patchAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRaw(requestParameters: PatchAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBinding>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchAuthorizationOrdiriComV1alpha1RoleBinding.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchAuthorizationOrdiriComV1alpha1NamespacedRoleBinding.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchAuthorizationOrdiriComV1alpha1NamespacedRoleBinding.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchAuthorizationOrdiriComV1alpha1RoleBinding.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchAuthorizationOrdiriComV1alpha1NamespacedRoleBinding.');
         }
 
         const queryParameters: any = {};
@@ -1242,7 +1610,7 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json-patch+json';
 
         const response = await this.request({
-            path: `/apis/authorization.ordiri.com/v1alpha1/rolebindings/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/authorization.ordiri.com/v1alpha1/namespaces/{namespace}/rolebindings/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -1255,21 +1623,25 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update the specified RoleBinding
      */
-    async patchAuthorizationOrdiriComV1alpha1RoleBinding(requestParameters: PatchAuthorizationOrdiriComV1alpha1RoleBindingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBinding> {
-        const response = await this.patchAuthorizationOrdiriComV1alpha1RoleBindingRaw(requestParameters, initOverrides);
+    async patchAuthorizationOrdiriComV1alpha1NamespacedRoleBinding(requestParameters: PatchAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBinding> {
+        const response = await this.patchAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * partially update status of the specified RoleBinding
      */
-    async patchAuthorizationOrdiriComV1alpha1RoleBindingStatusRaw(requestParameters: PatchAuthorizationOrdiriComV1alpha1RoleBindingStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBinding>> {
+    async patchAuthorizationOrdiriComV1alpha1NamespacedRoleBindingStatusRaw(requestParameters: PatchAuthorizationOrdiriComV1alpha1NamespacedRoleBindingStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBinding>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchAuthorizationOrdiriComV1alpha1RoleBindingStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchAuthorizationOrdiriComV1alpha1NamespacedRoleBindingStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchAuthorizationOrdiriComV1alpha1NamespacedRoleBindingStatus.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchAuthorizationOrdiriComV1alpha1RoleBindingStatus.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchAuthorizationOrdiriComV1alpha1NamespacedRoleBindingStatus.');
         }
 
         const queryParameters: any = {};
@@ -1295,7 +1667,7 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json-patch+json';
 
         const response = await this.request({
-            path: `/apis/authorization.ordiri.com/v1alpha1/rolebindings/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/authorization.ordiri.com/v1alpha1/namespaces/{namespace}/rolebindings/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -1308,21 +1680,25 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update status of the specified RoleBinding
      */
-    async patchAuthorizationOrdiriComV1alpha1RoleBindingStatus(requestParameters: PatchAuthorizationOrdiriComV1alpha1RoleBindingStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBinding> {
-        const response = await this.patchAuthorizationOrdiriComV1alpha1RoleBindingStatusRaw(requestParameters, initOverrides);
+    async patchAuthorizationOrdiriComV1alpha1NamespacedRoleBindingStatus(requestParameters: PatchAuthorizationOrdiriComV1alpha1NamespacedRoleBindingStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBinding> {
+        const response = await this.patchAuthorizationOrdiriComV1alpha1NamespacedRoleBindingStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * partially update status of the specified Role
      */
-    async patchAuthorizationOrdiriComV1alpha1RoleStatusRaw(requestParameters: PatchAuthorizationOrdiriComV1alpha1RoleStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1Role>> {
+    async patchAuthorizationOrdiriComV1alpha1NamespacedRoleStatusRaw(requestParameters: PatchAuthorizationOrdiriComV1alpha1NamespacedRoleStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1Role>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchAuthorizationOrdiriComV1alpha1RoleStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchAuthorizationOrdiriComV1alpha1NamespacedRoleStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchAuthorizationOrdiriComV1alpha1NamespacedRoleStatus.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchAuthorizationOrdiriComV1alpha1RoleStatus.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchAuthorizationOrdiriComV1alpha1NamespacedRoleStatus.');
         }
 
         const queryParameters: any = {};
@@ -1348,7 +1724,7 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json-patch+json';
 
         const response = await this.request({
-            path: `/apis/authorization.ordiri.com/v1alpha1/roles/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/authorization.ordiri.com/v1alpha1/namespaces/{namespace}/roles/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -1361,21 +1737,25 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update status of the specified Role
      */
-    async patchAuthorizationOrdiriComV1alpha1RoleStatus(requestParameters: PatchAuthorizationOrdiriComV1alpha1RoleStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1Role> {
-        const response = await this.patchAuthorizationOrdiriComV1alpha1RoleStatusRaw(requestParameters, initOverrides);
+    async patchAuthorizationOrdiriComV1alpha1NamespacedRoleStatus(requestParameters: PatchAuthorizationOrdiriComV1alpha1NamespacedRoleStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1Role> {
+        const response = await this.patchAuthorizationOrdiriComV1alpha1NamespacedRoleStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * partially update the specified ServiceAccount
      */
-    async patchAuthorizationOrdiriComV1alpha1ServiceAccountRaw(requestParameters: PatchAuthorizationOrdiriComV1alpha1ServiceAccountRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccount>> {
+    async patchAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRaw(requestParameters: PatchAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccount>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchAuthorizationOrdiriComV1alpha1ServiceAccount.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchAuthorizationOrdiriComV1alpha1NamespacedServiceAccount.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchAuthorizationOrdiriComV1alpha1NamespacedServiceAccount.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchAuthorizationOrdiriComV1alpha1ServiceAccount.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchAuthorizationOrdiriComV1alpha1NamespacedServiceAccount.');
         }
 
         const queryParameters: any = {};
@@ -1401,7 +1781,7 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json-patch+json';
 
         const response = await this.request({
-            path: `/apis/authorization.ordiri.com/v1alpha1/serviceaccounts/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/authorization.ordiri.com/v1alpha1/namespaces/{namespace}/serviceaccounts/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -1414,21 +1794,25 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update the specified ServiceAccount
      */
-    async patchAuthorizationOrdiriComV1alpha1ServiceAccount(requestParameters: PatchAuthorizationOrdiriComV1alpha1ServiceAccountRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccount> {
-        const response = await this.patchAuthorizationOrdiriComV1alpha1ServiceAccountRaw(requestParameters, initOverrides);
+    async patchAuthorizationOrdiriComV1alpha1NamespacedServiceAccount(requestParameters: PatchAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccount> {
+        const response = await this.patchAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * partially update status of the specified ServiceAccount
      */
-    async patchAuthorizationOrdiriComV1alpha1ServiceAccountStatusRaw(requestParameters: PatchAuthorizationOrdiriComV1alpha1ServiceAccountStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccount>> {
+    async patchAuthorizationOrdiriComV1alpha1NamespacedServiceAccountStatusRaw(requestParameters: PatchAuthorizationOrdiriComV1alpha1NamespacedServiceAccountStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccount>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchAuthorizationOrdiriComV1alpha1ServiceAccountStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchAuthorizationOrdiriComV1alpha1NamespacedServiceAccountStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchAuthorizationOrdiriComV1alpha1NamespacedServiceAccountStatus.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchAuthorizationOrdiriComV1alpha1ServiceAccountStatus.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchAuthorizationOrdiriComV1alpha1NamespacedServiceAccountStatus.');
         }
 
         const queryParameters: any = {};
@@ -1454,7 +1838,7 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json-patch+json';
 
         const response = await this.request({
-            path: `/apis/authorization.ordiri.com/v1alpha1/serviceaccounts/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/authorization.ordiri.com/v1alpha1/namespaces/{namespace}/serviceaccounts/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -1467,17 +1851,21 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update status of the specified ServiceAccount
      */
-    async patchAuthorizationOrdiriComV1alpha1ServiceAccountStatus(requestParameters: PatchAuthorizationOrdiriComV1alpha1ServiceAccountStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccount> {
-        const response = await this.patchAuthorizationOrdiriComV1alpha1ServiceAccountStatusRaw(requestParameters, initOverrides);
+    async patchAuthorizationOrdiriComV1alpha1NamespacedServiceAccountStatus(requestParameters: PatchAuthorizationOrdiriComV1alpha1NamespacedServiceAccountStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccount> {
+        const response = await this.patchAuthorizationOrdiriComV1alpha1NamespacedServiceAccountStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * read the specified Role
      */
-    async readAuthorizationOrdiriComV1alpha1RoleRaw(requestParameters: ReadAuthorizationOrdiriComV1alpha1RoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1Role>> {
+    async readAuthorizationOrdiriComV1alpha1NamespacedRoleRaw(requestParameters: ReadAuthorizationOrdiriComV1alpha1NamespacedRoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1Role>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readAuthorizationOrdiriComV1alpha1Role.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readAuthorizationOrdiriComV1alpha1NamespacedRole.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readAuthorizationOrdiriComV1alpha1NamespacedRole.');
         }
 
         const queryParameters: any = {};
@@ -1489,7 +1877,7 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/authorization.ordiri.com/v1alpha1/roles/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/authorization.ordiri.com/v1alpha1/namespaces/{namespace}/roles/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -1501,17 +1889,21 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read the specified Role
      */
-    async readAuthorizationOrdiriComV1alpha1Role(requestParameters: ReadAuthorizationOrdiriComV1alpha1RoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1Role> {
-        const response = await this.readAuthorizationOrdiriComV1alpha1RoleRaw(requestParameters, initOverrides);
+    async readAuthorizationOrdiriComV1alpha1NamespacedRole(requestParameters: ReadAuthorizationOrdiriComV1alpha1NamespacedRoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1Role> {
+        const response = await this.readAuthorizationOrdiriComV1alpha1NamespacedRoleRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * read the specified RoleBinding
      */
-    async readAuthorizationOrdiriComV1alpha1RoleBindingRaw(requestParameters: ReadAuthorizationOrdiriComV1alpha1RoleBindingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBinding>> {
+    async readAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRaw(requestParameters: ReadAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBinding>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readAuthorizationOrdiriComV1alpha1RoleBinding.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readAuthorizationOrdiriComV1alpha1NamespacedRoleBinding.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readAuthorizationOrdiriComV1alpha1NamespacedRoleBinding.');
         }
 
         const queryParameters: any = {};
@@ -1523,7 +1915,7 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/authorization.ordiri.com/v1alpha1/rolebindings/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/authorization.ordiri.com/v1alpha1/namespaces/{namespace}/rolebindings/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -1535,17 +1927,21 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read the specified RoleBinding
      */
-    async readAuthorizationOrdiriComV1alpha1RoleBinding(requestParameters: ReadAuthorizationOrdiriComV1alpha1RoleBindingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBinding> {
-        const response = await this.readAuthorizationOrdiriComV1alpha1RoleBindingRaw(requestParameters, initOverrides);
+    async readAuthorizationOrdiriComV1alpha1NamespacedRoleBinding(requestParameters: ReadAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBinding> {
+        const response = await this.readAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * read status of the specified RoleBinding
      */
-    async readAuthorizationOrdiriComV1alpha1RoleBindingStatusRaw(requestParameters: ReadAuthorizationOrdiriComV1alpha1RoleBindingStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBinding>> {
+    async readAuthorizationOrdiriComV1alpha1NamespacedRoleBindingStatusRaw(requestParameters: ReadAuthorizationOrdiriComV1alpha1NamespacedRoleBindingStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBinding>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readAuthorizationOrdiriComV1alpha1RoleBindingStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readAuthorizationOrdiriComV1alpha1NamespacedRoleBindingStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readAuthorizationOrdiriComV1alpha1NamespacedRoleBindingStatus.');
         }
 
         const queryParameters: any = {};
@@ -1557,7 +1953,7 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/authorization.ordiri.com/v1alpha1/rolebindings/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/authorization.ordiri.com/v1alpha1/namespaces/{namespace}/rolebindings/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -1569,17 +1965,21 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read status of the specified RoleBinding
      */
-    async readAuthorizationOrdiriComV1alpha1RoleBindingStatus(requestParameters: ReadAuthorizationOrdiriComV1alpha1RoleBindingStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBinding> {
-        const response = await this.readAuthorizationOrdiriComV1alpha1RoleBindingStatusRaw(requestParameters, initOverrides);
+    async readAuthorizationOrdiriComV1alpha1NamespacedRoleBindingStatus(requestParameters: ReadAuthorizationOrdiriComV1alpha1NamespacedRoleBindingStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBinding> {
+        const response = await this.readAuthorizationOrdiriComV1alpha1NamespacedRoleBindingStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * read status of the specified Role
      */
-    async readAuthorizationOrdiriComV1alpha1RoleStatusRaw(requestParameters: ReadAuthorizationOrdiriComV1alpha1RoleStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1Role>> {
+    async readAuthorizationOrdiriComV1alpha1NamespacedRoleStatusRaw(requestParameters: ReadAuthorizationOrdiriComV1alpha1NamespacedRoleStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1Role>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readAuthorizationOrdiriComV1alpha1RoleStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readAuthorizationOrdiriComV1alpha1NamespacedRoleStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readAuthorizationOrdiriComV1alpha1NamespacedRoleStatus.');
         }
 
         const queryParameters: any = {};
@@ -1591,7 +1991,7 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/authorization.ordiri.com/v1alpha1/roles/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/authorization.ordiri.com/v1alpha1/namespaces/{namespace}/roles/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -1603,17 +2003,21 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read status of the specified Role
      */
-    async readAuthorizationOrdiriComV1alpha1RoleStatus(requestParameters: ReadAuthorizationOrdiriComV1alpha1RoleStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1Role> {
-        const response = await this.readAuthorizationOrdiriComV1alpha1RoleStatusRaw(requestParameters, initOverrides);
+    async readAuthorizationOrdiriComV1alpha1NamespacedRoleStatus(requestParameters: ReadAuthorizationOrdiriComV1alpha1NamespacedRoleStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1Role> {
+        const response = await this.readAuthorizationOrdiriComV1alpha1NamespacedRoleStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * read the specified ServiceAccount
      */
-    async readAuthorizationOrdiriComV1alpha1ServiceAccountRaw(requestParameters: ReadAuthorizationOrdiriComV1alpha1ServiceAccountRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccount>> {
+    async readAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRaw(requestParameters: ReadAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccount>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readAuthorizationOrdiriComV1alpha1ServiceAccount.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readAuthorizationOrdiriComV1alpha1NamespacedServiceAccount.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readAuthorizationOrdiriComV1alpha1NamespacedServiceAccount.');
         }
 
         const queryParameters: any = {};
@@ -1625,7 +2029,7 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/authorization.ordiri.com/v1alpha1/serviceaccounts/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/authorization.ordiri.com/v1alpha1/namespaces/{namespace}/serviceaccounts/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -1637,17 +2041,21 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read the specified ServiceAccount
      */
-    async readAuthorizationOrdiriComV1alpha1ServiceAccount(requestParameters: ReadAuthorizationOrdiriComV1alpha1ServiceAccountRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccount> {
-        const response = await this.readAuthorizationOrdiriComV1alpha1ServiceAccountRaw(requestParameters, initOverrides);
+    async readAuthorizationOrdiriComV1alpha1NamespacedServiceAccount(requestParameters: ReadAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccount> {
+        const response = await this.readAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * read status of the specified ServiceAccount
      */
-    async readAuthorizationOrdiriComV1alpha1ServiceAccountStatusRaw(requestParameters: ReadAuthorizationOrdiriComV1alpha1ServiceAccountStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccount>> {
+    async readAuthorizationOrdiriComV1alpha1NamespacedServiceAccountStatusRaw(requestParameters: ReadAuthorizationOrdiriComV1alpha1NamespacedServiceAccountStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccount>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readAuthorizationOrdiriComV1alpha1ServiceAccountStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readAuthorizationOrdiriComV1alpha1NamespacedServiceAccountStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readAuthorizationOrdiriComV1alpha1NamespacedServiceAccountStatus.');
         }
 
         const queryParameters: any = {};
@@ -1659,7 +2067,7 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/authorization.ordiri.com/v1alpha1/serviceaccounts/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/authorization.ordiri.com/v1alpha1/namespaces/{namespace}/serviceaccounts/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -1671,21 +2079,25 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read status of the specified ServiceAccount
      */
-    async readAuthorizationOrdiriComV1alpha1ServiceAccountStatus(requestParameters: ReadAuthorizationOrdiriComV1alpha1ServiceAccountStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccount> {
-        const response = await this.readAuthorizationOrdiriComV1alpha1ServiceAccountStatusRaw(requestParameters, initOverrides);
+    async readAuthorizationOrdiriComV1alpha1NamespacedServiceAccountStatus(requestParameters: ReadAuthorizationOrdiriComV1alpha1NamespacedServiceAccountStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccount> {
+        const response = await this.readAuthorizationOrdiriComV1alpha1NamespacedServiceAccountStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * replace the specified Role
      */
-    async replaceAuthorizationOrdiriComV1alpha1RoleRaw(requestParameters: ReplaceAuthorizationOrdiriComV1alpha1RoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1Role>> {
+    async replaceAuthorizationOrdiriComV1alpha1NamespacedRoleRaw(requestParameters: ReplaceAuthorizationOrdiriComV1alpha1NamespacedRoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1Role>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceAuthorizationOrdiriComV1alpha1Role.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceAuthorizationOrdiriComV1alpha1NamespacedRole.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceAuthorizationOrdiriComV1alpha1NamespacedRole.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceAuthorizationOrdiriComV1alpha1Role.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceAuthorizationOrdiriComV1alpha1NamespacedRole.');
         }
 
         const queryParameters: any = {};
@@ -1707,7 +2119,7 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/authorization.ordiri.com/v1alpha1/roles/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/authorization.ordiri.com/v1alpha1/namespaces/{namespace}/roles/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -1720,21 +2132,25 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace the specified Role
      */
-    async replaceAuthorizationOrdiriComV1alpha1Role(requestParameters: ReplaceAuthorizationOrdiriComV1alpha1RoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1Role> {
-        const response = await this.replaceAuthorizationOrdiriComV1alpha1RoleRaw(requestParameters, initOverrides);
+    async replaceAuthorizationOrdiriComV1alpha1NamespacedRole(requestParameters: ReplaceAuthorizationOrdiriComV1alpha1NamespacedRoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1Role> {
+        const response = await this.replaceAuthorizationOrdiriComV1alpha1NamespacedRoleRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * replace the specified RoleBinding
      */
-    async replaceAuthorizationOrdiriComV1alpha1RoleBindingRaw(requestParameters: ReplaceAuthorizationOrdiriComV1alpha1RoleBindingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBinding>> {
+    async replaceAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRaw(requestParameters: ReplaceAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBinding>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceAuthorizationOrdiriComV1alpha1RoleBinding.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceAuthorizationOrdiriComV1alpha1NamespacedRoleBinding.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceAuthorizationOrdiriComV1alpha1NamespacedRoleBinding.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceAuthorizationOrdiriComV1alpha1RoleBinding.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceAuthorizationOrdiriComV1alpha1NamespacedRoleBinding.');
         }
 
         const queryParameters: any = {};
@@ -1756,7 +2172,7 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/authorization.ordiri.com/v1alpha1/rolebindings/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/authorization.ordiri.com/v1alpha1/namespaces/{namespace}/rolebindings/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -1769,21 +2185,25 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace the specified RoleBinding
      */
-    async replaceAuthorizationOrdiriComV1alpha1RoleBinding(requestParameters: ReplaceAuthorizationOrdiriComV1alpha1RoleBindingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBinding> {
-        const response = await this.replaceAuthorizationOrdiriComV1alpha1RoleBindingRaw(requestParameters, initOverrides);
+    async replaceAuthorizationOrdiriComV1alpha1NamespacedRoleBinding(requestParameters: ReplaceAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBinding> {
+        const response = await this.replaceAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * replace status of the specified RoleBinding
      */
-    async replaceAuthorizationOrdiriComV1alpha1RoleBindingStatusRaw(requestParameters: ReplaceAuthorizationOrdiriComV1alpha1RoleBindingStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBinding>> {
+    async replaceAuthorizationOrdiriComV1alpha1NamespacedRoleBindingStatusRaw(requestParameters: ReplaceAuthorizationOrdiriComV1alpha1NamespacedRoleBindingStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBinding>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceAuthorizationOrdiriComV1alpha1RoleBindingStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceAuthorizationOrdiriComV1alpha1NamespacedRoleBindingStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceAuthorizationOrdiriComV1alpha1NamespacedRoleBindingStatus.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceAuthorizationOrdiriComV1alpha1RoleBindingStatus.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceAuthorizationOrdiriComV1alpha1NamespacedRoleBindingStatus.');
         }
 
         const queryParameters: any = {};
@@ -1805,7 +2225,7 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/authorization.ordiri.com/v1alpha1/rolebindings/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/authorization.ordiri.com/v1alpha1/namespaces/{namespace}/rolebindings/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -1818,21 +2238,25 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace status of the specified RoleBinding
      */
-    async replaceAuthorizationOrdiriComV1alpha1RoleBindingStatus(requestParameters: ReplaceAuthorizationOrdiriComV1alpha1RoleBindingStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBinding> {
-        const response = await this.replaceAuthorizationOrdiriComV1alpha1RoleBindingStatusRaw(requestParameters, initOverrides);
+    async replaceAuthorizationOrdiriComV1alpha1NamespacedRoleBindingStatus(requestParameters: ReplaceAuthorizationOrdiriComV1alpha1NamespacedRoleBindingStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1RoleBinding> {
+        const response = await this.replaceAuthorizationOrdiriComV1alpha1NamespacedRoleBindingStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * replace status of the specified Role
      */
-    async replaceAuthorizationOrdiriComV1alpha1RoleStatusRaw(requestParameters: ReplaceAuthorizationOrdiriComV1alpha1RoleStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1Role>> {
+    async replaceAuthorizationOrdiriComV1alpha1NamespacedRoleStatusRaw(requestParameters: ReplaceAuthorizationOrdiriComV1alpha1NamespacedRoleStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1Role>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceAuthorizationOrdiriComV1alpha1RoleStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceAuthorizationOrdiriComV1alpha1NamespacedRoleStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceAuthorizationOrdiriComV1alpha1NamespacedRoleStatus.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceAuthorizationOrdiriComV1alpha1RoleStatus.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceAuthorizationOrdiriComV1alpha1NamespacedRoleStatus.');
         }
 
         const queryParameters: any = {};
@@ -1854,7 +2278,7 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/authorization.ordiri.com/v1alpha1/roles/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/authorization.ordiri.com/v1alpha1/namespaces/{namespace}/roles/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -1867,21 +2291,25 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace status of the specified Role
      */
-    async replaceAuthorizationOrdiriComV1alpha1RoleStatus(requestParameters: ReplaceAuthorizationOrdiriComV1alpha1RoleStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1Role> {
-        const response = await this.replaceAuthorizationOrdiriComV1alpha1RoleStatusRaw(requestParameters, initOverrides);
+    async replaceAuthorizationOrdiriComV1alpha1NamespacedRoleStatus(requestParameters: ReplaceAuthorizationOrdiriComV1alpha1NamespacedRoleStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1Role> {
+        const response = await this.replaceAuthorizationOrdiriComV1alpha1NamespacedRoleStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * replace the specified ServiceAccount
      */
-    async replaceAuthorizationOrdiriComV1alpha1ServiceAccountRaw(requestParameters: ReplaceAuthorizationOrdiriComV1alpha1ServiceAccountRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccount>> {
+    async replaceAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRaw(requestParameters: ReplaceAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccount>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceAuthorizationOrdiriComV1alpha1ServiceAccount.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceAuthorizationOrdiriComV1alpha1NamespacedServiceAccount.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceAuthorizationOrdiriComV1alpha1NamespacedServiceAccount.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceAuthorizationOrdiriComV1alpha1ServiceAccount.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceAuthorizationOrdiriComV1alpha1NamespacedServiceAccount.');
         }
 
         const queryParameters: any = {};
@@ -1903,7 +2331,7 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/authorization.ordiri.com/v1alpha1/serviceaccounts/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/authorization.ordiri.com/v1alpha1/namespaces/{namespace}/serviceaccounts/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -1916,21 +2344,25 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace the specified ServiceAccount
      */
-    async replaceAuthorizationOrdiriComV1alpha1ServiceAccount(requestParameters: ReplaceAuthorizationOrdiriComV1alpha1ServiceAccountRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccount> {
-        const response = await this.replaceAuthorizationOrdiriComV1alpha1ServiceAccountRaw(requestParameters, initOverrides);
+    async replaceAuthorizationOrdiriComV1alpha1NamespacedServiceAccount(requestParameters: ReplaceAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccount> {
+        const response = await this.replaceAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * replace status of the specified ServiceAccount
      */
-    async replaceAuthorizationOrdiriComV1alpha1ServiceAccountStatusRaw(requestParameters: ReplaceAuthorizationOrdiriComV1alpha1ServiceAccountStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccount>> {
+    async replaceAuthorizationOrdiriComV1alpha1NamespacedServiceAccountStatusRaw(requestParameters: ReplaceAuthorizationOrdiriComV1alpha1NamespacedServiceAccountStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccount>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceAuthorizationOrdiriComV1alpha1ServiceAccountStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceAuthorizationOrdiriComV1alpha1NamespacedServiceAccountStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceAuthorizationOrdiriComV1alpha1NamespacedServiceAccountStatus.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceAuthorizationOrdiriComV1alpha1ServiceAccountStatus.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceAuthorizationOrdiriComV1alpha1NamespacedServiceAccountStatus.');
         }
 
         const queryParameters: any = {};
@@ -1952,7 +2384,7 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/authorization.ordiri.com/v1alpha1/serviceaccounts/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/authorization.ordiri.com/v1alpha1/namespaces/{namespace}/serviceaccounts/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -1965,17 +2397,21 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace status of the specified ServiceAccount
      */
-    async replaceAuthorizationOrdiriComV1alpha1ServiceAccountStatus(requestParameters: ReplaceAuthorizationOrdiriComV1alpha1ServiceAccountStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccount> {
-        const response = await this.replaceAuthorizationOrdiriComV1alpha1ServiceAccountStatusRaw(requestParameters, initOverrides);
+    async replaceAuthorizationOrdiriComV1alpha1NamespacedServiceAccountStatus(requestParameters: ReplaceAuthorizationOrdiriComV1alpha1NamespacedServiceAccountStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisAuthorizationV1alpha1ServiceAccount> {
+        const response = await this.replaceAuthorizationOrdiriComV1alpha1NamespacedServiceAccountStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * watch changes to an object of kind Role. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
      */
-    async watchAuthorizationOrdiriComV1alpha1RoleRaw(requestParameters: WatchAuthorizationOrdiriComV1alpha1RoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+    async watchAuthorizationOrdiriComV1alpha1NamespacedRoleRaw(requestParameters: WatchAuthorizationOrdiriComV1alpha1NamespacedRoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling watchAuthorizationOrdiriComV1alpha1Role.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling watchAuthorizationOrdiriComV1alpha1NamespacedRole.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling watchAuthorizationOrdiriComV1alpha1NamespacedRole.');
         }
 
         const queryParameters: any = {};
@@ -2023,7 +2459,7 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/authorization.ordiri.com/v1alpha1/watch/roles/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/authorization.ordiri.com/v1alpha1/watch/namespaces/{namespace}/roles/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -2035,17 +2471,21 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * watch changes to an object of kind Role. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
      */
-    async watchAuthorizationOrdiriComV1alpha1Role(requestParameters: WatchAuthorizationOrdiriComV1alpha1RoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
-        const response = await this.watchAuthorizationOrdiriComV1alpha1RoleRaw(requestParameters, initOverrides);
+    async watchAuthorizationOrdiriComV1alpha1NamespacedRole(requestParameters: WatchAuthorizationOrdiriComV1alpha1NamespacedRoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchAuthorizationOrdiriComV1alpha1NamespacedRoleRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * watch changes to an object of kind RoleBinding. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
      */
-    async watchAuthorizationOrdiriComV1alpha1RoleBindingRaw(requestParameters: WatchAuthorizationOrdiriComV1alpha1RoleBindingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+    async watchAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRaw(requestParameters: WatchAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling watchAuthorizationOrdiriComV1alpha1RoleBinding.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling watchAuthorizationOrdiriComV1alpha1NamespacedRoleBinding.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling watchAuthorizationOrdiriComV1alpha1NamespacedRoleBinding.');
         }
 
         const queryParameters: any = {};
@@ -2093,7 +2533,7 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/authorization.ordiri.com/v1alpha1/watch/rolebindings/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/authorization.ordiri.com/v1alpha1/watch/namespaces/{namespace}/rolebindings/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -2105,15 +2545,299 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * watch changes to an object of kind RoleBinding. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
      */
-    async watchAuthorizationOrdiriComV1alpha1RoleBinding(requestParameters: WatchAuthorizationOrdiriComV1alpha1RoleBindingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
-        const response = await this.watchAuthorizationOrdiriComV1alpha1RoleBindingRaw(requestParameters, initOverrides);
+    async watchAuthorizationOrdiriComV1alpha1NamespacedRoleBinding(requestParameters: WatchAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchAuthorizationOrdiriComV1alpha1NamespacedRoleBindingRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * watch individual changes to a list of RoleBinding. deprecated: use the \'watch\' parameter with a list operation instead.
      */
-    async watchAuthorizationOrdiriComV1alpha1RoleBindingListRaw(requestParameters: WatchAuthorizationOrdiriComV1alpha1RoleBindingListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+    async watchAuthorizationOrdiriComV1alpha1NamespacedRoleBindingListRaw(requestParameters: WatchAuthorizationOrdiriComV1alpha1NamespacedRoleBindingListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling watchAuthorizationOrdiriComV1alpha1NamespacedRoleBindingList.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/authorization.ordiri.com/v1alpha1/watch/namespaces/{namespace}/rolebindings`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
+    }
+
+    /**
+     * watch individual changes to a list of RoleBinding. deprecated: use the \'watch\' parameter with a list operation instead.
+     */
+    async watchAuthorizationOrdiriComV1alpha1NamespacedRoleBindingList(requestParameters: WatchAuthorizationOrdiriComV1alpha1NamespacedRoleBindingListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchAuthorizationOrdiriComV1alpha1NamespacedRoleBindingListRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * watch individual changes to a list of Role. deprecated: use the \'watch\' parameter with a list operation instead.
+     */
+    async watchAuthorizationOrdiriComV1alpha1NamespacedRoleListRaw(requestParameters: WatchAuthorizationOrdiriComV1alpha1NamespacedRoleListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling watchAuthorizationOrdiriComV1alpha1NamespacedRoleList.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/authorization.ordiri.com/v1alpha1/watch/namespaces/{namespace}/roles`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
+    }
+
+    /**
+     * watch individual changes to a list of Role. deprecated: use the \'watch\' parameter with a list operation instead.
+     */
+    async watchAuthorizationOrdiriComV1alpha1NamespacedRoleList(requestParameters: WatchAuthorizationOrdiriComV1alpha1NamespacedRoleListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchAuthorizationOrdiriComV1alpha1NamespacedRoleListRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * watch changes to an object of kind ServiceAccount. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
+     */
+    async watchAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRaw(requestParameters: WatchAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+        if (requestParameters.name === null || requestParameters.name === undefined) {
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling watchAuthorizationOrdiriComV1alpha1NamespacedServiceAccount.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling watchAuthorizationOrdiriComV1alpha1NamespacedServiceAccount.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/authorization.ordiri.com/v1alpha1/watch/namespaces/{namespace}/serviceaccounts/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
+    }
+
+    /**
+     * watch changes to an object of kind ServiceAccount. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
+     */
+    async watchAuthorizationOrdiriComV1alpha1NamespacedServiceAccount(requestParameters: WatchAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchAuthorizationOrdiriComV1alpha1NamespacedServiceAccountRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * watch individual changes to a list of ServiceAccount. deprecated: use the \'watch\' parameter with a list operation instead.
+     */
+    async watchAuthorizationOrdiriComV1alpha1NamespacedServiceAccountListRaw(requestParameters: WatchAuthorizationOrdiriComV1alpha1NamespacedServiceAccountListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling watchAuthorizationOrdiriComV1alpha1NamespacedServiceAccountList.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/authorization.ordiri.com/v1alpha1/watch/namespaces/{namespace}/serviceaccounts`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
+    }
+
+    /**
+     * watch individual changes to a list of ServiceAccount. deprecated: use the \'watch\' parameter with a list operation instead.
+     */
+    async watchAuthorizationOrdiriComV1alpha1NamespacedServiceAccountList(requestParameters: WatchAuthorizationOrdiriComV1alpha1NamespacedServiceAccountListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchAuthorizationOrdiriComV1alpha1NamespacedServiceAccountListRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * watch individual changes to a list of RoleBinding. deprecated: use the \'watch\' parameter with a list operation instead.
+     */
+    async watchAuthorizationOrdiriComV1alpha1RoleBindingListForAllNamespacesRaw(requestParameters: WatchAuthorizationOrdiriComV1alpha1RoleBindingListForAllNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
         const queryParameters: any = {};
 
         if (requestParameters.allowWatchBookmarks !== undefined) {
@@ -2171,15 +2895,15 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * watch individual changes to a list of RoleBinding. deprecated: use the \'watch\' parameter with a list operation instead.
      */
-    async watchAuthorizationOrdiriComV1alpha1RoleBindingList(requestParameters: WatchAuthorizationOrdiriComV1alpha1RoleBindingListRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
-        const response = await this.watchAuthorizationOrdiriComV1alpha1RoleBindingListRaw(requestParameters, initOverrides);
+    async watchAuthorizationOrdiriComV1alpha1RoleBindingListForAllNamespaces(requestParameters: WatchAuthorizationOrdiriComV1alpha1RoleBindingListForAllNamespacesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchAuthorizationOrdiriComV1alpha1RoleBindingListForAllNamespacesRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * watch individual changes to a list of Role. deprecated: use the \'watch\' parameter with a list operation instead.
      */
-    async watchAuthorizationOrdiriComV1alpha1RoleListRaw(requestParameters: WatchAuthorizationOrdiriComV1alpha1RoleListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+    async watchAuthorizationOrdiriComV1alpha1RoleListForAllNamespacesRaw(requestParameters: WatchAuthorizationOrdiriComV1alpha1RoleListForAllNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
         const queryParameters: any = {};
 
         if (requestParameters.allowWatchBookmarks !== undefined) {
@@ -2237,85 +2961,15 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * watch individual changes to a list of Role. deprecated: use the \'watch\' parameter with a list operation instead.
      */
-    async watchAuthorizationOrdiriComV1alpha1RoleList(requestParameters: WatchAuthorizationOrdiriComV1alpha1RoleListRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
-        const response = await this.watchAuthorizationOrdiriComV1alpha1RoleListRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * watch changes to an object of kind ServiceAccount. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
-     */
-    async watchAuthorizationOrdiriComV1alpha1ServiceAccountRaw(requestParameters: WatchAuthorizationOrdiriComV1alpha1ServiceAccountRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
-        if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling watchAuthorizationOrdiriComV1alpha1ServiceAccount.');
-        }
-
-        const queryParameters: any = {};
-
-        if (requestParameters.allowWatchBookmarks !== undefined) {
-            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
-        }
-
-        if (requestParameters._continue !== undefined) {
-            queryParameters['continue'] = requestParameters._continue;
-        }
-
-        if (requestParameters.fieldSelector !== undefined) {
-            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
-        }
-
-        if (requestParameters.labelSelector !== undefined) {
-            queryParameters['labelSelector'] = requestParameters.labelSelector;
-        }
-
-        if (requestParameters.limit !== undefined) {
-            queryParameters['limit'] = requestParameters.limit;
-        }
-
-        if (requestParameters.pretty !== undefined) {
-            queryParameters['pretty'] = requestParameters.pretty;
-        }
-
-        if (requestParameters.resourceVersion !== undefined) {
-            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
-        }
-
-        if (requestParameters.resourceVersionMatch !== undefined) {
-            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
-        }
-
-        if (requestParameters.timeoutSeconds !== undefined) {
-            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
-        }
-
-        if (requestParameters.watch !== undefined) {
-            queryParameters['watch'] = requestParameters.watch;
-        }
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/apis/authorization.ordiri.com/v1alpha1/watch/serviceaccounts/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
-    }
-
-    /**
-     * watch changes to an object of kind ServiceAccount. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
-     */
-    async watchAuthorizationOrdiriComV1alpha1ServiceAccount(requestParameters: WatchAuthorizationOrdiriComV1alpha1ServiceAccountRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
-        const response = await this.watchAuthorizationOrdiriComV1alpha1ServiceAccountRaw(requestParameters, initOverrides);
+    async watchAuthorizationOrdiriComV1alpha1RoleListForAllNamespaces(requestParameters: WatchAuthorizationOrdiriComV1alpha1RoleListForAllNamespacesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchAuthorizationOrdiriComV1alpha1RoleListForAllNamespacesRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * watch individual changes to a list of ServiceAccount. deprecated: use the \'watch\' parameter with a list operation instead.
      */
-    async watchAuthorizationOrdiriComV1alpha1ServiceAccountListRaw(requestParameters: WatchAuthorizationOrdiriComV1alpha1ServiceAccountListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+    async watchAuthorizationOrdiriComV1alpha1ServiceAccountListForAllNamespacesRaw(requestParameters: WatchAuthorizationOrdiriComV1alpha1ServiceAccountListForAllNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
         const queryParameters: any = {};
 
         if (requestParameters.allowWatchBookmarks !== undefined) {
@@ -2373,8 +3027,8 @@ export class AuthorizationOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * watch individual changes to a list of ServiceAccount. deprecated: use the \'watch\' parameter with a list operation instead.
      */
-    async watchAuthorizationOrdiriComV1alpha1ServiceAccountList(requestParameters: WatchAuthorizationOrdiriComV1alpha1ServiceAccountListRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
-        const response = await this.watchAuthorizationOrdiriComV1alpha1ServiceAccountListRaw(requestParameters, initOverrides);
+    async watchAuthorizationOrdiriComV1alpha1ServiceAccountListForAllNamespaces(requestParameters: WatchAuthorizationOrdiriComV1alpha1ServiceAccountListForAllNamespacesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchAuthorizationOrdiriComV1alpha1ServiceAccountListForAllNamespacesRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

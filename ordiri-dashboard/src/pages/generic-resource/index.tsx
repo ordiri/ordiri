@@ -31,7 +31,7 @@ const foo = CreateResourcePage({a: {
     columns: {
 
     },
-    lister: a.listComputeOrdiriComV1alpha1VirtualMachineRaw
+    lister: a.listComputeOrdiriComV1alpha1VirtualMachineForAllNamespacesRaw
 }})
 
 export interface GenericResourceProps {

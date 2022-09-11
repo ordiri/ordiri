@@ -20,6 +20,7 @@ export * from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplic
 export * from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSetList';
 export * from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSetSpec';
 export * from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineReplicaSetStatus';
+export * from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineResources';
 export * from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineSpec';
 export * from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineStatus';
 export * from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineTemplate';
@@ -46,6 +47,9 @@ export * from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1DhcpConfiguration';
 export * from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostNetworkStatus';
 export * from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostRouterStatus';
 export * from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostSubnetStatus';
+export * from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancer';
+export * from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerList';
+export * from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1MetadataSubnetStatus';
 export * from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network';
 export * from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkList';
 export * from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkNatSpec';

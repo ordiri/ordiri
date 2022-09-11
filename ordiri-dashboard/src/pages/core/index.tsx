@@ -38,7 +38,7 @@ const CoreResourcesPage = (props: CoreResourceProps) => {
             }
         },
         "Machines": {
-            lister: api.listCoreOrdiriComV1alpha1MachineRaw.bind(api),
+            lister: api.listCoreOrdiriComV1alpha1MachineForAllNamespacesRaw.bind(api),
             columns: {
                 name: {
                     selector: "metadata.name",
@@ -71,7 +71,7 @@ const CoreResourcesPage = (props: CoreResourceProps) => {
             }
         },
         "Profiles": {
-            lister: api.listCoreOrdiriComV1alpha1MachineProfileRaw.bind(api),
+            lister: api.listCoreOrdiriComV1alpha1MachineProfileForAllNamespacesRaw.bind(api),
             columns: {
                 name: {
                     selector: "metadata.name",

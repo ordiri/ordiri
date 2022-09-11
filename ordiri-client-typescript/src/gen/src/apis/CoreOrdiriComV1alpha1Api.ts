@@ -49,14 +49,16 @@ import {
     IoK8sApimachineryPkgApisMetaV1WatchEventToJSON,
 } from '../models';
 
-export interface CreateCoreOrdiriComV1alpha1MachineRequest {
+export interface CreateCoreOrdiriComV1alpha1NamespacedMachineRequest {
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface CreateCoreOrdiriComV1alpha1MachineProfileRequest {
+export interface CreateCoreOrdiriComV1alpha1NamespacedMachineProfileRequest {
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfile;
     pretty?: string;
     dryRun?: string;
@@ -70,7 +72,8 @@ export interface CreateCoreOrdiriComV1alpha1NodeRequest {
     fieldManager?: string;
 }
 
-export interface DeleteCoreOrdiriComV1alpha1CollectionMachineRequest {
+export interface DeleteCoreOrdiriComV1alpha1CollectionNamespacedMachineRequest {
+    namespace: string;
     pretty?: string;
     _continue?: string;
     dryRun?: string;
@@ -86,7 +89,8 @@ export interface DeleteCoreOrdiriComV1alpha1CollectionMachineRequest {
     body?: IoK8sApimachineryPkgApisMetaV1DeleteOptions;
 }
 
-export interface DeleteCoreOrdiriComV1alpha1CollectionMachineProfileRequest {
+export interface DeleteCoreOrdiriComV1alpha1CollectionNamespacedMachineProfileRequest {
+    namespace: string;
     pretty?: string;
     _continue?: string;
     dryRun?: string;
@@ -118,8 +122,9 @@ export interface DeleteCoreOrdiriComV1alpha1CollectionNodeRequest {
     body?: IoK8sApimachineryPkgApisMetaV1DeleteOptions;
 }
 
-export interface DeleteCoreOrdiriComV1alpha1MachineRequest {
+export interface DeleteCoreOrdiriComV1alpha1NamespacedMachineRequest {
     name: string;
+    namespace: string;
     pretty?: string;
     dryRun?: string;
     gracePeriodSeconds?: number;
@@ -128,8 +133,9 @@ export interface DeleteCoreOrdiriComV1alpha1MachineRequest {
     body?: IoK8sApimachineryPkgApisMetaV1DeleteOptions;
 }
 
-export interface DeleteCoreOrdiriComV1alpha1MachineProfileRequest {
+export interface DeleteCoreOrdiriComV1alpha1NamespacedMachineProfileRequest {
     name: string;
+    namespace: string;
     pretty?: string;
     dryRun?: string;
     gracePeriodSeconds?: number;
@@ -148,7 +154,34 @@ export interface DeleteCoreOrdiriComV1alpha1NodeRequest {
     body?: IoK8sApimachineryPkgApisMetaV1DeleteOptions;
 }
 
-export interface ListCoreOrdiriComV1alpha1MachineRequest {
+export interface ListCoreOrdiriComV1alpha1MachineForAllNamespacesRequest {
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface ListCoreOrdiriComV1alpha1MachineProfileForAllNamespacesRequest {
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface ListCoreOrdiriComV1alpha1NamespacedMachineRequest {
+    namespace: string;
     pretty?: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
@@ -161,7 +194,8 @@ export interface ListCoreOrdiriComV1alpha1MachineRequest {
     watch?: boolean;
 }
 
-export interface ListCoreOrdiriComV1alpha1MachineProfileRequest {
+export interface ListCoreOrdiriComV1alpha1NamespacedMachineProfileRequest {
+    namespace: string;
     pretty?: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
@@ -187,8 +221,9 @@ export interface ListCoreOrdiriComV1alpha1NodeRequest {
     watch?: boolean;
 }
 
-export interface PatchCoreOrdiriComV1alpha1MachineRequest {
+export interface PatchCoreOrdiriComV1alpha1NamespacedMachineRequest {
     name: string;
+    namespace: string;
     body: object;
     pretty?: string;
     dryRun?: string;
@@ -196,8 +231,9 @@ export interface PatchCoreOrdiriComV1alpha1MachineRequest {
     force?: boolean;
 }
 
-export interface PatchCoreOrdiriComV1alpha1MachineProfileRequest {
+export interface PatchCoreOrdiriComV1alpha1NamespacedMachineProfileRequest {
     name: string;
+    namespace: string;
     body: object;
     pretty?: string;
     dryRun?: string;
@@ -205,8 +241,9 @@ export interface PatchCoreOrdiriComV1alpha1MachineProfileRequest {
     force?: boolean;
 }
 
-export interface PatchCoreOrdiriComV1alpha1MachineProfileStatusRequest {
+export interface PatchCoreOrdiriComV1alpha1NamespacedMachineProfileStatusRequest {
     name: string;
+    namespace: string;
     body: object;
     pretty?: string;
     dryRun?: string;
@@ -214,8 +251,9 @@ export interface PatchCoreOrdiriComV1alpha1MachineProfileStatusRequest {
     force?: boolean;
 }
 
-export interface PatchCoreOrdiriComV1alpha1MachineReviewRequest {
+export interface PatchCoreOrdiriComV1alpha1NamespacedMachineReviewRequest {
     name: string;
+    namespace: string;
     body: object;
     pretty?: string;
     dryRun?: string;
@@ -223,8 +261,9 @@ export interface PatchCoreOrdiriComV1alpha1MachineReviewRequest {
     force?: boolean;
 }
 
-export interface PatchCoreOrdiriComV1alpha1MachineStatusRequest {
+export interface PatchCoreOrdiriComV1alpha1NamespacedMachineStatusRequest {
     name: string;
+    namespace: string;
     body: object;
     pretty?: string;
     dryRun?: string;
@@ -250,28 +289,33 @@ export interface PatchCoreOrdiriComV1alpha1NodeStatusRequest {
     force?: boolean;
 }
 
-export interface ReadCoreOrdiriComV1alpha1MachineRequest {
+export interface ReadCoreOrdiriComV1alpha1NamespacedMachineRequest {
     name: string;
+    namespace: string;
     pretty?: string;
 }
 
-export interface ReadCoreOrdiriComV1alpha1MachineProfileRequest {
+export interface ReadCoreOrdiriComV1alpha1NamespacedMachineProfileRequest {
     name: string;
+    namespace: string;
     pretty?: string;
 }
 
-export interface ReadCoreOrdiriComV1alpha1MachineProfileStatusRequest {
+export interface ReadCoreOrdiriComV1alpha1NamespacedMachineProfileStatusRequest {
     name: string;
+    namespace: string;
     pretty?: string;
 }
 
-export interface ReadCoreOrdiriComV1alpha1MachineReviewRequest {
+export interface ReadCoreOrdiriComV1alpha1NamespacedMachineReviewRequest {
     name: string;
+    namespace: string;
     pretty?: string;
 }
 
-export interface ReadCoreOrdiriComV1alpha1MachineStatusRequest {
+export interface ReadCoreOrdiriComV1alpha1NamespacedMachineStatusRequest {
     name: string;
+    namespace: string;
     pretty?: string;
 }
 
@@ -285,40 +329,45 @@ export interface ReadCoreOrdiriComV1alpha1NodeStatusRequest {
     pretty?: string;
 }
 
-export interface ReplaceCoreOrdiriComV1alpha1MachineRequest {
+export interface ReplaceCoreOrdiriComV1alpha1NamespacedMachineRequest {
     name: string;
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface ReplaceCoreOrdiriComV1alpha1MachineProfileRequest {
+export interface ReplaceCoreOrdiriComV1alpha1NamespacedMachineProfileRequest {
     name: string;
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfile;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface ReplaceCoreOrdiriComV1alpha1MachineProfileStatusRequest {
+export interface ReplaceCoreOrdiriComV1alpha1NamespacedMachineProfileStatusRequest {
     name: string;
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfile;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface ReplaceCoreOrdiriComV1alpha1MachineReviewRequest {
+export interface ReplaceCoreOrdiriComV1alpha1NamespacedMachineReviewRequest {
     name: string;
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface ReplaceCoreOrdiriComV1alpha1MachineStatusRequest {
+export interface ReplaceCoreOrdiriComV1alpha1NamespacedMachineStatusRequest {
     name: string;
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine;
     pretty?: string;
     dryRun?: string;
@@ -341,8 +390,35 @@ export interface ReplaceCoreOrdiriComV1alpha1NodeStatusRequest {
     fieldManager?: string;
 }
 
-export interface WatchCoreOrdiriComV1alpha1MachineRequest {
+export interface WatchCoreOrdiriComV1alpha1MachineListForAllNamespacesRequest {
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface WatchCoreOrdiriComV1alpha1MachineProfileListForAllNamespacesRequest {
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface WatchCoreOrdiriComV1alpha1NamespacedMachineRequest {
     name: string;
+    namespace: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
     fieldSelector?: string;
@@ -355,7 +431,8 @@ export interface WatchCoreOrdiriComV1alpha1MachineRequest {
     watch?: boolean;
 }
 
-export interface WatchCoreOrdiriComV1alpha1MachineListRequest {
+export interface WatchCoreOrdiriComV1alpha1NamespacedMachineListRequest {
+    namespace: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
     fieldSelector?: string;
@@ -368,8 +445,9 @@ export interface WatchCoreOrdiriComV1alpha1MachineListRequest {
     watch?: boolean;
 }
 
-export interface WatchCoreOrdiriComV1alpha1MachineProfileRequest {
+export interface WatchCoreOrdiriComV1alpha1NamespacedMachineProfileRequest {
     name: string;
+    namespace: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
     fieldSelector?: string;
@@ -382,7 +460,8 @@ export interface WatchCoreOrdiriComV1alpha1MachineProfileRequest {
     watch?: boolean;
 }
 
-export interface WatchCoreOrdiriComV1alpha1MachineProfileListRequest {
+export interface WatchCoreOrdiriComV1alpha1NamespacedMachineProfileListRequest {
+    namespace: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
     fieldSelector?: string;
@@ -430,9 +509,13 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * create a Machine
      */
-    async createCoreOrdiriComV1alpha1MachineRaw(requestParameters: CreateCoreOrdiriComV1alpha1MachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine>> {
+    async createCoreOrdiriComV1alpha1NamespacedMachineRaw(requestParameters: CreateCoreOrdiriComV1alpha1NamespacedMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling createCoreOrdiriComV1alpha1NamespacedMachine.');
+        }
+
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling createCoreOrdiriComV1alpha1Machine.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling createCoreOrdiriComV1alpha1NamespacedMachine.');
         }
 
         const queryParameters: any = {};
@@ -454,7 +537,7 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/core.ordiri.com/v1alpha1/machines`,
+            path: `/apis/core.ordiri.com/v1alpha1/namespaces/{namespace}/machines`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -467,17 +550,21 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * create a Machine
      */
-    async createCoreOrdiriComV1alpha1Machine(requestParameters: CreateCoreOrdiriComV1alpha1MachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine> {
-        const response = await this.createCoreOrdiriComV1alpha1MachineRaw(requestParameters, initOverrides);
+    async createCoreOrdiriComV1alpha1NamespacedMachine(requestParameters: CreateCoreOrdiriComV1alpha1NamespacedMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine> {
+        const response = await this.createCoreOrdiriComV1alpha1NamespacedMachineRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * create a MachineProfile
      */
-    async createCoreOrdiriComV1alpha1MachineProfileRaw(requestParameters: CreateCoreOrdiriComV1alpha1MachineProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfile>> {
+    async createCoreOrdiriComV1alpha1NamespacedMachineProfileRaw(requestParameters: CreateCoreOrdiriComV1alpha1NamespacedMachineProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfile>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling createCoreOrdiriComV1alpha1NamespacedMachineProfile.');
+        }
+
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling createCoreOrdiriComV1alpha1MachineProfile.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling createCoreOrdiriComV1alpha1NamespacedMachineProfile.');
         }
 
         const queryParameters: any = {};
@@ -499,7 +586,7 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/core.ordiri.com/v1alpha1/machineprofiles`,
+            path: `/apis/core.ordiri.com/v1alpha1/namespaces/{namespace}/machineprofiles`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -512,8 +599,8 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * create a MachineProfile
      */
-    async createCoreOrdiriComV1alpha1MachineProfile(requestParameters: CreateCoreOrdiriComV1alpha1MachineProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfile> {
-        const response = await this.createCoreOrdiriComV1alpha1MachineProfileRaw(requestParameters, initOverrides);
+    async createCoreOrdiriComV1alpha1NamespacedMachineProfile(requestParameters: CreateCoreOrdiriComV1alpha1NamespacedMachineProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfile> {
+        const response = await this.createCoreOrdiriComV1alpha1NamespacedMachineProfileRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -565,7 +652,11 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * delete collection of Machine
      */
-    async deleteCoreOrdiriComV1alpha1CollectionMachineRaw(requestParameters: DeleteCoreOrdiriComV1alpha1CollectionMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+    async deleteCoreOrdiriComV1alpha1CollectionNamespacedMachineRaw(requestParameters: DeleteCoreOrdiriComV1alpha1CollectionNamespacedMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling deleteCoreOrdiriComV1alpha1CollectionNamespacedMachine.');
+        }
+
         const queryParameters: any = {};
 
         if (requestParameters.pretty !== undefined) {
@@ -621,7 +712,7 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/core.ordiri.com/v1alpha1/machines`,
+            path: `/apis/core.ordiri.com/v1alpha1/namespaces/{namespace}/machines`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -634,15 +725,19 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * delete collection of Machine
      */
-    async deleteCoreOrdiriComV1alpha1CollectionMachine(requestParameters: DeleteCoreOrdiriComV1alpha1CollectionMachineRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
-        const response = await this.deleteCoreOrdiriComV1alpha1CollectionMachineRaw(requestParameters, initOverrides);
+    async deleteCoreOrdiriComV1alpha1CollectionNamespacedMachine(requestParameters: DeleteCoreOrdiriComV1alpha1CollectionNamespacedMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
+        const response = await this.deleteCoreOrdiriComV1alpha1CollectionNamespacedMachineRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * delete collection of MachineProfile
      */
-    async deleteCoreOrdiriComV1alpha1CollectionMachineProfileRaw(requestParameters: DeleteCoreOrdiriComV1alpha1CollectionMachineProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+    async deleteCoreOrdiriComV1alpha1CollectionNamespacedMachineProfileRaw(requestParameters: DeleteCoreOrdiriComV1alpha1CollectionNamespacedMachineProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling deleteCoreOrdiriComV1alpha1CollectionNamespacedMachineProfile.');
+        }
+
         const queryParameters: any = {};
 
         if (requestParameters.pretty !== undefined) {
@@ -698,7 +793,7 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/core.ordiri.com/v1alpha1/machineprofiles`,
+            path: `/apis/core.ordiri.com/v1alpha1/namespaces/{namespace}/machineprofiles`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -711,8 +806,8 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * delete collection of MachineProfile
      */
-    async deleteCoreOrdiriComV1alpha1CollectionMachineProfile(requestParameters: DeleteCoreOrdiriComV1alpha1CollectionMachineProfileRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
-        const response = await this.deleteCoreOrdiriComV1alpha1CollectionMachineProfileRaw(requestParameters, initOverrides);
+    async deleteCoreOrdiriComV1alpha1CollectionNamespacedMachineProfile(requestParameters: DeleteCoreOrdiriComV1alpha1CollectionNamespacedMachineProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
+        const response = await this.deleteCoreOrdiriComV1alpha1CollectionNamespacedMachineProfileRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -796,9 +891,13 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * delete a Machine
      */
-    async deleteCoreOrdiriComV1alpha1MachineRaw(requestParameters: DeleteCoreOrdiriComV1alpha1MachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+    async deleteCoreOrdiriComV1alpha1NamespacedMachineRaw(requestParameters: DeleteCoreOrdiriComV1alpha1NamespacedMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling deleteCoreOrdiriComV1alpha1Machine.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling deleteCoreOrdiriComV1alpha1NamespacedMachine.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling deleteCoreOrdiriComV1alpha1NamespacedMachine.');
         }
 
         const queryParameters: any = {};
@@ -828,7 +927,7 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/core.ordiri.com/v1alpha1/machines/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/core.ordiri.com/v1alpha1/namespaces/{namespace}/machines/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -841,17 +940,21 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * delete a Machine
      */
-    async deleteCoreOrdiriComV1alpha1Machine(requestParameters: DeleteCoreOrdiriComV1alpha1MachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
-        const response = await this.deleteCoreOrdiriComV1alpha1MachineRaw(requestParameters, initOverrides);
+    async deleteCoreOrdiriComV1alpha1NamespacedMachine(requestParameters: DeleteCoreOrdiriComV1alpha1NamespacedMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
+        const response = await this.deleteCoreOrdiriComV1alpha1NamespacedMachineRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * delete a MachineProfile
      */
-    async deleteCoreOrdiriComV1alpha1MachineProfileRaw(requestParameters: DeleteCoreOrdiriComV1alpha1MachineProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+    async deleteCoreOrdiriComV1alpha1NamespacedMachineProfileRaw(requestParameters: DeleteCoreOrdiriComV1alpha1NamespacedMachineProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling deleteCoreOrdiriComV1alpha1MachineProfile.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling deleteCoreOrdiriComV1alpha1NamespacedMachineProfile.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling deleteCoreOrdiriComV1alpha1NamespacedMachineProfile.');
         }
 
         const queryParameters: any = {};
@@ -881,7 +984,7 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/core.ordiri.com/v1alpha1/machineprofiles/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/core.ordiri.com/v1alpha1/namespaces/{namespace}/machineprofiles/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -894,8 +997,8 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * delete a MachineProfile
      */
-    async deleteCoreOrdiriComV1alpha1MachineProfile(requestParameters: DeleteCoreOrdiriComV1alpha1MachineProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
-        const response = await this.deleteCoreOrdiriComV1alpha1MachineProfileRaw(requestParameters, initOverrides);
+    async deleteCoreOrdiriComV1alpha1NamespacedMachineProfile(requestParameters: DeleteCoreOrdiriComV1alpha1NamespacedMachineProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
+        const response = await this.deleteCoreOrdiriComV1alpha1NamespacedMachineProfileRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -981,12 +1084,8 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * list or watch objects of kind Machine
      */
-    async listCoreOrdiriComV1alpha1MachineRaw(requestParameters: ListCoreOrdiriComV1alpha1MachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineList>> {
+    async listCoreOrdiriComV1alpha1MachineForAllNamespacesRaw(requestParameters: ListCoreOrdiriComV1alpha1MachineForAllNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineList>> {
         const queryParameters: any = {};
-
-        if (requestParameters.pretty !== undefined) {
-            queryParameters['pretty'] = requestParameters.pretty;
-        }
 
         if (requestParameters.allowWatchBookmarks !== undefined) {
             queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
@@ -1006,6 +1105,10 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
 
         if (requestParameters.limit !== undefined) {
             queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
         }
 
         if (requestParameters.resourceVersion !== undefined) {
@@ -1039,15 +1142,85 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * list or watch objects of kind Machine
      */
-    async listCoreOrdiriComV1alpha1Machine(requestParameters: ListCoreOrdiriComV1alpha1MachineRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineList> {
-        const response = await this.listCoreOrdiriComV1alpha1MachineRaw(requestParameters, initOverrides);
+    async listCoreOrdiriComV1alpha1MachineForAllNamespaces(requestParameters: ListCoreOrdiriComV1alpha1MachineForAllNamespacesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineList> {
+        const response = await this.listCoreOrdiriComV1alpha1MachineForAllNamespacesRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * list or watch objects of kind MachineProfile
      */
-    async listCoreOrdiriComV1alpha1MachineProfileRaw(requestParameters: ListCoreOrdiriComV1alpha1MachineProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfileList>> {
+    async listCoreOrdiriComV1alpha1MachineProfileForAllNamespacesRaw(requestParameters: ListCoreOrdiriComV1alpha1MachineProfileForAllNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfileList>> {
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/core.ordiri.com/v1alpha1/machineprofiles`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfileListFromJSON(jsonValue));
+    }
+
+    /**
+     * list or watch objects of kind MachineProfile
+     */
+    async listCoreOrdiriComV1alpha1MachineProfileForAllNamespaces(requestParameters: ListCoreOrdiriComV1alpha1MachineProfileForAllNamespacesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfileList> {
+        const response = await this.listCoreOrdiriComV1alpha1MachineProfileForAllNamespacesRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * list or watch objects of kind Machine
+     */
+    async listCoreOrdiriComV1alpha1NamespacedMachineRaw(requestParameters: ListCoreOrdiriComV1alpha1NamespacedMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineList>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling listCoreOrdiriComV1alpha1NamespacedMachine.');
+        }
+
         const queryParameters: any = {};
 
         if (requestParameters.pretty !== undefined) {
@@ -1093,7 +1266,77 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/core.ordiri.com/v1alpha1/machineprofiles`,
+            path: `/apis/core.ordiri.com/v1alpha1/namespaces/{namespace}/machines`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineListFromJSON(jsonValue));
+    }
+
+    /**
+     * list or watch objects of kind Machine
+     */
+    async listCoreOrdiriComV1alpha1NamespacedMachine(requestParameters: ListCoreOrdiriComV1alpha1NamespacedMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineList> {
+        const response = await this.listCoreOrdiriComV1alpha1NamespacedMachineRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * list or watch objects of kind MachineProfile
+     */
+    async listCoreOrdiriComV1alpha1NamespacedMachineProfileRaw(requestParameters: ListCoreOrdiriComV1alpha1NamespacedMachineProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfileList>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling listCoreOrdiriComV1alpha1NamespacedMachineProfile.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/core.ordiri.com/v1alpha1/namespaces/{namespace}/machineprofiles`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -1105,8 +1348,8 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * list or watch objects of kind MachineProfile
      */
-    async listCoreOrdiriComV1alpha1MachineProfile(requestParameters: ListCoreOrdiriComV1alpha1MachineProfileRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfileList> {
-        const response = await this.listCoreOrdiriComV1alpha1MachineProfileRaw(requestParameters, initOverrides);
+    async listCoreOrdiriComV1alpha1NamespacedMachineProfile(requestParameters: ListCoreOrdiriComV1alpha1NamespacedMachineProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfileList> {
+        const response = await this.listCoreOrdiriComV1alpha1NamespacedMachineProfileRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -1179,13 +1422,17 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update the specified Machine
      */
-    async patchCoreOrdiriComV1alpha1MachineRaw(requestParameters: PatchCoreOrdiriComV1alpha1MachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine>> {
+    async patchCoreOrdiriComV1alpha1NamespacedMachineRaw(requestParameters: PatchCoreOrdiriComV1alpha1NamespacedMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchCoreOrdiriComV1alpha1Machine.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchCoreOrdiriComV1alpha1NamespacedMachine.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchCoreOrdiriComV1alpha1NamespacedMachine.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchCoreOrdiriComV1alpha1Machine.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchCoreOrdiriComV1alpha1NamespacedMachine.');
         }
 
         const queryParameters: any = {};
@@ -1211,7 +1458,7 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json-patch+json';
 
         const response = await this.request({
-            path: `/apis/core.ordiri.com/v1alpha1/machines/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/core.ordiri.com/v1alpha1/namespaces/{namespace}/machines/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -1224,21 +1471,25 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update the specified Machine
      */
-    async patchCoreOrdiriComV1alpha1Machine(requestParameters: PatchCoreOrdiriComV1alpha1MachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine> {
-        const response = await this.patchCoreOrdiriComV1alpha1MachineRaw(requestParameters, initOverrides);
+    async patchCoreOrdiriComV1alpha1NamespacedMachine(requestParameters: PatchCoreOrdiriComV1alpha1NamespacedMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine> {
+        const response = await this.patchCoreOrdiriComV1alpha1NamespacedMachineRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * partially update the specified MachineProfile
      */
-    async patchCoreOrdiriComV1alpha1MachineProfileRaw(requestParameters: PatchCoreOrdiriComV1alpha1MachineProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfile>> {
+    async patchCoreOrdiriComV1alpha1NamespacedMachineProfileRaw(requestParameters: PatchCoreOrdiriComV1alpha1NamespacedMachineProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfile>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchCoreOrdiriComV1alpha1MachineProfile.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchCoreOrdiriComV1alpha1NamespacedMachineProfile.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchCoreOrdiriComV1alpha1NamespacedMachineProfile.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchCoreOrdiriComV1alpha1MachineProfile.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchCoreOrdiriComV1alpha1NamespacedMachineProfile.');
         }
 
         const queryParameters: any = {};
@@ -1264,7 +1515,7 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json-patch+json';
 
         const response = await this.request({
-            path: `/apis/core.ordiri.com/v1alpha1/machineprofiles/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/core.ordiri.com/v1alpha1/namespaces/{namespace}/machineprofiles/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -1277,21 +1528,25 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update the specified MachineProfile
      */
-    async patchCoreOrdiriComV1alpha1MachineProfile(requestParameters: PatchCoreOrdiriComV1alpha1MachineProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfile> {
-        const response = await this.patchCoreOrdiriComV1alpha1MachineProfileRaw(requestParameters, initOverrides);
+    async patchCoreOrdiriComV1alpha1NamespacedMachineProfile(requestParameters: PatchCoreOrdiriComV1alpha1NamespacedMachineProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfile> {
+        const response = await this.patchCoreOrdiriComV1alpha1NamespacedMachineProfileRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * partially update status of the specified MachineProfile
      */
-    async patchCoreOrdiriComV1alpha1MachineProfileStatusRaw(requestParameters: PatchCoreOrdiriComV1alpha1MachineProfileStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfile>> {
+    async patchCoreOrdiriComV1alpha1NamespacedMachineProfileStatusRaw(requestParameters: PatchCoreOrdiriComV1alpha1NamespacedMachineProfileStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfile>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchCoreOrdiriComV1alpha1MachineProfileStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchCoreOrdiriComV1alpha1NamespacedMachineProfileStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchCoreOrdiriComV1alpha1NamespacedMachineProfileStatus.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchCoreOrdiriComV1alpha1MachineProfileStatus.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchCoreOrdiriComV1alpha1NamespacedMachineProfileStatus.');
         }
 
         const queryParameters: any = {};
@@ -1317,7 +1572,7 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json-patch+json';
 
         const response = await this.request({
-            path: `/apis/core.ordiri.com/v1alpha1/machineprofiles/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/core.ordiri.com/v1alpha1/namespaces/{namespace}/machineprofiles/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -1330,21 +1585,25 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update status of the specified MachineProfile
      */
-    async patchCoreOrdiriComV1alpha1MachineProfileStatus(requestParameters: PatchCoreOrdiriComV1alpha1MachineProfileStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfile> {
-        const response = await this.patchCoreOrdiriComV1alpha1MachineProfileStatusRaw(requestParameters, initOverrides);
+    async patchCoreOrdiriComV1alpha1NamespacedMachineProfileStatus(requestParameters: PatchCoreOrdiriComV1alpha1NamespacedMachineProfileStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfile> {
+        const response = await this.patchCoreOrdiriComV1alpha1NamespacedMachineProfileStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * partially update review of the specified Machine
      */
-    async patchCoreOrdiriComV1alpha1MachineReviewRaw(requestParameters: PatchCoreOrdiriComV1alpha1MachineReviewRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine>> {
+    async patchCoreOrdiriComV1alpha1NamespacedMachineReviewRaw(requestParameters: PatchCoreOrdiriComV1alpha1NamespacedMachineReviewRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchCoreOrdiriComV1alpha1MachineReview.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchCoreOrdiriComV1alpha1NamespacedMachineReview.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchCoreOrdiriComV1alpha1NamespacedMachineReview.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchCoreOrdiriComV1alpha1MachineReview.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchCoreOrdiriComV1alpha1NamespacedMachineReview.');
         }
 
         const queryParameters: any = {};
@@ -1370,7 +1629,7 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json-patch+json';
 
         const response = await this.request({
-            path: `/apis/core.ordiri.com/v1alpha1/machines/{name}/review`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/core.ordiri.com/v1alpha1/namespaces/{namespace}/machines/{name}/review`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -1383,21 +1642,25 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update review of the specified Machine
      */
-    async patchCoreOrdiriComV1alpha1MachineReview(requestParameters: PatchCoreOrdiriComV1alpha1MachineReviewRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine> {
-        const response = await this.patchCoreOrdiriComV1alpha1MachineReviewRaw(requestParameters, initOverrides);
+    async patchCoreOrdiriComV1alpha1NamespacedMachineReview(requestParameters: PatchCoreOrdiriComV1alpha1NamespacedMachineReviewRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine> {
+        const response = await this.patchCoreOrdiriComV1alpha1NamespacedMachineReviewRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * partially update status of the specified Machine
      */
-    async patchCoreOrdiriComV1alpha1MachineStatusRaw(requestParameters: PatchCoreOrdiriComV1alpha1MachineStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine>> {
+    async patchCoreOrdiriComV1alpha1NamespacedMachineStatusRaw(requestParameters: PatchCoreOrdiriComV1alpha1NamespacedMachineStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchCoreOrdiriComV1alpha1MachineStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchCoreOrdiriComV1alpha1NamespacedMachineStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchCoreOrdiriComV1alpha1NamespacedMachineStatus.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchCoreOrdiriComV1alpha1MachineStatus.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchCoreOrdiriComV1alpha1NamespacedMachineStatus.');
         }
 
         const queryParameters: any = {};
@@ -1423,7 +1686,7 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json-patch+json';
 
         const response = await this.request({
-            path: `/apis/core.ordiri.com/v1alpha1/machines/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/core.ordiri.com/v1alpha1/namespaces/{namespace}/machines/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -1436,8 +1699,8 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update status of the specified Machine
      */
-    async patchCoreOrdiriComV1alpha1MachineStatus(requestParameters: PatchCoreOrdiriComV1alpha1MachineStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine> {
-        const response = await this.patchCoreOrdiriComV1alpha1MachineStatusRaw(requestParameters, initOverrides);
+    async patchCoreOrdiriComV1alpha1NamespacedMachineStatus(requestParameters: PatchCoreOrdiriComV1alpha1NamespacedMachineStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine> {
+        const response = await this.patchCoreOrdiriComV1alpha1NamespacedMachineStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -1550,9 +1813,13 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read the specified Machine
      */
-    async readCoreOrdiriComV1alpha1MachineRaw(requestParameters: ReadCoreOrdiriComV1alpha1MachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine>> {
+    async readCoreOrdiriComV1alpha1NamespacedMachineRaw(requestParameters: ReadCoreOrdiriComV1alpha1NamespacedMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readCoreOrdiriComV1alpha1Machine.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readCoreOrdiriComV1alpha1NamespacedMachine.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readCoreOrdiriComV1alpha1NamespacedMachine.');
         }
 
         const queryParameters: any = {};
@@ -1564,7 +1831,7 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/core.ordiri.com/v1alpha1/machines/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/core.ordiri.com/v1alpha1/namespaces/{namespace}/machines/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -1576,17 +1843,21 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read the specified Machine
      */
-    async readCoreOrdiriComV1alpha1Machine(requestParameters: ReadCoreOrdiriComV1alpha1MachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine> {
-        const response = await this.readCoreOrdiriComV1alpha1MachineRaw(requestParameters, initOverrides);
+    async readCoreOrdiriComV1alpha1NamespacedMachine(requestParameters: ReadCoreOrdiriComV1alpha1NamespacedMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine> {
+        const response = await this.readCoreOrdiriComV1alpha1NamespacedMachineRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * read the specified MachineProfile
      */
-    async readCoreOrdiriComV1alpha1MachineProfileRaw(requestParameters: ReadCoreOrdiriComV1alpha1MachineProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfile>> {
+    async readCoreOrdiriComV1alpha1NamespacedMachineProfileRaw(requestParameters: ReadCoreOrdiriComV1alpha1NamespacedMachineProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfile>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readCoreOrdiriComV1alpha1MachineProfile.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readCoreOrdiriComV1alpha1NamespacedMachineProfile.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readCoreOrdiriComV1alpha1NamespacedMachineProfile.');
         }
 
         const queryParameters: any = {};
@@ -1598,7 +1869,7 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/core.ordiri.com/v1alpha1/machineprofiles/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/core.ordiri.com/v1alpha1/namespaces/{namespace}/machineprofiles/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -1610,17 +1881,21 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read the specified MachineProfile
      */
-    async readCoreOrdiriComV1alpha1MachineProfile(requestParameters: ReadCoreOrdiriComV1alpha1MachineProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfile> {
-        const response = await this.readCoreOrdiriComV1alpha1MachineProfileRaw(requestParameters, initOverrides);
+    async readCoreOrdiriComV1alpha1NamespacedMachineProfile(requestParameters: ReadCoreOrdiriComV1alpha1NamespacedMachineProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfile> {
+        const response = await this.readCoreOrdiriComV1alpha1NamespacedMachineProfileRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * read status of the specified MachineProfile
      */
-    async readCoreOrdiriComV1alpha1MachineProfileStatusRaw(requestParameters: ReadCoreOrdiriComV1alpha1MachineProfileStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfile>> {
+    async readCoreOrdiriComV1alpha1NamespacedMachineProfileStatusRaw(requestParameters: ReadCoreOrdiriComV1alpha1NamespacedMachineProfileStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfile>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readCoreOrdiriComV1alpha1MachineProfileStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readCoreOrdiriComV1alpha1NamespacedMachineProfileStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readCoreOrdiriComV1alpha1NamespacedMachineProfileStatus.');
         }
 
         const queryParameters: any = {};
@@ -1632,7 +1907,7 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/core.ordiri.com/v1alpha1/machineprofiles/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/core.ordiri.com/v1alpha1/namespaces/{namespace}/machineprofiles/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -1644,17 +1919,21 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read status of the specified MachineProfile
      */
-    async readCoreOrdiriComV1alpha1MachineProfileStatus(requestParameters: ReadCoreOrdiriComV1alpha1MachineProfileStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfile> {
-        const response = await this.readCoreOrdiriComV1alpha1MachineProfileStatusRaw(requestParameters, initOverrides);
+    async readCoreOrdiriComV1alpha1NamespacedMachineProfileStatus(requestParameters: ReadCoreOrdiriComV1alpha1NamespacedMachineProfileStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfile> {
+        const response = await this.readCoreOrdiriComV1alpha1NamespacedMachineProfileStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * read review of the specified Machine
      */
-    async readCoreOrdiriComV1alpha1MachineReviewRaw(requestParameters: ReadCoreOrdiriComV1alpha1MachineReviewRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine>> {
+    async readCoreOrdiriComV1alpha1NamespacedMachineReviewRaw(requestParameters: ReadCoreOrdiriComV1alpha1NamespacedMachineReviewRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readCoreOrdiriComV1alpha1MachineReview.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readCoreOrdiriComV1alpha1NamespacedMachineReview.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readCoreOrdiriComV1alpha1NamespacedMachineReview.');
         }
 
         const queryParameters: any = {};
@@ -1666,7 +1945,7 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/core.ordiri.com/v1alpha1/machines/{name}/review`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/core.ordiri.com/v1alpha1/namespaces/{namespace}/machines/{name}/review`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -1678,17 +1957,21 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read review of the specified Machine
      */
-    async readCoreOrdiriComV1alpha1MachineReview(requestParameters: ReadCoreOrdiriComV1alpha1MachineReviewRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine> {
-        const response = await this.readCoreOrdiriComV1alpha1MachineReviewRaw(requestParameters, initOverrides);
+    async readCoreOrdiriComV1alpha1NamespacedMachineReview(requestParameters: ReadCoreOrdiriComV1alpha1NamespacedMachineReviewRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine> {
+        const response = await this.readCoreOrdiriComV1alpha1NamespacedMachineReviewRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * read status of the specified Machine
      */
-    async readCoreOrdiriComV1alpha1MachineStatusRaw(requestParameters: ReadCoreOrdiriComV1alpha1MachineStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine>> {
+    async readCoreOrdiriComV1alpha1NamespacedMachineStatusRaw(requestParameters: ReadCoreOrdiriComV1alpha1NamespacedMachineStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readCoreOrdiriComV1alpha1MachineStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readCoreOrdiriComV1alpha1NamespacedMachineStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readCoreOrdiriComV1alpha1NamespacedMachineStatus.');
         }
 
         const queryParameters: any = {};
@@ -1700,7 +1983,7 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/core.ordiri.com/v1alpha1/machines/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/core.ordiri.com/v1alpha1/namespaces/{namespace}/machines/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -1712,8 +1995,8 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read status of the specified Machine
      */
-    async readCoreOrdiriComV1alpha1MachineStatus(requestParameters: ReadCoreOrdiriComV1alpha1MachineStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine> {
-        const response = await this.readCoreOrdiriComV1alpha1MachineStatusRaw(requestParameters, initOverrides);
+    async readCoreOrdiriComV1alpha1NamespacedMachineStatus(requestParameters: ReadCoreOrdiriComV1alpha1NamespacedMachineStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine> {
+        const response = await this.readCoreOrdiriComV1alpha1NamespacedMachineStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -1788,13 +2071,17 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace the specified Machine
      */
-    async replaceCoreOrdiriComV1alpha1MachineRaw(requestParameters: ReplaceCoreOrdiriComV1alpha1MachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine>> {
+    async replaceCoreOrdiriComV1alpha1NamespacedMachineRaw(requestParameters: ReplaceCoreOrdiriComV1alpha1NamespacedMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceCoreOrdiriComV1alpha1Machine.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceCoreOrdiriComV1alpha1NamespacedMachine.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceCoreOrdiriComV1alpha1NamespacedMachine.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceCoreOrdiriComV1alpha1Machine.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceCoreOrdiriComV1alpha1NamespacedMachine.');
         }
 
         const queryParameters: any = {};
@@ -1816,7 +2103,7 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/core.ordiri.com/v1alpha1/machines/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/core.ordiri.com/v1alpha1/namespaces/{namespace}/machines/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -1829,21 +2116,25 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace the specified Machine
      */
-    async replaceCoreOrdiriComV1alpha1Machine(requestParameters: ReplaceCoreOrdiriComV1alpha1MachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine> {
-        const response = await this.replaceCoreOrdiriComV1alpha1MachineRaw(requestParameters, initOverrides);
+    async replaceCoreOrdiriComV1alpha1NamespacedMachine(requestParameters: ReplaceCoreOrdiriComV1alpha1NamespacedMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine> {
+        const response = await this.replaceCoreOrdiriComV1alpha1NamespacedMachineRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * replace the specified MachineProfile
      */
-    async replaceCoreOrdiriComV1alpha1MachineProfileRaw(requestParameters: ReplaceCoreOrdiriComV1alpha1MachineProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfile>> {
+    async replaceCoreOrdiriComV1alpha1NamespacedMachineProfileRaw(requestParameters: ReplaceCoreOrdiriComV1alpha1NamespacedMachineProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfile>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceCoreOrdiriComV1alpha1MachineProfile.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceCoreOrdiriComV1alpha1NamespacedMachineProfile.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceCoreOrdiriComV1alpha1NamespacedMachineProfile.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceCoreOrdiriComV1alpha1MachineProfile.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceCoreOrdiriComV1alpha1NamespacedMachineProfile.');
         }
 
         const queryParameters: any = {};
@@ -1865,7 +2156,7 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/core.ordiri.com/v1alpha1/machineprofiles/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/core.ordiri.com/v1alpha1/namespaces/{namespace}/machineprofiles/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -1878,21 +2169,25 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace the specified MachineProfile
      */
-    async replaceCoreOrdiriComV1alpha1MachineProfile(requestParameters: ReplaceCoreOrdiriComV1alpha1MachineProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfile> {
-        const response = await this.replaceCoreOrdiriComV1alpha1MachineProfileRaw(requestParameters, initOverrides);
+    async replaceCoreOrdiriComV1alpha1NamespacedMachineProfile(requestParameters: ReplaceCoreOrdiriComV1alpha1NamespacedMachineProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfile> {
+        const response = await this.replaceCoreOrdiriComV1alpha1NamespacedMachineProfileRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * replace status of the specified MachineProfile
      */
-    async replaceCoreOrdiriComV1alpha1MachineProfileStatusRaw(requestParameters: ReplaceCoreOrdiriComV1alpha1MachineProfileStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfile>> {
+    async replaceCoreOrdiriComV1alpha1NamespacedMachineProfileStatusRaw(requestParameters: ReplaceCoreOrdiriComV1alpha1NamespacedMachineProfileStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfile>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceCoreOrdiriComV1alpha1MachineProfileStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceCoreOrdiriComV1alpha1NamespacedMachineProfileStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceCoreOrdiriComV1alpha1NamespacedMachineProfileStatus.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceCoreOrdiriComV1alpha1MachineProfileStatus.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceCoreOrdiriComV1alpha1NamespacedMachineProfileStatus.');
         }
 
         const queryParameters: any = {};
@@ -1914,7 +2209,7 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/core.ordiri.com/v1alpha1/machineprofiles/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/core.ordiri.com/v1alpha1/namespaces/{namespace}/machineprofiles/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -1927,21 +2222,25 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace status of the specified MachineProfile
      */
-    async replaceCoreOrdiriComV1alpha1MachineProfileStatus(requestParameters: ReplaceCoreOrdiriComV1alpha1MachineProfileStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfile> {
-        const response = await this.replaceCoreOrdiriComV1alpha1MachineProfileStatusRaw(requestParameters, initOverrides);
+    async replaceCoreOrdiriComV1alpha1NamespacedMachineProfileStatus(requestParameters: ReplaceCoreOrdiriComV1alpha1NamespacedMachineProfileStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProfile> {
+        const response = await this.replaceCoreOrdiriComV1alpha1NamespacedMachineProfileStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * replace review of the specified Machine
      */
-    async replaceCoreOrdiriComV1alpha1MachineReviewRaw(requestParameters: ReplaceCoreOrdiriComV1alpha1MachineReviewRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine>> {
+    async replaceCoreOrdiriComV1alpha1NamespacedMachineReviewRaw(requestParameters: ReplaceCoreOrdiriComV1alpha1NamespacedMachineReviewRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceCoreOrdiriComV1alpha1MachineReview.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceCoreOrdiriComV1alpha1NamespacedMachineReview.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceCoreOrdiriComV1alpha1NamespacedMachineReview.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceCoreOrdiriComV1alpha1MachineReview.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceCoreOrdiriComV1alpha1NamespacedMachineReview.');
         }
 
         const queryParameters: any = {};
@@ -1963,7 +2262,7 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/core.ordiri.com/v1alpha1/machines/{name}/review`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/core.ordiri.com/v1alpha1/namespaces/{namespace}/machines/{name}/review`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -1976,21 +2275,25 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace review of the specified Machine
      */
-    async replaceCoreOrdiriComV1alpha1MachineReview(requestParameters: ReplaceCoreOrdiriComV1alpha1MachineReviewRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine> {
-        const response = await this.replaceCoreOrdiriComV1alpha1MachineReviewRaw(requestParameters, initOverrides);
+    async replaceCoreOrdiriComV1alpha1NamespacedMachineReview(requestParameters: ReplaceCoreOrdiriComV1alpha1NamespacedMachineReviewRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine> {
+        const response = await this.replaceCoreOrdiriComV1alpha1NamespacedMachineReviewRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * replace status of the specified Machine
      */
-    async replaceCoreOrdiriComV1alpha1MachineStatusRaw(requestParameters: ReplaceCoreOrdiriComV1alpha1MachineStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine>> {
+    async replaceCoreOrdiriComV1alpha1NamespacedMachineStatusRaw(requestParameters: ReplaceCoreOrdiriComV1alpha1NamespacedMachineStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceCoreOrdiriComV1alpha1MachineStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceCoreOrdiriComV1alpha1NamespacedMachineStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceCoreOrdiriComV1alpha1NamespacedMachineStatus.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceCoreOrdiriComV1alpha1MachineStatus.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceCoreOrdiriComV1alpha1NamespacedMachineStatus.');
         }
 
         const queryParameters: any = {};
@@ -2012,7 +2315,7 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/core.ordiri.com/v1alpha1/machines/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/core.ordiri.com/v1alpha1/namespaces/{namespace}/machines/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -2025,8 +2328,8 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace status of the specified Machine
      */
-    async replaceCoreOrdiriComV1alpha1MachineStatus(requestParameters: ReplaceCoreOrdiriComV1alpha1MachineStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine> {
-        const response = await this.replaceCoreOrdiriComV1alpha1MachineStatusRaw(requestParameters, initOverrides);
+    async replaceCoreOrdiriComV1alpha1NamespacedMachineStatus(requestParameters: ReplaceCoreOrdiriComV1alpha1NamespacedMachineStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Machine> {
+        const response = await this.replaceCoreOrdiriComV1alpha1NamespacedMachineStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -2129,79 +2432,9 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
     }
 
     /**
-     * watch changes to an object of kind Machine. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
-     */
-    async watchCoreOrdiriComV1alpha1MachineRaw(requestParameters: WatchCoreOrdiriComV1alpha1MachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
-        if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling watchCoreOrdiriComV1alpha1Machine.');
-        }
-
-        const queryParameters: any = {};
-
-        if (requestParameters.allowWatchBookmarks !== undefined) {
-            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
-        }
-
-        if (requestParameters._continue !== undefined) {
-            queryParameters['continue'] = requestParameters._continue;
-        }
-
-        if (requestParameters.fieldSelector !== undefined) {
-            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
-        }
-
-        if (requestParameters.labelSelector !== undefined) {
-            queryParameters['labelSelector'] = requestParameters.labelSelector;
-        }
-
-        if (requestParameters.limit !== undefined) {
-            queryParameters['limit'] = requestParameters.limit;
-        }
-
-        if (requestParameters.pretty !== undefined) {
-            queryParameters['pretty'] = requestParameters.pretty;
-        }
-
-        if (requestParameters.resourceVersion !== undefined) {
-            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
-        }
-
-        if (requestParameters.resourceVersionMatch !== undefined) {
-            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
-        }
-
-        if (requestParameters.timeoutSeconds !== undefined) {
-            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
-        }
-
-        if (requestParameters.watch !== undefined) {
-            queryParameters['watch'] = requestParameters.watch;
-        }
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/apis/core.ordiri.com/v1alpha1/watch/machines/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
-    }
-
-    /**
-     * watch changes to an object of kind Machine. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
-     */
-    async watchCoreOrdiriComV1alpha1Machine(requestParameters: WatchCoreOrdiriComV1alpha1MachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
-        const response = await this.watchCoreOrdiriComV1alpha1MachineRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
      * watch individual changes to a list of Machine. deprecated: use the \'watch\' parameter with a list operation instead.
      */
-    async watchCoreOrdiriComV1alpha1MachineListRaw(requestParameters: WatchCoreOrdiriComV1alpha1MachineListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+    async watchCoreOrdiriComV1alpha1MachineListForAllNamespacesRaw(requestParameters: WatchCoreOrdiriComV1alpha1MachineListForAllNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
         const queryParameters: any = {};
 
         if (requestParameters.allowWatchBookmarks !== undefined) {
@@ -2259,85 +2492,15 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * watch individual changes to a list of Machine. deprecated: use the \'watch\' parameter with a list operation instead.
      */
-    async watchCoreOrdiriComV1alpha1MachineList(requestParameters: WatchCoreOrdiriComV1alpha1MachineListRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
-        const response = await this.watchCoreOrdiriComV1alpha1MachineListRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * watch changes to an object of kind MachineProfile. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
-     */
-    async watchCoreOrdiriComV1alpha1MachineProfileRaw(requestParameters: WatchCoreOrdiriComV1alpha1MachineProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
-        if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling watchCoreOrdiriComV1alpha1MachineProfile.');
-        }
-
-        const queryParameters: any = {};
-
-        if (requestParameters.allowWatchBookmarks !== undefined) {
-            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
-        }
-
-        if (requestParameters._continue !== undefined) {
-            queryParameters['continue'] = requestParameters._continue;
-        }
-
-        if (requestParameters.fieldSelector !== undefined) {
-            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
-        }
-
-        if (requestParameters.labelSelector !== undefined) {
-            queryParameters['labelSelector'] = requestParameters.labelSelector;
-        }
-
-        if (requestParameters.limit !== undefined) {
-            queryParameters['limit'] = requestParameters.limit;
-        }
-
-        if (requestParameters.pretty !== undefined) {
-            queryParameters['pretty'] = requestParameters.pretty;
-        }
-
-        if (requestParameters.resourceVersion !== undefined) {
-            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
-        }
-
-        if (requestParameters.resourceVersionMatch !== undefined) {
-            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
-        }
-
-        if (requestParameters.timeoutSeconds !== undefined) {
-            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
-        }
-
-        if (requestParameters.watch !== undefined) {
-            queryParameters['watch'] = requestParameters.watch;
-        }
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/apis/core.ordiri.com/v1alpha1/watch/machineprofiles/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
-    }
-
-    /**
-     * watch changes to an object of kind MachineProfile. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
-     */
-    async watchCoreOrdiriComV1alpha1MachineProfile(requestParameters: WatchCoreOrdiriComV1alpha1MachineProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
-        const response = await this.watchCoreOrdiriComV1alpha1MachineProfileRaw(requestParameters, initOverrides);
+    async watchCoreOrdiriComV1alpha1MachineListForAllNamespaces(requestParameters: WatchCoreOrdiriComV1alpha1MachineListForAllNamespacesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchCoreOrdiriComV1alpha1MachineListForAllNamespacesRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * watch individual changes to a list of MachineProfile. deprecated: use the \'watch\' parameter with a list operation instead.
      */
-    async watchCoreOrdiriComV1alpha1MachineProfileListRaw(requestParameters: WatchCoreOrdiriComV1alpha1MachineProfileListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+    async watchCoreOrdiriComV1alpha1MachineProfileListForAllNamespacesRaw(requestParameters: WatchCoreOrdiriComV1alpha1MachineProfileListForAllNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
         const queryParameters: any = {};
 
         if (requestParameters.allowWatchBookmarks !== undefined) {
@@ -2395,8 +2558,296 @@ export class CoreOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * watch individual changes to a list of MachineProfile. deprecated: use the \'watch\' parameter with a list operation instead.
      */
-    async watchCoreOrdiriComV1alpha1MachineProfileList(requestParameters: WatchCoreOrdiriComV1alpha1MachineProfileListRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
-        const response = await this.watchCoreOrdiriComV1alpha1MachineProfileListRaw(requestParameters, initOverrides);
+    async watchCoreOrdiriComV1alpha1MachineProfileListForAllNamespaces(requestParameters: WatchCoreOrdiriComV1alpha1MachineProfileListForAllNamespacesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchCoreOrdiriComV1alpha1MachineProfileListForAllNamespacesRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * watch changes to an object of kind Machine. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
+     */
+    async watchCoreOrdiriComV1alpha1NamespacedMachineRaw(requestParameters: WatchCoreOrdiriComV1alpha1NamespacedMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+        if (requestParameters.name === null || requestParameters.name === undefined) {
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling watchCoreOrdiriComV1alpha1NamespacedMachine.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling watchCoreOrdiriComV1alpha1NamespacedMachine.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/core.ordiri.com/v1alpha1/watch/namespaces/{namespace}/machines/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
+    }
+
+    /**
+     * watch changes to an object of kind Machine. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
+     */
+    async watchCoreOrdiriComV1alpha1NamespacedMachine(requestParameters: WatchCoreOrdiriComV1alpha1NamespacedMachineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchCoreOrdiriComV1alpha1NamespacedMachineRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * watch individual changes to a list of Machine. deprecated: use the \'watch\' parameter with a list operation instead.
+     */
+    async watchCoreOrdiriComV1alpha1NamespacedMachineListRaw(requestParameters: WatchCoreOrdiriComV1alpha1NamespacedMachineListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling watchCoreOrdiriComV1alpha1NamespacedMachineList.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/core.ordiri.com/v1alpha1/watch/namespaces/{namespace}/machines`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
+    }
+
+    /**
+     * watch individual changes to a list of Machine. deprecated: use the \'watch\' parameter with a list operation instead.
+     */
+    async watchCoreOrdiriComV1alpha1NamespacedMachineList(requestParameters: WatchCoreOrdiriComV1alpha1NamespacedMachineListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchCoreOrdiriComV1alpha1NamespacedMachineListRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * watch changes to an object of kind MachineProfile. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
+     */
+    async watchCoreOrdiriComV1alpha1NamespacedMachineProfileRaw(requestParameters: WatchCoreOrdiriComV1alpha1NamespacedMachineProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+        if (requestParameters.name === null || requestParameters.name === undefined) {
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling watchCoreOrdiriComV1alpha1NamespacedMachineProfile.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling watchCoreOrdiriComV1alpha1NamespacedMachineProfile.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/core.ordiri.com/v1alpha1/watch/namespaces/{namespace}/machineprofiles/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
+    }
+
+    /**
+     * watch changes to an object of kind MachineProfile. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
+     */
+    async watchCoreOrdiriComV1alpha1NamespacedMachineProfile(requestParameters: WatchCoreOrdiriComV1alpha1NamespacedMachineProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchCoreOrdiriComV1alpha1NamespacedMachineProfileRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * watch individual changes to a list of MachineProfile. deprecated: use the \'watch\' parameter with a list operation instead.
+     */
+    async watchCoreOrdiriComV1alpha1NamespacedMachineProfileListRaw(requestParameters: WatchCoreOrdiriComV1alpha1NamespacedMachineProfileListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling watchCoreOrdiriComV1alpha1NamespacedMachineProfileList.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/core.ordiri.com/v1alpha1/watch/namespaces/{namespace}/machineprofiles`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
+    }
+
+    /**
+     * watch individual changes to a list of MachineProfile. deprecated: use the \'watch\' parameter with a list operation instead.
+     */
+    async watchCoreOrdiriComV1alpha1NamespacedMachineProfileList(requestParameters: WatchCoreOrdiriComV1alpha1NamespacedMachineProfileListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchCoreOrdiriComV1alpha1NamespacedMachineProfileListRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

@@ -62,7 +62,7 @@ const ComputeResourcesPage = (props: ComputeResourceProps) => {
     // todo the type here is clearly done at 4am, it should be inferred from the listers return values
     const Page = CreateResourcePage({
         "Virtual Machines": {
-            lister: api.listComputeOrdiriComV1alpha1VirtualMachineRaw.bind(api),
+            lister: api.listComputeOrdiriComV1alpha1VirtualMachineForAllNamespacesRaw.bind(api),
             columns: {
                 name: {
                     label: "Name",
@@ -114,7 +114,7 @@ const ComputeResourcesPage = (props: ComputeResourceProps) => {
                         if (host === "debian") {
                             url = "10.0.1.110"
                         } else if (host === "mothership") {
-                            url = "10.0.2.118"
+                            url = "10.0.1.196"
                         }
 
                         return <>

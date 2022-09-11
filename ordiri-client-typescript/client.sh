@@ -7,9 +7,9 @@ set -o pipefail
 # While the typescript-fetch is deprecated, it's the only one that supports streaming
 # in a browser
 kubectl get --raw /openapi/v2 > swagger.json
-rm -fr src/gen && openapi-generator-cli generate \
+rm -fr src/gen && npx @openapitools/openapi-generator-cli generate \
     --skip-validate-spec  \
-    -i ./swagger.json \
+    -i /local/swagger.json \
     -g typescript-fetch \
-    -o src/gen \
-    --config client-oapi-gen.yaml && npm run build
+    -o /local/src/gen \
+    --config /local/client-oapi-gen.yaml && npm run build

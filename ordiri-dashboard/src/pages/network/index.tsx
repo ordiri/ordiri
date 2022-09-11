@@ -22,7 +22,7 @@ const NetworkResourcesPage = (props: NetworkResourceProps) => {
     // pretty bad, creates a whole new on every render
     const Page = CreateResourcePage({
         "Networks": {
-            lister: api.listNetworkOrdiriComV1alpha1NetworkRaw.bind(api),
+            lister: api.listNetworkOrdiriComV1alpha1NetworkForAllNamespacesRaw.bind(api),
             columns: {
                 name: {
                     label: "Name",
@@ -45,7 +45,7 @@ const NetworkResourcesPage = (props: NetworkResourceProps) => {
             }
         },
         "Subnets": {
-            lister: api.listNetworkOrdiriComV1alpha1SubnetRaw.bind(api),
+            lister: api.listNetworkOrdiriComV1alpha1SubnetForAllNamespacesRaw.bind(api),
             columns: {
                 name: {
                     label: "Name",

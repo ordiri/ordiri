@@ -15,6 +15,8 @@
 
 import * as runtime from '../runtime';
 import type {
+  ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancer,
+  ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerList,
   ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network,
   ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkList,
   ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Route,
@@ -31,6 +33,10 @@ import type {
   IoK8sApimachineryPkgApisMetaV1WatchEvent,
 } from '../models';
 import {
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerFromJSON,
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerToJSON,
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerListFromJSON,
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerListToJSON,
     ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkFromJSON,
     ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkToJSON,
     ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkListFromJSON,
@@ -61,42 +67,56 @@ import {
     IoK8sApimachineryPkgApisMetaV1WatchEventToJSON,
 } from '../models';
 
-export interface CreateNetworkOrdiriComV1alpha1NetworkRequest {
+export interface CreateNetworkOrdiriComV1alpha1NamespacedLoadBalancerRequest {
+    namespace: string;
+    body: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancer;
+    pretty?: string;
+    dryRun?: string;
+    fieldManager?: string;
+}
+
+export interface CreateNetworkOrdiriComV1alpha1NamespacedNetworkRequest {
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface CreateNetworkOrdiriComV1alpha1RouteRequest {
+export interface CreateNetworkOrdiriComV1alpha1NamespacedRouteRequest {
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Route;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface CreateNetworkOrdiriComV1alpha1RouteTableRequest {
+export interface CreateNetworkOrdiriComV1alpha1NamespacedRouteTableRequest {
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTable;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface CreateNetworkOrdiriComV1alpha1RouterRequest {
+export interface CreateNetworkOrdiriComV1alpha1NamespacedRouterRequest {
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Router;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface CreateNetworkOrdiriComV1alpha1SubnetRequest {
+export interface CreateNetworkOrdiriComV1alpha1NamespacedSubnetRequest {
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Subnet;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface DeleteNetworkOrdiriComV1alpha1CollectionNetworkRequest {
+export interface DeleteNetworkOrdiriComV1alpha1CollectionNamespacedLoadBalancerRequest {
+    namespace: string;
     pretty?: string;
     _continue?: string;
     dryRun?: string;
@@ -112,7 +132,8 @@ export interface DeleteNetworkOrdiriComV1alpha1CollectionNetworkRequest {
     body?: IoK8sApimachineryPkgApisMetaV1DeleteOptions;
 }
 
-export interface DeleteNetworkOrdiriComV1alpha1CollectionRouteRequest {
+export interface DeleteNetworkOrdiriComV1alpha1CollectionNamespacedNetworkRequest {
+    namespace: string;
     pretty?: string;
     _continue?: string;
     dryRun?: string;
@@ -128,7 +149,8 @@ export interface DeleteNetworkOrdiriComV1alpha1CollectionRouteRequest {
     body?: IoK8sApimachineryPkgApisMetaV1DeleteOptions;
 }
 
-export interface DeleteNetworkOrdiriComV1alpha1CollectionRouteTableRequest {
+export interface DeleteNetworkOrdiriComV1alpha1CollectionNamespacedRouteRequest {
+    namespace: string;
     pretty?: string;
     _continue?: string;
     dryRun?: string;
@@ -144,7 +166,8 @@ export interface DeleteNetworkOrdiriComV1alpha1CollectionRouteTableRequest {
     body?: IoK8sApimachineryPkgApisMetaV1DeleteOptions;
 }
 
-export interface DeleteNetworkOrdiriComV1alpha1CollectionRouterRequest {
+export interface DeleteNetworkOrdiriComV1alpha1CollectionNamespacedRouteTableRequest {
+    namespace: string;
     pretty?: string;
     _continue?: string;
     dryRun?: string;
@@ -160,7 +183,8 @@ export interface DeleteNetworkOrdiriComV1alpha1CollectionRouterRequest {
     body?: IoK8sApimachineryPkgApisMetaV1DeleteOptions;
 }
 
-export interface DeleteNetworkOrdiriComV1alpha1CollectionSubnetRequest {
+export interface DeleteNetworkOrdiriComV1alpha1CollectionNamespacedRouterRequest {
+    namespace: string;
     pretty?: string;
     _continue?: string;
     dryRun?: string;
@@ -176,8 +200,26 @@ export interface DeleteNetworkOrdiriComV1alpha1CollectionSubnetRequest {
     body?: IoK8sApimachineryPkgApisMetaV1DeleteOptions;
 }
 
-export interface DeleteNetworkOrdiriComV1alpha1NetworkRequest {
+export interface DeleteNetworkOrdiriComV1alpha1CollectionNamespacedSubnetRequest {
+    namespace: string;
+    pretty?: string;
+    _continue?: string;
+    dryRun?: string;
+    fieldSelector?: string;
+    gracePeriodSeconds?: number;
+    labelSelector?: string;
+    limit?: number;
+    orphanDependents?: boolean;
+    propagationPolicy?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    body?: IoK8sApimachineryPkgApisMetaV1DeleteOptions;
+}
+
+export interface DeleteNetworkOrdiriComV1alpha1NamespacedLoadBalancerRequest {
     name: string;
+    namespace: string;
     pretty?: string;
     dryRun?: string;
     gracePeriodSeconds?: number;
@@ -186,8 +228,9 @@ export interface DeleteNetworkOrdiriComV1alpha1NetworkRequest {
     body?: IoK8sApimachineryPkgApisMetaV1DeleteOptions;
 }
 
-export interface DeleteNetworkOrdiriComV1alpha1RouteRequest {
+export interface DeleteNetworkOrdiriComV1alpha1NamespacedNetworkRequest {
     name: string;
+    namespace: string;
     pretty?: string;
     dryRun?: string;
     gracePeriodSeconds?: number;
@@ -196,8 +239,9 @@ export interface DeleteNetworkOrdiriComV1alpha1RouteRequest {
     body?: IoK8sApimachineryPkgApisMetaV1DeleteOptions;
 }
 
-export interface DeleteNetworkOrdiriComV1alpha1RouteTableRequest {
+export interface DeleteNetworkOrdiriComV1alpha1NamespacedRouteRequest {
     name: string;
+    namespace: string;
     pretty?: string;
     dryRun?: string;
     gracePeriodSeconds?: number;
@@ -206,8 +250,9 @@ export interface DeleteNetworkOrdiriComV1alpha1RouteTableRequest {
     body?: IoK8sApimachineryPkgApisMetaV1DeleteOptions;
 }
 
-export interface DeleteNetworkOrdiriComV1alpha1RouterRequest {
+export interface DeleteNetworkOrdiriComV1alpha1NamespacedRouteTableRequest {
     name: string;
+    namespace: string;
     pretty?: string;
     dryRun?: string;
     gracePeriodSeconds?: number;
@@ -216,8 +261,9 @@ export interface DeleteNetworkOrdiriComV1alpha1RouterRequest {
     body?: IoK8sApimachineryPkgApisMetaV1DeleteOptions;
 }
 
-export interface DeleteNetworkOrdiriComV1alpha1SubnetRequest {
+export interface DeleteNetworkOrdiriComV1alpha1NamespacedRouterRequest {
     name: string;
+    namespace: string;
     pretty?: string;
     dryRun?: string;
     gracePeriodSeconds?: number;
@@ -226,7 +272,32 @@ export interface DeleteNetworkOrdiriComV1alpha1SubnetRequest {
     body?: IoK8sApimachineryPkgApisMetaV1DeleteOptions;
 }
 
-export interface ListNetworkOrdiriComV1alpha1NetworkRequest {
+export interface DeleteNetworkOrdiriComV1alpha1NamespacedSubnetRequest {
+    name: string;
+    namespace: string;
+    pretty?: string;
+    dryRun?: string;
+    gracePeriodSeconds?: number;
+    orphanDependents?: boolean;
+    propagationPolicy?: string;
+    body?: IoK8sApimachineryPkgApisMetaV1DeleteOptions;
+}
+
+export interface ListNetworkOrdiriComV1alpha1LoadBalancerForAllNamespacesRequest {
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface ListNetworkOrdiriComV1alpha1NamespacedLoadBalancerRequest {
+    namespace: string;
     pretty?: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
@@ -239,7 +310,8 @@ export interface ListNetworkOrdiriComV1alpha1NetworkRequest {
     watch?: boolean;
 }
 
-export interface ListNetworkOrdiriComV1alpha1RouteRequest {
+export interface ListNetworkOrdiriComV1alpha1NamespacedNetworkRequest {
+    namespace: string;
     pretty?: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
@@ -252,7 +324,8 @@ export interface ListNetworkOrdiriComV1alpha1RouteRequest {
     watch?: boolean;
 }
 
-export interface ListNetworkOrdiriComV1alpha1RouteTableRequest {
+export interface ListNetworkOrdiriComV1alpha1NamespacedRouteRequest {
+    namespace: string;
     pretty?: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
@@ -265,7 +338,8 @@ export interface ListNetworkOrdiriComV1alpha1RouteTableRequest {
     watch?: boolean;
 }
 
-export interface ListNetworkOrdiriComV1alpha1RouterRequest {
+export interface ListNetworkOrdiriComV1alpha1NamespacedRouteTableRequest {
+    namespace: string;
     pretty?: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
@@ -278,7 +352,8 @@ export interface ListNetworkOrdiriComV1alpha1RouterRequest {
     watch?: boolean;
 }
 
-export interface ListNetworkOrdiriComV1alpha1SubnetRequest {
+export interface ListNetworkOrdiriComV1alpha1NamespacedRouterRequest {
+    namespace: string;
     pretty?: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
@@ -291,8 +366,88 @@ export interface ListNetworkOrdiriComV1alpha1SubnetRequest {
     watch?: boolean;
 }
 
-export interface PatchNetworkOrdiriComV1alpha1NetworkRequest {
+export interface ListNetworkOrdiriComV1alpha1NamespacedSubnetRequest {
+    namespace: string;
+    pretty?: string;
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface ListNetworkOrdiriComV1alpha1NetworkForAllNamespacesRequest {
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface ListNetworkOrdiriComV1alpha1RouteForAllNamespacesRequest {
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface ListNetworkOrdiriComV1alpha1RouteTableForAllNamespacesRequest {
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface ListNetworkOrdiriComV1alpha1RouterForAllNamespacesRequest {
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface ListNetworkOrdiriComV1alpha1SubnetForAllNamespacesRequest {
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface PatchNetworkOrdiriComV1alpha1NamespacedLoadBalancerRequest {
     name: string;
+    namespace: string;
     body: object;
     pretty?: string;
     dryRun?: string;
@@ -300,8 +455,9 @@ export interface PatchNetworkOrdiriComV1alpha1NetworkRequest {
     force?: boolean;
 }
 
-export interface PatchNetworkOrdiriComV1alpha1NetworkStatusRequest {
+export interface PatchNetworkOrdiriComV1alpha1NamespacedLoadBalancerStatusRequest {
     name: string;
+    namespace: string;
     body: object;
     pretty?: string;
     dryRun?: string;
@@ -309,8 +465,9 @@ export interface PatchNetworkOrdiriComV1alpha1NetworkStatusRequest {
     force?: boolean;
 }
 
-export interface PatchNetworkOrdiriComV1alpha1RouteRequest {
+export interface PatchNetworkOrdiriComV1alpha1NamespacedNetworkRequest {
     name: string;
+    namespace: string;
     body: object;
     pretty?: string;
     dryRun?: string;
@@ -318,8 +475,9 @@ export interface PatchNetworkOrdiriComV1alpha1RouteRequest {
     force?: boolean;
 }
 
-export interface PatchNetworkOrdiriComV1alpha1RouteStatusRequest {
+export interface PatchNetworkOrdiriComV1alpha1NamespacedNetworkStatusRequest {
     name: string;
+    namespace: string;
     body: object;
     pretty?: string;
     dryRun?: string;
@@ -327,8 +485,9 @@ export interface PatchNetworkOrdiriComV1alpha1RouteStatusRequest {
     force?: boolean;
 }
 
-export interface PatchNetworkOrdiriComV1alpha1RouteTableRequest {
+export interface PatchNetworkOrdiriComV1alpha1NamespacedRouteRequest {
     name: string;
+    namespace: string;
     body: object;
     pretty?: string;
     dryRun?: string;
@@ -336,8 +495,9 @@ export interface PatchNetworkOrdiriComV1alpha1RouteTableRequest {
     force?: boolean;
 }
 
-export interface PatchNetworkOrdiriComV1alpha1RouteTableStatusRequest {
+export interface PatchNetworkOrdiriComV1alpha1NamespacedRouteStatusRequest {
     name: string;
+    namespace: string;
     body: object;
     pretty?: string;
     dryRun?: string;
@@ -345,8 +505,9 @@ export interface PatchNetworkOrdiriComV1alpha1RouteTableStatusRequest {
     force?: boolean;
 }
 
-export interface PatchNetworkOrdiriComV1alpha1RouterRequest {
+export interface PatchNetworkOrdiriComV1alpha1NamespacedRouteTableRequest {
     name: string;
+    namespace: string;
     body: object;
     pretty?: string;
     dryRun?: string;
@@ -354,8 +515,9 @@ export interface PatchNetworkOrdiriComV1alpha1RouterRequest {
     force?: boolean;
 }
 
-export interface PatchNetworkOrdiriComV1alpha1RouterStatusRequest {
+export interface PatchNetworkOrdiriComV1alpha1NamespacedRouteTableStatusRequest {
     name: string;
+    namespace: string;
     body: object;
     pretty?: string;
     dryRun?: string;
@@ -363,8 +525,9 @@ export interface PatchNetworkOrdiriComV1alpha1RouterStatusRequest {
     force?: boolean;
 }
 
-export interface PatchNetworkOrdiriComV1alpha1SubnetRequest {
+export interface PatchNetworkOrdiriComV1alpha1NamespacedRouterRequest {
     name: string;
+    namespace: string;
     body: object;
     pretty?: string;
     dryRun?: string;
@@ -372,8 +535,9 @@ export interface PatchNetworkOrdiriComV1alpha1SubnetRequest {
     force?: boolean;
 }
 
-export interface PatchNetworkOrdiriComV1alpha1SubnetStatusRequest {
+export interface PatchNetworkOrdiriComV1alpha1NamespacedRouterStatusRequest {
     name: string;
+    namespace: string;
     body: object;
     pretty?: string;
     dryRun?: string;
@@ -381,138 +545,222 @@ export interface PatchNetworkOrdiriComV1alpha1SubnetStatusRequest {
     force?: boolean;
 }
 
-export interface ReadNetworkOrdiriComV1alpha1NetworkRequest {
+export interface PatchNetworkOrdiriComV1alpha1NamespacedSubnetRequest {
     name: string;
+    namespace: string;
+    body: object;
+    pretty?: string;
+    dryRun?: string;
+    fieldManager?: string;
+    force?: boolean;
+}
+
+export interface PatchNetworkOrdiriComV1alpha1NamespacedSubnetStatusRequest {
+    name: string;
+    namespace: string;
+    body: object;
+    pretty?: string;
+    dryRun?: string;
+    fieldManager?: string;
+    force?: boolean;
+}
+
+export interface ReadNetworkOrdiriComV1alpha1NamespacedLoadBalancerRequest {
+    name: string;
+    namespace: string;
     pretty?: string;
 }
 
-export interface ReadNetworkOrdiriComV1alpha1NetworkStatusRequest {
+export interface ReadNetworkOrdiriComV1alpha1NamespacedLoadBalancerStatusRequest {
     name: string;
+    namespace: string;
     pretty?: string;
 }
 
-export interface ReadNetworkOrdiriComV1alpha1RouteRequest {
+export interface ReadNetworkOrdiriComV1alpha1NamespacedNetworkRequest {
     name: string;
+    namespace: string;
     pretty?: string;
 }
 
-export interface ReadNetworkOrdiriComV1alpha1RouteStatusRequest {
+export interface ReadNetworkOrdiriComV1alpha1NamespacedNetworkStatusRequest {
     name: string;
+    namespace: string;
     pretty?: string;
 }
 
-export interface ReadNetworkOrdiriComV1alpha1RouteTableRequest {
+export interface ReadNetworkOrdiriComV1alpha1NamespacedRouteRequest {
     name: string;
+    namespace: string;
     pretty?: string;
 }
 
-export interface ReadNetworkOrdiriComV1alpha1RouteTableStatusRequest {
+export interface ReadNetworkOrdiriComV1alpha1NamespacedRouteStatusRequest {
     name: string;
+    namespace: string;
     pretty?: string;
 }
 
-export interface ReadNetworkOrdiriComV1alpha1RouterRequest {
+export interface ReadNetworkOrdiriComV1alpha1NamespacedRouteTableRequest {
     name: string;
+    namespace: string;
     pretty?: string;
 }
 
-export interface ReadNetworkOrdiriComV1alpha1RouterStatusRequest {
+export interface ReadNetworkOrdiriComV1alpha1NamespacedRouteTableStatusRequest {
     name: string;
+    namespace: string;
     pretty?: string;
 }
 
-export interface ReadNetworkOrdiriComV1alpha1SubnetRequest {
+export interface ReadNetworkOrdiriComV1alpha1NamespacedRouterRequest {
     name: string;
+    namespace: string;
     pretty?: string;
 }
 
-export interface ReadNetworkOrdiriComV1alpha1SubnetStatusRequest {
+export interface ReadNetworkOrdiriComV1alpha1NamespacedRouterStatusRequest {
     name: string;
+    namespace: string;
     pretty?: string;
 }
 
-export interface ReplaceNetworkOrdiriComV1alpha1NetworkRequest {
+export interface ReadNetworkOrdiriComV1alpha1NamespacedSubnetRequest {
     name: string;
+    namespace: string;
+    pretty?: string;
+}
+
+export interface ReadNetworkOrdiriComV1alpha1NamespacedSubnetStatusRequest {
+    name: string;
+    namespace: string;
+    pretty?: string;
+}
+
+export interface ReplaceNetworkOrdiriComV1alpha1NamespacedLoadBalancerRequest {
+    name: string;
+    namespace: string;
+    body: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancer;
+    pretty?: string;
+    dryRun?: string;
+    fieldManager?: string;
+}
+
+export interface ReplaceNetworkOrdiriComV1alpha1NamespacedLoadBalancerStatusRequest {
+    name: string;
+    namespace: string;
+    body: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancer;
+    pretty?: string;
+    dryRun?: string;
+    fieldManager?: string;
+}
+
+export interface ReplaceNetworkOrdiriComV1alpha1NamespacedNetworkRequest {
+    name: string;
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface ReplaceNetworkOrdiriComV1alpha1NetworkStatusRequest {
+export interface ReplaceNetworkOrdiriComV1alpha1NamespacedNetworkStatusRequest {
     name: string;
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface ReplaceNetworkOrdiriComV1alpha1RouteRequest {
+export interface ReplaceNetworkOrdiriComV1alpha1NamespacedRouteRequest {
     name: string;
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Route;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface ReplaceNetworkOrdiriComV1alpha1RouteStatusRequest {
+export interface ReplaceNetworkOrdiriComV1alpha1NamespacedRouteStatusRequest {
     name: string;
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Route;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface ReplaceNetworkOrdiriComV1alpha1RouteTableRequest {
+export interface ReplaceNetworkOrdiriComV1alpha1NamespacedRouteTableRequest {
     name: string;
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTable;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface ReplaceNetworkOrdiriComV1alpha1RouteTableStatusRequest {
+export interface ReplaceNetworkOrdiriComV1alpha1NamespacedRouteTableStatusRequest {
     name: string;
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTable;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface ReplaceNetworkOrdiriComV1alpha1RouterRequest {
+export interface ReplaceNetworkOrdiriComV1alpha1NamespacedRouterRequest {
     name: string;
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Router;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface ReplaceNetworkOrdiriComV1alpha1RouterStatusRequest {
+export interface ReplaceNetworkOrdiriComV1alpha1NamespacedRouterStatusRequest {
     name: string;
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Router;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface ReplaceNetworkOrdiriComV1alpha1SubnetRequest {
+export interface ReplaceNetworkOrdiriComV1alpha1NamespacedSubnetRequest {
     name: string;
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Subnet;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface ReplaceNetworkOrdiriComV1alpha1SubnetStatusRequest {
+export interface ReplaceNetworkOrdiriComV1alpha1NamespacedSubnetStatusRequest {
     name: string;
+    namespace: string;
     body: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Subnet;
     pretty?: string;
     dryRun?: string;
     fieldManager?: string;
 }
 
-export interface WatchNetworkOrdiriComV1alpha1NetworkRequest {
+export interface WatchNetworkOrdiriComV1alpha1LoadBalancerListForAllNamespacesRequest {
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface WatchNetworkOrdiriComV1alpha1NamespacedLoadBalancerRequest {
     name: string;
+    namespace: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
     fieldSelector?: string;
@@ -525,7 +773,8 @@ export interface WatchNetworkOrdiriComV1alpha1NetworkRequest {
     watch?: boolean;
 }
 
-export interface WatchNetworkOrdiriComV1alpha1NetworkListRequest {
+export interface WatchNetworkOrdiriComV1alpha1NamespacedLoadBalancerListRequest {
+    namespace: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
     fieldSelector?: string;
@@ -538,8 +787,9 @@ export interface WatchNetworkOrdiriComV1alpha1NetworkListRequest {
     watch?: boolean;
 }
 
-export interface WatchNetworkOrdiriComV1alpha1RouteRequest {
+export interface WatchNetworkOrdiriComV1alpha1NamespacedNetworkRequest {
     name: string;
+    namespace: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
     fieldSelector?: string;
@@ -552,7 +802,8 @@ export interface WatchNetworkOrdiriComV1alpha1RouteRequest {
     watch?: boolean;
 }
 
-export interface WatchNetworkOrdiriComV1alpha1RouteListRequest {
+export interface WatchNetworkOrdiriComV1alpha1NamespacedNetworkListRequest {
+    namespace: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
     fieldSelector?: string;
@@ -565,8 +816,9 @@ export interface WatchNetworkOrdiriComV1alpha1RouteListRequest {
     watch?: boolean;
 }
 
-export interface WatchNetworkOrdiriComV1alpha1RouteTableRequest {
+export interface WatchNetworkOrdiriComV1alpha1NamespacedRouteRequest {
     name: string;
+    namespace: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
     fieldSelector?: string;
@@ -579,7 +831,8 @@ export interface WatchNetworkOrdiriComV1alpha1RouteTableRequest {
     watch?: boolean;
 }
 
-export interface WatchNetworkOrdiriComV1alpha1RouteTableListRequest {
+export interface WatchNetworkOrdiriComV1alpha1NamespacedRouteListRequest {
+    namespace: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
     fieldSelector?: string;
@@ -592,8 +845,9 @@ export interface WatchNetworkOrdiriComV1alpha1RouteTableListRequest {
     watch?: boolean;
 }
 
-export interface WatchNetworkOrdiriComV1alpha1RouterRequest {
+export interface WatchNetworkOrdiriComV1alpha1NamespacedRouteTableRequest {
     name: string;
+    namespace: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
     fieldSelector?: string;
@@ -606,7 +860,8 @@ export interface WatchNetworkOrdiriComV1alpha1RouterRequest {
     watch?: boolean;
 }
 
-export interface WatchNetworkOrdiriComV1alpha1RouterListRequest {
+export interface WatchNetworkOrdiriComV1alpha1NamespacedRouteTableListRequest {
+    namespace: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
     fieldSelector?: string;
@@ -619,8 +874,9 @@ export interface WatchNetworkOrdiriComV1alpha1RouterListRequest {
     watch?: boolean;
 }
 
-export interface WatchNetworkOrdiriComV1alpha1SubnetRequest {
+export interface WatchNetworkOrdiriComV1alpha1NamespacedRouterRequest {
     name: string;
+    namespace: string;
     allowWatchBookmarks?: boolean;
     _continue?: string;
     fieldSelector?: string;
@@ -633,7 +889,102 @@ export interface WatchNetworkOrdiriComV1alpha1SubnetRequest {
     watch?: boolean;
 }
 
-export interface WatchNetworkOrdiriComV1alpha1SubnetListRequest {
+export interface WatchNetworkOrdiriComV1alpha1NamespacedRouterListRequest {
+    namespace: string;
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface WatchNetworkOrdiriComV1alpha1NamespacedSubnetRequest {
+    name: string;
+    namespace: string;
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface WatchNetworkOrdiriComV1alpha1NamespacedSubnetListRequest {
+    namespace: string;
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface WatchNetworkOrdiriComV1alpha1NetworkListForAllNamespacesRequest {
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface WatchNetworkOrdiriComV1alpha1RouteListForAllNamespacesRequest {
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface WatchNetworkOrdiriComV1alpha1RouteTableListForAllNamespacesRequest {
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface WatchNetworkOrdiriComV1alpha1RouterListForAllNamespacesRequest {
+    allowWatchBookmarks?: boolean;
+    _continue?: string;
+    fieldSelector?: string;
+    labelSelector?: string;
+    limit?: number;
+    pretty?: string;
+    resourceVersion?: string;
+    resourceVersionMatch?: string;
+    timeoutSeconds?: number;
+    watch?: boolean;
+}
+
+export interface WatchNetworkOrdiriComV1alpha1SubnetListForAllNamespacesRequest {
     allowWatchBookmarks?: boolean;
     _continue?: string;
     fieldSelector?: string;
@@ -652,11 +1003,15 @@ export interface WatchNetworkOrdiriComV1alpha1SubnetListRequest {
 export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
 
     /**
-     * create a Network
+     * create a LoadBalancer
      */
-    async createNetworkOrdiriComV1alpha1NetworkRaw(requestParameters: CreateNetworkOrdiriComV1alpha1NetworkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network>> {
+    async createNetworkOrdiriComV1alpha1NamespacedLoadBalancerRaw(requestParameters: CreateNetworkOrdiriComV1alpha1NamespacedLoadBalancerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancer>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling createNetworkOrdiriComV1alpha1NamespacedLoadBalancer.');
+        }
+
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling createNetworkOrdiriComV1alpha1Network.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling createNetworkOrdiriComV1alpha1NamespacedLoadBalancer.');
         }
 
         const queryParameters: any = {};
@@ -678,7 +1033,56 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/networks`,
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/loadbalancers`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerToJSON(requestParameters.body),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerFromJSON(jsonValue));
+    }
+
+    /**
+     * create a LoadBalancer
+     */
+    async createNetworkOrdiriComV1alpha1NamespacedLoadBalancer(requestParameters: CreateNetworkOrdiriComV1alpha1NamespacedLoadBalancerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancer> {
+        const response = await this.createNetworkOrdiriComV1alpha1NamespacedLoadBalancerRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * create a Network
+     */
+    async createNetworkOrdiriComV1alpha1NamespacedNetworkRaw(requestParameters: CreateNetworkOrdiriComV1alpha1NamespacedNetworkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling createNetworkOrdiriComV1alpha1NamespacedNetwork.');
+        }
+
+        if (requestParameters.body === null || requestParameters.body === undefined) {
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling createNetworkOrdiriComV1alpha1NamespacedNetwork.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.dryRun !== undefined) {
+            queryParameters['dryRun'] = requestParameters.dryRun;
+        }
+
+        if (requestParameters.fieldManager !== undefined) {
+            queryParameters['fieldManager'] = requestParameters.fieldManager;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/networks`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -691,17 +1095,21 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * create a Network
      */
-    async createNetworkOrdiriComV1alpha1Network(requestParameters: CreateNetworkOrdiriComV1alpha1NetworkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network> {
-        const response = await this.createNetworkOrdiriComV1alpha1NetworkRaw(requestParameters, initOverrides);
+    async createNetworkOrdiriComV1alpha1NamespacedNetwork(requestParameters: CreateNetworkOrdiriComV1alpha1NamespacedNetworkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network> {
+        const response = await this.createNetworkOrdiriComV1alpha1NamespacedNetworkRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * create a Route
      */
-    async createNetworkOrdiriComV1alpha1RouteRaw(requestParameters: CreateNetworkOrdiriComV1alpha1RouteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Route>> {
+    async createNetworkOrdiriComV1alpha1NamespacedRouteRaw(requestParameters: CreateNetworkOrdiriComV1alpha1NamespacedRouteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Route>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling createNetworkOrdiriComV1alpha1NamespacedRoute.');
+        }
+
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling createNetworkOrdiriComV1alpha1Route.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling createNetworkOrdiriComV1alpha1NamespacedRoute.');
         }
 
         const queryParameters: any = {};
@@ -723,7 +1131,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/routes`,
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/routes`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -736,17 +1144,21 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * create a Route
      */
-    async createNetworkOrdiriComV1alpha1Route(requestParameters: CreateNetworkOrdiriComV1alpha1RouteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Route> {
-        const response = await this.createNetworkOrdiriComV1alpha1RouteRaw(requestParameters, initOverrides);
+    async createNetworkOrdiriComV1alpha1NamespacedRoute(requestParameters: CreateNetworkOrdiriComV1alpha1NamespacedRouteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Route> {
+        const response = await this.createNetworkOrdiriComV1alpha1NamespacedRouteRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * create a RouteTable
      */
-    async createNetworkOrdiriComV1alpha1RouteTableRaw(requestParameters: CreateNetworkOrdiriComV1alpha1RouteTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTable>> {
+    async createNetworkOrdiriComV1alpha1NamespacedRouteTableRaw(requestParameters: CreateNetworkOrdiriComV1alpha1NamespacedRouteTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTable>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling createNetworkOrdiriComV1alpha1NamespacedRouteTable.');
+        }
+
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling createNetworkOrdiriComV1alpha1RouteTable.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling createNetworkOrdiriComV1alpha1NamespacedRouteTable.');
         }
 
         const queryParameters: any = {};
@@ -768,7 +1180,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/routetables:`,
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/routetables:`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -781,17 +1193,21 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * create a RouteTable
      */
-    async createNetworkOrdiriComV1alpha1RouteTable(requestParameters: CreateNetworkOrdiriComV1alpha1RouteTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTable> {
-        const response = await this.createNetworkOrdiriComV1alpha1RouteTableRaw(requestParameters, initOverrides);
+    async createNetworkOrdiriComV1alpha1NamespacedRouteTable(requestParameters: CreateNetworkOrdiriComV1alpha1NamespacedRouteTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTable> {
+        const response = await this.createNetworkOrdiriComV1alpha1NamespacedRouteTableRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * create a Router
      */
-    async createNetworkOrdiriComV1alpha1RouterRaw(requestParameters: CreateNetworkOrdiriComV1alpha1RouterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Router>> {
+    async createNetworkOrdiriComV1alpha1NamespacedRouterRaw(requestParameters: CreateNetworkOrdiriComV1alpha1NamespacedRouterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Router>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling createNetworkOrdiriComV1alpha1NamespacedRouter.');
+        }
+
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling createNetworkOrdiriComV1alpha1Router.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling createNetworkOrdiriComV1alpha1NamespacedRouter.');
         }
 
         const queryParameters: any = {};
@@ -813,7 +1229,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/routers`,
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/routers`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -826,17 +1242,21 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * create a Router
      */
-    async createNetworkOrdiriComV1alpha1Router(requestParameters: CreateNetworkOrdiriComV1alpha1RouterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Router> {
-        const response = await this.createNetworkOrdiriComV1alpha1RouterRaw(requestParameters, initOverrides);
+    async createNetworkOrdiriComV1alpha1NamespacedRouter(requestParameters: CreateNetworkOrdiriComV1alpha1NamespacedRouterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Router> {
+        const response = await this.createNetworkOrdiriComV1alpha1NamespacedRouterRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * create a Subnet
      */
-    async createNetworkOrdiriComV1alpha1SubnetRaw(requestParameters: CreateNetworkOrdiriComV1alpha1SubnetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Subnet>> {
+    async createNetworkOrdiriComV1alpha1NamespacedSubnetRaw(requestParameters: CreateNetworkOrdiriComV1alpha1NamespacedSubnetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Subnet>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling createNetworkOrdiriComV1alpha1NamespacedSubnet.');
+        }
+
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling createNetworkOrdiriComV1alpha1Subnet.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling createNetworkOrdiriComV1alpha1NamespacedSubnet.');
         }
 
         const queryParameters: any = {};
@@ -858,7 +1278,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/subnets`,
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/subnets`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -871,15 +1291,100 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * create a Subnet
      */
-    async createNetworkOrdiriComV1alpha1Subnet(requestParameters: CreateNetworkOrdiriComV1alpha1SubnetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Subnet> {
-        const response = await this.createNetworkOrdiriComV1alpha1SubnetRaw(requestParameters, initOverrides);
+    async createNetworkOrdiriComV1alpha1NamespacedSubnet(requestParameters: CreateNetworkOrdiriComV1alpha1NamespacedSubnetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Subnet> {
+        const response = await this.createNetworkOrdiriComV1alpha1NamespacedSubnetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * delete collection of LoadBalancer
+     */
+    async deleteNetworkOrdiriComV1alpha1CollectionNamespacedLoadBalancerRaw(requestParameters: DeleteNetworkOrdiriComV1alpha1CollectionNamespacedLoadBalancerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling deleteNetworkOrdiriComV1alpha1CollectionNamespacedLoadBalancer.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.dryRun !== undefined) {
+            queryParameters['dryRun'] = requestParameters.dryRun;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.gracePeriodSeconds !== undefined) {
+            queryParameters['gracePeriodSeconds'] = requestParameters.gracePeriodSeconds;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.orphanDependents !== undefined) {
+            queryParameters['orphanDependents'] = requestParameters.orphanDependents;
+        }
+
+        if (requestParameters.propagationPolicy !== undefined) {
+            queryParameters['propagationPolicy'] = requestParameters.propagationPolicy;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/loadbalancers`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+            body: IoK8sApimachineryPkgApisMetaV1DeleteOptionsToJSON(requestParameters.body),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1StatusFromJSON(jsonValue));
+    }
+
+    /**
+     * delete collection of LoadBalancer
+     */
+    async deleteNetworkOrdiriComV1alpha1CollectionNamespacedLoadBalancer(requestParameters: DeleteNetworkOrdiriComV1alpha1CollectionNamespacedLoadBalancerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
+        const response = await this.deleteNetworkOrdiriComV1alpha1CollectionNamespacedLoadBalancerRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * delete collection of Network
      */
-    async deleteNetworkOrdiriComV1alpha1CollectionNetworkRaw(requestParameters: DeleteNetworkOrdiriComV1alpha1CollectionNetworkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+    async deleteNetworkOrdiriComV1alpha1CollectionNamespacedNetworkRaw(requestParameters: DeleteNetworkOrdiriComV1alpha1CollectionNamespacedNetworkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling deleteNetworkOrdiriComV1alpha1CollectionNamespacedNetwork.');
+        }
+
         const queryParameters: any = {};
 
         if (requestParameters.pretty !== undefined) {
@@ -935,7 +1440,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/networks`,
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/networks`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -948,15 +1453,19 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * delete collection of Network
      */
-    async deleteNetworkOrdiriComV1alpha1CollectionNetwork(requestParameters: DeleteNetworkOrdiriComV1alpha1CollectionNetworkRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
-        const response = await this.deleteNetworkOrdiriComV1alpha1CollectionNetworkRaw(requestParameters, initOverrides);
+    async deleteNetworkOrdiriComV1alpha1CollectionNamespacedNetwork(requestParameters: DeleteNetworkOrdiriComV1alpha1CollectionNamespacedNetworkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
+        const response = await this.deleteNetworkOrdiriComV1alpha1CollectionNamespacedNetworkRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * delete collection of Route
      */
-    async deleteNetworkOrdiriComV1alpha1CollectionRouteRaw(requestParameters: DeleteNetworkOrdiriComV1alpha1CollectionRouteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+    async deleteNetworkOrdiriComV1alpha1CollectionNamespacedRouteRaw(requestParameters: DeleteNetworkOrdiriComV1alpha1CollectionNamespacedRouteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling deleteNetworkOrdiriComV1alpha1CollectionNamespacedRoute.');
+        }
+
         const queryParameters: any = {};
 
         if (requestParameters.pretty !== undefined) {
@@ -1012,7 +1521,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/routes`,
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/routes`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -1025,15 +1534,19 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * delete collection of Route
      */
-    async deleteNetworkOrdiriComV1alpha1CollectionRoute(requestParameters: DeleteNetworkOrdiriComV1alpha1CollectionRouteRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
-        const response = await this.deleteNetworkOrdiriComV1alpha1CollectionRouteRaw(requestParameters, initOverrides);
+    async deleteNetworkOrdiriComV1alpha1CollectionNamespacedRoute(requestParameters: DeleteNetworkOrdiriComV1alpha1CollectionNamespacedRouteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
+        const response = await this.deleteNetworkOrdiriComV1alpha1CollectionNamespacedRouteRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * delete collection of RouteTable
      */
-    async deleteNetworkOrdiriComV1alpha1CollectionRouteTableRaw(requestParameters: DeleteNetworkOrdiriComV1alpha1CollectionRouteTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+    async deleteNetworkOrdiriComV1alpha1CollectionNamespacedRouteTableRaw(requestParameters: DeleteNetworkOrdiriComV1alpha1CollectionNamespacedRouteTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling deleteNetworkOrdiriComV1alpha1CollectionNamespacedRouteTable.');
+        }
+
         const queryParameters: any = {};
 
         if (requestParameters.pretty !== undefined) {
@@ -1089,7 +1602,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/routetables:`,
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/routetables:`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -1102,15 +1615,19 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * delete collection of RouteTable
      */
-    async deleteNetworkOrdiriComV1alpha1CollectionRouteTable(requestParameters: DeleteNetworkOrdiriComV1alpha1CollectionRouteTableRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
-        const response = await this.deleteNetworkOrdiriComV1alpha1CollectionRouteTableRaw(requestParameters, initOverrides);
+    async deleteNetworkOrdiriComV1alpha1CollectionNamespacedRouteTable(requestParameters: DeleteNetworkOrdiriComV1alpha1CollectionNamespacedRouteTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
+        const response = await this.deleteNetworkOrdiriComV1alpha1CollectionNamespacedRouteTableRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * delete collection of Router
      */
-    async deleteNetworkOrdiriComV1alpha1CollectionRouterRaw(requestParameters: DeleteNetworkOrdiriComV1alpha1CollectionRouterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+    async deleteNetworkOrdiriComV1alpha1CollectionNamespacedRouterRaw(requestParameters: DeleteNetworkOrdiriComV1alpha1CollectionNamespacedRouterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling deleteNetworkOrdiriComV1alpha1CollectionNamespacedRouter.');
+        }
+
         const queryParameters: any = {};
 
         if (requestParameters.pretty !== undefined) {
@@ -1166,7 +1683,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/routers`,
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/routers`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -1179,15 +1696,19 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * delete collection of Router
      */
-    async deleteNetworkOrdiriComV1alpha1CollectionRouter(requestParameters: DeleteNetworkOrdiriComV1alpha1CollectionRouterRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
-        const response = await this.deleteNetworkOrdiriComV1alpha1CollectionRouterRaw(requestParameters, initOverrides);
+    async deleteNetworkOrdiriComV1alpha1CollectionNamespacedRouter(requestParameters: DeleteNetworkOrdiriComV1alpha1CollectionNamespacedRouterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
+        const response = await this.deleteNetworkOrdiriComV1alpha1CollectionNamespacedRouterRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * delete collection of Subnet
      */
-    async deleteNetworkOrdiriComV1alpha1CollectionSubnetRaw(requestParameters: DeleteNetworkOrdiriComV1alpha1CollectionSubnetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+    async deleteNetworkOrdiriComV1alpha1CollectionNamespacedSubnetRaw(requestParameters: DeleteNetworkOrdiriComV1alpha1CollectionNamespacedSubnetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling deleteNetworkOrdiriComV1alpha1CollectionNamespacedSubnet.');
+        }
+
         const queryParameters: any = {};
 
         if (requestParameters.pretty !== undefined) {
@@ -1243,7 +1764,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/subnets`,
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/subnets`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -1256,17 +1777,78 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * delete collection of Subnet
      */
-    async deleteNetworkOrdiriComV1alpha1CollectionSubnet(requestParameters: DeleteNetworkOrdiriComV1alpha1CollectionSubnetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
-        const response = await this.deleteNetworkOrdiriComV1alpha1CollectionSubnetRaw(requestParameters, initOverrides);
+    async deleteNetworkOrdiriComV1alpha1CollectionNamespacedSubnet(requestParameters: DeleteNetworkOrdiriComV1alpha1CollectionNamespacedSubnetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
+        const response = await this.deleteNetworkOrdiriComV1alpha1CollectionNamespacedSubnetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * delete a LoadBalancer
+     */
+    async deleteNetworkOrdiriComV1alpha1NamespacedLoadBalancerRaw(requestParameters: DeleteNetworkOrdiriComV1alpha1NamespacedLoadBalancerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+        if (requestParameters.name === null || requestParameters.name === undefined) {
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling deleteNetworkOrdiriComV1alpha1NamespacedLoadBalancer.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling deleteNetworkOrdiriComV1alpha1NamespacedLoadBalancer.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.dryRun !== undefined) {
+            queryParameters['dryRun'] = requestParameters.dryRun;
+        }
+
+        if (requestParameters.gracePeriodSeconds !== undefined) {
+            queryParameters['gracePeriodSeconds'] = requestParameters.gracePeriodSeconds;
+        }
+
+        if (requestParameters.orphanDependents !== undefined) {
+            queryParameters['orphanDependents'] = requestParameters.orphanDependents;
+        }
+
+        if (requestParameters.propagationPolicy !== undefined) {
+            queryParameters['propagationPolicy'] = requestParameters.propagationPolicy;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/loadbalancers/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+            body: IoK8sApimachineryPkgApisMetaV1DeleteOptionsToJSON(requestParameters.body),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1StatusFromJSON(jsonValue));
+    }
+
+    /**
+     * delete a LoadBalancer
+     */
+    async deleteNetworkOrdiriComV1alpha1NamespacedLoadBalancer(requestParameters: DeleteNetworkOrdiriComV1alpha1NamespacedLoadBalancerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
+        const response = await this.deleteNetworkOrdiriComV1alpha1NamespacedLoadBalancerRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * delete a Network
      */
-    async deleteNetworkOrdiriComV1alpha1NetworkRaw(requestParameters: DeleteNetworkOrdiriComV1alpha1NetworkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+    async deleteNetworkOrdiriComV1alpha1NamespacedNetworkRaw(requestParameters: DeleteNetworkOrdiriComV1alpha1NamespacedNetworkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling deleteNetworkOrdiriComV1alpha1Network.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling deleteNetworkOrdiriComV1alpha1NamespacedNetwork.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling deleteNetworkOrdiriComV1alpha1NamespacedNetwork.');
         }
 
         const queryParameters: any = {};
@@ -1296,7 +1878,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/networks/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/networks/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -1309,17 +1891,21 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * delete a Network
      */
-    async deleteNetworkOrdiriComV1alpha1Network(requestParameters: DeleteNetworkOrdiriComV1alpha1NetworkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
-        const response = await this.deleteNetworkOrdiriComV1alpha1NetworkRaw(requestParameters, initOverrides);
+    async deleteNetworkOrdiriComV1alpha1NamespacedNetwork(requestParameters: DeleteNetworkOrdiriComV1alpha1NamespacedNetworkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
+        const response = await this.deleteNetworkOrdiriComV1alpha1NamespacedNetworkRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * delete a Route
      */
-    async deleteNetworkOrdiriComV1alpha1RouteRaw(requestParameters: DeleteNetworkOrdiriComV1alpha1RouteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+    async deleteNetworkOrdiriComV1alpha1NamespacedRouteRaw(requestParameters: DeleteNetworkOrdiriComV1alpha1NamespacedRouteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling deleteNetworkOrdiriComV1alpha1Route.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling deleteNetworkOrdiriComV1alpha1NamespacedRoute.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling deleteNetworkOrdiriComV1alpha1NamespacedRoute.');
         }
 
         const queryParameters: any = {};
@@ -1349,7 +1935,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/routes/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/routes/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -1362,17 +1948,21 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * delete a Route
      */
-    async deleteNetworkOrdiriComV1alpha1Route(requestParameters: DeleteNetworkOrdiriComV1alpha1RouteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
-        const response = await this.deleteNetworkOrdiriComV1alpha1RouteRaw(requestParameters, initOverrides);
+    async deleteNetworkOrdiriComV1alpha1NamespacedRoute(requestParameters: DeleteNetworkOrdiriComV1alpha1NamespacedRouteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
+        const response = await this.deleteNetworkOrdiriComV1alpha1NamespacedRouteRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * delete a RouteTable
      */
-    async deleteNetworkOrdiriComV1alpha1RouteTableRaw(requestParameters: DeleteNetworkOrdiriComV1alpha1RouteTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+    async deleteNetworkOrdiriComV1alpha1NamespacedRouteTableRaw(requestParameters: DeleteNetworkOrdiriComV1alpha1NamespacedRouteTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling deleteNetworkOrdiriComV1alpha1RouteTable.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling deleteNetworkOrdiriComV1alpha1NamespacedRouteTable.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling deleteNetworkOrdiriComV1alpha1NamespacedRouteTable.');
         }
 
         const queryParameters: any = {};
@@ -1402,7 +1992,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/routetables:/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/routetables:/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -1415,17 +2005,21 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * delete a RouteTable
      */
-    async deleteNetworkOrdiriComV1alpha1RouteTable(requestParameters: DeleteNetworkOrdiriComV1alpha1RouteTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
-        const response = await this.deleteNetworkOrdiriComV1alpha1RouteTableRaw(requestParameters, initOverrides);
+    async deleteNetworkOrdiriComV1alpha1NamespacedRouteTable(requestParameters: DeleteNetworkOrdiriComV1alpha1NamespacedRouteTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
+        const response = await this.deleteNetworkOrdiriComV1alpha1NamespacedRouteTableRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * delete a Router
      */
-    async deleteNetworkOrdiriComV1alpha1RouterRaw(requestParameters: DeleteNetworkOrdiriComV1alpha1RouterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+    async deleteNetworkOrdiriComV1alpha1NamespacedRouterRaw(requestParameters: DeleteNetworkOrdiriComV1alpha1NamespacedRouterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling deleteNetworkOrdiriComV1alpha1Router.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling deleteNetworkOrdiriComV1alpha1NamespacedRouter.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling deleteNetworkOrdiriComV1alpha1NamespacedRouter.');
         }
 
         const queryParameters: any = {};
@@ -1455,7 +2049,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/routers/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/routers/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -1468,17 +2062,21 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * delete a Router
      */
-    async deleteNetworkOrdiriComV1alpha1Router(requestParameters: DeleteNetworkOrdiriComV1alpha1RouterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
-        const response = await this.deleteNetworkOrdiriComV1alpha1RouterRaw(requestParameters, initOverrides);
+    async deleteNetworkOrdiriComV1alpha1NamespacedRouter(requestParameters: DeleteNetworkOrdiriComV1alpha1NamespacedRouterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
+        const response = await this.deleteNetworkOrdiriComV1alpha1NamespacedRouterRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * delete a Subnet
      */
-    async deleteNetworkOrdiriComV1alpha1SubnetRaw(requestParameters: DeleteNetworkOrdiriComV1alpha1SubnetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
+    async deleteNetworkOrdiriComV1alpha1NamespacedSubnetRaw(requestParameters: DeleteNetworkOrdiriComV1alpha1NamespacedSubnetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1Status>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling deleteNetworkOrdiriComV1alpha1Subnet.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling deleteNetworkOrdiriComV1alpha1NamespacedSubnet.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling deleteNetworkOrdiriComV1alpha1NamespacedSubnet.');
         }
 
         const queryParameters: any = {};
@@ -1508,7 +2106,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/subnets/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/subnets/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -1521,8 +2119,8 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * delete a Subnet
      */
-    async deleteNetworkOrdiriComV1alpha1Subnet(requestParameters: DeleteNetworkOrdiriComV1alpha1SubnetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
-        const response = await this.deleteNetworkOrdiriComV1alpha1SubnetRaw(requestParameters, initOverrides);
+    async deleteNetworkOrdiriComV1alpha1NamespacedSubnet(requestParameters: DeleteNetworkOrdiriComV1alpha1NamespacedSubnetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1Status> {
+        const response = await this.deleteNetworkOrdiriComV1alpha1NamespacedSubnetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -1553,9 +2151,79 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     }
 
     /**
-     * list or watch objects of kind Network
+     * list or watch objects of kind LoadBalancer
      */
-    async listNetworkOrdiriComV1alpha1NetworkRaw(requestParameters: ListNetworkOrdiriComV1alpha1NetworkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkList>> {
+    async listNetworkOrdiriComV1alpha1LoadBalancerForAllNamespacesRaw(requestParameters: ListNetworkOrdiriComV1alpha1LoadBalancerForAllNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerList>> {
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/network.ordiri.com/v1alpha1/loadbalancers`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerListFromJSON(jsonValue));
+    }
+
+    /**
+     * list or watch objects of kind LoadBalancer
+     */
+    async listNetworkOrdiriComV1alpha1LoadBalancerForAllNamespaces(requestParameters: ListNetworkOrdiriComV1alpha1LoadBalancerForAllNamespacesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerList> {
+        const response = await this.listNetworkOrdiriComV1alpha1LoadBalancerForAllNamespacesRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * list or watch objects of kind LoadBalancer
+     */
+    async listNetworkOrdiriComV1alpha1NamespacedLoadBalancerRaw(requestParameters: ListNetworkOrdiriComV1alpha1NamespacedLoadBalancerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerList>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling listNetworkOrdiriComV1alpha1NamespacedLoadBalancer.');
+        }
+
         const queryParameters: any = {};
 
         if (requestParameters.pretty !== undefined) {
@@ -1580,6 +2248,422 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
 
         if (requestParameters.limit !== undefined) {
             queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/loadbalancers`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerListFromJSON(jsonValue));
+    }
+
+    /**
+     * list or watch objects of kind LoadBalancer
+     */
+    async listNetworkOrdiriComV1alpha1NamespacedLoadBalancer(requestParameters: ListNetworkOrdiriComV1alpha1NamespacedLoadBalancerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerList> {
+        const response = await this.listNetworkOrdiriComV1alpha1NamespacedLoadBalancerRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * list or watch objects of kind Network
+     */
+    async listNetworkOrdiriComV1alpha1NamespacedNetworkRaw(requestParameters: ListNetworkOrdiriComV1alpha1NamespacedNetworkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkList>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling listNetworkOrdiriComV1alpha1NamespacedNetwork.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/networks`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkListFromJSON(jsonValue));
+    }
+
+    /**
+     * list or watch objects of kind Network
+     */
+    async listNetworkOrdiriComV1alpha1NamespacedNetwork(requestParameters: ListNetworkOrdiriComV1alpha1NamespacedNetworkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkList> {
+        const response = await this.listNetworkOrdiriComV1alpha1NamespacedNetworkRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * list or watch objects of kind Route
+     */
+    async listNetworkOrdiriComV1alpha1NamespacedRouteRaw(requestParameters: ListNetworkOrdiriComV1alpha1NamespacedRouteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteList>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling listNetworkOrdiriComV1alpha1NamespacedRoute.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/routes`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteListFromJSON(jsonValue));
+    }
+
+    /**
+     * list or watch objects of kind Route
+     */
+    async listNetworkOrdiriComV1alpha1NamespacedRoute(requestParameters: ListNetworkOrdiriComV1alpha1NamespacedRouteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteList> {
+        const response = await this.listNetworkOrdiriComV1alpha1NamespacedRouteRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * list or watch objects of kind RouteTable
+     */
+    async listNetworkOrdiriComV1alpha1NamespacedRouteTableRaw(requestParameters: ListNetworkOrdiriComV1alpha1NamespacedRouteTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableList>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling listNetworkOrdiriComV1alpha1NamespacedRouteTable.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/routetables:`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableListFromJSON(jsonValue));
+    }
+
+    /**
+     * list or watch objects of kind RouteTable
+     */
+    async listNetworkOrdiriComV1alpha1NamespacedRouteTable(requestParameters: ListNetworkOrdiriComV1alpha1NamespacedRouteTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableList> {
+        const response = await this.listNetworkOrdiriComV1alpha1NamespacedRouteTableRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * list or watch objects of kind Router
+     */
+    async listNetworkOrdiriComV1alpha1NamespacedRouterRaw(requestParameters: ListNetworkOrdiriComV1alpha1NamespacedRouterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterList>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling listNetworkOrdiriComV1alpha1NamespacedRouter.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/routers`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterListFromJSON(jsonValue));
+    }
+
+    /**
+     * list or watch objects of kind Router
+     */
+    async listNetworkOrdiriComV1alpha1NamespacedRouter(requestParameters: ListNetworkOrdiriComV1alpha1NamespacedRouterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterList> {
+        const response = await this.listNetworkOrdiriComV1alpha1NamespacedRouterRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * list or watch objects of kind Subnet
+     */
+    async listNetworkOrdiriComV1alpha1NamespacedSubnetRaw(requestParameters: ListNetworkOrdiriComV1alpha1NamespacedSubnetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetList>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling listNetworkOrdiriComV1alpha1NamespacedSubnet.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/subnets`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetListFromJSON(jsonValue));
+    }
+
+    /**
+     * list or watch objects of kind Subnet
+     */
+    async listNetworkOrdiriComV1alpha1NamespacedSubnet(requestParameters: ListNetworkOrdiriComV1alpha1NamespacedSubnetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetList> {
+        const response = await this.listNetworkOrdiriComV1alpha1NamespacedSubnetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * list or watch objects of kind Network
+     */
+    async listNetworkOrdiriComV1alpha1NetworkForAllNamespacesRaw(requestParameters: ListNetworkOrdiriComV1alpha1NetworkForAllNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkList>> {
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
         }
 
         if (requestParameters.resourceVersion !== undefined) {
@@ -1613,20 +2697,16 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * list or watch objects of kind Network
      */
-    async listNetworkOrdiriComV1alpha1Network(requestParameters: ListNetworkOrdiriComV1alpha1NetworkRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkList> {
-        const response = await this.listNetworkOrdiriComV1alpha1NetworkRaw(requestParameters, initOverrides);
+    async listNetworkOrdiriComV1alpha1NetworkForAllNamespaces(requestParameters: ListNetworkOrdiriComV1alpha1NetworkForAllNamespacesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkList> {
+        const response = await this.listNetworkOrdiriComV1alpha1NetworkForAllNamespacesRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * list or watch objects of kind Route
      */
-    async listNetworkOrdiriComV1alpha1RouteRaw(requestParameters: ListNetworkOrdiriComV1alpha1RouteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteList>> {
+    async listNetworkOrdiriComV1alpha1RouteForAllNamespacesRaw(requestParameters: ListNetworkOrdiriComV1alpha1RouteForAllNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteList>> {
         const queryParameters: any = {};
-
-        if (requestParameters.pretty !== undefined) {
-            queryParameters['pretty'] = requestParameters.pretty;
-        }
 
         if (requestParameters.allowWatchBookmarks !== undefined) {
             queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
@@ -1646,6 +2726,10 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
 
         if (requestParameters.limit !== undefined) {
             queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
         }
 
         if (requestParameters.resourceVersion !== undefined) {
@@ -1679,20 +2763,16 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * list or watch objects of kind Route
      */
-    async listNetworkOrdiriComV1alpha1Route(requestParameters: ListNetworkOrdiriComV1alpha1RouteRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteList> {
-        const response = await this.listNetworkOrdiriComV1alpha1RouteRaw(requestParameters, initOverrides);
+    async listNetworkOrdiriComV1alpha1RouteForAllNamespaces(requestParameters: ListNetworkOrdiriComV1alpha1RouteForAllNamespacesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteList> {
+        const response = await this.listNetworkOrdiriComV1alpha1RouteForAllNamespacesRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * list or watch objects of kind RouteTable
      */
-    async listNetworkOrdiriComV1alpha1RouteTableRaw(requestParameters: ListNetworkOrdiriComV1alpha1RouteTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableList>> {
+    async listNetworkOrdiriComV1alpha1RouteTableForAllNamespacesRaw(requestParameters: ListNetworkOrdiriComV1alpha1RouteTableForAllNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableList>> {
         const queryParameters: any = {};
-
-        if (requestParameters.pretty !== undefined) {
-            queryParameters['pretty'] = requestParameters.pretty;
-        }
 
         if (requestParameters.allowWatchBookmarks !== undefined) {
             queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
@@ -1712,6 +2792,10 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
 
         if (requestParameters.limit !== undefined) {
             queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
         }
 
         if (requestParameters.resourceVersion !== undefined) {
@@ -1745,20 +2829,16 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * list or watch objects of kind RouteTable
      */
-    async listNetworkOrdiriComV1alpha1RouteTable(requestParameters: ListNetworkOrdiriComV1alpha1RouteTableRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableList> {
-        const response = await this.listNetworkOrdiriComV1alpha1RouteTableRaw(requestParameters, initOverrides);
+    async listNetworkOrdiriComV1alpha1RouteTableForAllNamespaces(requestParameters: ListNetworkOrdiriComV1alpha1RouteTableForAllNamespacesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableList> {
+        const response = await this.listNetworkOrdiriComV1alpha1RouteTableForAllNamespacesRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * list or watch objects of kind Router
      */
-    async listNetworkOrdiriComV1alpha1RouterRaw(requestParameters: ListNetworkOrdiriComV1alpha1RouterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterList>> {
+    async listNetworkOrdiriComV1alpha1RouterForAllNamespacesRaw(requestParameters: ListNetworkOrdiriComV1alpha1RouterForAllNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterList>> {
         const queryParameters: any = {};
-
-        if (requestParameters.pretty !== undefined) {
-            queryParameters['pretty'] = requestParameters.pretty;
-        }
 
         if (requestParameters.allowWatchBookmarks !== undefined) {
             queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
@@ -1778,6 +2858,10 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
 
         if (requestParameters.limit !== undefined) {
             queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
         }
 
         if (requestParameters.resourceVersion !== undefined) {
@@ -1811,20 +2895,16 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * list or watch objects of kind Router
      */
-    async listNetworkOrdiriComV1alpha1Router(requestParameters: ListNetworkOrdiriComV1alpha1RouterRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterList> {
-        const response = await this.listNetworkOrdiriComV1alpha1RouterRaw(requestParameters, initOverrides);
+    async listNetworkOrdiriComV1alpha1RouterForAllNamespaces(requestParameters: ListNetworkOrdiriComV1alpha1RouterForAllNamespacesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouterList> {
+        const response = await this.listNetworkOrdiriComV1alpha1RouterForAllNamespacesRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * list or watch objects of kind Subnet
      */
-    async listNetworkOrdiriComV1alpha1SubnetRaw(requestParameters: ListNetworkOrdiriComV1alpha1SubnetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetList>> {
+    async listNetworkOrdiriComV1alpha1SubnetForAllNamespacesRaw(requestParameters: ListNetworkOrdiriComV1alpha1SubnetForAllNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetList>> {
         const queryParameters: any = {};
-
-        if (requestParameters.pretty !== undefined) {
-            queryParameters['pretty'] = requestParameters.pretty;
-        }
 
         if (requestParameters.allowWatchBookmarks !== undefined) {
             queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
@@ -1844,6 +2924,10 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
 
         if (requestParameters.limit !== undefined) {
             queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
         }
 
         if (requestParameters.resourceVersion !== undefined) {
@@ -1877,21 +2961,139 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * list or watch objects of kind Subnet
      */
-    async listNetworkOrdiriComV1alpha1Subnet(requestParameters: ListNetworkOrdiriComV1alpha1SubnetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetList> {
-        const response = await this.listNetworkOrdiriComV1alpha1SubnetRaw(requestParameters, initOverrides);
+    async listNetworkOrdiriComV1alpha1SubnetForAllNamespaces(requestParameters: ListNetworkOrdiriComV1alpha1SubnetForAllNamespacesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetList> {
+        const response = await this.listNetworkOrdiriComV1alpha1SubnetForAllNamespacesRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * partially update the specified LoadBalancer
+     */
+    async patchNetworkOrdiriComV1alpha1NamespacedLoadBalancerRaw(requestParameters: PatchNetworkOrdiriComV1alpha1NamespacedLoadBalancerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancer>> {
+        if (requestParameters.name === null || requestParameters.name === undefined) {
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedLoadBalancer.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedLoadBalancer.');
+        }
+
+        if (requestParameters.body === null || requestParameters.body === undefined) {
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedLoadBalancer.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.dryRun !== undefined) {
+            queryParameters['dryRun'] = requestParameters.dryRun;
+        }
+
+        if (requestParameters.fieldManager !== undefined) {
+            queryParameters['fieldManager'] = requestParameters.fieldManager;
+        }
+
+        if (requestParameters.force !== undefined) {
+            queryParameters['force'] = requestParameters.force;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json-patch+json';
+
+        const response = await this.request({
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/loadbalancers/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'PATCH',
+            headers: headerParameters,
+            query: queryParameters,
+            body: requestParameters.body as any,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerFromJSON(jsonValue));
+    }
+
+    /**
+     * partially update the specified LoadBalancer
+     */
+    async patchNetworkOrdiriComV1alpha1NamespacedLoadBalancer(requestParameters: PatchNetworkOrdiriComV1alpha1NamespacedLoadBalancerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancer> {
+        const response = await this.patchNetworkOrdiriComV1alpha1NamespacedLoadBalancerRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * partially update status of the specified LoadBalancer
+     */
+    async patchNetworkOrdiriComV1alpha1NamespacedLoadBalancerStatusRaw(requestParameters: PatchNetworkOrdiriComV1alpha1NamespacedLoadBalancerStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancer>> {
+        if (requestParameters.name === null || requestParameters.name === undefined) {
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedLoadBalancerStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedLoadBalancerStatus.');
+        }
+
+        if (requestParameters.body === null || requestParameters.body === undefined) {
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedLoadBalancerStatus.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.dryRun !== undefined) {
+            queryParameters['dryRun'] = requestParameters.dryRun;
+        }
+
+        if (requestParameters.fieldManager !== undefined) {
+            queryParameters['fieldManager'] = requestParameters.fieldManager;
+        }
+
+        if (requestParameters.force !== undefined) {
+            queryParameters['force'] = requestParameters.force;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json-patch+json';
+
+        const response = await this.request({
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/loadbalancers/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'PATCH',
+            headers: headerParameters,
+            query: queryParameters,
+            body: requestParameters.body as any,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerFromJSON(jsonValue));
+    }
+
+    /**
+     * partially update status of the specified LoadBalancer
+     */
+    async patchNetworkOrdiriComV1alpha1NamespacedLoadBalancerStatus(requestParameters: PatchNetworkOrdiriComV1alpha1NamespacedLoadBalancerStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancer> {
+        const response = await this.patchNetworkOrdiriComV1alpha1NamespacedLoadBalancerStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * partially update the specified Network
      */
-    async patchNetworkOrdiriComV1alpha1NetworkRaw(requestParameters: PatchNetworkOrdiriComV1alpha1NetworkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network>> {
+    async patchNetworkOrdiriComV1alpha1NamespacedNetworkRaw(requestParameters: PatchNetworkOrdiriComV1alpha1NamespacedNetworkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchNetworkOrdiriComV1alpha1Network.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedNetwork.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedNetwork.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchNetworkOrdiriComV1alpha1Network.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedNetwork.');
         }
 
         const queryParameters: any = {};
@@ -1917,7 +3119,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json-patch+json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/networks/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/networks/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -1930,21 +3132,25 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update the specified Network
      */
-    async patchNetworkOrdiriComV1alpha1Network(requestParameters: PatchNetworkOrdiriComV1alpha1NetworkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network> {
-        const response = await this.patchNetworkOrdiriComV1alpha1NetworkRaw(requestParameters, initOverrides);
+    async patchNetworkOrdiriComV1alpha1NamespacedNetwork(requestParameters: PatchNetworkOrdiriComV1alpha1NamespacedNetworkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network> {
+        const response = await this.patchNetworkOrdiriComV1alpha1NamespacedNetworkRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * partially update status of the specified Network
      */
-    async patchNetworkOrdiriComV1alpha1NetworkStatusRaw(requestParameters: PatchNetworkOrdiriComV1alpha1NetworkStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network>> {
+    async patchNetworkOrdiriComV1alpha1NamespacedNetworkStatusRaw(requestParameters: PatchNetworkOrdiriComV1alpha1NamespacedNetworkStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchNetworkOrdiriComV1alpha1NetworkStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedNetworkStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedNetworkStatus.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchNetworkOrdiriComV1alpha1NetworkStatus.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedNetworkStatus.');
         }
 
         const queryParameters: any = {};
@@ -1970,7 +3176,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json-patch+json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/networks/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/networks/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -1983,21 +3189,25 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update status of the specified Network
      */
-    async patchNetworkOrdiriComV1alpha1NetworkStatus(requestParameters: PatchNetworkOrdiriComV1alpha1NetworkStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network> {
-        const response = await this.patchNetworkOrdiriComV1alpha1NetworkStatusRaw(requestParameters, initOverrides);
+    async patchNetworkOrdiriComV1alpha1NamespacedNetworkStatus(requestParameters: PatchNetworkOrdiriComV1alpha1NamespacedNetworkStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network> {
+        const response = await this.patchNetworkOrdiriComV1alpha1NamespacedNetworkStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * partially update the specified Route
      */
-    async patchNetworkOrdiriComV1alpha1RouteRaw(requestParameters: PatchNetworkOrdiriComV1alpha1RouteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Route>> {
+    async patchNetworkOrdiriComV1alpha1NamespacedRouteRaw(requestParameters: PatchNetworkOrdiriComV1alpha1NamespacedRouteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Route>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchNetworkOrdiriComV1alpha1Route.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedRoute.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedRoute.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchNetworkOrdiriComV1alpha1Route.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedRoute.');
         }
 
         const queryParameters: any = {};
@@ -2023,7 +3233,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json-patch+json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/routes/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/routes/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -2036,21 +3246,25 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update the specified Route
      */
-    async patchNetworkOrdiriComV1alpha1Route(requestParameters: PatchNetworkOrdiriComV1alpha1RouteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Route> {
-        const response = await this.patchNetworkOrdiriComV1alpha1RouteRaw(requestParameters, initOverrides);
+    async patchNetworkOrdiriComV1alpha1NamespacedRoute(requestParameters: PatchNetworkOrdiriComV1alpha1NamespacedRouteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Route> {
+        const response = await this.patchNetworkOrdiriComV1alpha1NamespacedRouteRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * partially update status of the specified Route
      */
-    async patchNetworkOrdiriComV1alpha1RouteStatusRaw(requestParameters: PatchNetworkOrdiriComV1alpha1RouteStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Route>> {
+    async patchNetworkOrdiriComV1alpha1NamespacedRouteStatusRaw(requestParameters: PatchNetworkOrdiriComV1alpha1NamespacedRouteStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Route>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchNetworkOrdiriComV1alpha1RouteStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedRouteStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedRouteStatus.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchNetworkOrdiriComV1alpha1RouteStatus.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedRouteStatus.');
         }
 
         const queryParameters: any = {};
@@ -2076,7 +3290,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json-patch+json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/routes/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/routes/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -2089,21 +3303,25 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update status of the specified Route
      */
-    async patchNetworkOrdiriComV1alpha1RouteStatus(requestParameters: PatchNetworkOrdiriComV1alpha1RouteStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Route> {
-        const response = await this.patchNetworkOrdiriComV1alpha1RouteStatusRaw(requestParameters, initOverrides);
+    async patchNetworkOrdiriComV1alpha1NamespacedRouteStatus(requestParameters: PatchNetworkOrdiriComV1alpha1NamespacedRouteStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Route> {
+        const response = await this.patchNetworkOrdiriComV1alpha1NamespacedRouteStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * partially update the specified RouteTable
      */
-    async patchNetworkOrdiriComV1alpha1RouteTableRaw(requestParameters: PatchNetworkOrdiriComV1alpha1RouteTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTable>> {
+    async patchNetworkOrdiriComV1alpha1NamespacedRouteTableRaw(requestParameters: PatchNetworkOrdiriComV1alpha1NamespacedRouteTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTable>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchNetworkOrdiriComV1alpha1RouteTable.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedRouteTable.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedRouteTable.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchNetworkOrdiriComV1alpha1RouteTable.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedRouteTable.');
         }
 
         const queryParameters: any = {};
@@ -2129,7 +3347,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json-patch+json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/routetables:/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/routetables:/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -2142,21 +3360,25 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update the specified RouteTable
      */
-    async patchNetworkOrdiriComV1alpha1RouteTable(requestParameters: PatchNetworkOrdiriComV1alpha1RouteTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTable> {
-        const response = await this.patchNetworkOrdiriComV1alpha1RouteTableRaw(requestParameters, initOverrides);
+    async patchNetworkOrdiriComV1alpha1NamespacedRouteTable(requestParameters: PatchNetworkOrdiriComV1alpha1NamespacedRouteTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTable> {
+        const response = await this.patchNetworkOrdiriComV1alpha1NamespacedRouteTableRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * partially update status of the specified RouteTable
      */
-    async patchNetworkOrdiriComV1alpha1RouteTableStatusRaw(requestParameters: PatchNetworkOrdiriComV1alpha1RouteTableStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTable>> {
+    async patchNetworkOrdiriComV1alpha1NamespacedRouteTableStatusRaw(requestParameters: PatchNetworkOrdiriComV1alpha1NamespacedRouteTableStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTable>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchNetworkOrdiriComV1alpha1RouteTableStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedRouteTableStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedRouteTableStatus.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchNetworkOrdiriComV1alpha1RouteTableStatus.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedRouteTableStatus.');
         }
 
         const queryParameters: any = {};
@@ -2182,7 +3404,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json-patch+json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/routetables:/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/routetables:/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -2195,21 +3417,25 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update status of the specified RouteTable
      */
-    async patchNetworkOrdiriComV1alpha1RouteTableStatus(requestParameters: PatchNetworkOrdiriComV1alpha1RouteTableStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTable> {
-        const response = await this.patchNetworkOrdiriComV1alpha1RouteTableStatusRaw(requestParameters, initOverrides);
+    async patchNetworkOrdiriComV1alpha1NamespacedRouteTableStatus(requestParameters: PatchNetworkOrdiriComV1alpha1NamespacedRouteTableStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTable> {
+        const response = await this.patchNetworkOrdiriComV1alpha1NamespacedRouteTableStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * partially update the specified Router
      */
-    async patchNetworkOrdiriComV1alpha1RouterRaw(requestParameters: PatchNetworkOrdiriComV1alpha1RouterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Router>> {
+    async patchNetworkOrdiriComV1alpha1NamespacedRouterRaw(requestParameters: PatchNetworkOrdiriComV1alpha1NamespacedRouterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Router>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchNetworkOrdiriComV1alpha1Router.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedRouter.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedRouter.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchNetworkOrdiriComV1alpha1Router.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedRouter.');
         }
 
         const queryParameters: any = {};
@@ -2235,7 +3461,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json-patch+json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/routers/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/routers/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -2248,21 +3474,25 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update the specified Router
      */
-    async patchNetworkOrdiriComV1alpha1Router(requestParameters: PatchNetworkOrdiriComV1alpha1RouterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Router> {
-        const response = await this.patchNetworkOrdiriComV1alpha1RouterRaw(requestParameters, initOverrides);
+    async patchNetworkOrdiriComV1alpha1NamespacedRouter(requestParameters: PatchNetworkOrdiriComV1alpha1NamespacedRouterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Router> {
+        const response = await this.patchNetworkOrdiriComV1alpha1NamespacedRouterRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * partially update status of the specified Router
      */
-    async patchNetworkOrdiriComV1alpha1RouterStatusRaw(requestParameters: PatchNetworkOrdiriComV1alpha1RouterStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Router>> {
+    async patchNetworkOrdiriComV1alpha1NamespacedRouterStatusRaw(requestParameters: PatchNetworkOrdiriComV1alpha1NamespacedRouterStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Router>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchNetworkOrdiriComV1alpha1RouterStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedRouterStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedRouterStatus.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchNetworkOrdiriComV1alpha1RouterStatus.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedRouterStatus.');
         }
 
         const queryParameters: any = {};
@@ -2288,7 +3518,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json-patch+json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/routers/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/routers/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -2301,21 +3531,25 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update status of the specified Router
      */
-    async patchNetworkOrdiriComV1alpha1RouterStatus(requestParameters: PatchNetworkOrdiriComV1alpha1RouterStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Router> {
-        const response = await this.patchNetworkOrdiriComV1alpha1RouterStatusRaw(requestParameters, initOverrides);
+    async patchNetworkOrdiriComV1alpha1NamespacedRouterStatus(requestParameters: PatchNetworkOrdiriComV1alpha1NamespacedRouterStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Router> {
+        const response = await this.patchNetworkOrdiriComV1alpha1NamespacedRouterStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * partially update the specified Subnet
      */
-    async patchNetworkOrdiriComV1alpha1SubnetRaw(requestParameters: PatchNetworkOrdiriComV1alpha1SubnetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Subnet>> {
+    async patchNetworkOrdiriComV1alpha1NamespacedSubnetRaw(requestParameters: PatchNetworkOrdiriComV1alpha1NamespacedSubnetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Subnet>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchNetworkOrdiriComV1alpha1Subnet.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedSubnet.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedSubnet.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchNetworkOrdiriComV1alpha1Subnet.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedSubnet.');
         }
 
         const queryParameters: any = {};
@@ -2341,7 +3575,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json-patch+json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/subnets/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/subnets/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -2354,21 +3588,25 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update the specified Subnet
      */
-    async patchNetworkOrdiriComV1alpha1Subnet(requestParameters: PatchNetworkOrdiriComV1alpha1SubnetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Subnet> {
-        const response = await this.patchNetworkOrdiriComV1alpha1SubnetRaw(requestParameters, initOverrides);
+    async patchNetworkOrdiriComV1alpha1NamespacedSubnet(requestParameters: PatchNetworkOrdiriComV1alpha1NamespacedSubnetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Subnet> {
+        const response = await this.patchNetworkOrdiriComV1alpha1NamespacedSubnetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * partially update status of the specified Subnet
      */
-    async patchNetworkOrdiriComV1alpha1SubnetStatusRaw(requestParameters: PatchNetworkOrdiriComV1alpha1SubnetStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Subnet>> {
+    async patchNetworkOrdiriComV1alpha1NamespacedSubnetStatusRaw(requestParameters: PatchNetworkOrdiriComV1alpha1NamespacedSubnetStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Subnet>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchNetworkOrdiriComV1alpha1SubnetStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedSubnetStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedSubnetStatus.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchNetworkOrdiriComV1alpha1SubnetStatus.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling patchNetworkOrdiriComV1alpha1NamespacedSubnetStatus.');
         }
 
         const queryParameters: any = {};
@@ -2394,7 +3632,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json-patch+json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/subnets/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/subnets/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
@@ -2407,17 +3645,97 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * partially update status of the specified Subnet
      */
-    async patchNetworkOrdiriComV1alpha1SubnetStatus(requestParameters: PatchNetworkOrdiriComV1alpha1SubnetStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Subnet> {
-        const response = await this.patchNetworkOrdiriComV1alpha1SubnetStatusRaw(requestParameters, initOverrides);
+    async patchNetworkOrdiriComV1alpha1NamespacedSubnetStatus(requestParameters: PatchNetworkOrdiriComV1alpha1NamespacedSubnetStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Subnet> {
+        const response = await this.patchNetworkOrdiriComV1alpha1NamespacedSubnetStatusRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * read the specified LoadBalancer
+     */
+    async readNetworkOrdiriComV1alpha1NamespacedLoadBalancerRaw(requestParameters: ReadNetworkOrdiriComV1alpha1NamespacedLoadBalancerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancer>> {
+        if (requestParameters.name === null || requestParameters.name === undefined) {
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readNetworkOrdiriComV1alpha1NamespacedLoadBalancer.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readNetworkOrdiriComV1alpha1NamespacedLoadBalancer.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/loadbalancers/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerFromJSON(jsonValue));
+    }
+
+    /**
+     * read the specified LoadBalancer
+     */
+    async readNetworkOrdiriComV1alpha1NamespacedLoadBalancer(requestParameters: ReadNetworkOrdiriComV1alpha1NamespacedLoadBalancerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancer> {
+        const response = await this.readNetworkOrdiriComV1alpha1NamespacedLoadBalancerRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * read status of the specified LoadBalancer
+     */
+    async readNetworkOrdiriComV1alpha1NamespacedLoadBalancerStatusRaw(requestParameters: ReadNetworkOrdiriComV1alpha1NamespacedLoadBalancerStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancer>> {
+        if (requestParameters.name === null || requestParameters.name === undefined) {
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readNetworkOrdiriComV1alpha1NamespacedLoadBalancerStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readNetworkOrdiriComV1alpha1NamespacedLoadBalancerStatus.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/loadbalancers/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerFromJSON(jsonValue));
+    }
+
+    /**
+     * read status of the specified LoadBalancer
+     */
+    async readNetworkOrdiriComV1alpha1NamespacedLoadBalancerStatus(requestParameters: ReadNetworkOrdiriComV1alpha1NamespacedLoadBalancerStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancer> {
+        const response = await this.readNetworkOrdiriComV1alpha1NamespacedLoadBalancerStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * read the specified Network
      */
-    async readNetworkOrdiriComV1alpha1NetworkRaw(requestParameters: ReadNetworkOrdiriComV1alpha1NetworkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network>> {
+    async readNetworkOrdiriComV1alpha1NamespacedNetworkRaw(requestParameters: ReadNetworkOrdiriComV1alpha1NamespacedNetworkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readNetworkOrdiriComV1alpha1Network.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readNetworkOrdiriComV1alpha1NamespacedNetwork.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readNetworkOrdiriComV1alpha1NamespacedNetwork.');
         }
 
         const queryParameters: any = {};
@@ -2429,7 +3747,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/networks/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/networks/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -2441,17 +3759,21 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read the specified Network
      */
-    async readNetworkOrdiriComV1alpha1Network(requestParameters: ReadNetworkOrdiriComV1alpha1NetworkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network> {
-        const response = await this.readNetworkOrdiriComV1alpha1NetworkRaw(requestParameters, initOverrides);
+    async readNetworkOrdiriComV1alpha1NamespacedNetwork(requestParameters: ReadNetworkOrdiriComV1alpha1NamespacedNetworkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network> {
+        const response = await this.readNetworkOrdiriComV1alpha1NamespacedNetworkRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * read status of the specified Network
      */
-    async readNetworkOrdiriComV1alpha1NetworkStatusRaw(requestParameters: ReadNetworkOrdiriComV1alpha1NetworkStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network>> {
+    async readNetworkOrdiriComV1alpha1NamespacedNetworkStatusRaw(requestParameters: ReadNetworkOrdiriComV1alpha1NamespacedNetworkStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readNetworkOrdiriComV1alpha1NetworkStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readNetworkOrdiriComV1alpha1NamespacedNetworkStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readNetworkOrdiriComV1alpha1NamespacedNetworkStatus.');
         }
 
         const queryParameters: any = {};
@@ -2463,7 +3785,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/networks/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/networks/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -2475,17 +3797,21 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read status of the specified Network
      */
-    async readNetworkOrdiriComV1alpha1NetworkStatus(requestParameters: ReadNetworkOrdiriComV1alpha1NetworkStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network> {
-        const response = await this.readNetworkOrdiriComV1alpha1NetworkStatusRaw(requestParameters, initOverrides);
+    async readNetworkOrdiriComV1alpha1NamespacedNetworkStatus(requestParameters: ReadNetworkOrdiriComV1alpha1NamespacedNetworkStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network> {
+        const response = await this.readNetworkOrdiriComV1alpha1NamespacedNetworkStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * read the specified Route
      */
-    async readNetworkOrdiriComV1alpha1RouteRaw(requestParameters: ReadNetworkOrdiriComV1alpha1RouteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Route>> {
+    async readNetworkOrdiriComV1alpha1NamespacedRouteRaw(requestParameters: ReadNetworkOrdiriComV1alpha1NamespacedRouteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Route>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readNetworkOrdiriComV1alpha1Route.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readNetworkOrdiriComV1alpha1NamespacedRoute.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readNetworkOrdiriComV1alpha1NamespacedRoute.');
         }
 
         const queryParameters: any = {};
@@ -2497,7 +3823,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/routes/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/routes/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -2509,17 +3835,21 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read the specified Route
      */
-    async readNetworkOrdiriComV1alpha1Route(requestParameters: ReadNetworkOrdiriComV1alpha1RouteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Route> {
-        const response = await this.readNetworkOrdiriComV1alpha1RouteRaw(requestParameters, initOverrides);
+    async readNetworkOrdiriComV1alpha1NamespacedRoute(requestParameters: ReadNetworkOrdiriComV1alpha1NamespacedRouteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Route> {
+        const response = await this.readNetworkOrdiriComV1alpha1NamespacedRouteRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * read status of the specified Route
      */
-    async readNetworkOrdiriComV1alpha1RouteStatusRaw(requestParameters: ReadNetworkOrdiriComV1alpha1RouteStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Route>> {
+    async readNetworkOrdiriComV1alpha1NamespacedRouteStatusRaw(requestParameters: ReadNetworkOrdiriComV1alpha1NamespacedRouteStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Route>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readNetworkOrdiriComV1alpha1RouteStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readNetworkOrdiriComV1alpha1NamespacedRouteStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readNetworkOrdiriComV1alpha1NamespacedRouteStatus.');
         }
 
         const queryParameters: any = {};
@@ -2531,7 +3861,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/routes/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/routes/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -2543,17 +3873,21 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read status of the specified Route
      */
-    async readNetworkOrdiriComV1alpha1RouteStatus(requestParameters: ReadNetworkOrdiriComV1alpha1RouteStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Route> {
-        const response = await this.readNetworkOrdiriComV1alpha1RouteStatusRaw(requestParameters, initOverrides);
+    async readNetworkOrdiriComV1alpha1NamespacedRouteStatus(requestParameters: ReadNetworkOrdiriComV1alpha1NamespacedRouteStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Route> {
+        const response = await this.readNetworkOrdiriComV1alpha1NamespacedRouteStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * read the specified RouteTable
      */
-    async readNetworkOrdiriComV1alpha1RouteTableRaw(requestParameters: ReadNetworkOrdiriComV1alpha1RouteTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTable>> {
+    async readNetworkOrdiriComV1alpha1NamespacedRouteTableRaw(requestParameters: ReadNetworkOrdiriComV1alpha1NamespacedRouteTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTable>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readNetworkOrdiriComV1alpha1RouteTable.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readNetworkOrdiriComV1alpha1NamespacedRouteTable.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readNetworkOrdiriComV1alpha1NamespacedRouteTable.');
         }
 
         const queryParameters: any = {};
@@ -2565,7 +3899,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/routetables:/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/routetables:/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -2577,17 +3911,21 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read the specified RouteTable
      */
-    async readNetworkOrdiriComV1alpha1RouteTable(requestParameters: ReadNetworkOrdiriComV1alpha1RouteTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTable> {
-        const response = await this.readNetworkOrdiriComV1alpha1RouteTableRaw(requestParameters, initOverrides);
+    async readNetworkOrdiriComV1alpha1NamespacedRouteTable(requestParameters: ReadNetworkOrdiriComV1alpha1NamespacedRouteTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTable> {
+        const response = await this.readNetworkOrdiriComV1alpha1NamespacedRouteTableRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * read status of the specified RouteTable
      */
-    async readNetworkOrdiriComV1alpha1RouteTableStatusRaw(requestParameters: ReadNetworkOrdiriComV1alpha1RouteTableStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTable>> {
+    async readNetworkOrdiriComV1alpha1NamespacedRouteTableStatusRaw(requestParameters: ReadNetworkOrdiriComV1alpha1NamespacedRouteTableStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTable>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readNetworkOrdiriComV1alpha1RouteTableStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readNetworkOrdiriComV1alpha1NamespacedRouteTableStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readNetworkOrdiriComV1alpha1NamespacedRouteTableStatus.');
         }
 
         const queryParameters: any = {};
@@ -2599,7 +3937,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/routetables:/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/routetables:/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -2611,17 +3949,21 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read status of the specified RouteTable
      */
-    async readNetworkOrdiriComV1alpha1RouteTableStatus(requestParameters: ReadNetworkOrdiriComV1alpha1RouteTableStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTable> {
-        const response = await this.readNetworkOrdiriComV1alpha1RouteTableStatusRaw(requestParameters, initOverrides);
+    async readNetworkOrdiriComV1alpha1NamespacedRouteTableStatus(requestParameters: ReadNetworkOrdiriComV1alpha1NamespacedRouteTableStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTable> {
+        const response = await this.readNetworkOrdiriComV1alpha1NamespacedRouteTableStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * read the specified Router
      */
-    async readNetworkOrdiriComV1alpha1RouterRaw(requestParameters: ReadNetworkOrdiriComV1alpha1RouterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Router>> {
+    async readNetworkOrdiriComV1alpha1NamespacedRouterRaw(requestParameters: ReadNetworkOrdiriComV1alpha1NamespacedRouterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Router>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readNetworkOrdiriComV1alpha1Router.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readNetworkOrdiriComV1alpha1NamespacedRouter.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readNetworkOrdiriComV1alpha1NamespacedRouter.');
         }
 
         const queryParameters: any = {};
@@ -2633,7 +3975,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/routers/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/routers/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -2645,17 +3987,21 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read the specified Router
      */
-    async readNetworkOrdiriComV1alpha1Router(requestParameters: ReadNetworkOrdiriComV1alpha1RouterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Router> {
-        const response = await this.readNetworkOrdiriComV1alpha1RouterRaw(requestParameters, initOverrides);
+    async readNetworkOrdiriComV1alpha1NamespacedRouter(requestParameters: ReadNetworkOrdiriComV1alpha1NamespacedRouterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Router> {
+        const response = await this.readNetworkOrdiriComV1alpha1NamespacedRouterRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * read status of the specified Router
      */
-    async readNetworkOrdiriComV1alpha1RouterStatusRaw(requestParameters: ReadNetworkOrdiriComV1alpha1RouterStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Router>> {
+    async readNetworkOrdiriComV1alpha1NamespacedRouterStatusRaw(requestParameters: ReadNetworkOrdiriComV1alpha1NamespacedRouterStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Router>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readNetworkOrdiriComV1alpha1RouterStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readNetworkOrdiriComV1alpha1NamespacedRouterStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readNetworkOrdiriComV1alpha1NamespacedRouterStatus.');
         }
 
         const queryParameters: any = {};
@@ -2667,7 +4013,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/routers/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/routers/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -2679,17 +4025,21 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read status of the specified Router
      */
-    async readNetworkOrdiriComV1alpha1RouterStatus(requestParameters: ReadNetworkOrdiriComV1alpha1RouterStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Router> {
-        const response = await this.readNetworkOrdiriComV1alpha1RouterStatusRaw(requestParameters, initOverrides);
+    async readNetworkOrdiriComV1alpha1NamespacedRouterStatus(requestParameters: ReadNetworkOrdiriComV1alpha1NamespacedRouterStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Router> {
+        const response = await this.readNetworkOrdiriComV1alpha1NamespacedRouterStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * read the specified Subnet
      */
-    async readNetworkOrdiriComV1alpha1SubnetRaw(requestParameters: ReadNetworkOrdiriComV1alpha1SubnetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Subnet>> {
+    async readNetworkOrdiriComV1alpha1NamespacedSubnetRaw(requestParameters: ReadNetworkOrdiriComV1alpha1NamespacedSubnetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Subnet>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readNetworkOrdiriComV1alpha1Subnet.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readNetworkOrdiriComV1alpha1NamespacedSubnet.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readNetworkOrdiriComV1alpha1NamespacedSubnet.');
         }
 
         const queryParameters: any = {};
@@ -2701,7 +4051,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/subnets/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/subnets/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -2713,17 +4063,21 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read the specified Subnet
      */
-    async readNetworkOrdiriComV1alpha1Subnet(requestParameters: ReadNetworkOrdiriComV1alpha1SubnetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Subnet> {
-        const response = await this.readNetworkOrdiriComV1alpha1SubnetRaw(requestParameters, initOverrides);
+    async readNetworkOrdiriComV1alpha1NamespacedSubnet(requestParameters: ReadNetworkOrdiriComV1alpha1NamespacedSubnetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Subnet> {
+        const response = await this.readNetworkOrdiriComV1alpha1NamespacedSubnetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * read status of the specified Subnet
      */
-    async readNetworkOrdiriComV1alpha1SubnetStatusRaw(requestParameters: ReadNetworkOrdiriComV1alpha1SubnetStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Subnet>> {
+    async readNetworkOrdiriComV1alpha1NamespacedSubnetStatusRaw(requestParameters: ReadNetworkOrdiriComV1alpha1NamespacedSubnetStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Subnet>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readNetworkOrdiriComV1alpha1SubnetStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling readNetworkOrdiriComV1alpha1NamespacedSubnetStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling readNetworkOrdiriComV1alpha1NamespacedSubnetStatus.');
         }
 
         const queryParameters: any = {};
@@ -2735,7 +4089,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/subnets/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/subnets/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -2747,21 +4101,25 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * read status of the specified Subnet
      */
-    async readNetworkOrdiriComV1alpha1SubnetStatus(requestParameters: ReadNetworkOrdiriComV1alpha1SubnetStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Subnet> {
-        const response = await this.readNetworkOrdiriComV1alpha1SubnetStatusRaw(requestParameters, initOverrides);
+    async readNetworkOrdiriComV1alpha1NamespacedSubnetStatus(requestParameters: ReadNetworkOrdiriComV1alpha1NamespacedSubnetStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Subnet> {
+        const response = await this.readNetworkOrdiriComV1alpha1NamespacedSubnetStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
-     * replace the specified Network
+     * replace the specified LoadBalancer
      */
-    async replaceNetworkOrdiriComV1alpha1NetworkRaw(requestParameters: ReplaceNetworkOrdiriComV1alpha1NetworkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network>> {
+    async replaceNetworkOrdiriComV1alpha1NamespacedLoadBalancerRaw(requestParameters: ReplaceNetworkOrdiriComV1alpha1NamespacedLoadBalancerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancer>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceNetworkOrdiriComV1alpha1Network.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedLoadBalancer.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedLoadBalancer.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceNetworkOrdiriComV1alpha1Network.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedLoadBalancer.');
         }
 
         const queryParameters: any = {};
@@ -2783,7 +4141,113 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/networks/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/loadbalancers/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerToJSON(requestParameters.body),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerFromJSON(jsonValue));
+    }
+
+    /**
+     * replace the specified LoadBalancer
+     */
+    async replaceNetworkOrdiriComV1alpha1NamespacedLoadBalancer(requestParameters: ReplaceNetworkOrdiriComV1alpha1NamespacedLoadBalancerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancer> {
+        const response = await this.replaceNetworkOrdiriComV1alpha1NamespacedLoadBalancerRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * replace status of the specified LoadBalancer
+     */
+    async replaceNetworkOrdiriComV1alpha1NamespacedLoadBalancerStatusRaw(requestParameters: ReplaceNetworkOrdiriComV1alpha1NamespacedLoadBalancerStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancer>> {
+        if (requestParameters.name === null || requestParameters.name === undefined) {
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedLoadBalancerStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedLoadBalancerStatus.');
+        }
+
+        if (requestParameters.body === null || requestParameters.body === undefined) {
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedLoadBalancerStatus.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.dryRun !== undefined) {
+            queryParameters['dryRun'] = requestParameters.dryRun;
+        }
+
+        if (requestParameters.fieldManager !== undefined) {
+            queryParameters['fieldManager'] = requestParameters.fieldManager;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/loadbalancers/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerToJSON(requestParameters.body),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerFromJSON(jsonValue));
+    }
+
+    /**
+     * replace status of the specified LoadBalancer
+     */
+    async replaceNetworkOrdiriComV1alpha1NamespacedLoadBalancerStatus(requestParameters: ReplaceNetworkOrdiriComV1alpha1NamespacedLoadBalancerStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancer> {
+        const response = await this.replaceNetworkOrdiriComV1alpha1NamespacedLoadBalancerStatusRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * replace the specified Network
+     */
+    async replaceNetworkOrdiriComV1alpha1NamespacedNetworkRaw(requestParameters: ReplaceNetworkOrdiriComV1alpha1NamespacedNetworkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network>> {
+        if (requestParameters.name === null || requestParameters.name === undefined) {
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedNetwork.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedNetwork.');
+        }
+
+        if (requestParameters.body === null || requestParameters.body === undefined) {
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedNetwork.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.dryRun !== undefined) {
+            queryParameters['dryRun'] = requestParameters.dryRun;
+        }
+
+        if (requestParameters.fieldManager !== undefined) {
+            queryParameters['fieldManager'] = requestParameters.fieldManager;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/networks/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -2796,21 +4260,25 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace the specified Network
      */
-    async replaceNetworkOrdiriComV1alpha1Network(requestParameters: ReplaceNetworkOrdiriComV1alpha1NetworkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network> {
-        const response = await this.replaceNetworkOrdiriComV1alpha1NetworkRaw(requestParameters, initOverrides);
+    async replaceNetworkOrdiriComV1alpha1NamespacedNetwork(requestParameters: ReplaceNetworkOrdiriComV1alpha1NamespacedNetworkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network> {
+        const response = await this.replaceNetworkOrdiriComV1alpha1NamespacedNetworkRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * replace status of the specified Network
      */
-    async replaceNetworkOrdiriComV1alpha1NetworkStatusRaw(requestParameters: ReplaceNetworkOrdiriComV1alpha1NetworkStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network>> {
+    async replaceNetworkOrdiriComV1alpha1NamespacedNetworkStatusRaw(requestParameters: ReplaceNetworkOrdiriComV1alpha1NamespacedNetworkStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceNetworkOrdiriComV1alpha1NetworkStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedNetworkStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedNetworkStatus.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceNetworkOrdiriComV1alpha1NetworkStatus.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedNetworkStatus.');
         }
 
         const queryParameters: any = {};
@@ -2832,7 +4300,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/networks/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/networks/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -2845,21 +4313,25 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace status of the specified Network
      */
-    async replaceNetworkOrdiriComV1alpha1NetworkStatus(requestParameters: ReplaceNetworkOrdiriComV1alpha1NetworkStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network> {
-        const response = await this.replaceNetworkOrdiriComV1alpha1NetworkStatusRaw(requestParameters, initOverrides);
+    async replaceNetworkOrdiriComV1alpha1NamespacedNetworkStatus(requestParameters: ReplaceNetworkOrdiriComV1alpha1NamespacedNetworkStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Network> {
+        const response = await this.replaceNetworkOrdiriComV1alpha1NamespacedNetworkStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * replace the specified Route
      */
-    async replaceNetworkOrdiriComV1alpha1RouteRaw(requestParameters: ReplaceNetworkOrdiriComV1alpha1RouteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Route>> {
+    async replaceNetworkOrdiriComV1alpha1NamespacedRouteRaw(requestParameters: ReplaceNetworkOrdiriComV1alpha1NamespacedRouteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Route>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceNetworkOrdiriComV1alpha1Route.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedRoute.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedRoute.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceNetworkOrdiriComV1alpha1Route.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedRoute.');
         }
 
         const queryParameters: any = {};
@@ -2881,7 +4353,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/routes/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/routes/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -2894,21 +4366,25 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace the specified Route
      */
-    async replaceNetworkOrdiriComV1alpha1Route(requestParameters: ReplaceNetworkOrdiriComV1alpha1RouteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Route> {
-        const response = await this.replaceNetworkOrdiriComV1alpha1RouteRaw(requestParameters, initOverrides);
+    async replaceNetworkOrdiriComV1alpha1NamespacedRoute(requestParameters: ReplaceNetworkOrdiriComV1alpha1NamespacedRouteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Route> {
+        const response = await this.replaceNetworkOrdiriComV1alpha1NamespacedRouteRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * replace status of the specified Route
      */
-    async replaceNetworkOrdiriComV1alpha1RouteStatusRaw(requestParameters: ReplaceNetworkOrdiriComV1alpha1RouteStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Route>> {
+    async replaceNetworkOrdiriComV1alpha1NamespacedRouteStatusRaw(requestParameters: ReplaceNetworkOrdiriComV1alpha1NamespacedRouteStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Route>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceNetworkOrdiriComV1alpha1RouteStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedRouteStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedRouteStatus.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceNetworkOrdiriComV1alpha1RouteStatus.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedRouteStatus.');
         }
 
         const queryParameters: any = {};
@@ -2930,7 +4406,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/routes/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/routes/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -2943,21 +4419,25 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace status of the specified Route
      */
-    async replaceNetworkOrdiriComV1alpha1RouteStatus(requestParameters: ReplaceNetworkOrdiriComV1alpha1RouteStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Route> {
-        const response = await this.replaceNetworkOrdiriComV1alpha1RouteStatusRaw(requestParameters, initOverrides);
+    async replaceNetworkOrdiriComV1alpha1NamespacedRouteStatus(requestParameters: ReplaceNetworkOrdiriComV1alpha1NamespacedRouteStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Route> {
+        const response = await this.replaceNetworkOrdiriComV1alpha1NamespacedRouteStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * replace the specified RouteTable
      */
-    async replaceNetworkOrdiriComV1alpha1RouteTableRaw(requestParameters: ReplaceNetworkOrdiriComV1alpha1RouteTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTable>> {
+    async replaceNetworkOrdiriComV1alpha1NamespacedRouteTableRaw(requestParameters: ReplaceNetworkOrdiriComV1alpha1NamespacedRouteTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTable>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceNetworkOrdiriComV1alpha1RouteTable.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedRouteTable.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedRouteTable.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceNetworkOrdiriComV1alpha1RouteTable.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedRouteTable.');
         }
 
         const queryParameters: any = {};
@@ -2979,7 +4459,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/routetables:/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/routetables:/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -2992,21 +4472,25 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace the specified RouteTable
      */
-    async replaceNetworkOrdiriComV1alpha1RouteTable(requestParameters: ReplaceNetworkOrdiriComV1alpha1RouteTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTable> {
-        const response = await this.replaceNetworkOrdiriComV1alpha1RouteTableRaw(requestParameters, initOverrides);
+    async replaceNetworkOrdiriComV1alpha1NamespacedRouteTable(requestParameters: ReplaceNetworkOrdiriComV1alpha1NamespacedRouteTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTable> {
+        const response = await this.replaceNetworkOrdiriComV1alpha1NamespacedRouteTableRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * replace status of the specified RouteTable
      */
-    async replaceNetworkOrdiriComV1alpha1RouteTableStatusRaw(requestParameters: ReplaceNetworkOrdiriComV1alpha1RouteTableStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTable>> {
+    async replaceNetworkOrdiriComV1alpha1NamespacedRouteTableStatusRaw(requestParameters: ReplaceNetworkOrdiriComV1alpha1NamespacedRouteTableStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTable>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceNetworkOrdiriComV1alpha1RouteTableStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedRouteTableStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedRouteTableStatus.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceNetworkOrdiriComV1alpha1RouteTableStatus.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedRouteTableStatus.');
         }
 
         const queryParameters: any = {};
@@ -3028,7 +4512,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/routetables:/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/routetables:/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -3041,21 +4525,25 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace status of the specified RouteTable
      */
-    async replaceNetworkOrdiriComV1alpha1RouteTableStatus(requestParameters: ReplaceNetworkOrdiriComV1alpha1RouteTableStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTable> {
-        const response = await this.replaceNetworkOrdiriComV1alpha1RouteTableStatusRaw(requestParameters, initOverrides);
+    async replaceNetworkOrdiriComV1alpha1NamespacedRouteTableStatus(requestParameters: ReplaceNetworkOrdiriComV1alpha1NamespacedRouteTableStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTable> {
+        const response = await this.replaceNetworkOrdiriComV1alpha1NamespacedRouteTableStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * replace the specified Router
      */
-    async replaceNetworkOrdiriComV1alpha1RouterRaw(requestParameters: ReplaceNetworkOrdiriComV1alpha1RouterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Router>> {
+    async replaceNetworkOrdiriComV1alpha1NamespacedRouterRaw(requestParameters: ReplaceNetworkOrdiriComV1alpha1NamespacedRouterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Router>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceNetworkOrdiriComV1alpha1Router.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedRouter.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedRouter.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceNetworkOrdiriComV1alpha1Router.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedRouter.');
         }
 
         const queryParameters: any = {};
@@ -3077,7 +4565,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/routers/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/routers/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -3090,21 +4578,25 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace the specified Router
      */
-    async replaceNetworkOrdiriComV1alpha1Router(requestParameters: ReplaceNetworkOrdiriComV1alpha1RouterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Router> {
-        const response = await this.replaceNetworkOrdiriComV1alpha1RouterRaw(requestParameters, initOverrides);
+    async replaceNetworkOrdiriComV1alpha1NamespacedRouter(requestParameters: ReplaceNetworkOrdiriComV1alpha1NamespacedRouterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Router> {
+        const response = await this.replaceNetworkOrdiriComV1alpha1NamespacedRouterRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * replace status of the specified Router
      */
-    async replaceNetworkOrdiriComV1alpha1RouterStatusRaw(requestParameters: ReplaceNetworkOrdiriComV1alpha1RouterStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Router>> {
+    async replaceNetworkOrdiriComV1alpha1NamespacedRouterStatusRaw(requestParameters: ReplaceNetworkOrdiriComV1alpha1NamespacedRouterStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Router>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceNetworkOrdiriComV1alpha1RouterStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedRouterStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedRouterStatus.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceNetworkOrdiriComV1alpha1RouterStatus.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedRouterStatus.');
         }
 
         const queryParameters: any = {};
@@ -3126,7 +4618,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/routers/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/routers/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -3139,21 +4631,25 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace status of the specified Router
      */
-    async replaceNetworkOrdiriComV1alpha1RouterStatus(requestParameters: ReplaceNetworkOrdiriComV1alpha1RouterStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Router> {
-        const response = await this.replaceNetworkOrdiriComV1alpha1RouterStatusRaw(requestParameters, initOverrides);
+    async replaceNetworkOrdiriComV1alpha1NamespacedRouterStatus(requestParameters: ReplaceNetworkOrdiriComV1alpha1NamespacedRouterStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Router> {
+        const response = await this.replaceNetworkOrdiriComV1alpha1NamespacedRouterStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * replace the specified Subnet
      */
-    async replaceNetworkOrdiriComV1alpha1SubnetRaw(requestParameters: ReplaceNetworkOrdiriComV1alpha1SubnetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Subnet>> {
+    async replaceNetworkOrdiriComV1alpha1NamespacedSubnetRaw(requestParameters: ReplaceNetworkOrdiriComV1alpha1NamespacedSubnetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Subnet>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceNetworkOrdiriComV1alpha1Subnet.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedSubnet.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedSubnet.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceNetworkOrdiriComV1alpha1Subnet.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedSubnet.');
         }
 
         const queryParameters: any = {};
@@ -3175,7 +4671,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/subnets/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/subnets/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -3188,21 +4684,25 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace the specified Subnet
      */
-    async replaceNetworkOrdiriComV1alpha1Subnet(requestParameters: ReplaceNetworkOrdiriComV1alpha1SubnetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Subnet> {
-        const response = await this.replaceNetworkOrdiriComV1alpha1SubnetRaw(requestParameters, initOverrides);
+    async replaceNetworkOrdiriComV1alpha1NamespacedSubnet(requestParameters: ReplaceNetworkOrdiriComV1alpha1NamespacedSubnetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Subnet> {
+        const response = await this.replaceNetworkOrdiriComV1alpha1NamespacedSubnetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * replace status of the specified Subnet
      */
-    async replaceNetworkOrdiriComV1alpha1SubnetStatusRaw(requestParameters: ReplaceNetworkOrdiriComV1alpha1SubnetStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Subnet>> {
+    async replaceNetworkOrdiriComV1alpha1NamespacedSubnetStatusRaw(requestParameters: ReplaceNetworkOrdiriComV1alpha1NamespacedSubnetStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Subnet>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceNetworkOrdiriComV1alpha1SubnetStatus.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedSubnetStatus.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedSubnetStatus.');
         }
 
         if (requestParameters.body === null || requestParameters.body === undefined) {
-            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceNetworkOrdiriComV1alpha1SubnetStatus.');
+            throw new runtime.RequiredError('body','Required parameter requestParameters.body was null or undefined when calling replaceNetworkOrdiriComV1alpha1NamespacedSubnetStatus.');
         }
 
         const queryParameters: any = {};
@@ -3224,7 +4724,7 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/subnets/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/namespaces/{namespace}/subnets/{name}/status`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -3237,17 +4737,87 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * replace status of the specified Subnet
      */
-    async replaceNetworkOrdiriComV1alpha1SubnetStatus(requestParameters: ReplaceNetworkOrdiriComV1alpha1SubnetStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Subnet> {
-        const response = await this.replaceNetworkOrdiriComV1alpha1SubnetStatusRaw(requestParameters, initOverrides);
+    async replaceNetworkOrdiriComV1alpha1NamespacedSubnetStatus(requestParameters: ReplaceNetworkOrdiriComV1alpha1NamespacedSubnetStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1Subnet> {
+        const response = await this.replaceNetworkOrdiriComV1alpha1NamespacedSubnetStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
-     * watch changes to an object of kind Network. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
+     * watch individual changes to a list of LoadBalancer. deprecated: use the \'watch\' parameter with a list operation instead.
      */
-    async watchNetworkOrdiriComV1alpha1NetworkRaw(requestParameters: WatchNetworkOrdiriComV1alpha1NetworkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+    async watchNetworkOrdiriComV1alpha1LoadBalancerListForAllNamespacesRaw(requestParameters: WatchNetworkOrdiriComV1alpha1LoadBalancerListForAllNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/network.ordiri.com/v1alpha1/watch/loadbalancers`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
+    }
+
+    /**
+     * watch individual changes to a list of LoadBalancer. deprecated: use the \'watch\' parameter with a list operation instead.
+     */
+    async watchNetworkOrdiriComV1alpha1LoadBalancerListForAllNamespaces(requestParameters: WatchNetworkOrdiriComV1alpha1LoadBalancerListForAllNamespacesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchNetworkOrdiriComV1alpha1LoadBalancerListForAllNamespacesRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * watch changes to an object of kind LoadBalancer. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
+     */
+    async watchNetworkOrdiriComV1alpha1NamespacedLoadBalancerRaw(requestParameters: WatchNetworkOrdiriComV1alpha1NamespacedLoadBalancerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
         if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling watchNetworkOrdiriComV1alpha1Network.');
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling watchNetworkOrdiriComV1alpha1NamespacedLoadBalancer.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling watchNetworkOrdiriComV1alpha1NamespacedLoadBalancer.');
         }
 
         const queryParameters: any = {};
@@ -3295,7 +4865,151 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/watch/networks/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
+            path: `/apis/network.ordiri.com/v1alpha1/watch/namespaces/{namespace}/loadbalancers/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
+    }
+
+    /**
+     * watch changes to an object of kind LoadBalancer. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
+     */
+    async watchNetworkOrdiriComV1alpha1NamespacedLoadBalancer(requestParameters: WatchNetworkOrdiriComV1alpha1NamespacedLoadBalancerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchNetworkOrdiriComV1alpha1NamespacedLoadBalancerRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * watch individual changes to a list of LoadBalancer. deprecated: use the \'watch\' parameter with a list operation instead.
+     */
+    async watchNetworkOrdiriComV1alpha1NamespacedLoadBalancerListRaw(requestParameters: WatchNetworkOrdiriComV1alpha1NamespacedLoadBalancerListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling watchNetworkOrdiriComV1alpha1NamespacedLoadBalancerList.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/network.ordiri.com/v1alpha1/watch/namespaces/{namespace}/loadbalancers`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
+    }
+
+    /**
+     * watch individual changes to a list of LoadBalancer. deprecated: use the \'watch\' parameter with a list operation instead.
+     */
+    async watchNetworkOrdiriComV1alpha1NamespacedLoadBalancerList(requestParameters: WatchNetworkOrdiriComV1alpha1NamespacedLoadBalancerListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchNetworkOrdiriComV1alpha1NamespacedLoadBalancerListRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * watch changes to an object of kind Network. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
+     */
+    async watchNetworkOrdiriComV1alpha1NamespacedNetworkRaw(requestParameters: WatchNetworkOrdiriComV1alpha1NamespacedNetworkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+        if (requestParameters.name === null || requestParameters.name === undefined) {
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling watchNetworkOrdiriComV1alpha1NamespacedNetwork.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling watchNetworkOrdiriComV1alpha1NamespacedNetwork.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/network.ordiri.com/v1alpha1/watch/namespaces/{namespace}/networks/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -3307,15 +5021,661 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * watch changes to an object of kind Network. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
      */
-    async watchNetworkOrdiriComV1alpha1Network(requestParameters: WatchNetworkOrdiriComV1alpha1NetworkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
-        const response = await this.watchNetworkOrdiriComV1alpha1NetworkRaw(requestParameters, initOverrides);
+    async watchNetworkOrdiriComV1alpha1NamespacedNetwork(requestParameters: WatchNetworkOrdiriComV1alpha1NamespacedNetworkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchNetworkOrdiriComV1alpha1NamespacedNetworkRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * watch individual changes to a list of Network. deprecated: use the \'watch\' parameter with a list operation instead.
      */
-    async watchNetworkOrdiriComV1alpha1NetworkListRaw(requestParameters: WatchNetworkOrdiriComV1alpha1NetworkListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+    async watchNetworkOrdiriComV1alpha1NamespacedNetworkListRaw(requestParameters: WatchNetworkOrdiriComV1alpha1NamespacedNetworkListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling watchNetworkOrdiriComV1alpha1NamespacedNetworkList.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/network.ordiri.com/v1alpha1/watch/namespaces/{namespace}/networks`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
+    }
+
+    /**
+     * watch individual changes to a list of Network. deprecated: use the \'watch\' parameter with a list operation instead.
+     */
+    async watchNetworkOrdiriComV1alpha1NamespacedNetworkList(requestParameters: WatchNetworkOrdiriComV1alpha1NamespacedNetworkListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchNetworkOrdiriComV1alpha1NamespacedNetworkListRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * watch changes to an object of kind Route. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
+     */
+    async watchNetworkOrdiriComV1alpha1NamespacedRouteRaw(requestParameters: WatchNetworkOrdiriComV1alpha1NamespacedRouteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+        if (requestParameters.name === null || requestParameters.name === undefined) {
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling watchNetworkOrdiriComV1alpha1NamespacedRoute.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling watchNetworkOrdiriComV1alpha1NamespacedRoute.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/network.ordiri.com/v1alpha1/watch/namespaces/{namespace}/routes/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
+    }
+
+    /**
+     * watch changes to an object of kind Route. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
+     */
+    async watchNetworkOrdiriComV1alpha1NamespacedRoute(requestParameters: WatchNetworkOrdiriComV1alpha1NamespacedRouteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchNetworkOrdiriComV1alpha1NamespacedRouteRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * watch individual changes to a list of Route. deprecated: use the \'watch\' parameter with a list operation instead.
+     */
+    async watchNetworkOrdiriComV1alpha1NamespacedRouteListRaw(requestParameters: WatchNetworkOrdiriComV1alpha1NamespacedRouteListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling watchNetworkOrdiriComV1alpha1NamespacedRouteList.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/network.ordiri.com/v1alpha1/watch/namespaces/{namespace}/routes`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
+    }
+
+    /**
+     * watch individual changes to a list of Route. deprecated: use the \'watch\' parameter with a list operation instead.
+     */
+    async watchNetworkOrdiriComV1alpha1NamespacedRouteList(requestParameters: WatchNetworkOrdiriComV1alpha1NamespacedRouteListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchNetworkOrdiriComV1alpha1NamespacedRouteListRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * watch changes to an object of kind RouteTable. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
+     */
+    async watchNetworkOrdiriComV1alpha1NamespacedRouteTableRaw(requestParameters: WatchNetworkOrdiriComV1alpha1NamespacedRouteTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+        if (requestParameters.name === null || requestParameters.name === undefined) {
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling watchNetworkOrdiriComV1alpha1NamespacedRouteTable.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling watchNetworkOrdiriComV1alpha1NamespacedRouteTable.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/network.ordiri.com/v1alpha1/watch/namespaces/{namespace}/routetables:/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
+    }
+
+    /**
+     * watch changes to an object of kind RouteTable. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
+     */
+    async watchNetworkOrdiriComV1alpha1NamespacedRouteTable(requestParameters: WatchNetworkOrdiriComV1alpha1NamespacedRouteTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchNetworkOrdiriComV1alpha1NamespacedRouteTableRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * watch individual changes to a list of RouteTable. deprecated: use the \'watch\' parameter with a list operation instead.
+     */
+    async watchNetworkOrdiriComV1alpha1NamespacedRouteTableListRaw(requestParameters: WatchNetworkOrdiriComV1alpha1NamespacedRouteTableListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling watchNetworkOrdiriComV1alpha1NamespacedRouteTableList.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/network.ordiri.com/v1alpha1/watch/namespaces/{namespace}/routetables:`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
+    }
+
+    /**
+     * watch individual changes to a list of RouteTable. deprecated: use the \'watch\' parameter with a list operation instead.
+     */
+    async watchNetworkOrdiriComV1alpha1NamespacedRouteTableList(requestParameters: WatchNetworkOrdiriComV1alpha1NamespacedRouteTableListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchNetworkOrdiriComV1alpha1NamespacedRouteTableListRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * watch changes to an object of kind Router. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
+     */
+    async watchNetworkOrdiriComV1alpha1NamespacedRouterRaw(requestParameters: WatchNetworkOrdiriComV1alpha1NamespacedRouterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+        if (requestParameters.name === null || requestParameters.name === undefined) {
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling watchNetworkOrdiriComV1alpha1NamespacedRouter.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling watchNetworkOrdiriComV1alpha1NamespacedRouter.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/network.ordiri.com/v1alpha1/watch/namespaces/{namespace}/routers/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
+    }
+
+    /**
+     * watch changes to an object of kind Router. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
+     */
+    async watchNetworkOrdiriComV1alpha1NamespacedRouter(requestParameters: WatchNetworkOrdiriComV1alpha1NamespacedRouterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchNetworkOrdiriComV1alpha1NamespacedRouterRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * watch individual changes to a list of Router. deprecated: use the \'watch\' parameter with a list operation instead.
+     */
+    async watchNetworkOrdiriComV1alpha1NamespacedRouterListRaw(requestParameters: WatchNetworkOrdiriComV1alpha1NamespacedRouterListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling watchNetworkOrdiriComV1alpha1NamespacedRouterList.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/network.ordiri.com/v1alpha1/watch/namespaces/{namespace}/routers`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
+    }
+
+    /**
+     * watch individual changes to a list of Router. deprecated: use the \'watch\' parameter with a list operation instead.
+     */
+    async watchNetworkOrdiriComV1alpha1NamespacedRouterList(requestParameters: WatchNetworkOrdiriComV1alpha1NamespacedRouterListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchNetworkOrdiriComV1alpha1NamespacedRouterListRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * watch changes to an object of kind Subnet. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
+     */
+    async watchNetworkOrdiriComV1alpha1NamespacedSubnetRaw(requestParameters: WatchNetworkOrdiriComV1alpha1NamespacedSubnetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+        if (requestParameters.name === null || requestParameters.name === undefined) {
+            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling watchNetworkOrdiriComV1alpha1NamespacedSubnet.');
+        }
+
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling watchNetworkOrdiriComV1alpha1NamespacedSubnet.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/network.ordiri.com/v1alpha1/watch/namespaces/{namespace}/subnets/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))).replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
+    }
+
+    /**
+     * watch changes to an object of kind Subnet. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
+     */
+    async watchNetworkOrdiriComV1alpha1NamespacedSubnet(requestParameters: WatchNetworkOrdiriComV1alpha1NamespacedSubnetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchNetworkOrdiriComV1alpha1NamespacedSubnetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * watch individual changes to a list of Subnet. deprecated: use the \'watch\' parameter with a list operation instead.
+     */
+    async watchNetworkOrdiriComV1alpha1NamespacedSubnetListRaw(requestParameters: WatchNetworkOrdiriComV1alpha1NamespacedSubnetListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+        if (requestParameters.namespace === null || requestParameters.namespace === undefined) {
+            throw new runtime.RequiredError('namespace','Required parameter requestParameters.namespace was null or undefined when calling watchNetworkOrdiriComV1alpha1NamespacedSubnetList.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.allowWatchBookmarks !== undefined) {
+            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
+        }
+
+        if (requestParameters._continue !== undefined) {
+            queryParameters['continue'] = requestParameters._continue;
+        }
+
+        if (requestParameters.fieldSelector !== undefined) {
+            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
+        }
+
+        if (requestParameters.labelSelector !== undefined) {
+            queryParameters['labelSelector'] = requestParameters.labelSelector;
+        }
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.pretty !== undefined) {
+            queryParameters['pretty'] = requestParameters.pretty;
+        }
+
+        if (requestParameters.resourceVersion !== undefined) {
+            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
+        }
+
+        if (requestParameters.resourceVersionMatch !== undefined) {
+            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
+        }
+
+        if (requestParameters.timeoutSeconds !== undefined) {
+            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
+        }
+
+        if (requestParameters.watch !== undefined) {
+            queryParameters['watch'] = requestParameters.watch;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/apis/network.ordiri.com/v1alpha1/watch/namespaces/{namespace}/subnets`.replace(`{${"namespace"}}`, encodeURIComponent(String(requestParameters.namespace))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
+    }
+
+    /**
+     * watch individual changes to a list of Subnet. deprecated: use the \'watch\' parameter with a list operation instead.
+     */
+    async watchNetworkOrdiriComV1alpha1NamespacedSubnetList(requestParameters: WatchNetworkOrdiriComV1alpha1NamespacedSubnetListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchNetworkOrdiriComV1alpha1NamespacedSubnetListRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * watch individual changes to a list of Network. deprecated: use the \'watch\' parameter with a list operation instead.
+     */
+    async watchNetworkOrdiriComV1alpha1NetworkListForAllNamespacesRaw(requestParameters: WatchNetworkOrdiriComV1alpha1NetworkListForAllNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
         const queryParameters: any = {};
 
         if (requestParameters.allowWatchBookmarks !== undefined) {
@@ -3373,85 +5733,15 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * watch individual changes to a list of Network. deprecated: use the \'watch\' parameter with a list operation instead.
      */
-    async watchNetworkOrdiriComV1alpha1NetworkList(requestParameters: WatchNetworkOrdiriComV1alpha1NetworkListRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
-        const response = await this.watchNetworkOrdiriComV1alpha1NetworkListRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * watch changes to an object of kind Route. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
-     */
-    async watchNetworkOrdiriComV1alpha1RouteRaw(requestParameters: WatchNetworkOrdiriComV1alpha1RouteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
-        if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling watchNetworkOrdiriComV1alpha1Route.');
-        }
-
-        const queryParameters: any = {};
-
-        if (requestParameters.allowWatchBookmarks !== undefined) {
-            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
-        }
-
-        if (requestParameters._continue !== undefined) {
-            queryParameters['continue'] = requestParameters._continue;
-        }
-
-        if (requestParameters.fieldSelector !== undefined) {
-            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
-        }
-
-        if (requestParameters.labelSelector !== undefined) {
-            queryParameters['labelSelector'] = requestParameters.labelSelector;
-        }
-
-        if (requestParameters.limit !== undefined) {
-            queryParameters['limit'] = requestParameters.limit;
-        }
-
-        if (requestParameters.pretty !== undefined) {
-            queryParameters['pretty'] = requestParameters.pretty;
-        }
-
-        if (requestParameters.resourceVersion !== undefined) {
-            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
-        }
-
-        if (requestParameters.resourceVersionMatch !== undefined) {
-            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
-        }
-
-        if (requestParameters.timeoutSeconds !== undefined) {
-            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
-        }
-
-        if (requestParameters.watch !== undefined) {
-            queryParameters['watch'] = requestParameters.watch;
-        }
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/watch/routes/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
-    }
-
-    /**
-     * watch changes to an object of kind Route. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
-     */
-    async watchNetworkOrdiriComV1alpha1Route(requestParameters: WatchNetworkOrdiriComV1alpha1RouteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
-        const response = await this.watchNetworkOrdiriComV1alpha1RouteRaw(requestParameters, initOverrides);
+    async watchNetworkOrdiriComV1alpha1NetworkListForAllNamespaces(requestParameters: WatchNetworkOrdiriComV1alpha1NetworkListForAllNamespacesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchNetworkOrdiriComV1alpha1NetworkListForAllNamespacesRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * watch individual changes to a list of Route. deprecated: use the \'watch\' parameter with a list operation instead.
      */
-    async watchNetworkOrdiriComV1alpha1RouteListRaw(requestParameters: WatchNetworkOrdiriComV1alpha1RouteListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+    async watchNetworkOrdiriComV1alpha1RouteListForAllNamespacesRaw(requestParameters: WatchNetworkOrdiriComV1alpha1RouteListForAllNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
         const queryParameters: any = {};
 
         if (requestParameters.allowWatchBookmarks !== undefined) {
@@ -3509,85 +5799,15 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * watch individual changes to a list of Route. deprecated: use the \'watch\' parameter with a list operation instead.
      */
-    async watchNetworkOrdiriComV1alpha1RouteList(requestParameters: WatchNetworkOrdiriComV1alpha1RouteListRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
-        const response = await this.watchNetworkOrdiriComV1alpha1RouteListRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * watch changes to an object of kind RouteTable. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
-     */
-    async watchNetworkOrdiriComV1alpha1RouteTableRaw(requestParameters: WatchNetworkOrdiriComV1alpha1RouteTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
-        if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling watchNetworkOrdiriComV1alpha1RouteTable.');
-        }
-
-        const queryParameters: any = {};
-
-        if (requestParameters.allowWatchBookmarks !== undefined) {
-            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
-        }
-
-        if (requestParameters._continue !== undefined) {
-            queryParameters['continue'] = requestParameters._continue;
-        }
-
-        if (requestParameters.fieldSelector !== undefined) {
-            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
-        }
-
-        if (requestParameters.labelSelector !== undefined) {
-            queryParameters['labelSelector'] = requestParameters.labelSelector;
-        }
-
-        if (requestParameters.limit !== undefined) {
-            queryParameters['limit'] = requestParameters.limit;
-        }
-
-        if (requestParameters.pretty !== undefined) {
-            queryParameters['pretty'] = requestParameters.pretty;
-        }
-
-        if (requestParameters.resourceVersion !== undefined) {
-            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
-        }
-
-        if (requestParameters.resourceVersionMatch !== undefined) {
-            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
-        }
-
-        if (requestParameters.timeoutSeconds !== undefined) {
-            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
-        }
-
-        if (requestParameters.watch !== undefined) {
-            queryParameters['watch'] = requestParameters.watch;
-        }
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/watch/routetables:/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
-    }
-
-    /**
-     * watch changes to an object of kind RouteTable. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
-     */
-    async watchNetworkOrdiriComV1alpha1RouteTable(requestParameters: WatchNetworkOrdiriComV1alpha1RouteTableRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
-        const response = await this.watchNetworkOrdiriComV1alpha1RouteTableRaw(requestParameters, initOverrides);
+    async watchNetworkOrdiriComV1alpha1RouteListForAllNamespaces(requestParameters: WatchNetworkOrdiriComV1alpha1RouteListForAllNamespacesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchNetworkOrdiriComV1alpha1RouteListForAllNamespacesRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * watch individual changes to a list of RouteTable. deprecated: use the \'watch\' parameter with a list operation instead.
      */
-    async watchNetworkOrdiriComV1alpha1RouteTableListRaw(requestParameters: WatchNetworkOrdiriComV1alpha1RouteTableListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+    async watchNetworkOrdiriComV1alpha1RouteTableListForAllNamespacesRaw(requestParameters: WatchNetworkOrdiriComV1alpha1RouteTableListForAllNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
         const queryParameters: any = {};
 
         if (requestParameters.allowWatchBookmarks !== undefined) {
@@ -3645,85 +5865,15 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * watch individual changes to a list of RouteTable. deprecated: use the \'watch\' parameter with a list operation instead.
      */
-    async watchNetworkOrdiriComV1alpha1RouteTableList(requestParameters: WatchNetworkOrdiriComV1alpha1RouteTableListRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
-        const response = await this.watchNetworkOrdiriComV1alpha1RouteTableListRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * watch changes to an object of kind Router. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
-     */
-    async watchNetworkOrdiriComV1alpha1RouterRaw(requestParameters: WatchNetworkOrdiriComV1alpha1RouterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
-        if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling watchNetworkOrdiriComV1alpha1Router.');
-        }
-
-        const queryParameters: any = {};
-
-        if (requestParameters.allowWatchBookmarks !== undefined) {
-            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
-        }
-
-        if (requestParameters._continue !== undefined) {
-            queryParameters['continue'] = requestParameters._continue;
-        }
-
-        if (requestParameters.fieldSelector !== undefined) {
-            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
-        }
-
-        if (requestParameters.labelSelector !== undefined) {
-            queryParameters['labelSelector'] = requestParameters.labelSelector;
-        }
-
-        if (requestParameters.limit !== undefined) {
-            queryParameters['limit'] = requestParameters.limit;
-        }
-
-        if (requestParameters.pretty !== undefined) {
-            queryParameters['pretty'] = requestParameters.pretty;
-        }
-
-        if (requestParameters.resourceVersion !== undefined) {
-            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
-        }
-
-        if (requestParameters.resourceVersionMatch !== undefined) {
-            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
-        }
-
-        if (requestParameters.timeoutSeconds !== undefined) {
-            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
-        }
-
-        if (requestParameters.watch !== undefined) {
-            queryParameters['watch'] = requestParameters.watch;
-        }
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/watch/routers/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
-    }
-
-    /**
-     * watch changes to an object of kind Router. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
-     */
-    async watchNetworkOrdiriComV1alpha1Router(requestParameters: WatchNetworkOrdiriComV1alpha1RouterRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
-        const response = await this.watchNetworkOrdiriComV1alpha1RouterRaw(requestParameters, initOverrides);
+    async watchNetworkOrdiriComV1alpha1RouteTableListForAllNamespaces(requestParameters: WatchNetworkOrdiriComV1alpha1RouteTableListForAllNamespacesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchNetworkOrdiriComV1alpha1RouteTableListForAllNamespacesRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * watch individual changes to a list of Router. deprecated: use the \'watch\' parameter with a list operation instead.
      */
-    async watchNetworkOrdiriComV1alpha1RouterListRaw(requestParameters: WatchNetworkOrdiriComV1alpha1RouterListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+    async watchNetworkOrdiriComV1alpha1RouterListForAllNamespacesRaw(requestParameters: WatchNetworkOrdiriComV1alpha1RouterListForAllNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
         const queryParameters: any = {};
 
         if (requestParameters.allowWatchBookmarks !== undefined) {
@@ -3781,85 +5931,15 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * watch individual changes to a list of Router. deprecated: use the \'watch\' parameter with a list operation instead.
      */
-    async watchNetworkOrdiriComV1alpha1RouterList(requestParameters: WatchNetworkOrdiriComV1alpha1RouterListRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
-        const response = await this.watchNetworkOrdiriComV1alpha1RouterListRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * watch changes to an object of kind Subnet. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
-     */
-    async watchNetworkOrdiriComV1alpha1SubnetRaw(requestParameters: WatchNetworkOrdiriComV1alpha1SubnetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
-        if (requestParameters.name === null || requestParameters.name === undefined) {
-            throw new runtime.RequiredError('name','Required parameter requestParameters.name was null or undefined when calling watchNetworkOrdiriComV1alpha1Subnet.');
-        }
-
-        const queryParameters: any = {};
-
-        if (requestParameters.allowWatchBookmarks !== undefined) {
-            queryParameters['allowWatchBookmarks'] = requestParameters.allowWatchBookmarks;
-        }
-
-        if (requestParameters._continue !== undefined) {
-            queryParameters['continue'] = requestParameters._continue;
-        }
-
-        if (requestParameters.fieldSelector !== undefined) {
-            queryParameters['fieldSelector'] = requestParameters.fieldSelector;
-        }
-
-        if (requestParameters.labelSelector !== undefined) {
-            queryParameters['labelSelector'] = requestParameters.labelSelector;
-        }
-
-        if (requestParameters.limit !== undefined) {
-            queryParameters['limit'] = requestParameters.limit;
-        }
-
-        if (requestParameters.pretty !== undefined) {
-            queryParameters['pretty'] = requestParameters.pretty;
-        }
-
-        if (requestParameters.resourceVersion !== undefined) {
-            queryParameters['resourceVersion'] = requestParameters.resourceVersion;
-        }
-
-        if (requestParameters.resourceVersionMatch !== undefined) {
-            queryParameters['resourceVersionMatch'] = requestParameters.resourceVersionMatch;
-        }
-
-        if (requestParameters.timeoutSeconds !== undefined) {
-            queryParameters['timeoutSeconds'] = requestParameters.timeoutSeconds;
-        }
-
-        if (requestParameters.watch !== undefined) {
-            queryParameters['watch'] = requestParameters.watch;
-        }
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/apis/network.ordiri.com/v1alpha1/watch/subnets/{name}`.replace(`{${"name"}}`, encodeURIComponent(String(requestParameters.name))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => IoK8sApimachineryPkgApisMetaV1WatchEventFromJSON(jsonValue));
-    }
-
-    /**
-     * watch changes to an object of kind Subnet. deprecated: use the \'watch\' parameter with a list operation instead, filtered to a single item with the \'fieldSelector\' parameter.
-     */
-    async watchNetworkOrdiriComV1alpha1Subnet(requestParameters: WatchNetworkOrdiriComV1alpha1SubnetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
-        const response = await this.watchNetworkOrdiriComV1alpha1SubnetRaw(requestParameters, initOverrides);
+    async watchNetworkOrdiriComV1alpha1RouterListForAllNamespaces(requestParameters: WatchNetworkOrdiriComV1alpha1RouterListForAllNamespacesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchNetworkOrdiriComV1alpha1RouterListForAllNamespacesRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * watch individual changes to a list of Subnet. deprecated: use the \'watch\' parameter with a list operation instead.
      */
-    async watchNetworkOrdiriComV1alpha1SubnetListRaw(requestParameters: WatchNetworkOrdiriComV1alpha1SubnetListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
+    async watchNetworkOrdiriComV1alpha1SubnetListForAllNamespacesRaw(requestParameters: WatchNetworkOrdiriComV1alpha1SubnetListForAllNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<IoK8sApimachineryPkgApisMetaV1WatchEvent>> {
         const queryParameters: any = {};
 
         if (requestParameters.allowWatchBookmarks !== undefined) {
@@ -3917,8 +5997,8 @@ export class NetworkOrdiriComV1alpha1Api extends runtime.BaseAPI {
     /**
      * watch individual changes to a list of Subnet. deprecated: use the \'watch\' parameter with a list operation instead.
      */
-    async watchNetworkOrdiriComV1alpha1SubnetList(requestParameters: WatchNetworkOrdiriComV1alpha1SubnetListRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
-        const response = await this.watchNetworkOrdiriComV1alpha1SubnetListRaw(requestParameters, initOverrides);
+    async watchNetworkOrdiriComV1alpha1SubnetListForAllNamespaces(requestParameters: WatchNetworkOrdiriComV1alpha1SubnetListForAllNamespacesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<IoK8sApimachineryPkgApisMetaV1WatchEvent> {
+        const response = await this.watchNetworkOrdiriComV1alpha1SubnetListForAllNamespacesRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
