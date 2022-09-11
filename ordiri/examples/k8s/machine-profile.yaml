@@ -82,9 +82,9 @@ spec:
       d-i preseed/late_command string in-target apt-get update ; \
           in-target apt-get -y dist-upgrade ; \
           in-target apt-get -y autoremove ; \
-          in-target apt-get autoclean ; \
+          in-target apt-get autoclean -y ; \
           in-target apt-get clean ; \
-          in-target apt-get install curl ; \
+          in-target apt-get install -y curl ; \
           in-target curl -XGET http://169.254.169.254/latest/user-data -o /sbin/boot-server.sh ; \
           in-target chmod +x /sbin/boot-server.sh ; \
           in-target /sbin/boot-server.sh ;

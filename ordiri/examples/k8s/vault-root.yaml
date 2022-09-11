@@ -31,15 +31,19 @@ spec:
     metadata:
       creationTimestamp: null
     spec:
+      resources:
+        cpu: 1
+        memory: 512M
       userData: |
         #!/usr/bin/env bash
 
         set -eou pipefail
-
         cd $(mktemp -d)
-        apt update && apt install -y gpg jq wget curl
+
+        apt update && apt install -y gpg jq wget curl ca-certificates
         
-        local_ip=$(curl 169.254.169.254/latest/meta-data/local-ipv4)
+        export local_hostname=$(curl 169.254.169.254/latest/meta-data/local-hostname)
+        export local_ip=$(curl 169.254.169.254/latest/meta-data/local-ipv4)
 
         wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | tee /usr/share/keyrings/hashicorp-archive-keyring.gpg >/dev/null
         if [[ -z "$(gpg --no-default-keyring --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg --fingerprint | grep "E8A0 32E0 94D8 EB4E A189  D270 DA41 8C88 A321 9F7B")" ]]; then
@@ -69,7 +73,7 @@ spec:
         [Install]
         WantedBy=multi-user.target" > /etc/systemd/system/vault-root.mount
 
-        systemctl enable --now vault-root.mount
+        systemctl enable vault-root.mount
 
         mkdir -p /vault/root/vault-tls
 
@@ -101,6 +105,8 @@ spec:
         DNS.2 = ${local_hostname}.ordiri
         IP.1 = ${local_ip}" > /vault/root/vault-tls/vault.conf
           openssl req -x509 -nodes -days 730 -newkey rsa:4096 -keyout /vault/root/vault-tls/vault.key -out /vault/root/vault-tls/vault.crt -config /vault/root/vault-tls/vault.conf
+          cp /vault/root/vault-tls/vault.crt /usr/local/share/ca-certificates/.
+          update-ca-certificates
         fi
 
         echo 'disable_mlock = true
@@ -120,14 +126,20 @@ spec:
 
         chown -Rf vault:vault /vault/root 
 
-        systemctl daemon-reload
-        systemctl restart vault
+        systemctl enable vault
+        
+        tee /sbin/system-boot.sh <<'EOF'
+        #!/usr/bin/env bash
+
+        set -eou pipefail
+        cd $(mktemp -d)
 
         export VAULT_SKIP_VERIFY=true
         if [[ "$(vault status --format=json | jq -r '.initialized')" == "false" ]]; then
           vault operator init --format=json | tee /vault/root/vault-operator-init.log
         fi
 
+        export VAULT_ADDR=https://vault-root-0.ordiri:8200
         if [[ "$(vault status --format=json | jq -r '.sealed')" == "true" ]]; then
           # Minus 1 to make the looping easier
           threshold=$(cat /vault/root/vault-operator-init.log | jq -r '.unseal_threshold - 1')
@@ -135,7 +147,51 @@ spec:
             vault operator unseal $(cat /vault/root/vault-operator-init.log | jq --arg idx "$idx" -r '.unseal_keys_hex[$idx | tonumber]')
           done
         fi
+
+        vault status
+        EOF
         
+        chmod +x /sbin/system-boot.sh
+
+        echo "[Unit]
+        Description=Unseal vault
+        After=vault.service
+        Requires=vault.service
+
+        [Service]
+        ExecStart=/bin/bash -c /sbin/system-boot.sh
+        Restart=on-failure
+        RestartSec=30
+        
+        [Install]
+        WantedBy=vault.service" > /etc/systemd/system/system-boot.service
+
+        echo "[Unit]
+        Description=Configure Vault
+        After=system-boot.service
+        Wants=first-boot-complete.target system-boot.service
+        # ConditionFirstBoot=true
+
+        [Service]
+        ExecStart=/bin/bash -c /sbin/configure-vault.sh
+        Restart=on-failure
+        RestartSec=10
+        
+        [Install]
+        WantedBy=vault.service" > /etc/systemd/system/system-configure.service
+
+        systemctl enable system-configure.service system-boot.service
+
+        tee /sbin/configure-vault.sh <<'EOF'
+        #!/usr/bin/env bash
+
+        set -eou pipefail
+        cd $(mktemp -d)
+
+        export VAULT_ADDR=https://vault-root-0.ordiri:8200
+        export local_hostname=$(curl 169.254.169.254/latest/meta-data/local-hostname)
+        export local_ip=$(curl 169.254.169.254/latest/meta-data/local-ipv4)
+
         cat /vault/root/vault-operator-init.log | jq -r '.root_token' | vault login  -
         if ! vault audit list -format json | jq -e '.["file/"]'; then
           vault audit enable file file_path=/vault/root/audit.log
@@ -147,7 +203,7 @@ spec:
           vault write -f transit/keys/vault-vms-autounseal
         fi
 
-        tee autounseal.hcl <<EOF
+        tee autounseal.hcl <<POLICY
         path "transit/encrypt/vault-vms-autounseal" {
           capabilities = [ "update" ]
         }
@@ -155,19 +211,19 @@ spec:
         path "transit/decrypt/vault-vms-autounseal" {
           capabilities = [ "update" ]
         }
-        EOF
+        POLICY
 
-        tee sign-root-ca.hcl <<EOF
+        tee sign-root-ca.hcl <<POLICY
         path "pki_int/root/sign-intermediate" {
           capabilities = [ "update" ]
         }
-        EOF
+        POLICY
 
-        tee generate-cert.hcl <<EOF
-          path "pki_int/issue/dmann-default" {
-            capabilities = [ "update" ]
-          }
-        EOF
+        tee generate-cert.hcl <<POLICY
+        path "pki_int/issue/dmann-default" {
+          capabilities = [ "update" ]
+        }
+        POLICY
 
         vault policy write generate-cert generate-cert.hcl
         vault policy write sign-root-ca sign-root-ca.hcl
@@ -227,6 +283,8 @@ spec:
           allowed_domains="dmann.xyz,ordiri" \
           allow_subdomains=true \
           max_ttl="720h"
+        EOF
+        chmod +x /sbin/configure-vault.sh
       bootDevices:
       - hd
       - network
