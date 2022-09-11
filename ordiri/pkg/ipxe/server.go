@@ -38,14 +38,18 @@ var ipxeVars = map[string]string{
 	"node-role":    "smbios/node-role",
 }
 
+type machineClient interface {
+	Machines(namespace string) corev1alpha1client.MachineInterface
+}
+
 // Server serves boot and provisioning configs to machines via HTTP.
 type Server struct {
-	client corev1alpha1client.MachineInterface
+	client machineClient
 	cfg    *IpxeConfigs
 }
 
 // NewServer returns a new Server.
-func NewServer(client corev1alpha1client.MachineInterface, config *IpxeConfigs) *Server {
+func NewServer(client machineClient, config *IpxeConfigs) *Server {
 	return &Server{
 		client: client,
 		cfg:    config,
@@ -63,12 +67,16 @@ func (s *Server) HTTPHandler() http.Handler {
 		mux.Handle(route, logger)
 	}
 
-	getNode := func(ctx context.Context, uuid string) (*corev1alpha1.Machine, error) {
+	getNode := func(ctx context.Context, tenant, uuid string) (*corev1alpha1.Machine, error) {
 		if uuid == "" {
 			return nil, errors.New("missing uuid")
 		}
 
-		res, err := s.client.Get(ctx, uuid, v1.GetOptions{})
+		if tenant == "" {
+			tenant = "default"
+		}
+
+		res, err := s.client.Machines(tenant).Get(ctx, uuid, v1.GetOptions{})
 
 		if err != nil {
 			return nil, fmt.Errorf("error getting node - %w", err)
@@ -98,7 +106,8 @@ func (s *Server) HTTPHandler() http.Handler {
 			return
 		}
 		uuid := r.URL.Query().Get("uuid")
-		nodeObj, err := getNode(ctx, uuid)
+		// todo: get rid of this whole ipxe server/machineprofile junk
+		nodeObj, err := getNode(ctx, "", uuid)
 		if err != nil {
 			errorResponse(w, r, "{{ .Message }}", struct{ Message string }{Message: err.Error()})
 			return
@@ -126,14 +135,15 @@ func (s *Server) HTTPHandler() http.Handler {
 	chain("/discover.ipxe", "/discover.ipxe", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 		uuid := r.URL.Query().Get("uuid")
-		nodeObj, err := getNode(ctx, uuid)
+		nodeObj, err := getNode(ctx, "", uuid)
 		isNew := false
 
 		if uuid != "" && nodeObj == nil {
 			isNew = true
 			nodeObj = &corev1alpha1.Machine{
 				ObjectMeta: v1.ObjectMeta{
-					Name: uuid,
+					Name:      uuid,
+					Namespace: "default",
 				},
 			}
 		} else if err != nil {
@@ -181,13 +191,13 @@ func (s *Server) HTTPHandler() http.Handler {
 		}
 
 		if isNew {
-			nodeObj, err = s.client.Create(ctx, nodeObj, v1.CreateOptions{})
+			nodeObj, err = s.client.Machines("default").Create(ctx, nodeObj, v1.CreateOptions{})
 			if err != nil {
 				ipxeErrorResponse(w, r, err.Error())
 				return
 			}
 		} else if changed {
-			nodeObj, err = s.client.Update(ctx, nodeObj, v1.UpdateOptions{})
+			nodeObj, err = s.client.Machines("default").Update(ctx, nodeObj, v1.UpdateOptions{})
 			if err != nil {
 				ipxeErrorResponse(w, r, err.Error())
 				return
@@ -206,7 +216,7 @@ func (s *Server) HTTPHandler() http.Handler {
 	chain("/boot.ipxe", "/boot.ipxe", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 		uuid := r.URL.Query().Get("uuid")
-		nodeObj, err := getNode(ctx, uuid)
+		nodeObj, err := getNode(ctx, "", uuid)
 		if err != nil {
 			ipxeErrorResponse(w, r, err.Error())
 			return

@@ -5,10 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 
 	"github.com/digitalocean/go-openvswitch/ovs"
+	"github.com/gosimple/slug"
 	"github.com/ordiri/ordiri/pkg/network/api"
 	"github.com/ordiri/ordiri/pkg/network/sdn"
 	"github.com/vishvananda/netlink"
@@ -159,11 +160,15 @@ func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network
 		// the wrong ip for a multi ip interface
 		// post this comment the dns stuff was moved to the network to enable us
 		// to create dns records for the entire network
-		for _, addr := range iface.IP() {
-			dhcpHostDir := dhcpHostMappingDir(sn)
+		if len(iface.IP()) > 0 {
+			addr := iface.IP()[0]
+			dhcpHostDir := dhcpHostMappingDir(nw, sn)
 			mapping := fmt.Sprintf("%s,%s,%s", iface.Mac(), addr.String(), iface.Hostnames()[0])
-			ioutil.WriteFile(filepath.Join(dhcpHostDir, "host_map_"+hash(iface.Mac().String()+addr.String())), []byte(mapping), fs.ModePerm)
-			break
+			fileName := slug.Make(addr.String())
+			hostFile := filepath.Join(dhcpHostDir, fileName)
+			if err := os.WriteFile(hostFile, []byte(mapping), fs.ModePerm); err != nil {
+				return nil, fmt.Errorf("unable to write host mapping file - %w", err)
+			}
 		}
 	}
 

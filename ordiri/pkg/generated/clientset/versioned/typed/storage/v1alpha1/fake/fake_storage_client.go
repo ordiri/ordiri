@@ -27,12 +27,12 @@ type FakeStorageV1alpha1 struct {
 	*testing.Fake
 }
 
-func (c *FakeStorageV1alpha1) Volumes() v1alpha1.VolumeInterface {
-	return &FakeVolumes{c}
+func (c *FakeStorageV1alpha1) Volumes(namespace string) v1alpha1.VolumeInterface {
+	return &FakeVolumes{c, namespace}
 }
 
-func (c *FakeStorageV1alpha1) VolumeClaims() v1alpha1.VolumeClaimInterface {
-	return &FakeVolumeClaims{c}
+func (c *FakeStorageV1alpha1) VolumeClaims(namespace string) v1alpha1.VolumeClaimInterface {
+	return &FakeVolumeClaims{c, namespace}
 }
 
 // RESTClient returns a RESTClient that is used to communicate

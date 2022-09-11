@@ -1,6 +1,5 @@
 /*
 Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
@@ -63,7 +62,7 @@ to quickly create a Cobra application.`,
 			mp.Informer().Run(stopCh)
 		}()
 
-		ipxeServer := ipxe.NewServer(client.CoreV1alpha1().Machines(), &ipxeConfigs)
+		ipxeServer := ipxe.NewServer(client.CoreV1alpha1(), &ipxeConfigs)
 
 		log.Logger.Info("Starting server")
 		err = http.ListenAndServe(":"+port, ipxeServer.HTTPHandler())

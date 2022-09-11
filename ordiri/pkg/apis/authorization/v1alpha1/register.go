@@ -22,26 +22,24 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
+const (
+	GroupName = "authorization.ordiri.com"
+	Version   = "v1alpha1"
+)
+
+var SchemeGroupVersion = schema.GroupVersion{Group: GroupName, Version: Version}
+
 var AddToScheme = func(scheme *runtime.Scheme) error {
-	metav1.AddToGroupVersion(scheme, schema.GroupVersion{
-		Group:   "authorization.ordiri.com",
-		Version: "v1alpha1",
-	})
+	metav1.AddToGroupVersion(scheme, SchemeGroupVersion)
 	// +kubebuilder:scaffold:install
+	scheme.AddKnownTypes(SchemeGroupVersion, &ServiceAccount{}, &ServiceAccountList{})
 
-	scheme.AddKnownTypes(schema.GroupVersion{
-		Group:   "authorization.ordiri.com",
-		Version: "v1alpha1",
-	}, &RoleBinding{}, &RoleBindingList{})
+	scheme.AddKnownTypes(SchemeGroupVersion, &Role{}, &RoleList{}, &RoleBinding{}, &RoleBindingList{})
 
-	scheme.AddKnownTypes(schema.GroupVersion{
-		Group:   "authorization.ordiri.com",
-		Version: "v1alpha1",
-	}, &Role{}, &RoleList{})
-
-	scheme.AddKnownTypes(schema.GroupVersion{
-		Group:   "authorization.ordiri.com",
-		Version: "v1alpha1",
-	}, &ServiceAccount{}, &ServiceAccountList{})
 	return nil
+}
+
+// Resource takes an unqualified resource and returns a Group qualified GroupResource
+func Resource(resource string) schema.GroupResource {
+	return SchemeGroupVersion.WithResource(resource).GroupResource()
 }

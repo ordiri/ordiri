@@ -43,7 +43,8 @@ func NewCmdCreateRoute(f cmdutil.Factory, ioStreams genericclioptions.IOStreams)
 				},
 			}
 
-			_, err = client.NetworkV1alpha1().Routes().Create(cmd.Context(), route, v1.CreateOptions{})
+			tenant := cmd.Flag("namespace").Value.String()
+			_, err = client.NetworkV1alpha1().Routes(tenant).Create(cmd.Context(), route, v1.CreateOptions{})
 			if err != nil {
 				return err
 			}

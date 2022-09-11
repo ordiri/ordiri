@@ -32,7 +32,7 @@ import (
 // VirtualMachinesGetter has a method to return a VirtualMachineInterface.
 // A group's client should implement this interface.
 type VirtualMachinesGetter interface {
-	VirtualMachines() VirtualMachineInterface
+	VirtualMachines(namespace string) VirtualMachineInterface
 }
 
 // VirtualMachineInterface has methods to work with VirtualMachine resources.
@@ -54,12 +54,14 @@ type VirtualMachineInterface interface {
 // virtualMachines implements VirtualMachineInterface
 type virtualMachines struct {
 	client rest.Interface
+	ns     string
 }
 
 // newVirtualMachines returns a VirtualMachines
-func newVirtualMachines(c *ComputeV1alpha1Client) *virtualMachines {
+func newVirtualMachines(c *ComputeV1alpha1Client, namespace string) *virtualMachines {
 	return &virtualMachines{
 		client: c.RESTClient(),
+		ns:     namespace,
 	}
 }
 
@@ -67,6 +69,7 @@ func newVirtualMachines(c *ComputeV1alpha1Client) *virtualMachines {
 func (c *virtualMachines) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.VirtualMachine, err error) {
 	result = &v1alpha1.VirtualMachine{}
 	err = c.client.Get().
+		Namespace(c.ns).
 		Resource("virtualmachines").
 		Name(name).
 		VersionedParams(&options, scheme.ParameterCodec).
@@ -83,6 +86,7 @@ func (c *virtualMachines) List(ctx context.Context, opts v1.ListOptions) (result
 	}
 	result = &v1alpha1.VirtualMachineList{}
 	err = c.client.Get().
+		Namespace(c.ns).
 		Resource("virtualmachines").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -99,6 +103,7 @@ func (c *virtualMachines) Watch(ctx context.Context, opts v1.ListOptions) (watch
 	}
 	opts.Watch = true
 	return c.client.Get().
+		Namespace(c.ns).
 		Resource("virtualmachines").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -109,6 +114,7 @@ func (c *virtualMachines) Watch(ctx context.Context, opts v1.ListOptions) (watch
 func (c *virtualMachines) Create(ctx context.Context, virtualMachine *v1alpha1.VirtualMachine, opts v1.CreateOptions) (result *v1alpha1.VirtualMachine, err error) {
 	result = &v1alpha1.VirtualMachine{}
 	err = c.client.Post().
+		Namespace(c.ns).
 		Resource("virtualmachines").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Body(virtualMachine).
@@ -121,6 +127,7 @@ func (c *virtualMachines) Create(ctx context.Context, virtualMachine *v1alpha1.V
 func (c *virtualMachines) Update(ctx context.Context, virtualMachine *v1alpha1.VirtualMachine, opts v1.UpdateOptions) (result *v1alpha1.VirtualMachine, err error) {
 	result = &v1alpha1.VirtualMachine{}
 	err = c.client.Put().
+		Namespace(c.ns).
 		Resource("virtualmachines").
 		Name(virtualMachine.Name).
 		VersionedParams(&opts, scheme.ParameterCodec).
@@ -135,6 +142,7 @@ func (c *virtualMachines) Update(ctx context.Context, virtualMachine *v1alpha1.V
 func (c *virtualMachines) UpdateStatus(ctx context.Context, virtualMachine *v1alpha1.VirtualMachine, opts v1.UpdateOptions) (result *v1alpha1.VirtualMachine, err error) {
 	result = &v1alpha1.VirtualMachine{}
 	err = c.client.Put().
+		Namespace(c.ns).
 		Resource("virtualmachines").
 		Name(virtualMachine.Name).
 		SubResource("status").
@@ -148,6 +156,7 @@ func (c *virtualMachines) UpdateStatus(ctx context.Context, virtualMachine *v1al
 // Delete takes name of the virtualMachine and deletes it. Returns an error if one occurs.
 func (c *virtualMachines) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
 	return c.client.Delete().
+		Namespace(c.ns).
 		Resource("virtualmachines").
 		Name(name).
 		Body(&opts).
@@ -162,6 +171,7 @@ func (c *virtualMachines) DeleteCollection(ctx context.Context, opts v1.DeleteOp
 		timeout = time.Duration(*listOpts.TimeoutSeconds) * time.Second
 	}
 	return c.client.Delete().
+		Namespace(c.ns).
 		Resource("virtualmachines").
 		VersionedParams(&listOpts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -174,6 +184,7 @@ func (c *virtualMachines) DeleteCollection(ctx context.Context, opts v1.DeleteOp
 func (c *virtualMachines) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.VirtualMachine, err error) {
 	result = &v1alpha1.VirtualMachine{}
 	err = c.client.Patch(pt).
+		Namespace(c.ns).
 		Resource("virtualmachines").
 		Name(name).
 		SubResource(subresources...).
@@ -188,6 +199,7 @@ func (c *virtualMachines) Patch(ctx context.Context, name string, pt types.Patch
 func (c *virtualMachines) Restart(ctx context.Context, virtualMachineName string, virtualMachineRestart *v1alpha1.VirtualMachineRestart, opts v1.UpdateOptions) (result *v1alpha1.VirtualMachineRestart, err error) {
 	result = &v1alpha1.VirtualMachineRestart{}
 	err = c.client.Put().
+		Namespace(c.ns).
 		Resource("virtualmachines").
 		Name(virtualMachineName).
 		SubResource("restart").

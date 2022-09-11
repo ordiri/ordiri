@@ -28,6 +28,7 @@ import (
 
 	computev1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
+	"github.com/ordiri/ordiri/pkg/log"
 )
 
 // VmIpAllocator reconciles a Subnet object
@@ -39,6 +40,7 @@ type VmIpAllocator struct {
 }
 
 func (r *VmIpAllocator) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+	log := log.FromContext(ctx)
 	vm := &computev1alpha1.VirtualMachine{}
 	if err := r.Client.Get(ctx, req.NamespacedName, vm); err != nil {
 		if errors.IsNotFound(err) {
@@ -49,6 +51,7 @@ func (r *VmIpAllocator) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 	for _, iface := range vm.Spec.NetworkInterfaces {
 		sn := &networkv1alpha1.Subnet{}
 		sn.Name = iface.Subnet
+		sn.Namespace = vm.Namespace
 		if err := r.Client.Get(ctx, client.ObjectKeyFromObject(sn), sn); err != nil {
 			if errors.IsNotFound(err) {
 				return ctrl.Result{}, fmt.Errorf("no such subnet")
@@ -62,6 +65,7 @@ func (r *VmIpAllocator) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 		}
 		foundPrivate := false
 		foundPublic := false
+		wantsPublic := iface.Public
 		for _, ip := range iface.Ips {
 			parsedIp, err := netaddr.ParseIP(ip)
 			if err != nil {
@@ -71,12 +75,12 @@ func (r *VmIpAllocator) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 			if network.Contains(parsedIp) {
 				foundPrivate = true
 			}
-			if r.PublicRange.Contains(parsedIp) {
+			if wantsPublic && r.PublicRange.Contains(parsedIp) {
 				foundPublic = true
 			}
 		}
 
-		if !foundPrivate || !foundPublic {
+		if !foundPrivate || (wantsPublic && !foundPublic) {
 			network, err := netaddr.ParseIPPrefix(sn.Spec.Cidr)
 			if err != nil {
 				return ctrl.Result{}, fmt.Errorf("unable to parse subnet cidr - %q - %w", sn.Spec.Cidr, err)
@@ -84,7 +88,7 @@ func (r *VmIpAllocator) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 			if !foundPrivate {
 				// We skip the first 3 IP addrs (.0,.1,.2) as these represent the broadcast, router and dhcp srv IP
 				cidr := netaddr.IPPrefixFrom(network.IP().Next().Next().Next(), network.Bits())
-				nextIp, err := r.getNextIp(ctx, cidr, client.MatchingFields{"VmBySubnet": iface.Network + iface.Subnet}, iface)
+				nextIp, err := r.getNextIp(ctx, vm.Namespace, cidr, iface, client.MatchingFields{"VmBySubnet": iface.Network + iface.Subnet})
 				if err != nil {
 					return ctrl.Result{}, err
 				}
@@ -92,15 +96,16 @@ func (r *VmIpAllocator) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 				iface.Ips = append(iface.Ips, nextIp.String())
 			}
 
-			if !foundPublic {
+			if wantsPublic && !foundPublic {
 				// We don't bother skipping any ip range here as it's a public network routed directly at us
 				// we'll swap this with bird bgp routing eventually and clean all this fip stuff up
-				nextIp, err := r.getNextIp(ctx, network, nil, iface)
+				nextIp, err := r.getNextIp(ctx, vm.Namespace, r.PublicRange, iface)
 				if err != nil {
-					return ctrl.Result{}, err
+					// return ctrl.Result{}, fmt.Errorf("error with no public ip - %w", err)
+					log.Info("no public ip available for")
+				} else {
+					iface.Ips = append(iface.Ips, nextIp.String())
 				}
-
-				iface.Ips = append(iface.Ips, nextIp.String())
 			}
 
 			if err := r.Client.Update(ctx, vm); err != nil {
@@ -112,11 +117,12 @@ func (r *VmIpAllocator) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 	return ctrl.Result{}, nil
 }
 
-func (r *VmIpAllocator) getNextIp(ctx context.Context, network netaddr.IPPrefix, filters client.MatchingFields, iface *computev1alpha1.VirtualMachineNetworkInterface) (netaddr.IP, error) {
+func (r *VmIpAllocator) getNextIp(ctx context.Context, ns string, network netaddr.IPPrefix, iface *computev1alpha1.VirtualMachineNetworkInterface, listOpts ...client.ListOption) (netaddr.IP, error) {
 
 	vmsInSubnet := &computev1alpha1.VirtualMachineList{}
-	if err := r.Client.List(ctx, vmsInSubnet, filters); err != nil {
-		return netaddr.IP{}, err
+	listOpts = append([]client.ListOption{client.InNamespace(ns)}, listOpts...)
+	if err := r.Client.List(ctx, vmsInSubnet, listOpts...); err != nil {
+		return netaddr.IP{}, fmt.Errorf("error getting vm list - %w", err)
 	}
 
 	allocated := map[netaddr.IP]string{}

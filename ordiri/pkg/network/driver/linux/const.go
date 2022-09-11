@@ -10,3 +10,5 @@ const (
 )
 
 const confDir = "/run/ordiri"
+
+const IfaceHashSize = 5

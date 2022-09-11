@@ -7,12 +7,13 @@ import (
 
 type SubnetOption func(api.Subnet) error
 
-func NewSubnet(name string, cidr string, segment int, opt ...SubnetOption) (api.Subnet, error) {
+func NewSubnet(tenant string, name string, cidr string, segment int, opt ...SubnetOption) (api.Subnet, error) {
 	ipnet, err := netaddr.ParseIPPrefix(cidr)
 	if err != nil {
 		return nil, err
 	}
 	s := &subnet{
+		tenant: tenant,
 		name:   name,
 		cidr:   ipnet,
 		vlanId: segment,
@@ -27,6 +28,7 @@ func NewSubnet(name string, cidr string, segment int, opt ...SubnetOption) (api.
 }
 
 type subnet struct {
+	tenant string
 	name   string
 	vlanId int
 	hosts  []string
@@ -37,6 +39,9 @@ func (s *subnet) Segment() int {
 	return s.vlanId
 }
 
+func (s *subnet) Tenant() string {
+	return s.tenant
+}
 func (s *subnet) Name() string {
 	return s.name
 }

@@ -32,7 +32,7 @@ import (
 // VolumeClaimsGetter has a method to return a VolumeClaimInterface.
 // A group's client should implement this interface.
 type VolumeClaimsGetter interface {
-	VolumeClaims() VolumeClaimInterface
+	VolumeClaims(namespace string) VolumeClaimInterface
 }
 
 // VolumeClaimInterface has methods to work with VolumeClaim resources.
@@ -52,12 +52,14 @@ type VolumeClaimInterface interface {
 // volumeClaims implements VolumeClaimInterface
 type volumeClaims struct {
 	client rest.Interface
+	ns     string
 }
 
 // newVolumeClaims returns a VolumeClaims
-func newVolumeClaims(c *StorageV1alpha1Client) *volumeClaims {
+func newVolumeClaims(c *StorageV1alpha1Client, namespace string) *volumeClaims {
 	return &volumeClaims{
 		client: c.RESTClient(),
+		ns:     namespace,
 	}
 }
 
@@ -65,6 +67,7 @@ func newVolumeClaims(c *StorageV1alpha1Client) *volumeClaims {
 func (c *volumeClaims) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.VolumeClaim, err error) {
 	result = &v1alpha1.VolumeClaim{}
 	err = c.client.Get().
+		Namespace(c.ns).
 		Resource("volumeclaims").
 		Name(name).
 		VersionedParams(&options, scheme.ParameterCodec).
@@ -81,6 +84,7 @@ func (c *volumeClaims) List(ctx context.Context, opts v1.ListOptions) (result *v
 	}
 	result = &v1alpha1.VolumeClaimList{}
 	err = c.client.Get().
+		Namespace(c.ns).
 		Resource("volumeclaims").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -97,6 +101,7 @@ func (c *volumeClaims) Watch(ctx context.Context, opts v1.ListOptions) (watch.In
 	}
 	opts.Watch = true
 	return c.client.Get().
+		Namespace(c.ns).
 		Resource("volumeclaims").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -107,6 +112,7 @@ func (c *volumeClaims) Watch(ctx context.Context, opts v1.ListOptions) (watch.In
 func (c *volumeClaims) Create(ctx context.Context, volumeClaim *v1alpha1.VolumeClaim, opts v1.CreateOptions) (result *v1alpha1.VolumeClaim, err error) {
 	result = &v1alpha1.VolumeClaim{}
 	err = c.client.Post().
+		Namespace(c.ns).
 		Resource("volumeclaims").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Body(volumeClaim).
@@ -119,6 +125,7 @@ func (c *volumeClaims) Create(ctx context.Context, volumeClaim *v1alpha1.VolumeC
 func (c *volumeClaims) Update(ctx context.Context, volumeClaim *v1alpha1.VolumeClaim, opts v1.UpdateOptions) (result *v1alpha1.VolumeClaim, err error) {
 	result = &v1alpha1.VolumeClaim{}
 	err = c.client.Put().
+		Namespace(c.ns).
 		Resource("volumeclaims").
 		Name(volumeClaim.Name).
 		VersionedParams(&opts, scheme.ParameterCodec).
@@ -133,6 +140,7 @@ func (c *volumeClaims) Update(ctx context.Context, volumeClaim *v1alpha1.VolumeC
 func (c *volumeClaims) UpdateStatus(ctx context.Context, volumeClaim *v1alpha1.VolumeClaim, opts v1.UpdateOptions) (result *v1alpha1.VolumeClaim, err error) {
 	result = &v1alpha1.VolumeClaim{}
 	err = c.client.Put().
+		Namespace(c.ns).
 		Resource("volumeclaims").
 		Name(volumeClaim.Name).
 		SubResource("status").
@@ -146,6 +154,7 @@ func (c *volumeClaims) UpdateStatus(ctx context.Context, volumeClaim *v1alpha1.V
 // Delete takes name of the volumeClaim and deletes it. Returns an error if one occurs.
 func (c *volumeClaims) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
 	return c.client.Delete().
+		Namespace(c.ns).
 		Resource("volumeclaims").
 		Name(name).
 		Body(&opts).
@@ -160,6 +169,7 @@ func (c *volumeClaims) DeleteCollection(ctx context.Context, opts v1.DeleteOptio
 		timeout = time.Duration(*listOpts.TimeoutSeconds) * time.Second
 	}
 	return c.client.Delete().
+		Namespace(c.ns).
 		Resource("volumeclaims").
 		VersionedParams(&listOpts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -172,6 +182,7 @@ func (c *volumeClaims) DeleteCollection(ctx context.Context, opts v1.DeleteOptio
 func (c *volumeClaims) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.VolumeClaim, err error) {
 	result = &v1alpha1.VolumeClaim{}
 	err = c.client.Patch(pt).
+		Namespace(c.ns).
 		Resource("volumeclaims").
 		Name(name).
 		SubResource(subresources...).

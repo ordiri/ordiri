@@ -41,32 +41,33 @@ type VirtualMachineInformer interface {
 type virtualMachineInformer struct {
 	factory          internalinterfaces.SharedInformerFactory
 	tweakListOptions internalinterfaces.TweakListOptionsFunc
+	namespace        string
 }
 
 // NewVirtualMachineInformer constructs a new informer for VirtualMachine type.
 // Always prefer using an informer factory to get a shared informer instead of getting an independent
 // one. This reduces memory footprint and number of connections to the server.
-func NewVirtualMachineInformer(client versioned.Interface, resyncPeriod time.Duration, indexers cache.Indexers) cache.SharedIndexInformer {
-	return NewFilteredVirtualMachineInformer(client, resyncPeriod, indexers, nil)
+func NewVirtualMachineInformer(client versioned.Interface, namespace string, resyncPeriod time.Duration, indexers cache.Indexers) cache.SharedIndexInformer {
+	return NewFilteredVirtualMachineInformer(client, namespace, resyncPeriod, indexers, nil)
 }
 
 // NewFilteredVirtualMachineInformer constructs a new informer for VirtualMachine type.
 // Always prefer using an informer factory to get a shared informer instead of getting an independent
 // one. This reduces memory footprint and number of connections to the server.
-func NewFilteredVirtualMachineInformer(client versioned.Interface, resyncPeriod time.Duration, indexers cache.Indexers, tweakListOptions internalinterfaces.TweakListOptionsFunc) cache.SharedIndexInformer {
+func NewFilteredVirtualMachineInformer(client versioned.Interface, namespace string, resyncPeriod time.Duration, indexers cache.Indexers, tweakListOptions internalinterfaces.TweakListOptionsFunc) cache.SharedIndexInformer {
 	return cache.NewSharedIndexInformer(
 		&cache.ListWatch{
 			ListFunc: func(options v1.ListOptions) (runtime.Object, error) {
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
-				return client.ComputeV1alpha1().VirtualMachines().List(context.TODO(), options)
+				return client.ComputeV1alpha1().VirtualMachines(namespace).List(context.TODO(), options)
 			},
 			WatchFunc: func(options v1.ListOptions) (watch.Interface, error) {
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
-				return client.ComputeV1alpha1().VirtualMachines().Watch(context.TODO(), options)
+				return client.ComputeV1alpha1().VirtualMachines(namespace).Watch(context.TODO(), options)
 			},
 		},
 		&computev1alpha1.VirtualMachine{},
@@ -76,7 +77,7 @@ func NewFilteredVirtualMachineInformer(client versioned.Interface, resyncPeriod 
 }
 
 func (f *virtualMachineInformer) defaultInformer(client versioned.Interface, resyncPeriod time.Duration) cache.SharedIndexInformer {
-	return NewFilteredVirtualMachineInformer(client, resyncPeriod, cache.Indexers{cache.NamespaceIndex: cache.MetaNamespaceIndexFunc}, f.tweakListOptions)
+	return NewFilteredVirtualMachineInformer(client, f.namespace, resyncPeriod, cache.Indexers{cache.NamespaceIndex: cache.MetaNamespaceIndexFunc}, f.tweakListOptions)
 }
 
 func (f *virtualMachineInformer) Informer() cache.SharedIndexInformer {

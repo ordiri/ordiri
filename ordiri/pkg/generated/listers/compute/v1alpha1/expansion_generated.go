@@ -21,10 +21,22 @@ package v1alpha1
 // VirtualMachineLister.
 type VirtualMachineListerExpansion interface{}
 
+// VirtualMachineNamespaceListerExpansion allows custom methods to be added to
+// VirtualMachineNamespaceLister.
+type VirtualMachineNamespaceListerExpansion interface{}
+
 // VirtualMachineDeploymentListerExpansion allows custom methods to be added to
 // VirtualMachineDeploymentLister.
 type VirtualMachineDeploymentListerExpansion interface{}
 
+// VirtualMachineDeploymentNamespaceListerExpansion allows custom methods to be added to
+// VirtualMachineDeploymentNamespaceLister.
+type VirtualMachineDeploymentNamespaceListerExpansion interface{}
+
 // VirtualMachineReplicaSetListerExpansion allows custom methods to be added to
 // VirtualMachineReplicaSetLister.
 type VirtualMachineReplicaSetListerExpansion interface{}
+
+// VirtualMachineReplicaSetNamespaceListerExpansion allows custom methods to be added to
+// VirtualMachineReplicaSetNamespaceLister.
+type VirtualMachineReplicaSetNamespaceListerExpansion interface{}

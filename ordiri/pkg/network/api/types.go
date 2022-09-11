@@ -47,6 +47,7 @@ type RunnableManager interface {
 }
 
 type Network interface {
+	Tenant() string
 	Name() string
 	Cidr() netaddr.IPPrefix
 	Segment() int64
@@ -56,6 +57,7 @@ type Network interface {
 }
 
 type Subnet interface {
+	Tenant() string
 	Name() string
 	Cidr() netaddr.IPPrefix
 	Segment() int

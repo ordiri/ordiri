@@ -4,10 +4,8 @@ import (
 	"context"
 	"fmt"
 	"io/fs"
-	"io/ioutil"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/ordiri/ordiri/pkg/log"
 	"github.com/ordiri/ordiri/pkg/mac"
@@ -15,6 +13,7 @@ import (
 	"github.com/vishvananda/netlink"
 	"github.com/vishvananda/netns"
 
+	"github.com/gosimple/slug"
 	"github.com/ordiri/ordiri/pkg/network/sdn"
 )
 
@@ -45,12 +44,20 @@ func (ln *linuxDriver) EnsureNetwork(ctx context.Context, nw api.Network, sns []
 		return err
 	}
 
-	hostDir := hostMappingDir(nw)
 	if len(nw.DnsRecords()) > 0 {
-		os.MkdirAll(hostDir, os.ModePerm)
+		hostDir := etcHostMappingDir(nw)
+		if err := os.MkdirAll(hostDir, os.ModePerm); err != nil {
+			return err
+		}
 		for ip, hostnames := range nw.DnsRecords() {
-			mapping := fmt.Sprintf("%s %s", ip.String(), strings.Join(hostnames, " "))
-			ioutil.WriteFile(filepath.Join(hostDir, "host_map_"+hash(ip.String())), []byte(mapping), fs.ModePerm)
+			for _, hostname := range hostnames {
+				mapping := fmt.Sprintf("%s %s", ip.String(), hostname)
+				fileName := slug.Make(hostname)
+				mappingFile := filepath.Join(hostDir, fileName)
+				if err := os.WriteFile(mappingFile, []byte(mapping), fs.ModePerm); err != nil {
+					return fmt.Errorf("unable to write mapping file - %w", err)
+				}
+			}
 		}
 	}
 
@@ -98,6 +105,7 @@ func (ln *linuxDriver) installNetworkNat(ctx context.Context, nw api.Network) er
 	if err != nil {
 		return fmt.Errorf("unable to get current network ns - %w", err)
 	}
+	defer curNs.Close()
 	handle, err := netns.GetFromName(namespace)
 	if err != nil {
 		return fmt.Errorf("unable to get namespace for public gateway ns - %w", err)

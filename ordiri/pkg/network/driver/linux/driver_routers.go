@@ -92,6 +92,7 @@ func (ld *linuxDriver) installRouter(ctx context.Context, nw api.Network, subnet
 	if err != nil {
 		return fmt.Errorf("unable to get current network ns - %w", err)
 	}
+	curNs.Close()
 	handle, err := netns.GetFromName(routerNetworkNamespace)
 	if err != nil {
 		return fmt.Errorf("unable to get namespace for public gateway ns - %w", err)

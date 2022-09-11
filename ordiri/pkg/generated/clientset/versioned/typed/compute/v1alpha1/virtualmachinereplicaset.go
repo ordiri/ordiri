@@ -32,7 +32,7 @@ import (
 // VirtualMachineReplicaSetsGetter has a method to return a VirtualMachineReplicaSetInterface.
 // A group's client should implement this interface.
 type VirtualMachineReplicaSetsGetter interface {
-	VirtualMachineReplicaSets() VirtualMachineReplicaSetInterface
+	VirtualMachineReplicaSets(namespace string) VirtualMachineReplicaSetInterface
 }
 
 // VirtualMachineReplicaSetInterface has methods to work with VirtualMachineReplicaSet resources.
@@ -52,12 +52,14 @@ type VirtualMachineReplicaSetInterface interface {
 // virtualMachineReplicaSets implements VirtualMachineReplicaSetInterface
 type virtualMachineReplicaSets struct {
 	client rest.Interface
+	ns     string
 }
 
 // newVirtualMachineReplicaSets returns a VirtualMachineReplicaSets
-func newVirtualMachineReplicaSets(c *ComputeV1alpha1Client) *virtualMachineReplicaSets {
+func newVirtualMachineReplicaSets(c *ComputeV1alpha1Client, namespace string) *virtualMachineReplicaSets {
 	return &virtualMachineReplicaSets{
 		client: c.RESTClient(),
+		ns:     namespace,
 	}
 }
 
@@ -65,6 +67,7 @@ func newVirtualMachineReplicaSets(c *ComputeV1alpha1Client) *virtualMachineRepli
 func (c *virtualMachineReplicaSets) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.VirtualMachineReplicaSet, err error) {
 	result = &v1alpha1.VirtualMachineReplicaSet{}
 	err = c.client.Get().
+		Namespace(c.ns).
 		Resource("virtualmachinereplicasets").
 		Name(name).
 		VersionedParams(&options, scheme.ParameterCodec).
@@ -81,6 +84,7 @@ func (c *virtualMachineReplicaSets) List(ctx context.Context, opts v1.ListOption
 	}
 	result = &v1alpha1.VirtualMachineReplicaSetList{}
 	err = c.client.Get().
+		Namespace(c.ns).
 		Resource("virtualmachinereplicasets").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -97,6 +101,7 @@ func (c *virtualMachineReplicaSets) Watch(ctx context.Context, opts v1.ListOptio
 	}
 	opts.Watch = true
 	return c.client.Get().
+		Namespace(c.ns).
 		Resource("virtualmachinereplicasets").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -107,6 +112,7 @@ func (c *virtualMachineReplicaSets) Watch(ctx context.Context, opts v1.ListOptio
 func (c *virtualMachineReplicaSets) Create(ctx context.Context, virtualMachineReplicaSet *v1alpha1.VirtualMachineReplicaSet, opts v1.CreateOptions) (result *v1alpha1.VirtualMachineReplicaSet, err error) {
 	result = &v1alpha1.VirtualMachineReplicaSet{}
 	err = c.client.Post().
+		Namespace(c.ns).
 		Resource("virtualmachinereplicasets").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Body(virtualMachineReplicaSet).
@@ -119,6 +125,7 @@ func (c *virtualMachineReplicaSets) Create(ctx context.Context, virtualMachineRe
 func (c *virtualMachineReplicaSets) Update(ctx context.Context, virtualMachineReplicaSet *v1alpha1.VirtualMachineReplicaSet, opts v1.UpdateOptions) (result *v1alpha1.VirtualMachineReplicaSet, err error) {
 	result = &v1alpha1.VirtualMachineReplicaSet{}
 	err = c.client.Put().
+		Namespace(c.ns).
 		Resource("virtualmachinereplicasets").
 		Name(virtualMachineReplicaSet.Name).
 		VersionedParams(&opts, scheme.ParameterCodec).
@@ -133,6 +140,7 @@ func (c *virtualMachineReplicaSets) Update(ctx context.Context, virtualMachineRe
 func (c *virtualMachineReplicaSets) UpdateStatus(ctx context.Context, virtualMachineReplicaSet *v1alpha1.VirtualMachineReplicaSet, opts v1.UpdateOptions) (result *v1alpha1.VirtualMachineReplicaSet, err error) {
 	result = &v1alpha1.VirtualMachineReplicaSet{}
 	err = c.client.Put().
+		Namespace(c.ns).
 		Resource("virtualmachinereplicasets").
 		Name(virtualMachineReplicaSet.Name).
 		SubResource("status").
@@ -146,6 +154,7 @@ func (c *virtualMachineReplicaSets) UpdateStatus(ctx context.Context, virtualMac
 // Delete takes name of the virtualMachineReplicaSet and deletes it. Returns an error if one occurs.
 func (c *virtualMachineReplicaSets) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
 	return c.client.Delete().
+		Namespace(c.ns).
 		Resource("virtualmachinereplicasets").
 		Name(name).
 		Body(&opts).
@@ -160,6 +169,7 @@ func (c *virtualMachineReplicaSets) DeleteCollection(ctx context.Context, opts v
 		timeout = time.Duration(*listOpts.TimeoutSeconds) * time.Second
 	}
 	return c.client.Delete().
+		Namespace(c.ns).
 		Resource("virtualmachinereplicasets").
 		VersionedParams(&listOpts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -172,6 +182,7 @@ func (c *virtualMachineReplicaSets) DeleteCollection(ctx context.Context, opts v
 func (c *virtualMachineReplicaSets) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.VirtualMachineReplicaSet, err error) {
 	result = &v1alpha1.VirtualMachineReplicaSet{}
 	err = c.client.Patch(pt).
+		Namespace(c.ns).
 		Resource("virtualmachinereplicasets").
 		Name(name).
 		SubResource(subresources...).

@@ -60,6 +60,7 @@ func (s *Server) vmForRequest(r *http.Request) (*computev1alpha1.VirtualMachine,
 	subnet := r.Header.Get("X-Ordiri-Subnet")
 	network := r.Header.Get("X-Ordiri-Network")
 	ip := r.Header.Get("X-Ordiri-Ip")
+	tenant := r.Header.Get("X-Ordiri-Tenant")
 
 	vmKey := KeyForVmInterface(network, subnet, ip)
 	if subnet == "" || network == "" || ip == "" {
@@ -67,7 +68,7 @@ func (s *Server) vmForRequest(r *http.Request) (*computev1alpha1.VirtualMachine,
 	}
 
 	vmByIp := &computev1alpha1.VirtualMachineList{}
-	if err := s.client.List(context.Background(), vmByIp, client.MatchingFields{VirtualMachineByInterfaceIpKey: vmKey}); err != nil {
+	if err := s.client.List(context.Background(), vmByIp, client.InNamespace(tenant), client.MatchingFields{VirtualMachineByInterfaceIpKey: vmKey}); err != nil {
 		return nil, "", "", "", fmt.Errorf("error listing machine for ip %q - %s", vmKey, err.Error())
 	}
 

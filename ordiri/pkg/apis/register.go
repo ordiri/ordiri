@@ -1,6 +1,7 @@
 package apis
 
 import (
+	"github.com/ordiri/ordiri/pkg/apis/authorization"
 	compute "github.com/ordiri/ordiri/pkg/apis/compute"
 	core "github.com/ordiri/ordiri/pkg/apis/core"
 	network "github.com/ordiri/ordiri/pkg/apis/network"
@@ -21,6 +22,9 @@ var AddToScheme = func(scheme *runtime.Scheme) error {
 	if err := storage.AddToScheme(scheme); err != nil {
 		return err
 	}
+	if err := authorization.AddToScheme(scheme); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -36,6 +40,9 @@ func RegisterDefaults(scheme *runtime.Scheme) error {
 		return err
 	}
 	if err := storage.RegisterDefaults(scheme); err != nil {
+		return err
+	}
+	if err := authorization.RegisterDefaults(scheme); err != nil {
 		return err
 	}
 

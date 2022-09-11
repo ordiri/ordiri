@@ -32,6 +32,7 @@ import (
 // FakeVirtualMachineDeployments implements VirtualMachineDeploymentInterface
 type FakeVirtualMachineDeployments struct {
 	Fake *FakeComputeV1alpha1
+	ns   string
 }
 
 var virtualmachinedeploymentsResource = schema.GroupVersionResource{Group: "compute.ordiri.com", Version: "v1alpha1", Resource: "virtualmachinedeployments"}
@@ -41,7 +42,8 @@ var virtualmachinedeploymentsKind = schema.GroupVersionKind{Group: "compute.ordi
 // Get takes name of the virtualMachineDeployment, and returns the corresponding virtualMachineDeployment object, and an error if there is any.
 func (c *FakeVirtualMachineDeployments) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.VirtualMachineDeployment, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootGetAction(virtualmachinedeploymentsResource, name), &v1alpha1.VirtualMachineDeployment{})
+		Invokes(testing.NewGetAction(virtualmachinedeploymentsResource, c.ns, name), &v1alpha1.VirtualMachineDeployment{})
+
 	if obj == nil {
 		return nil, err
 	}
@@ -51,7 +53,8 @@ func (c *FakeVirtualMachineDeployments) Get(ctx context.Context, name string, op
 // List takes label and field selectors, and returns the list of VirtualMachineDeployments that match those selectors.
 func (c *FakeVirtualMachineDeployments) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.VirtualMachineDeploymentList, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootListAction(virtualmachinedeploymentsResource, virtualmachinedeploymentsKind, opts), &v1alpha1.VirtualMachineDeploymentList{})
+		Invokes(testing.NewListAction(virtualmachinedeploymentsResource, virtualmachinedeploymentsKind, c.ns, opts), &v1alpha1.VirtualMachineDeploymentList{})
+
 	if obj == nil {
 		return nil, err
 	}
@@ -72,13 +75,15 @@ func (c *FakeVirtualMachineDeployments) List(ctx context.Context, opts v1.ListOp
 // Watch returns a watch.Interface that watches the requested virtualMachineDeployments.
 func (c *FakeVirtualMachineDeployments) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
 	return c.Fake.
-		InvokesWatch(testing.NewRootWatchAction(virtualmachinedeploymentsResource, opts))
+		InvokesWatch(testing.NewWatchAction(virtualmachinedeploymentsResource, c.ns, opts))
+
 }
 
 // Create takes the representation of a virtualMachineDeployment and creates it.  Returns the server's representation of the virtualMachineDeployment, and an error, if there is any.
 func (c *FakeVirtualMachineDeployments) Create(ctx context.Context, virtualMachineDeployment *v1alpha1.VirtualMachineDeployment, opts v1.CreateOptions) (result *v1alpha1.VirtualMachineDeployment, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootCreateAction(virtualmachinedeploymentsResource, virtualMachineDeployment), &v1alpha1.VirtualMachineDeployment{})
+		Invokes(testing.NewCreateAction(virtualmachinedeploymentsResource, c.ns, virtualMachineDeployment), &v1alpha1.VirtualMachineDeployment{})
+
 	if obj == nil {
 		return nil, err
 	}
@@ -88,7 +93,8 @@ func (c *FakeVirtualMachineDeployments) Create(ctx context.Context, virtualMachi
 // Update takes the representation of a virtualMachineDeployment and updates it. Returns the server's representation of the virtualMachineDeployment, and an error, if there is any.
 func (c *FakeVirtualMachineDeployments) Update(ctx context.Context, virtualMachineDeployment *v1alpha1.VirtualMachineDeployment, opts v1.UpdateOptions) (result *v1alpha1.VirtualMachineDeployment, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootUpdateAction(virtualmachinedeploymentsResource, virtualMachineDeployment), &v1alpha1.VirtualMachineDeployment{})
+		Invokes(testing.NewUpdateAction(virtualmachinedeploymentsResource, c.ns, virtualMachineDeployment), &v1alpha1.VirtualMachineDeployment{})
+
 	if obj == nil {
 		return nil, err
 	}
@@ -99,7 +105,8 @@ func (c *FakeVirtualMachineDeployments) Update(ctx context.Context, virtualMachi
 // Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
 func (c *FakeVirtualMachineDeployments) UpdateStatus(ctx context.Context, virtualMachineDeployment *v1alpha1.VirtualMachineDeployment, opts v1.UpdateOptions) (*v1alpha1.VirtualMachineDeployment, error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootUpdateSubresourceAction(virtualmachinedeploymentsResource, "status", virtualMachineDeployment), &v1alpha1.VirtualMachineDeployment{})
+		Invokes(testing.NewUpdateSubresourceAction(virtualmachinedeploymentsResource, "status", c.ns, virtualMachineDeployment), &v1alpha1.VirtualMachineDeployment{})
+
 	if obj == nil {
 		return nil, err
 	}
@@ -109,13 +116,14 @@ func (c *FakeVirtualMachineDeployments) UpdateStatus(ctx context.Context, virtua
 // Delete takes name of the virtualMachineDeployment and deletes it. Returns an error if one occurs.
 func (c *FakeVirtualMachineDeployments) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
 	_, err := c.Fake.
-		Invokes(testing.NewRootDeleteActionWithOptions(virtualmachinedeploymentsResource, name, opts), &v1alpha1.VirtualMachineDeployment{})
+		Invokes(testing.NewDeleteActionWithOptions(virtualmachinedeploymentsResource, c.ns, name, opts), &v1alpha1.VirtualMachineDeployment{})
+
 	return err
 }
 
 // DeleteCollection deletes a collection of objects.
 func (c *FakeVirtualMachineDeployments) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewRootDeleteCollectionAction(virtualmachinedeploymentsResource, listOpts)
+	action := testing.NewDeleteCollectionAction(virtualmachinedeploymentsResource, c.ns, listOpts)
 
 	_, err := c.Fake.Invokes(action, &v1alpha1.VirtualMachineDeploymentList{})
 	return err
@@ -124,7 +132,8 @@ func (c *FakeVirtualMachineDeployments) DeleteCollection(ctx context.Context, op
 // Patch applies the patch and returns the patched virtualMachineDeployment.
 func (c *FakeVirtualMachineDeployments) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.VirtualMachineDeployment, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootPatchSubresourceAction(virtualmachinedeploymentsResource, name, pt, data, subresources...), &v1alpha1.VirtualMachineDeployment{})
+		Invokes(testing.NewPatchSubresourceAction(virtualmachinedeploymentsResource, c.ns, name, pt, data, subresources...), &v1alpha1.VirtualMachineDeployment{})
+
 	if obj == nil {
 		return nil, err
 	}

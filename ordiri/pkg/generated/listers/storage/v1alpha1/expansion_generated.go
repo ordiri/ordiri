@@ -21,6 +21,14 @@ package v1alpha1
 // VolumeLister.
 type VolumeListerExpansion interface{}
 
+// VolumeNamespaceListerExpansion allows custom methods to be added to
+// VolumeNamespaceLister.
+type VolumeNamespaceListerExpansion interface{}
+
 // VolumeClaimListerExpansion allows custom methods to be added to
 // VolumeClaimLister.
 type VolumeClaimListerExpansion interface{}
+
+// VolumeClaimNamespaceListerExpansion allows custom methods to be added to
+// VolumeClaimNamespaceLister.
+type VolumeClaimNamespaceListerExpansion interface{}

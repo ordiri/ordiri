@@ -51,7 +51,7 @@ func (ln *linuxDriver) enableUnitFile(ctx context.Context, baseDir string, unitN
 			return err
 		}
 
-		log.V(5).Info("enabling systemd service", "unit", unitName)
+		log.V(5).Info("enabling systemd service", "unit", unitName, "unitFile", unitFile)
 		started, _, err := ln.dbus.EnableUnitFilesContext(ctx, []string{unitFile}, true, true)
 		if err != nil {
 			return fmt.Errorf("unable to enable system unit file %q - %w", unitName, err)

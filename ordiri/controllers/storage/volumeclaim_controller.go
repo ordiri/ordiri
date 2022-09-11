@@ -64,7 +64,7 @@ func (r *VolumeClaimReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		return ctrl.Result{}, err
 	}
 
-	poolName := "tenant1"
+	poolName := vc.Namespace
 
 	if _, err := r.ceph.GetPoolByName(poolName); err != nil {
 		if err := r.ceph.MakePool(poolName); err != nil {
@@ -127,6 +127,7 @@ func (r *VolumeClaimReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 			Kind:       volume.Kind,
 			APIVersion: volume.APIVersion,
 			Name:       volume.Name,
+			Namespace:  volume.Namespace,
 			UID:        volume.UID,
 		}
 		volume.Spec.Size = vc.Spec.Size

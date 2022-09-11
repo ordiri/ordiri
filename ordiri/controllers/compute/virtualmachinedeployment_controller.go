@@ -79,6 +79,7 @@ func (r *VirtualMachineDeploymentReconciler) Reconcile(ctx context.Context, req 
 
 		rs := &computev1alpha1.VirtualMachineReplicaSet{}
 		rs.Name = deployment.Name
+		rs.Namespace = deployment.Namespace
 		if err := r.Client.Delete(ctx, rs); err != nil {
 			if errors.IsNotFound(err) {
 				return ctrl.Result{}, nil
@@ -111,6 +112,7 @@ func (r *VirtualMachineDeploymentReconciler) Reconcile(ctx context.Context, req 
 
 	rs := &computev1alpha1.VirtualMachineReplicaSet{}
 	rs.Name = deployment.Name
+	rs.Namespace = deployment.Namespace
 
 	_, err := ctrl.CreateOrUpdate(ctx, r.Client, rs, func() error {
 		if !reflect.DeepEqual(rs.Spec.Template, deployment.Spec.Template) {
@@ -122,7 +124,7 @@ func (r *VirtualMachineDeploymentReconciler) Reconcile(ctx context.Context, req 
 		return ctrl.SetControllerReference(deployment, rs, r.Scheme)
 	})
 
-	log.V(5).Info("found replicaset", "rs", rs)
+	log.V(5).Info("found replicaset for deployment", "rs", rs)
 
 	if err != nil {
 		return ctrl.Result{}, err

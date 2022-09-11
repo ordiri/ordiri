@@ -201,6 +201,7 @@ func (ln *linuxDriver) Start(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+	curNs.Close()
 	stopCh := make(chan error)
 	defer close(stopCh)
 

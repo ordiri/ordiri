@@ -44,15 +44,15 @@ func New(f internalinterfaces.SharedInformerFactory, namespace string, tweakList
 
 // VirtualMachines returns a VirtualMachineInformer.
 func (v *version) VirtualMachines() VirtualMachineInformer {
-	return &virtualMachineInformer{factory: v.factory, tweakListOptions: v.tweakListOptions}
+	return &virtualMachineInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
 }
 
 // VirtualMachineDeployments returns a VirtualMachineDeploymentInformer.
 func (v *version) VirtualMachineDeployments() VirtualMachineDeploymentInformer {
-	return &virtualMachineDeploymentInformer{factory: v.factory, tweakListOptions: v.tweakListOptions}
+	return &virtualMachineDeploymentInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
 }
 
 // VirtualMachineReplicaSets returns a VirtualMachineReplicaSetInformer.
 func (v *version) VirtualMachineReplicaSets() VirtualMachineReplicaSetInformer {
-	return &virtualMachineReplicaSetInformer{factory: v.factory, tweakListOptions: v.tweakListOptions}
+	return &virtualMachineReplicaSetInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
 }

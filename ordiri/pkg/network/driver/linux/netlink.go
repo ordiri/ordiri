@@ -64,6 +64,7 @@ func (ln *linuxDriver) getOrCreateVeth(ctx context.Context, namespace string, ca
 	if err != nil {
 		return fmt.Errorf("unable to get namespace for public gateway ns - %w", err)
 	}
+	defer handle.Close()
 	nlhandle, err := netlink.NewHandleAt(handle)
 	if err != nil {
 		return fmt.Errorf("unable to get namespace for public gateway ns - %w", err)

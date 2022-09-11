@@ -19,6 +19,8 @@ package fake
 
 import (
 	clientset "github.com/ordiri/ordiri/pkg/generated/clientset/versioned"
+	authorizationv1alpha1 "github.com/ordiri/ordiri/pkg/generated/clientset/versioned/typed/authorization/v1alpha1"
+	fakeauthorizationv1alpha1 "github.com/ordiri/ordiri/pkg/generated/clientset/versioned/typed/authorization/v1alpha1/fake"
 	computev1alpha1 "github.com/ordiri/ordiri/pkg/generated/clientset/versioned/typed/compute/v1alpha1"
 	fakecomputev1alpha1 "github.com/ordiri/ordiri/pkg/generated/clientset/versioned/typed/compute/v1alpha1/fake"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/generated/clientset/versioned/typed/core/v1alpha1"
@@ -83,6 +85,11 @@ var (
 	_ clientset.Interface = &Clientset{}
 	_ testing.FakeClient  = &Clientset{}
 )
+
+// AuthorizationV1alpha1 retrieves the AuthorizationV1alpha1Client
+func (c *Clientset) AuthorizationV1alpha1() authorizationv1alpha1.AuthorizationV1alpha1Interface {
+	return &fakeauthorizationv1alpha1.FakeAuthorizationV1alpha1{Fake: &c.Fake}
+}
 
 // ComputeV1alpha1 retrieves the ComputeV1alpha1Client
 func (c *Clientset) ComputeV1alpha1() computev1alpha1.ComputeV1alpha1Interface {

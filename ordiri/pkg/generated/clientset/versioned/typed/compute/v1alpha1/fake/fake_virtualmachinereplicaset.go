@@ -32,6 +32,7 @@ import (
 // FakeVirtualMachineReplicaSets implements VirtualMachineReplicaSetInterface
 type FakeVirtualMachineReplicaSets struct {
 	Fake *FakeComputeV1alpha1
+	ns   string
 }
 
 var virtualmachinereplicasetsResource = schema.GroupVersionResource{Group: "compute.ordiri.com", Version: "v1alpha1", Resource: "virtualmachinereplicasets"}
@@ -41,7 +42,8 @@ var virtualmachinereplicasetsKind = schema.GroupVersionKind{Group: "compute.ordi
 // Get takes name of the virtualMachineReplicaSet, and returns the corresponding virtualMachineReplicaSet object, and an error if there is any.
 func (c *FakeVirtualMachineReplicaSets) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.VirtualMachineReplicaSet, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootGetAction(virtualmachinereplicasetsResource, name), &v1alpha1.VirtualMachineReplicaSet{})
+		Invokes(testing.NewGetAction(virtualmachinereplicasetsResource, c.ns, name), &v1alpha1.VirtualMachineReplicaSet{})
+
 	if obj == nil {
 		return nil, err
 	}
@@ -51,7 +53,8 @@ func (c *FakeVirtualMachineReplicaSets) Get(ctx context.Context, name string, op
 // List takes label and field selectors, and returns the list of VirtualMachineReplicaSets that match those selectors.
 func (c *FakeVirtualMachineReplicaSets) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.VirtualMachineReplicaSetList, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootListAction(virtualmachinereplicasetsResource, virtualmachinereplicasetsKind, opts), &v1alpha1.VirtualMachineReplicaSetList{})
+		Invokes(testing.NewListAction(virtualmachinereplicasetsResource, virtualmachinereplicasetsKind, c.ns, opts), &v1alpha1.VirtualMachineReplicaSetList{})
+
 	if obj == nil {
 		return nil, err
 	}
@@ -72,13 +75,15 @@ func (c *FakeVirtualMachineReplicaSets) List(ctx context.Context, opts v1.ListOp
 // Watch returns a watch.Interface that watches the requested virtualMachineReplicaSets.
 func (c *FakeVirtualMachineReplicaSets) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
 	return c.Fake.
-		InvokesWatch(testing.NewRootWatchAction(virtualmachinereplicasetsResource, opts))
+		InvokesWatch(testing.NewWatchAction(virtualmachinereplicasetsResource, c.ns, opts))
+
 }
 
 // Create takes the representation of a virtualMachineReplicaSet and creates it.  Returns the server's representation of the virtualMachineReplicaSet, and an error, if there is any.
 func (c *FakeVirtualMachineReplicaSets) Create(ctx context.Context, virtualMachineReplicaSet *v1alpha1.VirtualMachineReplicaSet, opts v1.CreateOptions) (result *v1alpha1.VirtualMachineReplicaSet, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootCreateAction(virtualmachinereplicasetsResource, virtualMachineReplicaSet), &v1alpha1.VirtualMachineReplicaSet{})
+		Invokes(testing.NewCreateAction(virtualmachinereplicasetsResource, c.ns, virtualMachineReplicaSet), &v1alpha1.VirtualMachineReplicaSet{})
+
 	if obj == nil {
 		return nil, err
 	}
@@ -88,7 +93,8 @@ func (c *FakeVirtualMachineReplicaSets) Create(ctx context.Context, virtualMachi
 // Update takes the representation of a virtualMachineReplicaSet and updates it. Returns the server's representation of the virtualMachineReplicaSet, and an error, if there is any.
 func (c *FakeVirtualMachineReplicaSets) Update(ctx context.Context, virtualMachineReplicaSet *v1alpha1.VirtualMachineReplicaSet, opts v1.UpdateOptions) (result *v1alpha1.VirtualMachineReplicaSet, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootUpdateAction(virtualmachinereplicasetsResource, virtualMachineReplicaSet), &v1alpha1.VirtualMachineReplicaSet{})
+		Invokes(testing.NewUpdateAction(virtualmachinereplicasetsResource, c.ns, virtualMachineReplicaSet), &v1alpha1.VirtualMachineReplicaSet{})
+
 	if obj == nil {
 		return nil, err
 	}
@@ -99,7 +105,8 @@ func (c *FakeVirtualMachineReplicaSets) Update(ctx context.Context, virtualMachi
 // Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
 func (c *FakeVirtualMachineReplicaSets) UpdateStatus(ctx context.Context, virtualMachineReplicaSet *v1alpha1.VirtualMachineReplicaSet, opts v1.UpdateOptions) (*v1alpha1.VirtualMachineReplicaSet, error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootUpdateSubresourceAction(virtualmachinereplicasetsResource, "status", virtualMachineReplicaSet), &v1alpha1.VirtualMachineReplicaSet{})
+		Invokes(testing.NewUpdateSubresourceAction(virtualmachinereplicasetsResource, "status", c.ns, virtualMachineReplicaSet), &v1alpha1.VirtualMachineReplicaSet{})
+
 	if obj == nil {
 		return nil, err
 	}
@@ -109,13 +116,14 @@ func (c *FakeVirtualMachineReplicaSets) UpdateStatus(ctx context.Context, virtua
 // Delete takes name of the virtualMachineReplicaSet and deletes it. Returns an error if one occurs.
 func (c *FakeVirtualMachineReplicaSets) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
 	_, err := c.Fake.
-		Invokes(testing.NewRootDeleteActionWithOptions(virtualmachinereplicasetsResource, name, opts), &v1alpha1.VirtualMachineReplicaSet{})
+		Invokes(testing.NewDeleteActionWithOptions(virtualmachinereplicasetsResource, c.ns, name, opts), &v1alpha1.VirtualMachineReplicaSet{})
+
 	return err
 }
 
 // DeleteCollection deletes a collection of objects.
 func (c *FakeVirtualMachineReplicaSets) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewRootDeleteCollectionAction(virtualmachinereplicasetsResource, listOpts)
+	action := testing.NewDeleteCollectionAction(virtualmachinereplicasetsResource, c.ns, listOpts)
 
 	_, err := c.Fake.Invokes(action, &v1alpha1.VirtualMachineReplicaSetList{})
 	return err
@@ -124,7 +132,8 @@ func (c *FakeVirtualMachineReplicaSets) DeleteCollection(ctx context.Context, op
 // Patch applies the patch and returns the patched virtualMachineReplicaSet.
 func (c *FakeVirtualMachineReplicaSets) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.VirtualMachineReplicaSet, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootPatchSubresourceAction(virtualmachinereplicasetsResource, name, pt, data, subresources...), &v1alpha1.VirtualMachineReplicaSet{})
+		Invokes(testing.NewPatchSubresourceAction(virtualmachinereplicasetsResource, c.ns, name, pt, data, subresources...), &v1alpha1.VirtualMachineReplicaSet{})
+
 	if obj == nil {
 		return nil, err
 	}

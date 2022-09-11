@@ -18,6 +18,7 @@ package network
 
 import (
 	"context"
+	"fmt"
 
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -97,6 +98,7 @@ func (r *NodeSubnetVlanAllocator) Reconcile(ctx context.Context, req ctrl.Reques
 
 	for _, existing := range n.Status.VirtualMachines {
 		vm := &computev1alpha1.VirtualMachine{}
+		vm.Namespace = existing.Namespace
 		vm.Name = existing.Name
 		if err := r.Client.Get(ctx, client.ObjectKeyFromObject(vm), vm); err != nil {
 			return ctrl.Result{}, err
@@ -108,6 +110,7 @@ func (r *NodeSubnetVlanAllocator) Reconcile(ctx context.Context, req ctrl.Reques
 					delete(previouslyAllocatedNetworks, iface.Network)
 				} else {
 					nw := &networkv1alpha1.Network{}
+					nw.Namespace = vm.Namespace
 					nw.Name = iface.Network
 					if err := r.Client.Get(ctx, client.ObjectKeyFromObject(nw), nw); err != nil {
 						return ctrl.Result{}, err
@@ -116,6 +119,7 @@ func (r *NodeSubnetVlanAllocator) Reconcile(ctx context.Context, req ctrl.Reques
 						ObjectReference: v1.ObjectReference{
 							Kind:       nw.Kind,
 							Name:       nw.Name,
+							Namespace:  nw.Namespace,
 							UID:        nw.UID,
 							APIVersion: nw.APIVersion,
 						},
@@ -124,8 +128,8 @@ func (r *NodeSubnetVlanAllocator) Reconcile(ctx context.Context, req ctrl.Reques
 				}
 			}
 			subnets := &networkv1alpha1.SubnetList{}
-			if err := r.Client.List(ctx, subnets, client.MatchingFields{SubnetByNetworkKey: iface.Network}); err != nil {
-				return ctrl.Result{}, err
+			if err := r.Client.List(ctx, subnets, client.InNamespace(vm.Namespace), client.MatchingFields{SubnetByNetworkKey: iface.Network}); err != nil {
+				return ctrl.Result{}, fmt.Errorf("error getting subnets - %w", err)
 			}
 
 			for _, sn := range subnets.Items {
@@ -135,6 +139,7 @@ func (r *NodeSubnetVlanAllocator) Reconcile(ctx context.Context, req ctrl.Reques
 						delete(previouslyAllocatedSubnets, sn.Name)
 					} else {
 						subnet := &networkv1alpha1.Subnet{}
+						subnet.Namespace = sn.Namespace
 						subnet.Name = sn.Name
 						if err := r.Client.Get(ctx, client.ObjectKeyFromObject(subnet), subnet); err != nil {
 							return ctrl.Result{}, err
@@ -143,6 +148,7 @@ func (r *NodeSubnetVlanAllocator) Reconcile(ctx context.Context, req ctrl.Reques
 							ObjectReference: v1.ObjectReference{
 								Kind:       subnet.Kind,
 								Name:       subnet.Name,
+								Namespace:  subnet.Namespace,
 								UID:        subnet.UID,
 								APIVersion: subnet.APIVersion,
 							},

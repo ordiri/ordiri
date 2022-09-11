@@ -35,6 +35,7 @@ func NewCmdCreateNetwork(f cmdutil.Factory, ioStreams genericclioptions.IOStream
 			if err != nil {
 				return err
 			}
+			tenant := cmd.Flag("namespace").Value.String()
 			client := versioned.NewForConfigOrDie(restConfig)
 			// o.Client, err = coreclient.NewForConfig(restConfig)
 
@@ -44,7 +45,7 @@ func NewCmdCreateNetwork(f cmdutil.Factory, ioStreams genericclioptions.IOStream
 				},
 			}
 
-			_, err = client.NetworkV1alpha1().Networks().Create(cmd.Context(), network, v1.CreateOptions{})
+			_, err = client.NetworkV1alpha1().Networks(tenant).Create(cmd.Context(), network, v1.CreateOptions{})
 			if err != nil {
 				return err
 			}

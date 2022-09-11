@@ -78,7 +78,7 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 	if r.NetworkManager.HasNetwork(nw.Name) {
 		net = r.NetworkManager.GetNetwork(nw.Name)
 	} else {
-		_net, err := network.NewNetwork(nw.Name, nw.Spec.Cidr, nw.Status.Vni)
+		_net, err := network.NewNetwork(nw.Namespace, nw.Name, nw.Spec.Cidr, nw.Status.Vni)
 		if err != nil {
 			return ctrl.Result{}, err
 		}
@@ -103,7 +103,7 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 	} else if nodeWantsNetwork {
 		log.V(5).Info("Starting to build networking", "nodeWantsNetwork", nodeWantsNetwork, "nodeHasNetwork", nodeHasNetwork, "network", net)
 		vmsInNetwork := &computev1alpha1.VirtualMachineList{}
-		if err := r.Client.List(ctx, vmsInNetwork, client.MatchingFields{"VmsByNetwork": nw.Name}); err != nil {
+		if err := r.Client.List(ctx, vmsInNetwork, client.InNamespace(nw.Namespace), client.MatchingFields{"VmsByNetwork": nw.Name}); err != nil {
 			return ctrl.Result{}, fmt.Errorf("unable to get vms in this network - %w", err)
 		}
 

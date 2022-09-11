@@ -32,7 +32,7 @@ import (
 // VirtualMachineDeploymentsGetter has a method to return a VirtualMachineDeploymentInterface.
 // A group's client should implement this interface.
 type VirtualMachineDeploymentsGetter interface {
-	VirtualMachineDeployments() VirtualMachineDeploymentInterface
+	VirtualMachineDeployments(namespace string) VirtualMachineDeploymentInterface
 }
 
 // VirtualMachineDeploymentInterface has methods to work with VirtualMachineDeployment resources.
@@ -52,12 +52,14 @@ type VirtualMachineDeploymentInterface interface {
 // virtualMachineDeployments implements VirtualMachineDeploymentInterface
 type virtualMachineDeployments struct {
 	client rest.Interface
+	ns     string
 }
 
 // newVirtualMachineDeployments returns a VirtualMachineDeployments
-func newVirtualMachineDeployments(c *ComputeV1alpha1Client) *virtualMachineDeployments {
+func newVirtualMachineDeployments(c *ComputeV1alpha1Client, namespace string) *virtualMachineDeployments {
 	return &virtualMachineDeployments{
 		client: c.RESTClient(),
+		ns:     namespace,
 	}
 }
 
@@ -65,6 +67,7 @@ func newVirtualMachineDeployments(c *ComputeV1alpha1Client) *virtualMachineDeplo
 func (c *virtualMachineDeployments) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.VirtualMachineDeployment, err error) {
 	result = &v1alpha1.VirtualMachineDeployment{}
 	err = c.client.Get().
+		Namespace(c.ns).
 		Resource("virtualmachinedeployments").
 		Name(name).
 		VersionedParams(&options, scheme.ParameterCodec).
@@ -81,6 +84,7 @@ func (c *virtualMachineDeployments) List(ctx context.Context, opts v1.ListOption
 	}
 	result = &v1alpha1.VirtualMachineDeploymentList{}
 	err = c.client.Get().
+		Namespace(c.ns).
 		Resource("virtualmachinedeployments").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -97,6 +101,7 @@ func (c *virtualMachineDeployments) Watch(ctx context.Context, opts v1.ListOptio
 	}
 	opts.Watch = true
 	return c.client.Get().
+		Namespace(c.ns).
 		Resource("virtualmachinedeployments").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -107,6 +112,7 @@ func (c *virtualMachineDeployments) Watch(ctx context.Context, opts v1.ListOptio
 func (c *virtualMachineDeployments) Create(ctx context.Context, virtualMachineDeployment *v1alpha1.VirtualMachineDeployment, opts v1.CreateOptions) (result *v1alpha1.VirtualMachineDeployment, err error) {
 	result = &v1alpha1.VirtualMachineDeployment{}
 	err = c.client.Post().
+		Namespace(c.ns).
 		Resource("virtualmachinedeployments").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Body(virtualMachineDeployment).
@@ -119,6 +125,7 @@ func (c *virtualMachineDeployments) Create(ctx context.Context, virtualMachineDe
 func (c *virtualMachineDeployments) Update(ctx context.Context, virtualMachineDeployment *v1alpha1.VirtualMachineDeployment, opts v1.UpdateOptions) (result *v1alpha1.VirtualMachineDeployment, err error) {
 	result = &v1alpha1.VirtualMachineDeployment{}
 	err = c.client.Put().
+		Namespace(c.ns).
 		Resource("virtualmachinedeployments").
 		Name(virtualMachineDeployment.Name).
 		VersionedParams(&opts, scheme.ParameterCodec).
@@ -133,6 +140,7 @@ func (c *virtualMachineDeployments) Update(ctx context.Context, virtualMachineDe
 func (c *virtualMachineDeployments) UpdateStatus(ctx context.Context, virtualMachineDeployment *v1alpha1.VirtualMachineDeployment, opts v1.UpdateOptions) (result *v1alpha1.VirtualMachineDeployment, err error) {
 	result = &v1alpha1.VirtualMachineDeployment{}
 	err = c.client.Put().
+		Namespace(c.ns).
 		Resource("virtualmachinedeployments").
 		Name(virtualMachineDeployment.Name).
 		SubResource("status").
@@ -146,6 +154,7 @@ func (c *virtualMachineDeployments) UpdateStatus(ctx context.Context, virtualMac
 // Delete takes name of the virtualMachineDeployment and deletes it. Returns an error if one occurs.
 func (c *virtualMachineDeployments) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
 	return c.client.Delete().
+		Namespace(c.ns).
 		Resource("virtualmachinedeployments").
 		Name(name).
 		Body(&opts).
@@ -160,6 +169,7 @@ func (c *virtualMachineDeployments) DeleteCollection(ctx context.Context, opts v
 		timeout = time.Duration(*listOpts.TimeoutSeconds) * time.Second
 	}
 	return c.client.Delete().
+		Namespace(c.ns).
 		Resource("virtualmachinedeployments").
 		VersionedParams(&listOpts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -172,6 +182,7 @@ func (c *virtualMachineDeployments) DeleteCollection(ctx context.Context, opts v
 func (c *virtualMachineDeployments) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.VirtualMachineDeployment, err error) {
 	result = &v1alpha1.VirtualMachineDeployment{}
 	err = c.client.Patch(pt).
+		Namespace(c.ns).
 		Resource("virtualmachinedeployments").
 		Name(name).
 		SubResource(subresources...).

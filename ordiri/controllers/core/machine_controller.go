@@ -41,9 +41,9 @@ type MachineReconciler struct {
 	Scheme *runtime.Scheme
 }
 
-//+kubebuilder:rbac:groups=core,resources=machines,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=core,resources=machines/status,verbs=get;update;patch
-//+kubebuilder:rbac:groups=core,resources=machines/finalizers,verbs=update
+// +kubebuilder:rbac:groups=core,resources=machines,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=core,resources=machines/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=core,resources=machines/finalizers,verbs=update
 func (r *MachineReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := log.FromContext(ctx)
 	log.V(5).Info("Starting to reconcile", "request", req)
@@ -76,7 +76,7 @@ func (r *MachineReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 	}
 
 	mp := &corev1alpha1.MachineProfile{}
-	if err := r.Client.Get(ctx, client.ObjectKey{Name: m.Spec.Role}, mp); err != nil {
+	if err := r.Client.Get(ctx, client.ObjectKey{Namespace: m.Namespace, Name: m.Spec.Role}, mp); err != nil {
 		if !errors.IsNotFound(err) {
 			return ctrl.Result{}, err
 		}

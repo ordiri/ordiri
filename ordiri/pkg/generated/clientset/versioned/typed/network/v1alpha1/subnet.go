@@ -32,7 +32,7 @@ import (
 // SubnetsGetter has a method to return a SubnetInterface.
 // A group's client should implement this interface.
 type SubnetsGetter interface {
-	Subnets() SubnetInterface
+	Subnets(namespace string) SubnetInterface
 }
 
 // SubnetInterface has methods to work with Subnet resources.
@@ -52,12 +52,14 @@ type SubnetInterface interface {
 // subnets implements SubnetInterface
 type subnets struct {
 	client rest.Interface
+	ns     string
 }
 
 // newSubnets returns a Subnets
-func newSubnets(c *NetworkV1alpha1Client) *subnets {
+func newSubnets(c *NetworkV1alpha1Client, namespace string) *subnets {
 	return &subnets{
 		client: c.RESTClient(),
+		ns:     namespace,
 	}
 }
 
@@ -65,6 +67,7 @@ func newSubnets(c *NetworkV1alpha1Client) *subnets {
 func (c *subnets) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.Subnet, err error) {
 	result = &v1alpha1.Subnet{}
 	err = c.client.Get().
+		Namespace(c.ns).
 		Resource("subnets").
 		Name(name).
 		VersionedParams(&options, scheme.ParameterCodec).
@@ -81,6 +84,7 @@ func (c *subnets) List(ctx context.Context, opts v1.ListOptions) (result *v1alph
 	}
 	result = &v1alpha1.SubnetList{}
 	err = c.client.Get().
+		Namespace(c.ns).
 		Resource("subnets").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -97,6 +101,7 @@ func (c *subnets) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interfa
 	}
 	opts.Watch = true
 	return c.client.Get().
+		Namespace(c.ns).
 		Resource("subnets").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -107,6 +112,7 @@ func (c *subnets) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interfa
 func (c *subnets) Create(ctx context.Context, subnet *v1alpha1.Subnet, opts v1.CreateOptions) (result *v1alpha1.Subnet, err error) {
 	result = &v1alpha1.Subnet{}
 	err = c.client.Post().
+		Namespace(c.ns).
 		Resource("subnets").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Body(subnet).
@@ -119,6 +125,7 @@ func (c *subnets) Create(ctx context.Context, subnet *v1alpha1.Subnet, opts v1.C
 func (c *subnets) Update(ctx context.Context, subnet *v1alpha1.Subnet, opts v1.UpdateOptions) (result *v1alpha1.Subnet, err error) {
 	result = &v1alpha1.Subnet{}
 	err = c.client.Put().
+		Namespace(c.ns).
 		Resource("subnets").
 		Name(subnet.Name).
 		VersionedParams(&opts, scheme.ParameterCodec).
@@ -133,6 +140,7 @@ func (c *subnets) Update(ctx context.Context, subnet *v1alpha1.Subnet, opts v1.U
 func (c *subnets) UpdateStatus(ctx context.Context, subnet *v1alpha1.Subnet, opts v1.UpdateOptions) (result *v1alpha1.Subnet, err error) {
 	result = &v1alpha1.Subnet{}
 	err = c.client.Put().
+		Namespace(c.ns).
 		Resource("subnets").
 		Name(subnet.Name).
 		SubResource("status").
@@ -146,6 +154,7 @@ func (c *subnets) UpdateStatus(ctx context.Context, subnet *v1alpha1.Subnet, opt
 // Delete takes name of the subnet and deletes it. Returns an error if one occurs.
 func (c *subnets) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
 	return c.client.Delete().
+		Namespace(c.ns).
 		Resource("subnets").
 		Name(name).
 		Body(&opts).
@@ -160,6 +169,7 @@ func (c *subnets) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, l
 		timeout = time.Duration(*listOpts.TimeoutSeconds) * time.Second
 	}
 	return c.client.Delete().
+		Namespace(c.ns).
 		Resource("subnets").
 		VersionedParams(&listOpts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -172,6 +182,7 @@ func (c *subnets) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, l
 func (c *subnets) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.Subnet, err error) {
 	result = &v1alpha1.Subnet{}
 	err = c.client.Patch(pt).
+		Namespace(c.ns).
 		Resource("subnets").
 		Name(name).
 		SubResource(subresources...).

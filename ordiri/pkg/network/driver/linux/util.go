@@ -9,10 +9,12 @@ import (
 	"strings"
 	"time"
 
-	"io/ioutil"
 	"path"
 
 	"github.com/ordiri/ordiri/pkg/network/api"
+	"github.com/vishvananda/netlink"
+	"github.com/vishvananda/netns"
+	"inet.af/netaddr"
 )
 
 func dhcpUnitName(subnet api.Subnet) string {
@@ -26,14 +28,18 @@ func namespacePath(namespace string) string {
 	return fmt.Sprintf("/var/run/netns/%s", namespace)
 }
 
-func hash(s string) string {
+func hash(s string, size int) string {
 	h := fnv.New32a()
 	h.Write([]byte(s))
-	return string([]byte(fmt.Sprint(h.Sum32()))[0:5])
+	hash := fmt.Sprint(h.Sum32())
+	if size == 0 {
+		size = len(hash)
+	}
+	return string([]byte(hash)[0:size])
 }
 
 func listNamespaces() (map[string]string, error) {
-	namespaces, err := ioutil.ReadDir(networkNamespacePath)
+	namespaces, err := os.ReadDir(networkNamespacePath)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return nil, nil
@@ -99,40 +105,63 @@ func createNetworkNs(name string) error {
 	out, err := cmd.CombinedOutput()
 
 	if err != nil && !strings.Contains(string(out), "File exists") {
-		return fmt.Errorf("%s: unable to create network namespace - %s - %w", cmd.String(), string(out), err)
+		return fmt.Errorf("%s: unable to create network namespace - %q - %w", cmd.String(), string(out), err)
 	}
 	return nil
 }
 
 func setNsVethIp(namespace string, addr string, cableName string) error {
+	nsHandle, err := netns.GetFromName(namespace)
+	if err != nil {
+		return fmt.Errorf("unable to get namespace %q - %w", namespace, err)
+	}
+	defer nsHandle.Close()
 
-	cmd := exec.Command("ip", "netns", "exec", namespace, "ip", "addr", "add", addr, "dev", cableName)
-	out, err := cmd.CombinedOutput()
-	if err != nil && !strings.Contains(string(out), "File exists") {
-		return fmt.Errorf("%s: unable to add ip to ns network interface - %s - %w", cmd.String(), string(out), err)
+	nl, err := netlink.NewHandleAt(nsHandle)
+	if err != nil {
+		return fmt.Errorf("unable to create netlink handle for namespace %q - %w", namespace, err)
+	}
+	link, err := nl.LinkByName(cableName)
+	if err != nil {
+		return fmt.Errorf("unable to get interface %q in namespace %q - %w", cableName, namespace, err)
+	}
+
+	ipNw := netaddr.MustParseIPPrefix(addr)
+	if err := nl.AddrReplace(link, &netlink.Addr{
+		IPNet: ipNw.IPNet(),
+	}); err != nil {
+		return fmt.Errorf("unable to add address %q to interface %q in namespace %q - %w", ipNw.String(), cableName, namespace, err)
 	}
 
 	return nil
 }
 
-func dhcpLeaseFile(subnet api.Subnet) string {
-	baseDir := dhcpConfDir(subnet)
-	return filepath.Join(baseDir, "dnsmasq.leases")
-}
-func dhcpHostsFile(subnet api.Subnet) string {
-	baseDir := dhcpConfDir(subnet)
-	return filepath.Join(baseDir, "etc-hosts")
-}
-func dhcpHostMappingDir(subnet api.Subnet) string {
-	return filepath.Join(dhcpConfDir(subnet), "/host-mappings")
-}
-func hostMappingDir(nw api.Network) string {
-	return filepath.Join(networkDhcpConfDir(nw), "/etc-hosts.d")
+// dhcpLeaseFilePath returns the path
+func dhcpLeaseFilePath(nw api.Network, subnet api.Subnet) string {
+	return filepath.Join(dhcpConfDir(nw, subnet), "dnsmasq.leases")
 }
 
-func dhcpConfDir(subnet api.Subnet) string {
-	return filepath.Join(confDir, "/subnets", subnet.Name(), "dhcp")
+func dhcpHostsFilePath(nw api.Network, subnet api.Subnet) string {
+	return filepath.Join(dhcpConfDir(nw, subnet), "etc-hosts")
 }
-func networkDhcpConfDir(nw api.Network) string {
-	return filepath.Join(confDir, "/networks", nw.Name(), "dhcp")
+
+func dhcpHostMappingDir(nw api.Network, subnet api.Subnet) string {
+	return filepath.Join(dhcpConfDir(nw, subnet), "/host-mappings")
+}
+
+func etcHostMappingDir(nw api.Network) string {
+	return filepath.Join(dhcpConfDir(nw, nil), "/etc-hosts.d")
+}
+
+func dhcpConfDir(nw api.Network, subnet api.Subnet) string {
+	return filepath.Join(subnetConfDir(nw, subnet), "dhcp")
+}
+
+func subnetConfDir(nw api.Network, subnet api.Subnet) string {
+	sn := "_shared"
+	if subnet != nil {
+		sn = subnet.Name()
+	}
+
+	return filepath.Join(confDir, "networks", nw.Name(), "subnets", sn)
 }

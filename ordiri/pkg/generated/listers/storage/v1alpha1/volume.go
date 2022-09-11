@@ -30,9 +30,8 @@ type VolumeLister interface {
 	// List lists all Volumes in the indexer.
 	// Objects returned here must be treated as read-only.
 	List(selector labels.Selector) (ret []*v1alpha1.Volume, err error)
-	// Get retrieves the Volume from the index for a given name.
-	// Objects returned here must be treated as read-only.
-	Get(name string) (*v1alpha1.Volume, error)
+	// Volumes returns an object that can list and get Volumes.
+	Volumes(namespace string) VolumeNamespaceLister
 	VolumeListerExpansion
 }
 
@@ -54,9 +53,41 @@ func (s *volumeLister) List(selector labels.Selector) (ret []*v1alpha1.Volume, e
 	return ret, err
 }
 
-// Get retrieves the Volume from the index for a given name.
-func (s *volumeLister) Get(name string) (*v1alpha1.Volume, error) {
-	obj, exists, err := s.indexer.GetByKey(name)
+// Volumes returns an object that can list and get Volumes.
+func (s *volumeLister) Volumes(namespace string) VolumeNamespaceLister {
+	return volumeNamespaceLister{indexer: s.indexer, namespace: namespace}
+}
+
+// VolumeNamespaceLister helps list and get Volumes.
+// All objects returned here must be treated as read-only.
+type VolumeNamespaceLister interface {
+	// List lists all Volumes in the indexer for a given namespace.
+	// Objects returned here must be treated as read-only.
+	List(selector labels.Selector) (ret []*v1alpha1.Volume, err error)
+	// Get retrieves the Volume from the indexer for a given namespace and name.
+	// Objects returned here must be treated as read-only.
+	Get(name string) (*v1alpha1.Volume, error)
+	VolumeNamespaceListerExpansion
+}
+
+// volumeNamespaceLister implements the VolumeNamespaceLister
+// interface.
+type volumeNamespaceLister struct {
+	indexer   cache.Indexer
+	namespace string
+}
+
+// List lists all Volumes in the indexer for a given namespace.
+func (s volumeNamespaceLister) List(selector labels.Selector) (ret []*v1alpha1.Volume, err error) {
+	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
+		ret = append(ret, m.(*v1alpha1.Volume))
+	})
+	return ret, err
+}
+
+// Get retrieves the Volume from the indexer for a given namespace and name.
+func (s volumeNamespaceLister) Get(name string) (*v1alpha1.Volume, error) {
+	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
 	if err != nil {
 		return nil, err
 	}

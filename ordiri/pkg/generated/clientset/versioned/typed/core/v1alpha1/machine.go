@@ -32,7 +32,7 @@ import (
 // MachinesGetter has a method to return a MachineInterface.
 // A group's client should implement this interface.
 type MachinesGetter interface {
-	Machines() MachineInterface
+	Machines(namespace string) MachineInterface
 }
 
 // MachineInterface has methods to work with Machine resources.
@@ -54,12 +54,14 @@ type MachineInterface interface {
 // machines implements MachineInterface
 type machines struct {
 	client rest.Interface
+	ns     string
 }
 
 // newMachines returns a Machines
-func newMachines(c *CoreV1alpha1Client) *machines {
+func newMachines(c *CoreV1alpha1Client, namespace string) *machines {
 	return &machines{
 		client: c.RESTClient(),
+		ns:     namespace,
 	}
 }
 
@@ -67,6 +69,7 @@ func newMachines(c *CoreV1alpha1Client) *machines {
 func (c *machines) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.Machine, err error) {
 	result = &v1alpha1.Machine{}
 	err = c.client.Get().
+		Namespace(c.ns).
 		Resource("machines").
 		Name(name).
 		VersionedParams(&options, scheme.ParameterCodec).
@@ -83,6 +86,7 @@ func (c *machines) List(ctx context.Context, opts v1.ListOptions) (result *v1alp
 	}
 	result = &v1alpha1.MachineList{}
 	err = c.client.Get().
+		Namespace(c.ns).
 		Resource("machines").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -99,6 +103,7 @@ func (c *machines) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interf
 	}
 	opts.Watch = true
 	return c.client.Get().
+		Namespace(c.ns).
 		Resource("machines").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -109,6 +114,7 @@ func (c *machines) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interf
 func (c *machines) Create(ctx context.Context, machine *v1alpha1.Machine, opts v1.CreateOptions) (result *v1alpha1.Machine, err error) {
 	result = &v1alpha1.Machine{}
 	err = c.client.Post().
+		Namespace(c.ns).
 		Resource("machines").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Body(machine).
@@ -121,6 +127,7 @@ func (c *machines) Create(ctx context.Context, machine *v1alpha1.Machine, opts v
 func (c *machines) Update(ctx context.Context, machine *v1alpha1.Machine, opts v1.UpdateOptions) (result *v1alpha1.Machine, err error) {
 	result = &v1alpha1.Machine{}
 	err = c.client.Put().
+		Namespace(c.ns).
 		Resource("machines").
 		Name(machine.Name).
 		VersionedParams(&opts, scheme.ParameterCodec).
@@ -135,6 +142,7 @@ func (c *machines) Update(ctx context.Context, machine *v1alpha1.Machine, opts v
 func (c *machines) UpdateStatus(ctx context.Context, machine *v1alpha1.Machine, opts v1.UpdateOptions) (result *v1alpha1.Machine, err error) {
 	result = &v1alpha1.Machine{}
 	err = c.client.Put().
+		Namespace(c.ns).
 		Resource("machines").
 		Name(machine.Name).
 		SubResource("status").
@@ -148,6 +156,7 @@ func (c *machines) UpdateStatus(ctx context.Context, machine *v1alpha1.Machine, 
 // Delete takes name of the machine and deletes it. Returns an error if one occurs.
 func (c *machines) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
 	return c.client.Delete().
+		Namespace(c.ns).
 		Resource("machines").
 		Name(name).
 		Body(&opts).
@@ -162,6 +171,7 @@ func (c *machines) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, 
 		timeout = time.Duration(*listOpts.TimeoutSeconds) * time.Second
 	}
 	return c.client.Delete().
+		Namespace(c.ns).
 		Resource("machines").
 		VersionedParams(&listOpts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -174,6 +184,7 @@ func (c *machines) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, 
 func (c *machines) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.Machine, err error) {
 	result = &v1alpha1.Machine{}
 	err = c.client.Patch(pt).
+		Namespace(c.ns).
 		Resource("machines").
 		Name(name).
 		SubResource(subresources...).
@@ -188,6 +199,7 @@ func (c *machines) Patch(ctx context.Context, name string, pt types.PatchType, d
 func (c *machines) PutReview(ctx context.Context, machineName string, machineReview *v1alpha1.MachineReview, opts v1.UpdateOptions) (result *v1alpha1.MachineReview, err error) {
 	result = &v1alpha1.MachineReview{}
 	err = c.client.Put().
+		Namespace(c.ns).
 		Resource("machines").
 		Name(machineName).
 		SubResource("review").

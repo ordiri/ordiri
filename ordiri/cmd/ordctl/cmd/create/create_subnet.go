@@ -43,7 +43,8 @@ func NewCmdCreateSubnet(f cmdutil.Factory, ioStreams genericclioptions.IOStreams
 				},
 			}
 
-			_, err = client.NetworkV1alpha1().Subnets().Create(cmd.Context(), subnet, v1.CreateOptions{})
+			tenant := cmd.Flag("namespace").Value.String()
+			_, err = client.NetworkV1alpha1().Subnets(tenant).Create(cmd.Context(), subnet, v1.CreateOptions{})
 			if err != nil {
 				return err
 			}

@@ -27,12 +27,12 @@ type FakeCoreV1alpha1 struct {
 	*testing.Fake
 }
 
-func (c *FakeCoreV1alpha1) Machines() v1alpha1.MachineInterface {
-	return &FakeMachines{c}
+func (c *FakeCoreV1alpha1) Machines(namespace string) v1alpha1.MachineInterface {
+	return &FakeMachines{c, namespace}
 }
 
-func (c *FakeCoreV1alpha1) MachineProfiles() v1alpha1.MachineProfileInterface {
-	return &FakeMachineProfiles{c}
+func (c *FakeCoreV1alpha1) MachineProfiles(namespace string) v1alpha1.MachineProfileInterface {
+	return &FakeMachineProfiles{c, namespace}
 }
 
 func (c *FakeCoreV1alpha1) Nodes() v1alpha1.NodeInterface {

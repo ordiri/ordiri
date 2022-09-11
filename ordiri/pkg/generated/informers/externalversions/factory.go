@@ -23,6 +23,7 @@ import (
 	time "time"
 
 	versioned "github.com/ordiri/ordiri/pkg/generated/clientset/versioned"
+	authorization "github.com/ordiri/ordiri/pkg/generated/informers/externalversions/authorization"
 	compute "github.com/ordiri/ordiri/pkg/generated/informers/externalversions/compute"
 	core "github.com/ordiri/ordiri/pkg/generated/informers/externalversions/core"
 	internalinterfaces "github.com/ordiri/ordiri/pkg/generated/informers/externalversions/internalinterfaces"
@@ -174,10 +175,15 @@ type SharedInformerFactory interface {
 	ForResource(resource schema.GroupVersionResource) (GenericInformer, error)
 	WaitForCacheSync(stopCh <-chan struct{}) map[reflect.Type]bool
 
+	Authorization() authorization.Interface
 	Compute() compute.Interface
 	Core() core.Interface
 	Network() network.Interface
 	Storage() storage.Interface
+}
+
+func (f *sharedInformerFactory) Authorization() authorization.Interface {
+	return authorization.New(f, f.namespace, f.tweakListOptions)
 }
 
 func (f *sharedInformerFactory) Compute() compute.Interface {

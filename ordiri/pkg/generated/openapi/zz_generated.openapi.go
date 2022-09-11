@@ -90,6 +90,10 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.HostNetworkStatus":                    schema_pkg_apis_network_v1alpha1_HostNetworkStatus(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.HostRouterStatus":                     schema_pkg_apis_network_v1alpha1_HostRouterStatus(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.HostSubnetStatus":                     schema_pkg_apis_network_v1alpha1_HostSubnetStatus(ref),
+		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.LoadBalancer":                         schema_pkg_apis_network_v1alpha1_LoadBalancer(ref),
+		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.LoadBalancerList":                     schema_pkg_apis_network_v1alpha1_LoadBalancerList(ref),
+		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.LoadBalancerSpec":                     schema_pkg_apis_network_v1alpha1_LoadBalancerSpec(ref),
+		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.LoadBalancerStatus":                   schema_pkg_apis_network_v1alpha1_LoadBalancerStatus(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.MetadataSubnetStatus":                 schema_pkg_apis_network_v1alpha1_MetadataSubnetStatus(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.Network":                              schema_pkg_apis_network_v1alpha1_Network(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkList":                          schema_pkg_apis_network_v1alpha1_NetworkList(ref),
@@ -2724,6 +2728,124 @@ func schema_pkg_apis_network_v1alpha1_HostSubnetStatus(ref common.ReferenceCallb
 					},
 				},
 				Required: []string{"node", "vlanId"},
+			},
+		},
+	}
+}
+
+func schema_pkg_apis_network_v1alpha1_LoadBalancer(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "LoadBalancer",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"kind": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"apiVersion": {
+						SchemaProps: spec.SchemaProps{
+							Description: "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"metadata": {
+						SchemaProps: spec.SchemaProps{
+							Default: map[string]interface{}{},
+							Ref:     ref("k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"),
+						},
+					},
+					"spec": {
+						SchemaProps: spec.SchemaProps{
+							Default: map[string]interface{}{},
+							Ref:     ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.LoadBalancerSpec"),
+						},
+					},
+					"status": {
+						SchemaProps: spec.SchemaProps{
+							Default: map[string]interface{}{},
+							Ref:     ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.LoadBalancerStatus"),
+						},
+					},
+				},
+			},
+		},
+		Dependencies: []string{
+			"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.LoadBalancerSpec", "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.LoadBalancerStatus", "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"},
+	}
+}
+
+func schema_pkg_apis_network_v1alpha1_LoadBalancerList(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "LoadBalancerList",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"kind": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"apiVersion": {
+						SchemaProps: spec.SchemaProps{
+							Description: "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"metadata": {
+						SchemaProps: spec.SchemaProps{
+							Default: map[string]interface{}{},
+							Ref:     ref("k8s.io/apimachinery/pkg/apis/meta/v1.ListMeta"),
+						},
+					},
+					"items": {
+						SchemaProps: spec.SchemaProps{
+							Type: []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: map[string]interface{}{},
+										Ref:     ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.LoadBalancer"),
+									},
+								},
+							},
+						},
+					},
+				},
+				Required: []string{"items"},
+			},
+		},
+		Dependencies: []string{
+			"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.LoadBalancer", "k8s.io/apimachinery/pkg/apis/meta/v1.ListMeta"},
+	}
+}
+
+func schema_pkg_apis_network_v1alpha1_LoadBalancerSpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "LoadBalancerSpec defines the desired state of LoadBalancer",
+				Type:        []string{"object"},
+			},
+		},
+	}
+}
+
+func schema_pkg_apis_network_v1alpha1_LoadBalancerStatus(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "LoadBalancerStatus defines the observed state of LoadBalancer",
+				Type:        []string{"object"},
 			},
 		},
 	}

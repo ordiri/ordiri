@@ -32,7 +32,7 @@ import (
 // NetworksGetter has a method to return a NetworkInterface.
 // A group's client should implement this interface.
 type NetworksGetter interface {
-	Networks() NetworkInterface
+	Networks(namespace string) NetworkInterface
 }
 
 // NetworkInterface has methods to work with Network resources.
@@ -52,12 +52,14 @@ type NetworkInterface interface {
 // networks implements NetworkInterface
 type networks struct {
 	client rest.Interface
+	ns     string
 }
 
 // newNetworks returns a Networks
-func newNetworks(c *NetworkV1alpha1Client) *networks {
+func newNetworks(c *NetworkV1alpha1Client, namespace string) *networks {
 	return &networks{
 		client: c.RESTClient(),
+		ns:     namespace,
 	}
 }
 
@@ -65,6 +67,7 @@ func newNetworks(c *NetworkV1alpha1Client) *networks {
 func (c *networks) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.Network, err error) {
 	result = &v1alpha1.Network{}
 	err = c.client.Get().
+		Namespace(c.ns).
 		Resource("networks").
 		Name(name).
 		VersionedParams(&options, scheme.ParameterCodec).
@@ -81,6 +84,7 @@ func (c *networks) List(ctx context.Context, opts v1.ListOptions) (result *v1alp
 	}
 	result = &v1alpha1.NetworkList{}
 	err = c.client.Get().
+		Namespace(c.ns).
 		Resource("networks").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -97,6 +101,7 @@ func (c *networks) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interf
 	}
 	opts.Watch = true
 	return c.client.Get().
+		Namespace(c.ns).
 		Resource("networks").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -107,6 +112,7 @@ func (c *networks) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interf
 func (c *networks) Create(ctx context.Context, network *v1alpha1.Network, opts v1.CreateOptions) (result *v1alpha1.Network, err error) {
 	result = &v1alpha1.Network{}
 	err = c.client.Post().
+		Namespace(c.ns).
 		Resource("networks").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Body(network).
@@ -119,6 +125,7 @@ func (c *networks) Create(ctx context.Context, network *v1alpha1.Network, opts v
 func (c *networks) Update(ctx context.Context, network *v1alpha1.Network, opts v1.UpdateOptions) (result *v1alpha1.Network, err error) {
 	result = &v1alpha1.Network{}
 	err = c.client.Put().
+		Namespace(c.ns).
 		Resource("networks").
 		Name(network.Name).
 		VersionedParams(&opts, scheme.ParameterCodec).
@@ -133,6 +140,7 @@ func (c *networks) Update(ctx context.Context, network *v1alpha1.Network, opts v
 func (c *networks) UpdateStatus(ctx context.Context, network *v1alpha1.Network, opts v1.UpdateOptions) (result *v1alpha1.Network, err error) {
 	result = &v1alpha1.Network{}
 	err = c.client.Put().
+		Namespace(c.ns).
 		Resource("networks").
 		Name(network.Name).
 		SubResource("status").
@@ -146,6 +154,7 @@ func (c *networks) UpdateStatus(ctx context.Context, network *v1alpha1.Network, 
 // Delete takes name of the network and deletes it. Returns an error if one occurs.
 func (c *networks) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
 	return c.client.Delete().
+		Namespace(c.ns).
 		Resource("networks").
 		Name(name).
 		Body(&opts).
@@ -160,6 +169,7 @@ func (c *networks) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, 
 		timeout = time.Duration(*listOpts.TimeoutSeconds) * time.Second
 	}
 	return c.client.Delete().
+		Namespace(c.ns).
 		Resource("networks").
 		VersionedParams(&listOpts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -172,6 +182,7 @@ func (c *networks) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, 
 func (c *networks) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.Network, err error) {
 	result = &v1alpha1.Network{}
 	err = c.client.Patch(pt).
+		Namespace(c.ns).
 		Resource("networks").
 		Name(name).
 		SubResource(subresources...).

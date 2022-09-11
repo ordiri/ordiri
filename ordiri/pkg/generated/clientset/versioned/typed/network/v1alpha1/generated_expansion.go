@@ -17,6 +17,8 @@ limitations under the License.aoeaoeaoeao
 
 package v1alpha1
 
+type LoadBalancerExpansion interface{}
+
 type NetworkExpansion interface{}
 
 type RouteExpansion interface{}

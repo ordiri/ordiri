@@ -27,16 +27,16 @@ type FakeComputeV1alpha1 struct {
 	*testing.Fake
 }
 
-func (c *FakeComputeV1alpha1) VirtualMachines() v1alpha1.VirtualMachineInterface {
-	return &FakeVirtualMachines{c}
+func (c *FakeComputeV1alpha1) VirtualMachines(namespace string) v1alpha1.VirtualMachineInterface {
+	return &FakeVirtualMachines{c, namespace}
 }
 
-func (c *FakeComputeV1alpha1) VirtualMachineDeployments() v1alpha1.VirtualMachineDeploymentInterface {
-	return &FakeVirtualMachineDeployments{c}
+func (c *FakeComputeV1alpha1) VirtualMachineDeployments(namespace string) v1alpha1.VirtualMachineDeploymentInterface {
+	return &FakeVirtualMachineDeployments{c, namespace}
 }
 
-func (c *FakeComputeV1alpha1) VirtualMachineReplicaSets() v1alpha1.VirtualMachineReplicaSetInterface {
-	return &FakeVirtualMachineReplicaSets{c}
+func (c *FakeComputeV1alpha1) VirtualMachineReplicaSets(namespace string) v1alpha1.VirtualMachineReplicaSetInterface {
+	return &FakeVirtualMachineReplicaSets{c, namespace}
 }
 
 // RESTClient returns a RESTClient that is used to communicate

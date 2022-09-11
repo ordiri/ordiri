@@ -41,32 +41,33 @@ type VirtualMachineDeploymentInformer interface {
 type virtualMachineDeploymentInformer struct {
 	factory          internalinterfaces.SharedInformerFactory
 	tweakListOptions internalinterfaces.TweakListOptionsFunc
+	namespace        string
 }
 
 // NewVirtualMachineDeploymentInformer constructs a new informer for VirtualMachineDeployment type.
 // Always prefer using an informer factory to get a shared informer instead of getting an independent
 // one. This reduces memory footprint and number of connections to the server.
-func NewVirtualMachineDeploymentInformer(client versioned.Interface, resyncPeriod time.Duration, indexers cache.Indexers) cache.SharedIndexInformer {
-	return NewFilteredVirtualMachineDeploymentInformer(client, resyncPeriod, indexers, nil)
+func NewVirtualMachineDeploymentInformer(client versioned.Interface, namespace string, resyncPeriod time.Duration, indexers cache.Indexers) cache.SharedIndexInformer {
+	return NewFilteredVirtualMachineDeploymentInformer(client, namespace, resyncPeriod, indexers, nil)
 }
 
 // NewFilteredVirtualMachineDeploymentInformer constructs a new informer for VirtualMachineDeployment type.
 // Always prefer using an informer factory to get a shared informer instead of getting an independent
 // one. This reduces memory footprint and number of connections to the server.
-func NewFilteredVirtualMachineDeploymentInformer(client versioned.Interface, resyncPeriod time.Duration, indexers cache.Indexers, tweakListOptions internalinterfaces.TweakListOptionsFunc) cache.SharedIndexInformer {
+func NewFilteredVirtualMachineDeploymentInformer(client versioned.Interface, namespace string, resyncPeriod time.Duration, indexers cache.Indexers, tweakListOptions internalinterfaces.TweakListOptionsFunc) cache.SharedIndexInformer {
 	return cache.NewSharedIndexInformer(
 		&cache.ListWatch{
 			ListFunc: func(options v1.ListOptions) (runtime.Object, error) {
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
-				return client.ComputeV1alpha1().VirtualMachineDeployments().List(context.TODO(), options)
+				return client.ComputeV1alpha1().VirtualMachineDeployments(namespace).List(context.TODO(), options)
 			},
 			WatchFunc: func(options v1.ListOptions) (watch.Interface, error) {
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
-				return client.ComputeV1alpha1().VirtualMachineDeployments().Watch(context.TODO(), options)
+				return client.ComputeV1alpha1().VirtualMachineDeployments(namespace).Watch(context.TODO(), options)
 			},
 		},
 		&computev1alpha1.VirtualMachineDeployment{},
@@ -76,7 +77,7 @@ func NewFilteredVirtualMachineDeploymentInformer(client versioned.Interface, res
 }
 
 func (f *virtualMachineDeploymentInformer) defaultInformer(client versioned.Interface, resyncPeriod time.Duration) cache.SharedIndexInformer {
-	return NewFilteredVirtualMachineDeploymentInformer(client, resyncPeriod, cache.Indexers{cache.NamespaceIndex: cache.MetaNamespaceIndexFunc}, f.tweakListOptions)
+	return NewFilteredVirtualMachineDeploymentInformer(client, f.namespace, resyncPeriod, cache.Indexers{cache.NamespaceIndex: cache.MetaNamespaceIndexFunc}, f.tweakListOptions)
 }
 
 func (f *virtualMachineDeploymentInformer) Informer() cache.SharedIndexInformer {

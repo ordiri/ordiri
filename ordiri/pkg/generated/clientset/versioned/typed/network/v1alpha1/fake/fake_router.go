@@ -32,6 +32,7 @@ import (
 // FakeRouters implements RouterInterface
 type FakeRouters struct {
 	Fake *FakeNetworkV1alpha1
+	ns   string
 }
 
 var routersResource = schema.GroupVersionResource{Group: "network.ordiri.com", Version: "v1alpha1", Resource: "routers"}
@@ -41,7 +42,8 @@ var routersKind = schema.GroupVersionKind{Group: "network.ordiri.com", Version: 
 // Get takes name of the router, and returns the corresponding router object, and an error if there is any.
 func (c *FakeRouters) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.Router, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootGetAction(routersResource, name), &v1alpha1.Router{})
+		Invokes(testing.NewGetAction(routersResource, c.ns, name), &v1alpha1.Router{})
+
 	if obj == nil {
 		return nil, err
 	}
@@ -51,7 +53,8 @@ func (c *FakeRouters) Get(ctx context.Context, name string, options v1.GetOption
 // List takes label and field selectors, and returns the list of Routers that match those selectors.
 func (c *FakeRouters) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.RouterList, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootListAction(routersResource, routersKind, opts), &v1alpha1.RouterList{})
+		Invokes(testing.NewListAction(routersResource, routersKind, c.ns, opts), &v1alpha1.RouterList{})
+
 	if obj == nil {
 		return nil, err
 	}
@@ -72,13 +75,15 @@ func (c *FakeRouters) List(ctx context.Context, opts v1.ListOptions) (result *v1
 // Watch returns a watch.Interface that watches the requested routers.
 func (c *FakeRouters) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
 	return c.Fake.
-		InvokesWatch(testing.NewRootWatchAction(routersResource, opts))
+		InvokesWatch(testing.NewWatchAction(routersResource, c.ns, opts))
+
 }
 
 // Create takes the representation of a router and creates it.  Returns the server's representation of the router, and an error, if there is any.
 func (c *FakeRouters) Create(ctx context.Context, router *v1alpha1.Router, opts v1.CreateOptions) (result *v1alpha1.Router, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootCreateAction(routersResource, router), &v1alpha1.Router{})
+		Invokes(testing.NewCreateAction(routersResource, c.ns, router), &v1alpha1.Router{})
+
 	if obj == nil {
 		return nil, err
 	}
@@ -88,7 +93,8 @@ func (c *FakeRouters) Create(ctx context.Context, router *v1alpha1.Router, opts 
 // Update takes the representation of a router and updates it. Returns the server's representation of the router, and an error, if there is any.
 func (c *FakeRouters) Update(ctx context.Context, router *v1alpha1.Router, opts v1.UpdateOptions) (result *v1alpha1.Router, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootUpdateAction(routersResource, router), &v1alpha1.Router{})
+		Invokes(testing.NewUpdateAction(routersResource, c.ns, router), &v1alpha1.Router{})
+
 	if obj == nil {
 		return nil, err
 	}
@@ -99,7 +105,8 @@ func (c *FakeRouters) Update(ctx context.Context, router *v1alpha1.Router, opts 
 // Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
 func (c *FakeRouters) UpdateStatus(ctx context.Context, router *v1alpha1.Router, opts v1.UpdateOptions) (*v1alpha1.Router, error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootUpdateSubresourceAction(routersResource, "status", router), &v1alpha1.Router{})
+		Invokes(testing.NewUpdateSubresourceAction(routersResource, "status", c.ns, router), &v1alpha1.Router{})
+
 	if obj == nil {
 		return nil, err
 	}
@@ -109,13 +116,14 @@ func (c *FakeRouters) UpdateStatus(ctx context.Context, router *v1alpha1.Router,
 // Delete takes name of the router and deletes it. Returns an error if one occurs.
 func (c *FakeRouters) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
 	_, err := c.Fake.
-		Invokes(testing.NewRootDeleteActionWithOptions(routersResource, name, opts), &v1alpha1.Router{})
+		Invokes(testing.NewDeleteActionWithOptions(routersResource, c.ns, name, opts), &v1alpha1.Router{})
+
 	return err
 }
 
 // DeleteCollection deletes a collection of objects.
 func (c *FakeRouters) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewRootDeleteCollectionAction(routersResource, listOpts)
+	action := testing.NewDeleteCollectionAction(routersResource, c.ns, listOpts)
 
 	_, err := c.Fake.Invokes(action, &v1alpha1.RouterList{})
 	return err
@@ -124,7 +132,8 @@ func (c *FakeRouters) DeleteCollection(ctx context.Context, opts v1.DeleteOption
 // Patch applies the patch and returns the patched router.
 func (c *FakeRouters) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.Router, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootPatchSubresourceAction(routersResource, name, pt, data, subresources...), &v1alpha1.Router{})
+		Invokes(testing.NewPatchSubresourceAction(routersResource, c.ns, name, pt, data, subresources...), &v1alpha1.Router{})
+
 	if obj == nil {
 		return nil, err
 	}

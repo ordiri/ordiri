@@ -36,12 +36,12 @@ type StorageV1alpha1Client struct {
 	restClient rest.Interface
 }
 
-func (c *StorageV1alpha1Client) Volumes() VolumeInterface {
-	return newVolumes(c)
+func (c *StorageV1alpha1Client) Volumes(namespace string) VolumeInterface {
+	return newVolumes(c, namespace)
 }
 
-func (c *StorageV1alpha1Client) VolumeClaims() VolumeClaimInterface {
-	return newVolumeClaims(c)
+func (c *StorageV1alpha1Client) VolumeClaims(namespace string) VolumeClaimInterface {
+	return newVolumeClaims(c, namespace)
 }
 
 // NewForConfig creates a new StorageV1alpha1Client for the given config.

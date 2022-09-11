@@ -20,7 +20,8 @@ package externalversions
 import (
 	"fmt"
 
-	v1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
+	v1alpha1 "github.com/ordiri/ordiri/pkg/apis/authorization/v1alpha1"
+	computev1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
 	storagev1alpha1 "github.com/ordiri/ordiri/pkg/apis/storage/v1alpha1"
@@ -54,12 +55,20 @@ func (f *genericInformer) Lister() cache.GenericLister {
 // TODO extend this to unknown resources with a client pool
 func (f *sharedInformerFactory) ForResource(resource schema.GroupVersionResource) (GenericInformer, error) {
 	switch resource {
-	// Group=compute.ordiri.com, Version=v1alpha1
-	case v1alpha1.SchemeGroupVersion.WithResource("virtualmachines"):
+	// Group=authorization.ordiri.com, Version=v1alpha1
+	case v1alpha1.SchemeGroupVersion.WithResource("roles"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Authorization().V1alpha1().Roles().Informer()}, nil
+	case v1alpha1.SchemeGroupVersion.WithResource("rolebindings"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Authorization().V1alpha1().RoleBindings().Informer()}, nil
+	case v1alpha1.SchemeGroupVersion.WithResource("serviceaccounts"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Authorization().V1alpha1().ServiceAccounts().Informer()}, nil
+
+		// Group=compute.ordiri.com, Version=v1alpha1
+	case computev1alpha1.SchemeGroupVersion.WithResource("virtualmachines"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Compute().V1alpha1().VirtualMachines().Informer()}, nil
-	case v1alpha1.SchemeGroupVersion.WithResource("virtualmachinedeployments"):
+	case computev1alpha1.SchemeGroupVersion.WithResource("virtualmachinedeployments"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Compute().V1alpha1().VirtualMachineDeployments().Informer()}, nil
-	case v1alpha1.SchemeGroupVersion.WithResource("virtualmachinereplicasets"):
+	case computev1alpha1.SchemeGroupVersion.WithResource("virtualmachinereplicasets"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Compute().V1alpha1().VirtualMachineReplicaSets().Informer()}, nil
 
 		// Group=core.ordiri.com, Version=v1alpha1
@@ -71,6 +80,8 @@ func (f *sharedInformerFactory) ForResource(resource schema.GroupVersionResource
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Core().V1alpha1().Nodes().Informer()}, nil
 
 		// Group=network.ordiri.com, Version=v1alpha1
+	case networkv1alpha1.SchemeGroupVersion.WithResource("loadbalancers"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Network().V1alpha1().LoadBalancers().Informer()}, nil
 	case networkv1alpha1.SchemeGroupVersion.WithResource("networks"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Network().V1alpha1().Networks().Informer()}, nil
 	case networkv1alpha1.SchemeGroupVersion.WithResource("routes"):

@@ -82,7 +82,7 @@ func (r *SubnetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	}
 
 	nw := &networkv1alpha1.Network{}
-	if err := r.Client.Get(ctx, types.NamespacedName{Name: subnet.Spec.Network.Name}, nw); err != nil {
+	if err := r.Client.Get(ctx, types.NamespacedName{Namespace: subnet.Namespace, Name: subnet.Spec.Network.Name}, nw); err != nil {
 		return ctrl.Result{}, err
 	}
 
@@ -135,7 +135,7 @@ func (r *SubnetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 		}
 
 		log.Info("network manager has not seen this subnet yet, creating a new one")
-		newSubnet, err := network.NewSubnet(subnet.Name, subnet.Spec.Cidr, vlan)
+		newSubnet, err := network.NewSubnet(subnet.Namespace, subnet.Name, subnet.Spec.Cidr, vlan)
 		if err != nil {
 			return ctrl.Result{}, err
 		}
@@ -236,7 +236,8 @@ func (r *SubnetReconciler) SetupWithManager(mgr ctrl.Manager) error {
 			for _, iface := range obj.Status.Subnets {
 				reqs = append(reqs, reconcile.Request{
 					NamespacedName: types.NamespacedName{
-						Name: iface.Name,
+						Namespace: obj.Namespace,
+						Name:      iface.Name,
 					},
 				})
 			}

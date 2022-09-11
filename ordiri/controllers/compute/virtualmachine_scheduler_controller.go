@@ -95,7 +95,7 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		log.Info("scheduling vm ", "vm", vm)
 		err := r.schedule(ctx, vm)
 		if err != nil {
-			return ctrl.Result{}, err
+			return ctrl.Result{}, fmt.Errorf("error scheduling - %w", err)
 		}
 	}
 
@@ -147,7 +147,7 @@ func (r *VirtualMachineReconciler) schedule(ctx context.Context, vm *computev1al
 	if _, scheduled := vm.ScheduledNode(); !scheduled {
 		nodes := &corev1alpha1.NodeList{}
 		if err := r.Client.List(ctx, nodes); err != nil {
-			return err
+			return fmt.Errorf("error fetching node list - %w", err)
 		}
 		log.Info("finding node to schedule on out of", "nodes", nodes.Items)
 		scheduledNode = r.Scheduler(nodes.Items)
@@ -155,7 +155,7 @@ func (r *VirtualMachineReconciler) schedule(ctx context.Context, vm *computev1al
 			return fmt.Errorf("couldn't schedule node")
 		}
 		if err := vm.Schedule(scheduledNode.Name); err != nil {
-			return err
+			return fmt.Errorf("unable to schedule vm - %w", err)
 		}
 
 		if err := r.Client.Update(ctx, vm); err != nil {
@@ -190,6 +190,7 @@ func (r *VirtualMachineReconciler) addVmToNodeStatus(ctx context.Context, vm *co
 				ObjectReference: v1.ObjectReference{
 					Kind:       vm.Kind,
 					Name:       vm.Name,
+					Namespace:  vm.Namespace,
 					UID:        vm.UID,
 					APIVersion: vm.APIVersion,
 				},

@@ -7,7 +7,7 @@ import (
 	"inet.af/netaddr"
 )
 
-func DnsMasqConfig(confDir, name, ifaceName string, network netaddr.IPPrefix, hostDir, dhcpDir string) dnsmasq.Config {
+func DnsMasqConfig(confDir, name, ifaceName string, network netaddr.IPPrefix, hostMappingDir, dhcpMappingDir string) dnsmasq.Config {
 	routerAddr := network.IP().Next()
 	dhcpAddr := routerAddr.Next()
 
@@ -30,8 +30,8 @@ func DnsMasqConfig(confDir, name, ifaceName string, network netaddr.IPPrefix, ho
 		dnsmasq.WithOption("domain", "ordiri"),
 		dnsmasq.WithOption("dhcp-fqdn", ""),
 		dnsmasq.WithOption("dhcp-range", []string{dhcpAddr.String(), "static"}),
-		dnsmasq.WithOption("dhcp-hostsdir", dhcpDir),
-		dnsmasq.WithOption("hostsdir", hostDir),
+		dnsmasq.WithOption("dhcp-hostsdir", dhcpMappingDir),
+		dnsmasq.WithOption("hostsdir", hostMappingDir),
 		dnsmasq.WithOption("dhcp-option", []string{
 			dnsmasq.DhcpOptionRouter.Option(routerAddr.String()),
 			dnsmasq.DhcpOptionDnsServer.Option(dhcpAddr.String()),

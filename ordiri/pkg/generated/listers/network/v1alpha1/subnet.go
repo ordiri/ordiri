@@ -30,9 +30,8 @@ type SubnetLister interface {
 	// List lists all Subnets in the indexer.
 	// Objects returned here must be treated as read-only.
 	List(selector labels.Selector) (ret []*v1alpha1.Subnet, err error)
-	// Get retrieves the Subnet from the index for a given name.
-	// Objects returned here must be treated as read-only.
-	Get(name string) (*v1alpha1.Subnet, error)
+	// Subnets returns an object that can list and get Subnets.
+	Subnets(namespace string) SubnetNamespaceLister
 	SubnetListerExpansion
 }
 
@@ -54,9 +53,41 @@ func (s *subnetLister) List(selector labels.Selector) (ret []*v1alpha1.Subnet, e
 	return ret, err
 }
 
-// Get retrieves the Subnet from the index for a given name.
-func (s *subnetLister) Get(name string) (*v1alpha1.Subnet, error) {
-	obj, exists, err := s.indexer.GetByKey(name)
+// Subnets returns an object that can list and get Subnets.
+func (s *subnetLister) Subnets(namespace string) SubnetNamespaceLister {
+	return subnetNamespaceLister{indexer: s.indexer, namespace: namespace}
+}
+
+// SubnetNamespaceLister helps list and get Subnets.
+// All objects returned here must be treated as read-only.
+type SubnetNamespaceLister interface {
+	// List lists all Subnets in the indexer for a given namespace.
+	// Objects returned here must be treated as read-only.
+	List(selector labels.Selector) (ret []*v1alpha1.Subnet, err error)
+	// Get retrieves the Subnet from the indexer for a given namespace and name.
+	// Objects returned here must be treated as read-only.
+	Get(name string) (*v1alpha1.Subnet, error)
+	SubnetNamespaceListerExpansion
+}
+
+// subnetNamespaceLister implements the SubnetNamespaceLister
+// interface.
+type subnetNamespaceLister struct {
+	indexer   cache.Indexer
+	namespace string
+}
+
+// List lists all Subnets in the indexer for a given namespace.
+func (s subnetNamespaceLister) List(selector labels.Selector) (ret []*v1alpha1.Subnet, err error) {
+	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
+		ret = append(ret, m.(*v1alpha1.Subnet))
+	})
+	return ret, err
+}
+
+// Get retrieves the Subnet from the indexer for a given namespace and name.
+func (s subnetNamespaceLister) Get(name string) (*v1alpha1.Subnet, error) {
+	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
 	if err != nil {
 		return nil, err
 	}

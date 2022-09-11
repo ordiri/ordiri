@@ -30,9 +30,8 @@ type NetworkLister interface {
 	// List lists all Networks in the indexer.
 	// Objects returned here must be treated as read-only.
 	List(selector labels.Selector) (ret []*v1alpha1.Network, err error)
-	// Get retrieves the Network from the index for a given name.
-	// Objects returned here must be treated as read-only.
-	Get(name string) (*v1alpha1.Network, error)
+	// Networks returns an object that can list and get Networks.
+	Networks(namespace string) NetworkNamespaceLister
 	NetworkListerExpansion
 }
 
@@ -54,9 +53,41 @@ func (s *networkLister) List(selector labels.Selector) (ret []*v1alpha1.Network,
 	return ret, err
 }
 
-// Get retrieves the Network from the index for a given name.
-func (s *networkLister) Get(name string) (*v1alpha1.Network, error) {
-	obj, exists, err := s.indexer.GetByKey(name)
+// Networks returns an object that can list and get Networks.
+func (s *networkLister) Networks(namespace string) NetworkNamespaceLister {
+	return networkNamespaceLister{indexer: s.indexer, namespace: namespace}
+}
+
+// NetworkNamespaceLister helps list and get Networks.
+// All objects returned here must be treated as read-only.
+type NetworkNamespaceLister interface {
+	// List lists all Networks in the indexer for a given namespace.
+	// Objects returned here must be treated as read-only.
+	List(selector labels.Selector) (ret []*v1alpha1.Network, err error)
+	// Get retrieves the Network from the indexer for a given namespace and name.
+	// Objects returned here must be treated as read-only.
+	Get(name string) (*v1alpha1.Network, error)
+	NetworkNamespaceListerExpansion
+}
+
+// networkNamespaceLister implements the NetworkNamespaceLister
+// interface.
+type networkNamespaceLister struct {
+	indexer   cache.Indexer
+	namespace string
+}
+
+// List lists all Networks in the indexer for a given namespace.
+func (s networkNamespaceLister) List(selector labels.Selector) (ret []*v1alpha1.Network, err error) {
+	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
+		ret = append(ret, m.(*v1alpha1.Network))
+	})
+	return ret, err
+}
+
+// Get retrieves the Network from the indexer for a given namespace and name.
+func (s networkNamespaceLister) Get(name string) (*v1alpha1.Network, error) {
+	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
 	if err != nil {
 		return nil, err
 	}

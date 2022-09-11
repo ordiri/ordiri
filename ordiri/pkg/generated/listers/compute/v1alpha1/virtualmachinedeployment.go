@@ -30,9 +30,8 @@ type VirtualMachineDeploymentLister interface {
 	// List lists all VirtualMachineDeployments in the indexer.
 	// Objects returned here must be treated as read-only.
 	List(selector labels.Selector) (ret []*v1alpha1.VirtualMachineDeployment, err error)
-	// Get retrieves the VirtualMachineDeployment from the index for a given name.
-	// Objects returned here must be treated as read-only.
-	Get(name string) (*v1alpha1.VirtualMachineDeployment, error)
+	// VirtualMachineDeployments returns an object that can list and get VirtualMachineDeployments.
+	VirtualMachineDeployments(namespace string) VirtualMachineDeploymentNamespaceLister
 	VirtualMachineDeploymentListerExpansion
 }
 
@@ -54,9 +53,41 @@ func (s *virtualMachineDeploymentLister) List(selector labels.Selector) (ret []*
 	return ret, err
 }
 
-// Get retrieves the VirtualMachineDeployment from the index for a given name.
-func (s *virtualMachineDeploymentLister) Get(name string) (*v1alpha1.VirtualMachineDeployment, error) {
-	obj, exists, err := s.indexer.GetByKey(name)
+// VirtualMachineDeployments returns an object that can list and get VirtualMachineDeployments.
+func (s *virtualMachineDeploymentLister) VirtualMachineDeployments(namespace string) VirtualMachineDeploymentNamespaceLister {
+	return virtualMachineDeploymentNamespaceLister{indexer: s.indexer, namespace: namespace}
+}
+
+// VirtualMachineDeploymentNamespaceLister helps list and get VirtualMachineDeployments.
+// All objects returned here must be treated as read-only.
+type VirtualMachineDeploymentNamespaceLister interface {
+	// List lists all VirtualMachineDeployments in the indexer for a given namespace.
+	// Objects returned here must be treated as read-only.
+	List(selector labels.Selector) (ret []*v1alpha1.VirtualMachineDeployment, err error)
+	// Get retrieves the VirtualMachineDeployment from the indexer for a given namespace and name.
+	// Objects returned here must be treated as read-only.
+	Get(name string) (*v1alpha1.VirtualMachineDeployment, error)
+	VirtualMachineDeploymentNamespaceListerExpansion
+}
+
+// virtualMachineDeploymentNamespaceLister implements the VirtualMachineDeploymentNamespaceLister
+// interface.
+type virtualMachineDeploymentNamespaceLister struct {
+	indexer   cache.Indexer
+	namespace string
+}
+
+// List lists all VirtualMachineDeployments in the indexer for a given namespace.
+func (s virtualMachineDeploymentNamespaceLister) List(selector labels.Selector) (ret []*v1alpha1.VirtualMachineDeployment, err error) {
+	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
+		ret = append(ret, m.(*v1alpha1.VirtualMachineDeployment))
+	})
+	return ret, err
+}
+
+// Get retrieves the VirtualMachineDeployment from the indexer for a given namespace and name.
+func (s virtualMachineDeploymentNamespaceLister) Get(name string) (*v1alpha1.VirtualMachineDeployment, error) {
+	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
 	if err != nil {
 		return nil, err
 	}

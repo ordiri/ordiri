@@ -112,13 +112,17 @@ func (r *RouterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 		}
 
 		subnet := &networkv1alpha1.Subnet{}
+		subnet.Namespace = selector.Namespace
+		if subnet.Namespace == "" { // cross account?
+			subnet.Namespace = router.Namespace
+		}
 		subnet.Name = selector.Name
 		if err := r.Client.Get(ctx, client.ObjectKeyFromObject(subnet), subnet); err != nil {
 			return ctrl.Result{}, fmt.Errorf("subnet does not exist - %w", err)
 		}
 
 		nw := &networkv1alpha1.Network{}
-		if err := r.Client.Get(ctx, client.ObjectKey{Name: subnet.Spec.Network.Name}, nw); err != nil {
+		if err := r.Client.Get(ctx, client.ObjectKey{Namespace: subnet.Namespace, Name: subnet.Spec.Network.Name}, nw); err != nil {
 			return ctrl.Result{}, fmt.Errorf("network does not exist - %w", err)
 		}
 
@@ -164,7 +168,7 @@ func (r *RouterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 			}
 
 			vms := &computev1alpha1.VirtualMachineList{}
-			if err := r.Client.List(ctx, vms, client.MatchingFields{"VmsToSubnetIndex": nw.Name + subnet.Name}); err != nil {
+			if err := r.Client.List(ctx, vms, client.InNamespace(router.Namespace), client.MatchingFields{"VmsToSubnetIndex": nw.Name + subnet.Name}); err != nil {
 				return ctrl.Result{}, fmt.Errorf("aoe - %w", err)
 			}
 			for _, vm := range vms.Items {
@@ -272,27 +276,29 @@ func (r *RouterReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		switch obj := o.(type) {
 		case *networkv1alpha1.Subnet:
 			rtrs := &networkv1alpha1.RouterList{}
-			if err := r.Client.List(context.Background(), rtrs, client.MatchingFields{"RouterToSubnetIndex": o.GetName()}); err != nil {
+			if err := r.Client.List(context.Background(), rtrs, client.InNamespace(obj.Namespace), client.MatchingFields{"RouterToSubnetIndex": obj.GetName()}); err != nil {
 				fmt.Printf("got error listing routers - %s", err.Error())
 				return nil
 			}
 			for _, rtr := range rtrs.Items {
 				reqs = append(reqs, reconcile.Request{
 					NamespacedName: types.NamespacedName{
-						Name: rtr.Name,
+						Namespace: obj.Namespace,
+						Name:      rtr.Name,
 					},
 				})
 			}
 		case *networkv1alpha1.Network:
 			rtrs := &networkv1alpha1.RouterList{}
-			if err := r.Client.List(context.Background(), rtrs, client.MatchingFields{"RouterToNetworkIndex": o.GetName()}); err != nil {
+			if err := r.Client.List(context.Background(), rtrs, client.InNamespace(obj.Namespace), client.MatchingFields{"RouterToNetworkIndex": obj.Name}); err != nil {
 				fmt.Printf("got error listing routers - %s", err.Error())
 				return nil
 			}
 			for _, rtr := range rtrs.Items {
 				reqs = append(reqs, reconcile.Request{
 					NamespacedName: types.NamespacedName{
-						Name: rtr.Name,
+						Namespace: obj.Namespace,
+						Name:      rtr.Name,
 					},
 				})
 			}
@@ -300,26 +306,29 @@ func (r *RouterReconciler) SetupWithManager(mgr ctrl.Manager) error {
 			for _, iface := range obj.Spec.NetworkInterfaces {
 				reqs = append(reqs, reconcile.Request{
 					NamespacedName: types.NamespacedName{
-						Name: "router-" + iface.Network,
+						Namespace: obj.Namespace,
+						Name:      "router-" + iface.Network,
 					},
 				})
 			}
 		case *corev1alpha1.Node:
 			rtrs := &networkv1alpha1.RouterList{}
-			if err := r.Client.List(context.Background(), rtrs, client.MatchingFields{"RouterToNodeIndex": o.GetName()}); err != nil {
+			if err := r.Client.List(context.Background(), rtrs, client.InNamespace(obj.Namespace), client.MatchingFields{"RouterToNodeIndex": obj.Name}); err != nil {
 				fmt.Printf("got error listing routers - %s", err.Error())
 				return nil
 			}
 			for _, rtr := range rtrs.Items {
 				reqs = append(reqs, reconcile.Request{
 					NamespacedName: types.NamespacedName{
-						Name: rtr.Name,
+						Namespace: obj.Namespace,
+						Name:      rtr.Name,
 					},
 				})
 			}
 			reqs = append(reqs, reconcile.Request{
 				NamespacedName: types.NamespacedName{
-					Name: "router-" + obj.Name,
+					Namespace: obj.Namespace,
+					Name:      "router-" + obj.Name,
 				},
 			})
 		default:

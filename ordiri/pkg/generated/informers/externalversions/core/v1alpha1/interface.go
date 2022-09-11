@@ -44,12 +44,12 @@ func New(f internalinterfaces.SharedInformerFactory, namespace string, tweakList
 
 // Machines returns a MachineInformer.
 func (v *version) Machines() MachineInformer {
-	return &machineInformer{factory: v.factory, tweakListOptions: v.tweakListOptions}
+	return &machineInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
 }
 
 // MachineProfiles returns a MachineProfileInformer.
 func (v *version) MachineProfiles() MachineProfileInformer {
-	return &machineProfileInformer{factory: v.factory, tweakListOptions: v.tweakListOptions}
+	return &machineProfileInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
 }
 
 // Nodes returns a NodeInformer.

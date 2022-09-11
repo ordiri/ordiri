@@ -61,8 +61,8 @@ generate: generate-controller generate-openapi generate-tsclient generate-client
 
 clientset_name = versioned
 gendir = pkg/generated
-INPUT_DIRS = "$(PACKAGE_NAME)/pkg/apis/core/v1alpha1,$(PACKAGE_NAME)/pkg/apis/network/v1alpha1,$(PACKAGE_NAME)/pkg/apis/compute/v1alpha1,$(PACKAGE_NAME)/pkg/apis/storage/v1alpha1"
-CLIENT_INPUTS = "pkg/apis/core/v1alpha1,pkg/apis/network/v1alpha1,pkg/apis/compute/v1alpha1,pkg/apis/storage/v1alpha1"
+INPUT_DIRS = "$(PACKAGE_NAME)/pkg/apis/core/v1alpha1,$(PACKAGE_NAME)/pkg/apis/network/v1alpha1,$(PACKAGE_NAME)/pkg/apis/compute/v1alpha1,$(PACKAGE_NAME)/pkg/apis/storage/v1alpha1,$(PACKAGE_NAME)/pkg/apis/authorization/v1alpha1"
+CLIENT_INPUTS = "pkg/apis/core/v1alpha1,pkg/apis/network/v1alpha1,pkg/apis/compute/v1alpha1,pkg/apis/storage/v1alpha1,pkg/apis/authorization/v1alpha1"
 generate-controller: $(CONTROLLER_GEN)
 	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./pkg/apis/..."
 generate-tsclient: $(CONTROLLER_GEN)
@@ -80,7 +80,7 @@ generate-informer: $(INFORMER_GEN)
 generate-defaulter: $(DEFAULTER_GEN)
 	$(DEFAULTER_GEN)  --input-dirs $(INPUT_DIRS) --output-base=. --trim-path-prefix $(PACKAGE_NAME) --output-package $(PACKAGE_NAME)/$(gendir)/defaulters --go-header-file ./hack/boilerplate.go.txt
 	
-generate-openapi:
+generate-openapi: $(OPENAPI_GEN)
 	$(OPENAPI_GEN) -v10 --input-dirs k8s.io/apimachinery/pkg/api/resource,k8s.io/api/autoscaling/v1,k8s.io/api/core/v1,k8s.io/apimachinery/pkg/apis/meta/v1,k8s.io/apimachinery/pkg/runtime,k8s.io/apimachinery/pkg/version,$(PACKAGE_NAME)/pkg/apis/... --output-package $(gendir)/openapi -O zz_generated.openapi --go-header-file ./hack/boilerplate.go.txt
 
 .PHONY: fmt
@@ -153,13 +153,15 @@ run-mothership-remote: stop-mothership deploy-mothership-ordlet
 run-debian-remote:  stop-debian deploy-debian-ordlet
 	ssh root@debian 'modprobe nf_nat_tftp nf_conntrack && KUBECONFIG=/etc/ordiri.conf /usr/local/bin/ordlet -zap-log-level=5 | tee /var/log/ordlet.conf' &
 
+#  systemctl restart ovsdb-server.service ovs-vswitchd.service || true;
 .PHONY: stop-mothership
 stop-mothership:
-	{ ssh mothership 'kill $$(pidof ordlet); kill $$(pidof ordlet); kill $$(pidof ordlet)'; systemctl restart ovsdb-server.service ovs-vswitchd.service || true; }
+	{ ssh mothership 'kill $$(pidof ordlet); kill $$(pidof ordlet); kill $$(pidof ordlet); true;'; }
 
+#  systemctl restart ovsdb-server.service ovs-vswitchd.service || true;
 .PHONY: stop-debian
 stop-debian: 
-	{ ssh root@debian 'kill $$(pidof ordlet); kill $$(pidof ordlet); kill $$(pidof ordlet)'; systemctl restart ovsdb-server.service ovs-vswitchd.service || true; }
+	{ ssh root@debian 'kill $$(pidof ordlet); kill $$(pidof ordlet); kill $$(pidof ordlet); true;'; }
 
 .PHONY: start-all
 start-all: 
@@ -194,10 +196,10 @@ run-apiserver:
 run-manager: 
 	killall controller-manager || true
 	go build -o ./bin/controller-manager ./cmd/manager
-	./bin/controller-manager --kubeconfig=kubeconfig
+	VAULT_ADDR='http://127.0.0.1:8200' ./bin/controller-manager --kubeconfig=kubeconfig
 
 run-vault: 
-	vault server idp.hcl
+	VAULT_DEV_LISTEN_ADDRESS="0.0.0.0:8200"  vault server -dev
 run-ipxe: 
 	killall bootserver || true
 	go build -o bin/bootserver ./cmd/bootserver
@@ -247,7 +249,8 @@ $(LISTER_GEN): ## Download lister-gen locally if necessary.
 
 .PHONY: $(OPENAPI_GEN)
 $(OPENAPI_GEN):
-	$(call go-get-tool,$(OPENAPI_GEN),k8s.io/kube-openapi/cmd/generators@latest)
+ 	# Brew install openapi-generator
+	$(call go-get-tool,$(OPENAPI_GEN),k8s.io/kube-openapi/cmd/openapi-gen@latest)
 
 
 .PHONY: $(DEFAULTER_GEN)

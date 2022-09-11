@@ -30,9 +30,8 @@ type MachineProfileLister interface {
 	// List lists all MachineProfiles in the indexer.
 	// Objects returned here must be treated as read-only.
 	List(selector labels.Selector) (ret []*v1alpha1.MachineProfile, err error)
-	// Get retrieves the MachineProfile from the index for a given name.
-	// Objects returned here must be treated as read-only.
-	Get(name string) (*v1alpha1.MachineProfile, error)
+	// MachineProfiles returns an object that can list and get MachineProfiles.
+	MachineProfiles(namespace string) MachineProfileNamespaceLister
 	MachineProfileListerExpansion
 }
 
@@ -54,9 +53,41 @@ func (s *machineProfileLister) List(selector labels.Selector) (ret []*v1alpha1.M
 	return ret, err
 }
 
-// Get retrieves the MachineProfile from the index for a given name.
-func (s *machineProfileLister) Get(name string) (*v1alpha1.MachineProfile, error) {
-	obj, exists, err := s.indexer.GetByKey(name)
+// MachineProfiles returns an object that can list and get MachineProfiles.
+func (s *machineProfileLister) MachineProfiles(namespace string) MachineProfileNamespaceLister {
+	return machineProfileNamespaceLister{indexer: s.indexer, namespace: namespace}
+}
+
+// MachineProfileNamespaceLister helps list and get MachineProfiles.
+// All objects returned here must be treated as read-only.
+type MachineProfileNamespaceLister interface {
+	// List lists all MachineProfiles in the indexer for a given namespace.
+	// Objects returned here must be treated as read-only.
+	List(selector labels.Selector) (ret []*v1alpha1.MachineProfile, err error)
+	// Get retrieves the MachineProfile from the indexer for a given namespace and name.
+	// Objects returned here must be treated as read-only.
+	Get(name string) (*v1alpha1.MachineProfile, error)
+	MachineProfileNamespaceListerExpansion
+}
+
+// machineProfileNamespaceLister implements the MachineProfileNamespaceLister
+// interface.
+type machineProfileNamespaceLister struct {
+	indexer   cache.Indexer
+	namespace string
+}
+
+// List lists all MachineProfiles in the indexer for a given namespace.
+func (s machineProfileNamespaceLister) List(selector labels.Selector) (ret []*v1alpha1.MachineProfile, err error) {
+	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
+		ret = append(ret, m.(*v1alpha1.MachineProfile))
+	})
+	return ret, err
+}
+
+// Get retrieves the MachineProfile from the indexer for a given namespace and name.
+func (s machineProfileNamespaceLister) Get(name string) (*v1alpha1.MachineProfile, error) {
+	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
 	if err != nil {
 		return nil, err
 	}

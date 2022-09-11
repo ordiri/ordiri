@@ -23,6 +23,8 @@ import (
 
 // Interface provides access to all the informers in this group version.
 type Interface interface {
+	// LoadBalancers returns a LoadBalancerInformer.
+	LoadBalancers() LoadBalancerInformer
 	// Networks returns a NetworkInformer.
 	Networks() NetworkInformer
 	// Routes returns a RouteInformer.
@@ -46,27 +48,32 @@ func New(f internalinterfaces.SharedInformerFactory, namespace string, tweakList
 	return &version{factory: f, namespace: namespace, tweakListOptions: tweakListOptions}
 }
 
+// LoadBalancers returns a LoadBalancerInformer.
+func (v *version) LoadBalancers() LoadBalancerInformer {
+	return &loadBalancerInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
+}
+
 // Networks returns a NetworkInformer.
 func (v *version) Networks() NetworkInformer {
-	return &networkInformer{factory: v.factory, tweakListOptions: v.tweakListOptions}
+	return &networkInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
 }
 
 // Routes returns a RouteInformer.
 func (v *version) Routes() RouteInformer {
-	return &routeInformer{factory: v.factory, tweakListOptions: v.tweakListOptions}
+	return &routeInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
 }
 
 // RouteTables returns a RouteTableInformer.
 func (v *version) RouteTables() RouteTableInformer {
-	return &routeTableInformer{factory: v.factory, tweakListOptions: v.tweakListOptions}
+	return &routeTableInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
 }
 
 // Routers returns a RouterInformer.
 func (v *version) Routers() RouterInformer {
-	return &routerInformer{factory: v.factory, tweakListOptions: v.tweakListOptions}
+	return &routerInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
 }
 
 // Subnets returns a SubnetInformer.
 func (v *version) Subnets() SubnetInformer {
-	return &subnetInformer{factory: v.factory, tweakListOptions: v.tweakListOptions}
+	return &subnetInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
 }

@@ -17,22 +17,50 @@ limitations under the License.aoeaoeaoeao
 
 package v1alpha1
 
+// LoadBalancerListerExpansion allows custom methods to be added to
+// LoadBalancerLister.
+type LoadBalancerListerExpansion interface{}
+
+// LoadBalancerNamespaceListerExpansion allows custom methods to be added to
+// LoadBalancerNamespaceLister.
+type LoadBalancerNamespaceListerExpansion interface{}
+
 // NetworkListerExpansion allows custom methods to be added to
 // NetworkLister.
 type NetworkListerExpansion interface{}
+
+// NetworkNamespaceListerExpansion allows custom methods to be added to
+// NetworkNamespaceLister.
+type NetworkNamespaceListerExpansion interface{}
 
 // RouteListerExpansion allows custom methods to be added to
 // RouteLister.
 type RouteListerExpansion interface{}
 
+// RouteNamespaceListerExpansion allows custom methods to be added to
+// RouteNamespaceLister.
+type RouteNamespaceListerExpansion interface{}
+
 // RouteTableListerExpansion allows custom methods to be added to
 // RouteTableLister.
 type RouteTableListerExpansion interface{}
+
+// RouteTableNamespaceListerExpansion allows custom methods to be added to
+// RouteTableNamespaceLister.
+type RouteTableNamespaceListerExpansion interface{}
 
 // RouterListerExpansion allows custom methods to be added to
 // RouterLister.
 type RouterListerExpansion interface{}
 
+// RouterNamespaceListerExpansion allows custom methods to be added to
+// RouterNamespaceLister.
+type RouterNamespaceListerExpansion interface{}
+
 // SubnetListerExpansion allows custom methods to be added to
 // SubnetLister.
 type SubnetListerExpansion interface{}
+
+// SubnetNamespaceListerExpansion allows custom methods to be added to
+// SubnetNamespaceLister.
+type SubnetNamespaceListerExpansion interface{}

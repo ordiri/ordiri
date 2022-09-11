@@ -241,7 +241,7 @@ func WithBiosOemString(entries ...string) DomainOption {
 	}
 }
 
-func WithCephVolume(name, device string) DomainOption {
+func WithCephVolume(tenant, name, device string) DomainOption {
 	return func(d *libvirtxml.Domain) error {
 		return WithDisk(libvirtxml.DomainDisk{
 			Device: "disk",
@@ -249,7 +249,7 @@ func WithCephVolume(name, device string) DomainOption {
 			Source: &libvirtxml.DomainDiskSource{
 				Network: &libvirtxml.DomainDiskSourceNetwork{
 					Protocol: "rbd",
-					Name:     fmt.Sprintf("tenant1/%s", name),
+					Name:     fmt.Sprintf("%s/%s", tenant, name),
 					Hosts: []libvirtxml.DomainDiskSourceHost{
 						{
 							Name: "debian.mgmt",

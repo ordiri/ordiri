@@ -37,12 +37,12 @@ type CoreV1alpha1Client struct {
 	restClient rest.Interface
 }
 
-func (c *CoreV1alpha1Client) Machines() MachineInterface {
-	return newMachines(c)
+func (c *CoreV1alpha1Client) Machines(namespace string) MachineInterface {
+	return newMachines(c, namespace)
 }
 
-func (c *CoreV1alpha1Client) MachineProfiles() MachineProfileInterface {
-	return newMachineProfiles(c)
+func (c *CoreV1alpha1Client) MachineProfiles(namespace string) MachineProfileInterface {
+	return newMachineProfiles(c, namespace)
 }
 
 func (c *CoreV1alpha1Client) Nodes() NodeInterface {

@@ -1,6 +1,5 @@
 /*
 Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
@@ -43,6 +42,10 @@ to quickly create a Cobra application.`,
 		if err != nil {
 			return err
 		}
+		tenant, err := cmd.Flags().GetString("tenant")
+		if err != nil {
+			return err
+		}
 		cidrFlag, err := cmd.Flags().GetString("cidr")
 		if err != nil {
 			return err
@@ -79,6 +82,7 @@ to quickly create a Cobra application.`,
 			r.Header.Set("X-Ordiri-Network", network)
 			r.Header.Set("X-Ordiri-Subnet", subnet)
 			r.Header.Set("X-Ordiri-Ip", parsedIp.IP().String())
+			r.Header.Set("X-Ordiri-Tenant", tenant)
 		}
 
 		log.Println("Starting proxy server on", ":80")
@@ -94,7 +98,8 @@ func init() {
 	rootCmd.AddCommand(serverCmd)
 
 	serverCmd.PersistentFlags().StringP("cidr", "a", "", "which cidr to pre-filter requests by")
-	serverCmd.PersistentFlags().StringP("network", "n", "", "which network")
-	serverCmd.PersistentFlags().StringP("subnet", "s", "", "which subnet to watch")
+	serverCmd.PersistentFlags().StringP("network", "n", "", "which network this is for")
+	serverCmd.PersistentFlags().StringP("subnet", "s", "", "which subnet this is for")
+	serverCmd.PersistentFlags().StringP("tenant", "t", "", "which tenant this is for")
 
 }

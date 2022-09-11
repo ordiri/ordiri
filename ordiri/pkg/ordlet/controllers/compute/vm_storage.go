@@ -51,7 +51,7 @@ func (r *VirtualMachineReconciler) ensureVolume(ctx context.Context, vm *compute
 		status.Bound = true
 		status.Size = vol.Spec.Size
 
-		return status, internallibvirt.WithCephVolume(vol.Name, disk.Device), nil
+		return status, internallibvirt.WithCephVolume(vol.Namespace, vol.Name, disk.Device), nil
 	} else if disk.HostLocal != nil {
 		if disk.HostLocal.PoolName == "" {
 			return status, nil, fmt.Errorf("missing pool name")
@@ -129,6 +129,7 @@ func (r *VirtualMachineReconciler) ensureStoragePool(ctx context.Context, name s
 }
 func (r *VirtualMachineReconciler) volumeFromClaim(ctx context.Context, vm *computev1alpha1.VirtualMachine, claim *storagev1alpha1.VolumeClaim) (*storagev1alpha1.Volume, error) {
 	volume := &storagev1alpha1.Volume{}
+	volume.Namespace = claim.Namespace
 	volume.Name = claim.Spec.VolumeName
 	if err := r.Client.Get(ctx, client.ObjectKeyFromObject(volume), volume); err != nil {
 		return nil, err
@@ -137,11 +138,12 @@ func (r *VirtualMachineReconciler) volumeFromClaim(ctx context.Context, vm *comp
 	return volume, nil
 }
 func (r *VirtualMachineReconciler) volumeClaim(ctx context.Context, vm *computev1alpha1.VirtualMachine, vol *computev1alpha1.VirtualMachineVolume) (*storagev1alpha1.VolumeClaim, error) {
-	volume := &storagev1alpha1.VolumeClaim{}
-	volume.Name = vol.Name
-	if err := r.Client.Get(ctx, client.ObjectKeyFromObject(volume), volume); err != nil {
+	volumeClaim := &storagev1alpha1.VolumeClaim{}
+	volumeClaim.Namespace = vm.Namespace
+	volumeClaim.Name = vol.Name
+	if err := r.Client.Get(ctx, client.ObjectKeyFromObject(volumeClaim), volumeClaim); err != nil {
 		return nil, err
 	}
 
-	return volume, nil
+	return volumeClaim, nil
 }

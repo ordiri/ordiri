@@ -27,6 +27,7 @@ import (
 
 type NetworkV1alpha1Interface interface {
 	RESTClient() rest.Interface
+	LoadBalancersGetter
 	NetworksGetter
 	RoutesGetter
 	RouteTablesGetter
@@ -39,24 +40,28 @@ type NetworkV1alpha1Client struct {
 	restClient rest.Interface
 }
 
-func (c *NetworkV1alpha1Client) Networks() NetworkInterface {
-	return newNetworks(c)
+func (c *NetworkV1alpha1Client) LoadBalancers(namespace string) LoadBalancerInterface {
+	return newLoadBalancers(c, namespace)
 }
 
-func (c *NetworkV1alpha1Client) Routes() RouteInterface {
-	return newRoutes(c)
+func (c *NetworkV1alpha1Client) Networks(namespace string) NetworkInterface {
+	return newNetworks(c, namespace)
 }
 
-func (c *NetworkV1alpha1Client) RouteTables() RouteTableInterface {
-	return newRouteTables(c)
+func (c *NetworkV1alpha1Client) Routes(namespace string) RouteInterface {
+	return newRoutes(c, namespace)
 }
 
-func (c *NetworkV1alpha1Client) Routers() RouterInterface {
-	return newRouters(c)
+func (c *NetworkV1alpha1Client) RouteTables(namespace string) RouteTableInterface {
+	return newRouteTables(c, namespace)
 }
 
-func (c *NetworkV1alpha1Client) Subnets() SubnetInterface {
-	return newSubnets(c)
+func (c *NetworkV1alpha1Client) Routers(namespace string) RouterInterface {
+	return newRouters(c, namespace)
+}
+
+func (c *NetworkV1alpha1Client) Subnets(namespace string) SubnetInterface {
+	return newSubnets(c, namespace)
 }
 
 // NewForConfig creates a new NetworkV1alpha1Client for the given config.

@@ -32,7 +32,7 @@ import (
 // MachineProfilesGetter has a method to return a MachineProfileInterface.
 // A group's client should implement this interface.
 type MachineProfilesGetter interface {
-	MachineProfiles() MachineProfileInterface
+	MachineProfiles(namespace string) MachineProfileInterface
 }
 
 // MachineProfileInterface has methods to work with MachineProfile resources.
@@ -52,12 +52,14 @@ type MachineProfileInterface interface {
 // machineProfiles implements MachineProfileInterface
 type machineProfiles struct {
 	client rest.Interface
+	ns     string
 }
 
 // newMachineProfiles returns a MachineProfiles
-func newMachineProfiles(c *CoreV1alpha1Client) *machineProfiles {
+func newMachineProfiles(c *CoreV1alpha1Client, namespace string) *machineProfiles {
 	return &machineProfiles{
 		client: c.RESTClient(),
+		ns:     namespace,
 	}
 }
 
@@ -65,6 +67,7 @@ func newMachineProfiles(c *CoreV1alpha1Client) *machineProfiles {
 func (c *machineProfiles) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.MachineProfile, err error) {
 	result = &v1alpha1.MachineProfile{}
 	err = c.client.Get().
+		Namespace(c.ns).
 		Resource("machineprofiles").
 		Name(name).
 		VersionedParams(&options, scheme.ParameterCodec).
@@ -81,6 +84,7 @@ func (c *machineProfiles) List(ctx context.Context, opts v1.ListOptions) (result
 	}
 	result = &v1alpha1.MachineProfileList{}
 	err = c.client.Get().
+		Namespace(c.ns).
 		Resource("machineprofiles").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -97,6 +101,7 @@ func (c *machineProfiles) Watch(ctx context.Context, opts v1.ListOptions) (watch
 	}
 	opts.Watch = true
 	return c.client.Get().
+		Namespace(c.ns).
 		Resource("machineprofiles").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -107,6 +112,7 @@ func (c *machineProfiles) Watch(ctx context.Context, opts v1.ListOptions) (watch
 func (c *machineProfiles) Create(ctx context.Context, machineProfile *v1alpha1.MachineProfile, opts v1.CreateOptions) (result *v1alpha1.MachineProfile, err error) {
 	result = &v1alpha1.MachineProfile{}
 	err = c.client.Post().
+		Namespace(c.ns).
 		Resource("machineprofiles").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Body(machineProfile).
@@ -119,6 +125,7 @@ func (c *machineProfiles) Create(ctx context.Context, machineProfile *v1alpha1.M
 func (c *machineProfiles) Update(ctx context.Context, machineProfile *v1alpha1.MachineProfile, opts v1.UpdateOptions) (result *v1alpha1.MachineProfile, err error) {
 	result = &v1alpha1.MachineProfile{}
 	err = c.client.Put().
+		Namespace(c.ns).
 		Resource("machineprofiles").
 		Name(machineProfile.Name).
 		VersionedParams(&opts, scheme.ParameterCodec).
@@ -133,6 +140,7 @@ func (c *machineProfiles) Update(ctx context.Context, machineProfile *v1alpha1.M
 func (c *machineProfiles) UpdateStatus(ctx context.Context, machineProfile *v1alpha1.MachineProfile, opts v1.UpdateOptions) (result *v1alpha1.MachineProfile, err error) {
 	result = &v1alpha1.MachineProfile{}
 	err = c.client.Put().
+		Namespace(c.ns).
 		Resource("machineprofiles").
 		Name(machineProfile.Name).
 		SubResource("status").
@@ -146,6 +154,7 @@ func (c *machineProfiles) UpdateStatus(ctx context.Context, machineProfile *v1al
 // Delete takes name of the machineProfile and deletes it. Returns an error if one occurs.
 func (c *machineProfiles) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
 	return c.client.Delete().
+		Namespace(c.ns).
 		Resource("machineprofiles").
 		Name(name).
 		Body(&opts).
@@ -160,6 +169,7 @@ func (c *machineProfiles) DeleteCollection(ctx context.Context, opts v1.DeleteOp
 		timeout = time.Duration(*listOpts.TimeoutSeconds) * time.Second
 	}
 	return c.client.Delete().
+		Namespace(c.ns).
 		Resource("machineprofiles").
 		VersionedParams(&listOpts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -172,6 +182,7 @@ func (c *machineProfiles) DeleteCollection(ctx context.Context, opts v1.DeleteOp
 func (c *machineProfiles) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.MachineProfile, err error) {
 	result = &v1alpha1.MachineProfile{}
 	err = c.client.Patch(pt).
+		Namespace(c.ns).
 		Resource("machineprofiles").
 		Name(name).
 		SubResource(subresources...).

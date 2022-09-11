@@ -67,7 +67,7 @@ func (r *VirtualMachineReplicaSetReconciler) Reconcile(ctx context.Context, req 
 		}
 		return ctrl.Result{}, err
 	}
-	log.V(5).Info("found replicaset", "rs", rs)
+	log.V(5).Info("found rs", "rs", rs)
 
 	if !rs.DeletionTimestamp.IsZero() {
 		log.V(5).Info("Detected replicaset in deletion mode")
@@ -75,6 +75,7 @@ func (r *VirtualMachineReplicaSetReconciler) Reconcile(ctx context.Context, req 
 		for i := int32(0); i < rs.Spec.Replicas; i++ {
 			vm := &computev1alpha1.VirtualMachine{}
 			vm.Name = fmt.Sprintf("%s-%d", rs.Name, i)
+			vm.Namespace = rs.Namespace
 			if err := r.Client.Delete(ctx, vm); err != nil {
 				if errors.IsNotFound(err) {
 					continue // Doesn't matter if it's already gone
@@ -101,6 +102,7 @@ func (r *VirtualMachineReplicaSetReconciler) Reconcile(ctx context.Context, req 
 	for i := int32(0); i < int32(math.Max(float64(rs.Spec.Replicas), float64(rs.Status.Replicas))); i++ {
 		vm := &computev1alpha1.VirtualMachine{}
 		vm.Name = fmt.Sprintf("%s-%d", rs.Name, int64(i))
+		vm.Namespace = rs.Namespace
 		if i >= rs.Spec.Replicas {
 			log.Info("deleting item", "vm", vm.Name)
 			if err := r.Client.Delete(ctx, vm); err != nil && !errors.IsNotFound(err) {

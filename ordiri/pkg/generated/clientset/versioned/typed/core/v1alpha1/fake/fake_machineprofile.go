@@ -32,6 +32,7 @@ import (
 // FakeMachineProfiles implements MachineProfileInterface
 type FakeMachineProfiles struct {
 	Fake *FakeCoreV1alpha1
+	ns   string
 }
 
 var machineprofilesResource = schema.GroupVersionResource{Group: "core.ordiri.com", Version: "v1alpha1", Resource: "machineprofiles"}
@@ -41,7 +42,8 @@ var machineprofilesKind = schema.GroupVersionKind{Group: "core.ordiri.com", Vers
 // Get takes name of the machineProfile, and returns the corresponding machineProfile object, and an error if there is any.
 func (c *FakeMachineProfiles) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.MachineProfile, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootGetAction(machineprofilesResource, name), &v1alpha1.MachineProfile{})
+		Invokes(testing.NewGetAction(machineprofilesResource, c.ns, name), &v1alpha1.MachineProfile{})
+
 	if obj == nil {
 		return nil, err
 	}
@@ -51,7 +53,8 @@ func (c *FakeMachineProfiles) Get(ctx context.Context, name string, options v1.G
 // List takes label and field selectors, and returns the list of MachineProfiles that match those selectors.
 func (c *FakeMachineProfiles) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.MachineProfileList, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootListAction(machineprofilesResource, machineprofilesKind, opts), &v1alpha1.MachineProfileList{})
+		Invokes(testing.NewListAction(machineprofilesResource, machineprofilesKind, c.ns, opts), &v1alpha1.MachineProfileList{})
+
 	if obj == nil {
 		return nil, err
 	}
@@ -72,13 +75,15 @@ func (c *FakeMachineProfiles) List(ctx context.Context, opts v1.ListOptions) (re
 // Watch returns a watch.Interface that watches the requested machineProfiles.
 func (c *FakeMachineProfiles) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
 	return c.Fake.
-		InvokesWatch(testing.NewRootWatchAction(machineprofilesResource, opts))
+		InvokesWatch(testing.NewWatchAction(machineprofilesResource, c.ns, opts))
+
 }
 
 // Create takes the representation of a machineProfile and creates it.  Returns the server's representation of the machineProfile, and an error, if there is any.
 func (c *FakeMachineProfiles) Create(ctx context.Context, machineProfile *v1alpha1.MachineProfile, opts v1.CreateOptions) (result *v1alpha1.MachineProfile, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootCreateAction(machineprofilesResource, machineProfile), &v1alpha1.MachineProfile{})
+		Invokes(testing.NewCreateAction(machineprofilesResource, c.ns, machineProfile), &v1alpha1.MachineProfile{})
+
 	if obj == nil {
 		return nil, err
 	}
@@ -88,7 +93,8 @@ func (c *FakeMachineProfiles) Create(ctx context.Context, machineProfile *v1alph
 // Update takes the representation of a machineProfile and updates it. Returns the server's representation of the machineProfile, and an error, if there is any.
 func (c *FakeMachineProfiles) Update(ctx context.Context, machineProfile *v1alpha1.MachineProfile, opts v1.UpdateOptions) (result *v1alpha1.MachineProfile, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootUpdateAction(machineprofilesResource, machineProfile), &v1alpha1.MachineProfile{})
+		Invokes(testing.NewUpdateAction(machineprofilesResource, c.ns, machineProfile), &v1alpha1.MachineProfile{})
+
 	if obj == nil {
 		return nil, err
 	}
@@ -99,7 +105,8 @@ func (c *FakeMachineProfiles) Update(ctx context.Context, machineProfile *v1alph
 // Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
 func (c *FakeMachineProfiles) UpdateStatus(ctx context.Context, machineProfile *v1alpha1.MachineProfile, opts v1.UpdateOptions) (*v1alpha1.MachineProfile, error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootUpdateSubresourceAction(machineprofilesResource, "status", machineProfile), &v1alpha1.MachineProfile{})
+		Invokes(testing.NewUpdateSubresourceAction(machineprofilesResource, "status", c.ns, machineProfile), &v1alpha1.MachineProfile{})
+
 	if obj == nil {
 		return nil, err
 	}
@@ -109,13 +116,14 @@ func (c *FakeMachineProfiles) UpdateStatus(ctx context.Context, machineProfile *
 // Delete takes name of the machineProfile and deletes it. Returns an error if one occurs.
 func (c *FakeMachineProfiles) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
 	_, err := c.Fake.
-		Invokes(testing.NewRootDeleteActionWithOptions(machineprofilesResource, name, opts), &v1alpha1.MachineProfile{})
+		Invokes(testing.NewDeleteActionWithOptions(machineprofilesResource, c.ns, name, opts), &v1alpha1.MachineProfile{})
+
 	return err
 }
 
 // DeleteCollection deletes a collection of objects.
 func (c *FakeMachineProfiles) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewRootDeleteCollectionAction(machineprofilesResource, listOpts)
+	action := testing.NewDeleteCollectionAction(machineprofilesResource, c.ns, listOpts)
 
 	_, err := c.Fake.Invokes(action, &v1alpha1.MachineProfileList{})
 	return err
@@ -124,7 +132,8 @@ func (c *FakeMachineProfiles) DeleteCollection(ctx context.Context, opts v1.Dele
 // Patch applies the patch and returns the patched machineProfile.
 func (c *FakeMachineProfiles) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.MachineProfile, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootPatchSubresourceAction(machineprofilesResource, name, pt, data, subresources...), &v1alpha1.MachineProfile{})
+		Invokes(testing.NewPatchSubresourceAction(machineprofilesResource, c.ns, name, pt, data, subresources...), &v1alpha1.MachineProfile{})
+
 	if obj == nil {
 		return nil, err
 	}

@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"net/http"
 
+	authorizationv1alpha1 "github.com/ordiri/ordiri/pkg/generated/clientset/versioned/typed/authorization/v1alpha1"
 	computev1alpha1 "github.com/ordiri/ordiri/pkg/generated/clientset/versioned/typed/compute/v1alpha1"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/generated/clientset/versioned/typed/core/v1alpha1"
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/generated/clientset/versioned/typed/network/v1alpha1"
@@ -32,6 +33,7 @@ import (
 
 type Interface interface {
 	Discovery() discovery.DiscoveryInterface
+	AuthorizationV1alpha1() authorizationv1alpha1.AuthorizationV1alpha1Interface
 	ComputeV1alpha1() computev1alpha1.ComputeV1alpha1Interface
 	CoreV1alpha1() corev1alpha1.CoreV1alpha1Interface
 	NetworkV1alpha1() networkv1alpha1.NetworkV1alpha1Interface
@@ -42,10 +44,16 @@ type Interface interface {
 // version included in a Clientset.
 type Clientset struct {
 	*discovery.DiscoveryClient
-	computeV1alpha1 *computev1alpha1.ComputeV1alpha1Client
-	coreV1alpha1    *corev1alpha1.CoreV1alpha1Client
-	networkV1alpha1 *networkv1alpha1.NetworkV1alpha1Client
-	storageV1alpha1 *storagev1alpha1.StorageV1alpha1Client
+	authorizationV1alpha1 *authorizationv1alpha1.AuthorizationV1alpha1Client
+	computeV1alpha1       *computev1alpha1.ComputeV1alpha1Client
+	coreV1alpha1          *corev1alpha1.CoreV1alpha1Client
+	networkV1alpha1       *networkv1alpha1.NetworkV1alpha1Client
+	storageV1alpha1       *storagev1alpha1.StorageV1alpha1Client
+}
+
+// AuthorizationV1alpha1 retrieves the AuthorizationV1alpha1Client
+func (c *Clientset) AuthorizationV1alpha1() authorizationv1alpha1.AuthorizationV1alpha1Interface {
+	return c.authorizationV1alpha1
 }
 
 // ComputeV1alpha1 retrieves the ComputeV1alpha1Client
@@ -112,6 +120,10 @@ func NewForConfigAndClient(c *rest.Config, httpClient *http.Client) (*Clientset,
 
 	var cs Clientset
 	var err error
+	cs.authorizationV1alpha1, err = authorizationv1alpha1.NewForConfigAndClient(&configShallowCopy, httpClient)
+	if err != nil {
+		return nil, err
+	}
 	cs.computeV1alpha1, err = computev1alpha1.NewForConfigAndClient(&configShallowCopy, httpClient)
 	if err != nil {
 		return nil, err
@@ -149,6 +161,7 @@ func NewForConfigOrDie(c *rest.Config) *Clientset {
 // New creates a new Clientset for the given RESTClient.
 func New(c rest.Interface) *Clientset {
 	var cs Clientset
+	cs.authorizationV1alpha1 = authorizationv1alpha1.New(c)
 	cs.computeV1alpha1 = computev1alpha1.New(c)
 	cs.coreV1alpha1 = corev1alpha1.New(c)
 	cs.networkV1alpha1 = networkv1alpha1.New(c)

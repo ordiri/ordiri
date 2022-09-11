@@ -210,6 +210,7 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 func (r *VirtualMachineReconciler) createOrUpdateMachine(ctx context.Context, vm *computev1alpha1.VirtualMachine, domain *libvirtxml.Domain) (controllerutil.OperationResult, error) {
 	machine := &corev1alpha1.Machine{}
 	machine.Name = string(vm.UID)
+	machine.Namespace = vm.Namespace
 	return ctrl.CreateOrUpdate(ctx, r.Client, machine, func() error {
 		if machine.Spec.Properties == nil {
 			machine.Spec.Properties = []corev1alpha1.MachineProperty{}
@@ -302,6 +303,7 @@ func (r *VirtualMachineReconciler) ReconcileDeletion(ctx context.Context, vm *co
 
 	machine := &corev1alpha1.Machine{}
 	machine.Name = string(vm.UID)
+	machine.Namespace = vm.Namespace
 	if err := r.Client.Delete(ctx, machine); err != nil && !k8err.IsNotFound(err) {
 		return ctrl.Result{}, fmt.Errorf("unable to delete machine - %w", err)
 	}
@@ -316,7 +318,7 @@ func (r *VirtualMachineReconciler) ReconcileDeletion(ctx context.Context, vm *co
 func (r *VirtualMachineReconciler) removeFinalizer(ctx context.Context, vm *computev1alpha1.VirtualMachine) error {
 	if controllerutil.RemoveFinalizer(vm, FinalizerNameVmProvisioned) {
 		if err := r.Client.Update(ctx, vm); err != nil {
-			return err
+			return fmt.Errorf("unable to remove finalizer - %w", err)
 		}
 	}
 

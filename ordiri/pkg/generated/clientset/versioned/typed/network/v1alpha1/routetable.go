@@ -32,7 +32,7 @@ import (
 // RouteTablesGetter has a method to return a RouteTableInterface.
 // A group's client should implement this interface.
 type RouteTablesGetter interface {
-	RouteTables() RouteTableInterface
+	RouteTables(namespace string) RouteTableInterface
 }
 
 // RouteTableInterface has methods to work with RouteTable resources.
@@ -52,12 +52,14 @@ type RouteTableInterface interface {
 // routeTables implements RouteTableInterface
 type routeTables struct {
 	client rest.Interface
+	ns     string
 }
 
 // newRouteTables returns a RouteTables
-func newRouteTables(c *NetworkV1alpha1Client) *routeTables {
+func newRouteTables(c *NetworkV1alpha1Client, namespace string) *routeTables {
 	return &routeTables{
 		client: c.RESTClient(),
+		ns:     namespace,
 	}
 }
 
@@ -65,6 +67,7 @@ func newRouteTables(c *NetworkV1alpha1Client) *routeTables {
 func (c *routeTables) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.RouteTable, err error) {
 	result = &v1alpha1.RouteTable{}
 	err = c.client.Get().
+		Namespace(c.ns).
 		Resource("routetables").
 		Name(name).
 		VersionedParams(&options, scheme.ParameterCodec).
@@ -81,6 +84,7 @@ func (c *routeTables) List(ctx context.Context, opts v1.ListOptions) (result *v1
 	}
 	result = &v1alpha1.RouteTableList{}
 	err = c.client.Get().
+		Namespace(c.ns).
 		Resource("routetables").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -97,6 +101,7 @@ func (c *routeTables) Watch(ctx context.Context, opts v1.ListOptions) (watch.Int
 	}
 	opts.Watch = true
 	return c.client.Get().
+		Namespace(c.ns).
 		Resource("routetables").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -107,6 +112,7 @@ func (c *routeTables) Watch(ctx context.Context, opts v1.ListOptions) (watch.Int
 func (c *routeTables) Create(ctx context.Context, routeTable *v1alpha1.RouteTable, opts v1.CreateOptions) (result *v1alpha1.RouteTable, err error) {
 	result = &v1alpha1.RouteTable{}
 	err = c.client.Post().
+		Namespace(c.ns).
 		Resource("routetables").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Body(routeTable).
@@ -119,6 +125,7 @@ func (c *routeTables) Create(ctx context.Context, routeTable *v1alpha1.RouteTabl
 func (c *routeTables) Update(ctx context.Context, routeTable *v1alpha1.RouteTable, opts v1.UpdateOptions) (result *v1alpha1.RouteTable, err error) {
 	result = &v1alpha1.RouteTable{}
 	err = c.client.Put().
+		Namespace(c.ns).
 		Resource("routetables").
 		Name(routeTable.Name).
 		VersionedParams(&opts, scheme.ParameterCodec).
@@ -133,6 +140,7 @@ func (c *routeTables) Update(ctx context.Context, routeTable *v1alpha1.RouteTabl
 func (c *routeTables) UpdateStatus(ctx context.Context, routeTable *v1alpha1.RouteTable, opts v1.UpdateOptions) (result *v1alpha1.RouteTable, err error) {
 	result = &v1alpha1.RouteTable{}
 	err = c.client.Put().
+		Namespace(c.ns).
 		Resource("routetables").
 		Name(routeTable.Name).
 		SubResource("status").
@@ -146,6 +154,7 @@ func (c *routeTables) UpdateStatus(ctx context.Context, routeTable *v1alpha1.Rou
 // Delete takes name of the routeTable and deletes it. Returns an error if one occurs.
 func (c *routeTables) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
 	return c.client.Delete().
+		Namespace(c.ns).
 		Resource("routetables").
 		Name(name).
 		Body(&opts).
@@ -160,6 +169,7 @@ func (c *routeTables) DeleteCollection(ctx context.Context, opts v1.DeleteOption
 		timeout = time.Duration(*listOpts.TimeoutSeconds) * time.Second
 	}
 	return c.client.Delete().
+		Namespace(c.ns).
 		Resource("routetables").
 		VersionedParams(&listOpts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -172,6 +182,7 @@ func (c *routeTables) DeleteCollection(ctx context.Context, opts v1.DeleteOption
 func (c *routeTables) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.RouteTable, err error) {
 	result = &v1alpha1.RouteTable{}
 	err = c.client.Patch(pt).
+		Namespace(c.ns).
 		Resource("routetables").
 		Name(name).
 		SubResource(subresources...).

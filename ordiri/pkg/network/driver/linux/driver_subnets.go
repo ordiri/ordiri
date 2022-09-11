@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net"
 	"os"
-	"path/filepath"
 	"strings"
 	"syscall"
 
@@ -101,7 +100,7 @@ func (ln *linuxDriver) removeMetadataServer(ctx context.Context, nw api.Network,
 	}
 
 	// remove the metadata directory and the unit file
-	baseDir := filepath.Join(confDir, "/metadata", subnet.Name(), "ordiri-metedata")
+	baseDir := subnetConfDir(nw, subnet)
 
 	if err := ln.dbus.ReloadContext(ctx); err != nil {
 		return fmt.Errorf("unabel to reload systemctl dbus ctx - %w", err)
@@ -149,7 +148,7 @@ func (ln *linuxDriver) removeDhcp(ctx context.Context, nw api.Network, subnet ap
 	}
 
 	// create the dnsmasq config to provide dhcp for this subnet
-	baseDir := filepath.Join("/run/ordiri/subnets", subnet.Name(), "dhcp")
+	baseDir := subnetConfDir(nw, subnet)
 
 	if err := ln.dbus.ReloadContext(ctx); err != nil {
 		return fmt.Errorf("unabel to reload systemctl dbus ctx - %w", err)
@@ -207,13 +206,13 @@ func (ln *linuxDriver) installMetadataServer(ctx context.Context, nw api.Network
 	}
 
 	// create the dnsmasq config to provide metadata for this subnet
-	baseDir := filepath.Join(confDir, "/metadata", subnet.Name(), "ordiri-metedata")
+	baseDir := subnetConfDir(nw, subnet)
 	if err := os.MkdirAll(baseDir, os.ModePerm); err != nil {
 		return fmt.Errorf("unable to create directory %s - %w", baseDir, err)
 	}
 
 	// startCmd := strings.Join(append([]string{"ip", "netns", "exec", namespace, "/usr/sbin/dnsmasq"}, dnsMasqOptions.Args()...), " ")
-	startCmd := strings.Join([]string{"/usr/local/bin/ordiri-metadata", "--network", nw.Name(), "--subnet", subnet.Name(), "--cidr", subnet.Cidr().String(), "server"}, " ")
+	startCmd := strings.Join([]string{"/usr/local/bin/ordiri-metadata", "--network", nw.Name(), "--tenant", nw.Tenant(), "--subnet", subnet.Name(), "--cidr", subnet.Cidr().String(), "server"}, " ")
 	// create the systemd file to manage this metadata
 	unitName := metadataServerUnitName(subnet)
 	opts := []*unit.UnitOption{
@@ -273,6 +272,7 @@ func (ln *linuxDriver) installDhcp(ctx context.Context, nw api.Network, subnet a
 	if err != nil {
 		return fmt.Errorf("unable to get current network ns - %w", err)
 	}
+	curNs.Close()
 	handle, err := netns.GetFromName(namespace)
 	if err != nil {
 		return fmt.Errorf("unable to get namespace for public gateway ns - %w", err)
@@ -302,13 +302,13 @@ func (ln *linuxDriver) installDhcp(ctx context.Context, nw api.Network, subnet a
 	}
 
 	// create the dnsmasq config to provide dhcp for this subnet
-	baseDir := dhcpConfDir(subnet)
-	dhcpHostDir := dhcpHostMappingDir(subnet)
-	hostDir := hostMappingDir(nw)
+	baseDir := dhcpConfDir(nw, subnet)
+	dhcpHostDir := dhcpHostMappingDir(nw, subnet)
+	etcHostsDir := etcHostMappingDir(nw)
 
-	dnsMasqOptions := dhcp.DnsMasqConfig(baseDir, subnet.Name(), cableName.Namespace(), subnet.Cidr(), hostDir, dhcpHostDir)
+	dnsMasqOptions := dhcp.DnsMasqConfig(baseDir, subnet.Name(), cableName.Namespace(), subnet.Cidr(), etcHostsDir, dhcpHostDir)
 	// easier to just make the host dir as it's deeper in the tree than the root conf dir
-	if err := os.MkdirAll(hostDir, os.ModePerm); err != nil {
+	if err := os.MkdirAll(etcHostsDir, os.ModePerm); err != nil {
 		return fmt.Errorf("unable to create hosts directory %s - %w", baseDir, err)
 	}
 	// easier to just make the host dir as it's deeper in the tree than the root conf dir
@@ -316,8 +316,8 @@ func (ln *linuxDriver) installDhcp(ctx context.Context, nw api.Network, subnet a
 		return fmt.Errorf("unable to create dhcp directory %s - %w", baseDir, err)
 	}
 
-	hostFile := dhcpHostsFile(subnet)
-	leaseFile := dhcpLeaseFile(subnet)
+	hostFile := dhcpHostsFilePath(nw, subnet)
+	leaseFile := dhcpLeaseFilePath(nw, subnet)
 	if err := touchFiles(hostFile, leaseFile); err != nil {
 		return err
 	}

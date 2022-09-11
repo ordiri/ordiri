@@ -18,6 +18,7 @@ package network
 
 import (
 	"context"
+	"fmt"
 	"math/rand"
 	"sort"
 	"time"
@@ -125,6 +126,7 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 
 func (r *NetworkReconciler) removeDefaultRouter(ctx context.Context, network *networkv1alpha1.Network) error {
 	router := &networkv1alpha1.Router{}
+	router.Namespace = network.Namespace
 	router.Name = network.DefaultRouterName()
 	if err := r.Client.Get(ctx, client.ObjectKeyFromObject(router), router); err != nil {
 		if errors.IsNotFound(err) {
@@ -140,10 +142,11 @@ func (r *NetworkReconciler) removeDefaultRouter(ctx context.Context, network *ne
 func (r *NetworkReconciler) ensureDefaultRouter(ctx context.Context, network *networkv1alpha1.Network) (controllerutil.OperationResult, *networkv1alpha1.Router, error) {
 	router := &networkv1alpha1.Router{}
 	router.Name = network.DefaultRouterName()
+	router.Namespace = network.Namespace
 	result, err := ctrl.CreateOrUpdate(ctx, r.Client, router, func() error {
 		subnets := &networkv1alpha1.SubnetList{}
-		if err := r.Client.List(ctx, subnets, client.MatchingFields{SubnetByNetworkKey: network.Name}); err != nil {
-			return err
+		if err := r.Client.List(ctx, subnets, client.InNamespace(router.Namespace), client.MatchingFields{SubnetByNetworkKey: network.Name}); err != nil {
+			return fmt.Errorf("unable to fetch router - %w", err)
 		}
 
 		existingSubnetSpec := map[string]networkv1alpha1.RouterSubnetReference{}
@@ -161,6 +164,7 @@ func (r *NetworkReconciler) ensureDefaultRouter(ctx context.Context, network *ne
 						Kind:       subnet.Kind,
 						APIVersion: subnet.APIVersion,
 						Name:       subnet.Name,
+						Namespace:  subnet.Namespace,
 						UID:        subnet.UID,
 					},
 				})
@@ -204,7 +208,7 @@ func (r *NetworkReconciler) SetupWithManager(mgr ctrl.Manager) error {
 			switch subnet := o.(type) {
 			case *networkv1alpha1.Subnet:
 				return []reconcile.Request{
-					{NamespacedName: types.NamespacedName{Name: subnet.Spec.Network.Name}},
+					{NamespacedName: types.NamespacedName{Namespace: subnet.Namespace, Name: subnet.Spec.Network.Name}},
 				}
 			}
 			return nil

@@ -27,24 +27,28 @@ type FakeNetworkV1alpha1 struct {
 	*testing.Fake
 }
 
-func (c *FakeNetworkV1alpha1) Networks() v1alpha1.NetworkInterface {
-	return &FakeNetworks{c}
+func (c *FakeNetworkV1alpha1) LoadBalancers(namespace string) v1alpha1.LoadBalancerInterface {
+	return &FakeLoadBalancers{c, namespace}
 }
 
-func (c *FakeNetworkV1alpha1) Routes() v1alpha1.RouteInterface {
-	return &FakeRoutes{c}
+func (c *FakeNetworkV1alpha1) Networks(namespace string) v1alpha1.NetworkInterface {
+	return &FakeNetworks{c, namespace}
 }
 
-func (c *FakeNetworkV1alpha1) RouteTables() v1alpha1.RouteTableInterface {
-	return &FakeRouteTables{c}
+func (c *FakeNetworkV1alpha1) Routes(namespace string) v1alpha1.RouteInterface {
+	return &FakeRoutes{c, namespace}
 }
 
-func (c *FakeNetworkV1alpha1) Routers() v1alpha1.RouterInterface {
-	return &FakeRouters{c}
+func (c *FakeNetworkV1alpha1) RouteTables(namespace string) v1alpha1.RouteTableInterface {
+	return &FakeRouteTables{c, namespace}
 }
 
-func (c *FakeNetworkV1alpha1) Subnets() v1alpha1.SubnetInterface {
-	return &FakeSubnets{c}
+func (c *FakeNetworkV1alpha1) Routers(namespace string) v1alpha1.RouterInterface {
+	return &FakeRouters{c, namespace}
+}
+
+func (c *FakeNetworkV1alpha1) Subnets(namespace string) v1alpha1.SubnetInterface {
+	return &FakeSubnets{c, namespace}
 }
 
 // RESTClient returns a RESTClient that is used to communicate

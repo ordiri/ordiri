@@ -32,7 +32,7 @@ import (
 // RoutersGetter has a method to return a RouterInterface.
 // A group's client should implement this interface.
 type RoutersGetter interface {
-	Routers() RouterInterface
+	Routers(namespace string) RouterInterface
 }
 
 // RouterInterface has methods to work with Router resources.
@@ -52,12 +52,14 @@ type RouterInterface interface {
 // routers implements RouterInterface
 type routers struct {
 	client rest.Interface
+	ns     string
 }
 
 // newRouters returns a Routers
-func newRouters(c *NetworkV1alpha1Client) *routers {
+func newRouters(c *NetworkV1alpha1Client, namespace string) *routers {
 	return &routers{
 		client: c.RESTClient(),
+		ns:     namespace,
 	}
 }
 
@@ -65,6 +67,7 @@ func newRouters(c *NetworkV1alpha1Client) *routers {
 func (c *routers) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.Router, err error) {
 	result = &v1alpha1.Router{}
 	err = c.client.Get().
+		Namespace(c.ns).
 		Resource("routers").
 		Name(name).
 		VersionedParams(&options, scheme.ParameterCodec).
@@ -81,6 +84,7 @@ func (c *routers) List(ctx context.Context, opts v1.ListOptions) (result *v1alph
 	}
 	result = &v1alpha1.RouterList{}
 	err = c.client.Get().
+		Namespace(c.ns).
 		Resource("routers").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -97,6 +101,7 @@ func (c *routers) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interfa
 	}
 	opts.Watch = true
 	return c.client.Get().
+		Namespace(c.ns).
 		Resource("routers").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -107,6 +112,7 @@ func (c *routers) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interfa
 func (c *routers) Create(ctx context.Context, router *v1alpha1.Router, opts v1.CreateOptions) (result *v1alpha1.Router, err error) {
 	result = &v1alpha1.Router{}
 	err = c.client.Post().
+		Namespace(c.ns).
 		Resource("routers").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Body(router).
@@ -119,6 +125,7 @@ func (c *routers) Create(ctx context.Context, router *v1alpha1.Router, opts v1.C
 func (c *routers) Update(ctx context.Context, router *v1alpha1.Router, opts v1.UpdateOptions) (result *v1alpha1.Router, err error) {
 	result = &v1alpha1.Router{}
 	err = c.client.Put().
+		Namespace(c.ns).
 		Resource("routers").
 		Name(router.Name).
 		VersionedParams(&opts, scheme.ParameterCodec).
@@ -133,6 +140,7 @@ func (c *routers) Update(ctx context.Context, router *v1alpha1.Router, opts v1.U
 func (c *routers) UpdateStatus(ctx context.Context, router *v1alpha1.Router, opts v1.UpdateOptions) (result *v1alpha1.Router, err error) {
 	result = &v1alpha1.Router{}
 	err = c.client.Put().
+		Namespace(c.ns).
 		Resource("routers").
 		Name(router.Name).
 		SubResource("status").
@@ -146,6 +154,7 @@ func (c *routers) UpdateStatus(ctx context.Context, router *v1alpha1.Router, opt
 // Delete takes name of the router and deletes it. Returns an error if one occurs.
 func (c *routers) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
 	return c.client.Delete().
+		Namespace(c.ns).
 		Resource("routers").
 		Name(name).
 		Body(&opts).
@@ -160,6 +169,7 @@ func (c *routers) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, l
 		timeout = time.Duration(*listOpts.TimeoutSeconds) * time.Second
 	}
 	return c.client.Delete().
+		Namespace(c.ns).
 		Resource("routers").
 		VersionedParams(&listOpts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -172,6 +182,7 @@ func (c *routers) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, l
 func (c *routers) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.Router, err error) {
 	result = &v1alpha1.Router{}
 	err = c.client.Patch(pt).
+		Namespace(c.ns).
 		Resource("routers").
 		Name(name).
 		SubResource(subresources...).

@@ -37,16 +37,16 @@ type ComputeV1alpha1Client struct {
 	restClient rest.Interface
 }
 
-func (c *ComputeV1alpha1Client) VirtualMachines() VirtualMachineInterface {
-	return newVirtualMachines(c)
+func (c *ComputeV1alpha1Client) VirtualMachines(namespace string) VirtualMachineInterface {
+	return newVirtualMachines(c, namespace)
 }
 
-func (c *ComputeV1alpha1Client) VirtualMachineDeployments() VirtualMachineDeploymentInterface {
-	return newVirtualMachineDeployments(c)
+func (c *ComputeV1alpha1Client) VirtualMachineDeployments(namespace string) VirtualMachineDeploymentInterface {
+	return newVirtualMachineDeployments(c, namespace)
 }
 
-func (c *ComputeV1alpha1Client) VirtualMachineReplicaSets() VirtualMachineReplicaSetInterface {
-	return newVirtualMachineReplicaSets(c)
+func (c *ComputeV1alpha1Client) VirtualMachineReplicaSets(namespace string) VirtualMachineReplicaSetInterface {
+	return newVirtualMachineReplicaSets(c, namespace)
 }
 
 // NewForConfig creates a new ComputeV1alpha1Client for the given config.

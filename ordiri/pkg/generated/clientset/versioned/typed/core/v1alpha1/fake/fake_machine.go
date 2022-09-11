@@ -32,6 +32,7 @@ import (
 // FakeMachines implements MachineInterface
 type FakeMachines struct {
 	Fake *FakeCoreV1alpha1
+	ns   string
 }
 
 var machinesResource = schema.GroupVersionResource{Group: "core.ordiri.com", Version: "v1alpha1", Resource: "machines"}
@@ -41,7 +42,8 @@ var machinesKind = schema.GroupVersionKind{Group: "core.ordiri.com", Version: "v
 // Get takes name of the machine, and returns the corresponding machine object, and an error if there is any.
 func (c *FakeMachines) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.Machine, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootGetAction(machinesResource, name), &v1alpha1.Machine{})
+		Invokes(testing.NewGetAction(machinesResource, c.ns, name), &v1alpha1.Machine{})
+
 	if obj == nil {
 		return nil, err
 	}
@@ -51,7 +53,8 @@ func (c *FakeMachines) Get(ctx context.Context, name string, options v1.GetOptio
 // List takes label and field selectors, and returns the list of Machines that match those selectors.
 func (c *FakeMachines) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.MachineList, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootListAction(machinesResource, machinesKind, opts), &v1alpha1.MachineList{})
+		Invokes(testing.NewListAction(machinesResource, machinesKind, c.ns, opts), &v1alpha1.MachineList{})
+
 	if obj == nil {
 		return nil, err
 	}
@@ -72,13 +75,15 @@ func (c *FakeMachines) List(ctx context.Context, opts v1.ListOptions) (result *v
 // Watch returns a watch.Interface that watches the requested machines.
 func (c *FakeMachines) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
 	return c.Fake.
-		InvokesWatch(testing.NewRootWatchAction(machinesResource, opts))
+		InvokesWatch(testing.NewWatchAction(machinesResource, c.ns, opts))
+
 }
 
 // Create takes the representation of a machine and creates it.  Returns the server's representation of the machine, and an error, if there is any.
 func (c *FakeMachines) Create(ctx context.Context, machine *v1alpha1.Machine, opts v1.CreateOptions) (result *v1alpha1.Machine, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootCreateAction(machinesResource, machine), &v1alpha1.Machine{})
+		Invokes(testing.NewCreateAction(machinesResource, c.ns, machine), &v1alpha1.Machine{})
+
 	if obj == nil {
 		return nil, err
 	}
@@ -88,7 +93,8 @@ func (c *FakeMachines) Create(ctx context.Context, machine *v1alpha1.Machine, op
 // Update takes the representation of a machine and updates it. Returns the server's representation of the machine, and an error, if there is any.
 func (c *FakeMachines) Update(ctx context.Context, machine *v1alpha1.Machine, opts v1.UpdateOptions) (result *v1alpha1.Machine, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootUpdateAction(machinesResource, machine), &v1alpha1.Machine{})
+		Invokes(testing.NewUpdateAction(machinesResource, c.ns, machine), &v1alpha1.Machine{})
+
 	if obj == nil {
 		return nil, err
 	}
@@ -99,7 +105,8 @@ func (c *FakeMachines) Update(ctx context.Context, machine *v1alpha1.Machine, op
 // Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
 func (c *FakeMachines) UpdateStatus(ctx context.Context, machine *v1alpha1.Machine, opts v1.UpdateOptions) (*v1alpha1.Machine, error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootUpdateSubresourceAction(machinesResource, "status", machine), &v1alpha1.Machine{})
+		Invokes(testing.NewUpdateSubresourceAction(machinesResource, "status", c.ns, machine), &v1alpha1.Machine{})
+
 	if obj == nil {
 		return nil, err
 	}
@@ -109,13 +116,14 @@ func (c *FakeMachines) UpdateStatus(ctx context.Context, machine *v1alpha1.Machi
 // Delete takes name of the machine and deletes it. Returns an error if one occurs.
 func (c *FakeMachines) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
 	_, err := c.Fake.
-		Invokes(testing.NewRootDeleteActionWithOptions(machinesResource, name, opts), &v1alpha1.Machine{})
+		Invokes(testing.NewDeleteActionWithOptions(machinesResource, c.ns, name, opts), &v1alpha1.Machine{})
+
 	return err
 }
 
 // DeleteCollection deletes a collection of objects.
 func (c *FakeMachines) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewRootDeleteCollectionAction(machinesResource, listOpts)
+	action := testing.NewDeleteCollectionAction(machinesResource, c.ns, listOpts)
 
 	_, err := c.Fake.Invokes(action, &v1alpha1.MachineList{})
 	return err
@@ -124,7 +132,8 @@ func (c *FakeMachines) DeleteCollection(ctx context.Context, opts v1.DeleteOptio
 // Patch applies the patch and returns the patched machine.
 func (c *FakeMachines) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.Machine, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootPatchSubresourceAction(machinesResource, name, pt, data, subresources...), &v1alpha1.Machine{})
+		Invokes(testing.NewPatchSubresourceAction(machinesResource, c.ns, name, pt, data, subresources...), &v1alpha1.Machine{})
+
 	if obj == nil {
 		return nil, err
 	}
@@ -134,7 +143,8 @@ func (c *FakeMachines) Patch(ctx context.Context, name string, pt types.PatchTyp
 // PutReview takes the representation of a machineReview and updates it. Returns the server's representation of the machineReview, and an error, if there is any.
 func (c *FakeMachines) PutReview(ctx context.Context, machineName string, machineReview *v1alpha1.MachineReview, opts v1.UpdateOptions) (result *v1alpha1.MachineReview, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootUpdateSubresourceAction(machinesResource, "review", machineReview), &v1alpha1.MachineReview{})
+		Invokes(testing.NewUpdateSubresourceAction(machinesResource, "review", c.ns, machineReview), &v1alpha1.MachineReview{})
+
 	if obj == nil {
 		return nil, err
 	}

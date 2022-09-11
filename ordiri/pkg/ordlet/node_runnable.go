@@ -67,6 +67,9 @@ func (clnr *createLocalNodeRunnable) GetNode() *corev1alpha1.Node {
 func (clnr *createLocalNodeRunnable) Refresh(ctx context.Context) error {
 	node, err := clnr.client.CoreV1alpha1().Nodes().Get(ctx, clnr.Node.Name, v1.GetOptions{})
 	if err != nil {
+		if clnr.Node.UID == "" {
+			return nil
+		}
 		return err
 	}
 	clnr.Node = node

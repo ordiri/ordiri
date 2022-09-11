@@ -21,9 +21,17 @@ package v1alpha1
 // MachineLister.
 type MachineListerExpansion interface{}
 
+// MachineNamespaceListerExpansion allows custom methods to be added to
+// MachineNamespaceLister.
+type MachineNamespaceListerExpansion interface{}
+
 // MachineProfileListerExpansion allows custom methods to be added to
 // MachineProfileLister.
 type MachineProfileListerExpansion interface{}
+
+// MachineProfileNamespaceListerExpansion allows custom methods to be added to
+// MachineProfileNamespaceLister.
+type MachineProfileNamespaceListerExpansion interface{}
 
 // NodeListerExpansion allows custom methods to be added to
 // NodeLister.
