@@ -102,7 +102,7 @@ func EnsureNew(ctx context.Context, client *Libvirt, domain *libvirtxml.Domain) 
 	return &dom, EnsureResultDomainCreated, nil
 }
 
-func Ensure(ctx context.Context, client *Libvirt, name string, desiredState libvirt.DomainState, opts ...DomainOption) (*libvirtxml.Domain, *libvirt.Domain, EnsureResult, error) {
+func Ensure(ctx context.Context, client *Libvirt, tenant string, name string, desiredState libvirt.DomainState, opts ...DomainOption) (*libvirtxml.Domain, *libvirt.Domain, EnsureResult, error) {
 	domain, err := NewDomain(name, opts...)
 	if err != nil {
 		return nil, nil, EnsureResultDomainUnknown, fmt.Errorf("unable to create new domain - %w", err)

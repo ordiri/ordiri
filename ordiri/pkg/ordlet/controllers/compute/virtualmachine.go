@@ -18,6 +18,7 @@ package compute
 
 import (
 	"context"
+	"encoding/xml"
 	"fmt"
 
 	k8err "k8s.io/apimachinery/pkg/api/errors"
@@ -124,6 +125,7 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		internallibvirt.WithCpu(2),
 		internallibvirt.WithMemory(4 * 1e3 * 1024),
 		internallibvirt.WithVnc(),
+		internallibvirt.WithMetadata("ordiri", "https://ordiri.com/tenant", "tenant", vm.Namespace),
 	}
 	// newDomain := libvirtxml.Domain{}
 
@@ -154,7 +156,7 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	}
 	vm.Status.NetworkInterfaces = ifaces
 
-	domain, _, result, err := internallibvirt.Ensure(ctx, r.LibvirtClient, vm.Name, libvirtStatus(vm.Spec.State), domainOptions...)
+	domain, _, result, err := internallibvirt.Ensure(ctx, r.LibvirtClient, vm.Namespace, vm.Name, libvirtStatus(vm.Spec.State), domainOptions...)
 
 	if err != nil {
 		return ctrl.Result{}, fmt.Errorf("error ensuring domain - %w", err)
@@ -388,10 +390,29 @@ func (r *VirtualMachineReconciler) SetupWithManager(mgr ctrl.Manager) error {
 			if evt.Event == int32(libvirt.DomainEventDefined) {
 				continue
 			}
+			// virsh metadata --domain vault-root-0 --uri 'https://ordiri.com/tenant' --config
+			meta, err := r.LibvirtClient.DomainGetMetadata(evt.Dom, int32(libvirt.DomainMetadataElement), libvirt.OptString{"https://ordiri.com/tenant"}, libvirt.DomainAffectLive)
+			if err != nil {
+				continue
+			}
+			type Meta struct {
+				XMLName xml.Name `xml:"tenant"`
+				Tenant  string   `xml:",chardata"`
+			}
+			metaObj := &Meta{}
+			if err := xml.Unmarshal([]byte(meta), &metaObj); err != nil {
+				continue
+			}
+
+			if metaObj.Tenant == "" {
+				continue
+			}
+
 			chanWatchers <- (event.GenericEvent{
 				Object: &computev1alpha1.VirtualMachine{
 					ObjectMeta: v1.ObjectMeta{
-						Name: evt.Dom.Name,
+						Namespace: metaObj.Tenant,
+						Name:      evt.Dom.Name,
 					},
 				},
 			})

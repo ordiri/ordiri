@@ -180,6 +180,15 @@ func WithVnc() DomainOption {
 		},
 	})
 }
+func WithMetadata(ns, uri, key, value string) DomainOption {
+	return func(domain *libvirtxml.Domain) error {
+		if domain.Metadata == nil {
+			domain.Metadata = &libvirtxml.DomainMetadata{}
+		}
+		domain.Metadata.XML = domain.Metadata.XML + fmt.Sprintf("<%s:%s xmlns:%s=%q>%s</%s:%s>", ns, key, ns, uri, value, ns, key)
+		return nil
+	}
+}
 func WithGraphics(graphics ...libvirtxml.DomainGraphic) DomainOption {
 	return func(domain *libvirtxml.Domain) error {
 		if domain.Devices == nil {
