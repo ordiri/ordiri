@@ -1,4 +1,4 @@
-import yaml
+import ruamel.yaml as yaml
 import json
 import shutil
 import glob
@@ -26,8 +26,7 @@ yaml.SafeLoader.add_constructor(u'!include', yaml_include_constructor)
 # stack overflow
 def str_presenter(dumper, data):
     if len(data) > 30:  # check for multiline string
-        print(data)
-        return dumper.represent_scalar('tag:yaml.org,2002:str', bytes(data, "utf-8").decode("unicode_escape"), style='|')
+        return dumper.represent_scalar('tag:yaml.org,2002:str', data, style='|')
     return dumper.represent_scalar('tag:yaml.org,2002:str', data)
 
 # to use with safe_dump:
