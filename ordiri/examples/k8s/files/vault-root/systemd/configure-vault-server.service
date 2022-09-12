@@ -1,0 +1,13 @@
+[Unit]
+Description=Configure Vault
+After=insecure-unseal-vault.service
+Wants=insecure-unseal-vault.service
+PartOf=vault.service
+
+[Service]
+ExecStart=/bin/bash -c /sbin/configure-vault.sh
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=vault.service

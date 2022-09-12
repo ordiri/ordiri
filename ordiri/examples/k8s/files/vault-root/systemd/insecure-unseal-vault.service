@@ -1,0 +1,12 @@
+[Unit]
+Description=Unseal vault
+After=vault.service
+PartOf=vault.service
+
+[Service]
+ExecStart=/bin/bash -c /sbin/insecure-unseal-vault.sh
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=vault.service

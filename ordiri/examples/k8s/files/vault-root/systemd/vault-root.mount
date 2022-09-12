@@ -1,0 +1,13 @@
+[Unit]
+Description=Vault root mount
+After=network.target
+Before=vault.service  
+
+[Mount]
+What=/dev/disk/by-uuid/$UUID
+Where=/vault/root
+Type=ext4
+Options=defaults
+
+[Install]
+WantedBy=vault.service

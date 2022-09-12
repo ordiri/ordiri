@@ -1,0 +1,11 @@
+[Unit]
+Description=Get the unseal token
+Requires=network-online.target
+Before=vault.service
+PartOf=vault.service
+
+[Service]
+ExecStart=/bin/bash -c /sbin/fetch-unseal-token.sh
+
+[Install]
+RequiredBy=vault.service
