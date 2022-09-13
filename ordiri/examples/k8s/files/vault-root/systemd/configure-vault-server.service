@@ -1,7 +1,7 @@
 [Unit]
 Description=Configure Vault
 After=insecure-unseal-vault.service
-Requires=insecure-unseal-vault.service
+Wants=insecure-unseal-vault.service
 
 [Service]
 ExecStart=/bin/bash -c /sbin/configure-vault.sh

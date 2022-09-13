@@ -1,13 +1,13 @@
 [Unit]
-Description=Configure vault
+Description=Unseal vault
+Wants=vault.service
 After=vault.service
-PartOf=vault.service
-Wants=first-boot-complete.target
+BindsTo=vault.service
 
 [Service]
 ExecStart=/bin/bash -c /sbin/configure-vault.sh
 Restart=on-failure
-RestartSec=10
+RestartSec=5
 
 [Install]
-WantedBy=vault.service
+WantedBy=multi-user.target
