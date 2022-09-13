@@ -7,7 +7,7 @@ cd $(mktemp -d)
 export local_hostname=$(curl 169.254.169.254/latest/meta-data/local-hostname)
 export local_ip=$(curl 169.254.169.254/latest/meta-data/local-ipv4)
 
-{% include 'common/install-vault.sh' %}
+{% include 'common/includes/install-vault.sh' %}
 
 # This should really be a systemd.mkfs@.service
 if [[ -z "$(lsblk /dev/vdb --json | jq -r '.blockdevices[].children // ""')" ]]; then

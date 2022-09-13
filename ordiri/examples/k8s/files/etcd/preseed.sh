@@ -8,9 +8,9 @@ DOWNLOAD_URL=https://storage.googleapis.com/etcd
 
 cd $(mktemp -d)
 
-{% include 'common/install-vault.sh' %}
-{% include 'common/install-root-ca.sh' %}
-{% import 'common/install-cert-renewer.sh' as renewer %}
+{% include 'common/includes/install-vault.sh' %}
+{% include 'common/includes/install-root-ca.sh' %}
+{% import 'common/includes/install-cert-renewer.sh' as renewer %}
 {{ renewer.vault_cert_renewer("etcd-node", "https://vault-0.ordiri:8200", "pki/issue/homelab-default") }}
 
 local_ip=$(curl 169.254.169.254/latest/meta-data/local-ipv4)
@@ -41,6 +41,7 @@ done
 systemctl enable cert-renewer@etcd.timer
 systemctl enable cert-renewer@etcd.service
 systemctl enable /etc/systemd/system/etcd.service
+systemctl daemon-reload || true
 
 echo "export ETCDCTL_API=3
 export ETCDCTL_ENDPOINTS=$endpoints

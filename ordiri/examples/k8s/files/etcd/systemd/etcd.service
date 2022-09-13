@@ -1,8 +1,8 @@
 [Unit]
 Description=etcd key-value store
 Documentation=https://github.com/etcd-io/etcd
-After=network-online.target local-fs.target remote-fs.target time-sync.target cert-renewer@etcd.service
-Wants=network-online.target local-fs.target remote-fs.target time-sync.target cert-renewer@etcd.service
+After=network-online.target local-fs.target remote-fs.target time-sync.target
+Wants=network-online.target local-fs.target remote-fs.target time-sync.target
 
 [Service]
 Type=notify
@@ -11,7 +11,7 @@ Environment=ETCD_NAME=${local_hostname}.ordiri
 Environment=ETCD_INITIAL_ADVERTISE_PEER_URLS=https://${local_hostname}.ordiri:2380
 Environment=ETCD_LISTEN_PEER_URLS=https://${local_ip}:2380
 Environment=ETCD_LISTEN_CLIENT_URLS=https://${local_ip}:2379,https://127.0.0.1:2379
-Environment=ETCD_ADVERTISE_CLIENT_URLS=https://${local_hostname}.ordiri:2379,https://${local_ip}:2379
+Environment=ETCD_ADVERTISE_CLIENT_URLS=https://${local_hostname}.ordiri:2379
 Environment=ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster-1
 Environment=ETCD_INITIAL_CLUSTER=${peers}
 Environment=ETCD_INITIAL_CLUSTER_STATE=new

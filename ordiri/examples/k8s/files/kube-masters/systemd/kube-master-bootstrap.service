@@ -1,0 +1,11 @@
+[Unit]
+Description=Configure Kube Masters
+
+[Service]
+ConditionPathExists=!/etc/kubernetes/admin.conf
+ExecStart=/bin/bash -c /sbin/bootstrap.sh
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,45 @@
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+healthzBindAddress: "::"
+cgroupDriver: systemd
+address: "::"
+
+---
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: ClusterConfiguration
+kubernetesVersion: stable
+controlPlaneEndpoint: "cluster.homelab.dmann.xyz:6443"
+clusterName: "homelab"
+networking:
+  # podSubnet: "2403:5806:97ec:1000::/56"
+  # serviceSubnet: "2403:5806:97ec:1100::/112"
+  podSubnet: "10.200.1.0/24"
+  serviceSubnet: "10.200.2.0/24"
+apiServer:
+  certSANs:
+  - cluster.homelab.dmann.xyz
+  - "*.cluster.homelab.dmann.xyz"
+  extraArgs:
+    bind-address: "::"
+    permit-address-sharing: "true"
+controllerManager:
+  extraArgs:
+    bind-address: "::"
+    permit-address-sharing: "true"
+scheduler:
+  extraArgs:
+    bind-address: "::"
+    permit-address-sharing: "true"
+etcd:
+    external:
+      endpoints: ["https://etcd-0.ordiri:2379", "https://etcd-1.ordiri:2379", "https://etcd-2.ordiri:2379"]
+      caFile: /etc/ssl/certs/etcd-ca.crt
+      certFile: /etc/ssl/certs/etcd.crt
+      keyFile: /etc/ssl/private/etcd.key
+---
+
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: InitConfiguration
+localAPIEndpoint:
+  advertiseAddress: "${local_ip}"
+  bindPort: 6443

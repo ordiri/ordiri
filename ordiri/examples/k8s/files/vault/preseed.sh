@@ -7,15 +7,15 @@ cd $(mktemp -d)
 apt update && apt install -y ssl-cert
 
 # We install Vault first to keep boot fast
-{% include 'common/install-vault.sh' %}
-{% include 'common/install-root-ca.sh' %}
+{% include 'common/includes/install-vault.sh' %}
+{% include 'common/includes/install-root-ca.sh' %}
 
 
 local_ip=$(curl 169.254.169.254/latest/meta-data/local-ipv4)
 local_hostname=$(curl 169.254.169.254/latest/meta-data/local-hostname)
 export local_ip local_hostname # Export these so we can use them vault HCL files below
 
-{% import 'common/install-cert-renewer.sh' as renewer %}
+{% import 'common/includes/install-cert-renewer.sh' as renewer %}
 {{ renewer.vault_cert_renewer("vault-ca-bootstrap", "https://vault-root-0.ordiri:8200", "pki_int/issue/dmann-default") }}
 
 {{ with_local_file('vault/bin/fetch-unseal-token.sh', "/sbin/fetch-unseal-token.sh", mode="+x") }}

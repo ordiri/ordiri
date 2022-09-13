@@ -122,8 +122,8 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		internallibvirt.WithUuid(string(vm.UID)),
 		internallibvirt.WithBootDevice(vm.Spec.BootDevices...),
 		internallibvirt.WithConsole(0, "serial"),
-		internallibvirt.WithCpu(2),
-		internallibvirt.WithMemory(4 * 1e3 * 1024),
+		internallibvirt.WithCpu(uint(vm.Spec.Resources.CPU)),
+		internallibvirt.WithMemory(4 * 1e3 * 1024), // (uint(vm.Spec.Resources.Memory.Value())),
 		internallibvirt.WithVnc(),
 		internallibvirt.WithMetadata("ordiri", "https://ordiri.com/tenant", "tenant", vm.Namespace),
 	}
