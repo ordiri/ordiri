@@ -43,4 +43,5 @@ seal "transit" {
     disable_renewal = "false"
     key_name = "vault-vms-autounseal"
     mount_path = "transit/"
+    token = "${vault_unseal_token}"
 }

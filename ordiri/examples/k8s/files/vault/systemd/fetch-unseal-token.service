@@ -1,6 +1,6 @@
 [Unit]
 Description=Get the unseal token
-Wants=network-online.target
+Requires=network-online.target
 Before=vault.service
 
 [Service]
