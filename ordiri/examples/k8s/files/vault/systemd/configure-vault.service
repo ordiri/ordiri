@@ -2,7 +2,6 @@
 Description=Unseal vault
 Wants=vault.service
 After=vault.service
-BindsTo=vault.service
 
 [Service]
 ExecStart=/bin/bash -c /sbin/configure-vault.sh
