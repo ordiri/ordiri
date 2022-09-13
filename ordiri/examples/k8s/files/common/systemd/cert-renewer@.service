@@ -11,7 +11,7 @@ User=root
 Environment=CA_LOCATION=/etc/ssl/certs/%i-ca.crt
 Environment=CERT_LOCATION=/etc/ssl/certs/%i.crt
 Environment=KEY_LOCATION=/etc/ssl/private/%i.key
-Environment=VAULT_ROLE_ID={{ vault_role }} # 
+Environment=VAULT_ROLE_ID={{vault_role}} # 
 Environment=VAULT_ADDR={{vault_addr}} # https://vault-root-0.ordiri:8200
 Environment=VAULT_PATH={{vault_path}} # pki_int/issue/dmann-default
 

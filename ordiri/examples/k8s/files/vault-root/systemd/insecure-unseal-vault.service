@@ -1,7 +1,8 @@
 [Unit]
 Description=Unseal vault
+Requires=vault.service
 After=vault.service
-PartOf=vault.service
+BindsTo=vault.service
 
 [Service]
 ExecStart=/bin/bash -c /sbin/insecure-unseal-vault.sh
@@ -9,4 +10,4 @@ Restart=on-failure
 RestartSec=5
 
 [Install]
-WantedBy=vault.service
+WantedBy=multi-user.target

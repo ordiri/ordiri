@@ -3,7 +3,6 @@ Description=Vault TLS setup
 Before=vault.service
 After=vault-root.mount
 Requires=vault-root.mount
-PartOf=vault.service
 
 [Service]
 ExecStart=/bin/bash -c /sbin/vault-tls-configure.sh

@@ -10,4 +10,4 @@ Type=ext4
 Options=defaults
 
 [Install]
-WantedBy=vault.service
+RequiredBy=vault.service

@@ -35,12 +35,9 @@ yaml.representer.SafeRepresenter.add_representer(str, str_presenter)
 tpl_env = Environment(
     loader=FileSystemLoader("%s/files" % root_dir)
 )
-def with_local_file(local_path, remote_path, executable=False):
-    file_content = ""
-    with open("%s/files/%s" % (root_dir, local_path)) as file:
-        file_content = file.read()
-
-    content = file_content
+def with_local_file(local_path, remote_path, executable=False, **tplvars):
+    template = tpl_env.get_template(local_path)
+    content = template.render(**tplvars)
     # print(content)
     tag = "tag_%s" % hashlib.sha256(content.encode('utf-8')).hexdigest()[0:5]
 
@@ -48,9 +45,9 @@ def with_local_file(local_path, remote_path, executable=False):
     if executable == False:
         start_tag = "'%s'" % tag
     return """tee %s <<%s
-    %s
 %s
-""" % (remote_path, start_tag, file_content, tag)
+%s
+""" % (remote_path, start_tag, content, tag)
 
 tpl_env.globals['with_local_file'] = with_local_file
 
