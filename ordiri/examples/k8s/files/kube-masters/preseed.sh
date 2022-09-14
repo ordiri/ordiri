@@ -1,6 +1,8 @@
 #!/bin/bash
 set -eou pipefail
 
+apt-get install -y dnsutils
+
 cd $(mktemp -d)
 local_ip=$(curl 169.254.169.254/latest/meta-data/local-ipv4)
 local_hostname=$(curl 169.254.169.254/latest/meta-data/local-hostname)
@@ -18,17 +20,19 @@ export local_ip local_hostname # Export these so we can use them in envsubst cal
 mkdir -p /usr/local/kubeadm/
 {{ with_local_file('kube-masters/kubeadm/config.yaml', "/usr/local/kubeadm/config.yaml") }}
 
-
+echo "br_netfilter
+bridge
+overlay
+" > /etc/modules-load.d/modules.conf
 
 echo "net.bridge.bridge-nf-call-iptables=1
-net.ipv4.ip_forward=1" > /etc/sysctl.d/kubelet.conf
+net.ipv4.ip_forward=1
+" > /etc/sysctl.d/kubelet.conf
 
 
-echo "br-netfilter
-bridge
-overlay " > /etc/modules-load.d/modules.conf
 
-echo "${local_hostname} cluster.homelab.dmann.xyz" >> /etc/hosts
+cluster_ip=$(dig +short kube-master-0.ordiri)
+echo "${cluster_ip} cluster.homelab.dmann.xyz" >> /etc/hosts
 
 systemctl enable cert-renewer@etcd.timer \
     cert-renewer@etcd.service \
