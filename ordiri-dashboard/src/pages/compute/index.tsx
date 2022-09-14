@@ -8,8 +8,15 @@ import { useState } from 'react';
 const PageTitle = "Compute Services"
 
 interface ComputeResourceProps { }
+interface VncDialogLauncherProps { 
+    host: string
+    hostname: string
+    name: string
+    port:number
+    ip:string
+}
 
-export const VncDialogLauncher = ({ host, port, name }: { host: string, name: string, port:number}) => {
+export const VncDialogLauncher = ({ host, port, name, ip, hostname }: VncDialogLauncherProps) => {
     const [open, setOpen] = useState(false);
 
     const handleClickOpen = () => {
@@ -27,7 +34,7 @@ export const VncDialogLauncher = ({ host, port, name }: { host: string, name: st
                 Launch
             </Button>
             <Dialog open={open} onClose={handleClose} fullWidth={true} maxWidth={'xl'}>
-                <DialogTitle>Console for {name}</DialogTitle>
+                <DialogTitle>Console for {name} @ {ip} ({hostname}) </DialogTitle>
                 <DialogContent>
                     <VncScreen
                         url={`ws://${host}:${port}`}
@@ -38,6 +45,10 @@ export const VncDialogLauncher = ({ host, port, name }: { host: string, name: st
                                 password: "password"
                             }
                         }}
+
+                        onBell={(...args) => console.log("onBell", ...args)}
+                        onClipboard={(...args) => console.log("onClipBoard", ...args)}
+                        onDesktopName={(...args) => console.log("onDesktopName", ...args)}
                         style={{
                             width: '100%',
                             height: '70vh',
@@ -118,7 +129,7 @@ const ComputeResourcesPage = (props: ComputeResourceProps) => {
                         }
 
                         return <>
-                            <VncDialogLauncher name={obj.metadata?.name || "N/A"} host={url} port={port!} />
+                            <VncDialogLauncher ip={obj.spec.networkInterfaces?.at(0)?.ip?.at(0) || "Unknown"} name={obj.metadata?.name || "N/A"} hostname={host || "Pending"} host={url} port={port!} />
                         </>
                     }
                 }
