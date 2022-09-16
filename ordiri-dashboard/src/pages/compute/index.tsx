@@ -8,15 +8,16 @@ import { useState } from 'react';
 const PageTitle = "Compute Services"
 
 interface ComputeResourceProps { }
-interface VncDialogLauncherProps { 
+interface VncDialogLauncherProps {
     host: string
+    disabled: boolean
     hostname: string
     name: string
-    port:number
-    ip:string
+    port: number
+    ip: string
 }
 
-export const VncDialogLauncher = ({ host, port, name, ip, hostname }: VncDialogLauncherProps) => {
+export const VncDialogLauncher = ({ host, disabled, port, name, ip, hostname }: VncDialogLauncherProps) => {
     const [open, setOpen] = useState(false);
 
     const handleClickOpen = () => {
@@ -28,6 +29,9 @@ export const VncDialogLauncher = ({ host, port, name, ip, hostname }: VncDialogL
     };
 
 
+    if(disabled) {
+        return <Button disabled>Pending</Button>
+    }
     return (
         <>
             <Button onClick={handleClickOpen}>
@@ -104,32 +108,34 @@ const ComputeResourcesPage = (props: ComputeResourceProps) => {
                         }
 
                         return <>
-                        {res.map(it => {
-                            return <div>{it.name}/{it.device}/{it.hostLocal?.size}</div>
-                        })}
+                            {res.map(it => {
+                                return <div>{it.name}/{it.device}/{it.hostLocal?.size}</div>
+                            })}
                         </>
                     }
                 }, vnc: {
                     label: "Console",
                     formatter: (obj: ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine) => {
+                        var disabled = false
                         if (obj.spec == null || obj.status == null) {
-                            return "Pending"
+                            disabled = true
                         }
 
-                        const host = obj.spec.node
-                        const port = (obj.status as { vncPort: number | undefined }).vncPort
-                        if (!port || port <= 0) {
-                            return "Pending"
-                        }
+                        const host = obj?.spec?.node
+                        const port = obj?.status?.vncPort
                         var url = ""
-                        if (host === "debian") {
-                            url = "10.0.1.110"
-                        } else if (host === "mothership") {
-                            url = "10.0.1.196"
+                        if (!port || port <= 0) {
+                            disabled = true
+                        } else {
+                            if (host === "debian") {
+                                url = "10.0.1.110"
+                            } else if (host === "mothership") {
+                                url = "10.0.1.196"
+                            }
                         }
 
                         return <>
-                            <VncDialogLauncher ip={obj.spec.networkInterfaces?.at(0)?.ip?.at(0) || "Unknown"} name={obj.metadata?.name || "N/A"} hostname={host || "Pending"} host={url} port={port!} />
+                            <VncDialogLauncher disabled={disabled} ip={obj?.spec?.networkInterfaces?.at(0)?.ip?.at(0) || "Unknown"} name={obj.metadata?.name || "N/A"} hostname={host || "Pending"} host={url} port={port!} />
                         </>
                     }
                 }
