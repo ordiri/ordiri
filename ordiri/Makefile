@@ -130,38 +130,40 @@ linux-md:
 
 .PHONY: deploy-debian-ordlet deploy-mothership-ordlet
 deploy-debian-ordlet: linux-ordlet
-	scp bin/ordlet-amd64-linux root@debian:/usr/local/bin/ordlet
 	scp kubeconfig root@debian:/etc/ordiri.conf
+	scp ordlet.service root@debian:/etc/systemd/system/ordlet.service
+	ssh root@debian 'systemctl enable ordlet.service'
+	scp bin/ordlet-amd64-linux root@debian:~/ordlet
+	ssh root@debian 'mv ~/ordlet /usr/local/bin/ordlet && systemctl daemon-reload'
 
 deploy-mothership-ordlet: linux-ordlet
-	scp bin/ordlet-amd64-linux mothership:/usr/local/bin/ordlet
 	scp kubeconfig mothership:/etc/ordiri.conf
+	scp ordlet.service mothership:/etc/systemd/system/ordlet.service
+	ssh mothership 'systemctl enable ordlet.service'
+	scp bin/ordlet-amd64-linux mothership:~/ordlet
+	ssh mothership 'mv ~/ordlet /usr/local/bin/ordlet && systemctl daemon-reload'
 
 deploy-debian-md: linux-md
-	scp bin/metadata-amd64-linux root@debian:/usr/local/bin/ordiri-metadata
+	scp bin/metadata-amd64-linux root@debian:~/ordiri-metadata
+	ssh root@debian 'mv ~/ordiri-metadata /usr/local/bin/ordiri-metadata'
 
 deploy-mothership-md: linux-md
-	scp bin/metadata-amd64-linux mothership:/usr/local/bin/ordiri-metadata
+	scp bin/metadata-amd64-linux mothership:~/ordiri-metadata
+	ssh mothership 'mv ~/ordiri-metadata /usr/local/bin/ordiri-metadata'
 
 .PHONY: run-remote
-run-remote: stop-mothership stop-debian run-debian-remote run-mothership-remote
+run-remote: run-debian-remote run-mothership-remote
 	@echo "starting"
 
-run-mothership-remote: stop-mothership deploy-mothership-ordlet
-	ssh mothership 'modprobe nf_nat_tftp nf_conntrack && KUBECONFIG=/etc/ordiri.conf /usr/local/bin/ordlet -zap-log-level=5 | tee /var/log/ordlet.conf' &
+run-mothership-remote: deploy-mothership-ordlet
+# modprobe nf_nat_tftp nf_conntrack && 
+	ssh mothership 'systemctl restart ordlet & journalctl -xefu ordlet'
 
-run-debian-remote:  stop-debian deploy-debian-ordlet
-	ssh root@debian 'modprobe nf_nat_tftp nf_conntrack && KUBECONFIG=/etc/ordiri.conf /usr/local/bin/ordlet -zap-log-level=5 | tee /var/log/ordlet.conf' &
+run-debian-remote: deploy-debian-ordlet
+# modprobe nf_nat_tftp nf_conntrack && 
+	ssh root@debian 'systemctl restart ordlet & journalctl -xefu ordlet'
 
-#  systemctl restart ovsdb-server.service ovs-vswitchd.service || true;
-.PHONY: stop-mothership
-stop-mothership:
-	{ ssh mothership 'kill $$(pidof ordlet); kill $$(pidof ordlet); kill $$(pidof ordlet); true;'; }
 
-#  systemctl restart ovsdb-server.service ovs-vswitchd.service || true;
-.PHONY: stop-debian
-stop-debian: 
-	{ ssh root@debian 'kill $$(pidof ordlet); kill $$(pidof ordlet); kill $$(pidof ordlet); true;'; }
 
 .PHONY: start-all
 start-all: 
