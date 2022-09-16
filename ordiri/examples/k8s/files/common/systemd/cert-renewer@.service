@@ -3,6 +3,8 @@ Description=Certificate renewer for %I
 After=network-online.target
 Documentation=https://github.com/smallstep/cli/blob/005920ad4122fa5838c338b567d6584fcc33c1cc/systemd/cert-renewer@.service
 StartLimitIntervalSec=0
+Before=%I.service %I.target
+WantedBy=%I.service
 
 [Service]
 Type=oneshot
@@ -18,7 +20,7 @@ Environment=VAULT_PATH={{vault_path}} # pki_int/issue/dmann-default
 
 ExecCondition=/usr/bin/env sh -c "(! test -s ${CERT_LOCATION} || ! /usr/bin/openssl x509 -checkend 1800 -noout -in ${CERT_LOCATION}) || true"
 Restart=on-failure
-RestartSec=10
+RestartSec=5
 
 ; ExecStart renews the certificate, if ExecStartPre was successful.
 ExecStart=/usr/bin/vault-cert
@@ -26,6 +28,7 @@ ExecStart=/usr/bin/vault-cert
 ; Try to reload or restart the systemd service that relies on this cert-renewer
 ; If the relying service doesn't exist, forge ahead.
 ; (In systemd <229, use `reload-or-try-restart` instead of `try-reload-or-restart`)
-ExecStartPost=/usr/bin/env sh -c "! systemctl --quiet is-enabled %i.service || systemctl try-reload-or-restart %i"
+; ExecStartPost=/usr/bin/env sh -c "! systemctl --quiet is-active %i.service || systemctl try-reload-or-restart %i"
+
 [Install]
 WantedBy=multi-user.target

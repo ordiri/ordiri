@@ -20,12 +20,14 @@ export local_ip local_hostname # Export these so we can use them vault HCL files
 {{ with_local_file('vault/bin/fetch-unseal-token.sh', "/sbin/fetch-unseal-token.sh", mode="+x") }}
 {{ with_local_file('vault/bin/configure-vault.sh', "/sbin/configure-vault.sh", mode="+x") }}
 
+mkdir -p /etc/systemd/system/vault.service.d/
+{{ with_local_file('vault/systemd/vault.service.d/override.conf', "/etc/systemd/system/vault.service.d/override.conf") }}
+mkdir -p /etc/systemd/system/cert-renewer@vault.service.d/
+{{ with_local_file('vault/systemd/cert-renewer@vault.service.d/override.conf', "/etc/systemd/system/cert-renewer@vault.service.d/override.conf") }}
 {{ with_local_file('vault/systemd/fetch-unseal-token.service', "/etc/systemd/system/fetch-unseal-token.service") }}
 {{ with_local_file('vault/systemd/configure-vault.service', "/etc/systemd/system/configure-vault.service") }}
 
 systemctl enable cert-renewer@vault.service cert-renewer@vault.timer configure-vault.service fetch-unseal-token.service vault
-mkdir -p /etc/systemd/system/vault.service.requires/
-ln -sf /etc/systemd/system/cert-renewer@vault.service /etc/systemd/system/vault.service.requires/cert-renewer@vault.service
 
 addgroup --system 'ssl-cert' || true
 chown -R root:ssl-cert '/etc/ssl/private'

@@ -1,8 +1,8 @@
 [Unit]
 Description=etcd key-value store
 Documentation=https://github.com/etcd-io/etcd
-After=network-online.target local-fs.target remote-fs.target time-sync.target
-Wants=network-online.target local-fs.target remote-fs.target time-sync.target
+After=network-online.target local-fs.target remote-fs.target time-sync.target cert-renewer@etcd.service
+Wants=network-online.target local-fs.target remote-fs.target time-sync.target cert-renewer@etcd.service
 
 [Service]
 Type=notify

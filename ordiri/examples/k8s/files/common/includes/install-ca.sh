@@ -3,5 +3,5 @@
 
 {{ ca_waiter.wait_for_vault_ca("https://vault-0.ordiri:8200", "pki") }}
 
-curl -fs -L -XGET https://vault-0.ordiri:8200/v1/pki/ca_chain  | awk 'BEGIN {c=0;} /BEGIN CERT/{c++} { print > "/usr/local/share/ca-certificates/vault." c ".crt"}'
+curl  -fsSL https://vault-0.ordiri:8200/v1/pki/ca_chain | awk 'BEGIN {c=0;} /BEGIN CERT/{c++} { print > "/usr/local/share/ca-certificates/vault." c ".crt"}'
 update-ca-certificates

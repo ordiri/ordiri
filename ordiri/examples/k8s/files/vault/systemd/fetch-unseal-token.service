@@ -1,13 +1,10 @@
 [Unit]
 Description=Get the unseal token
-Requires=network-online.target
-Before=vault.service
+Requires=network-online.target cert-renewer@vault.service
+After=cert-renewer@vault.service
 
 [Service]
 Type=oneshot
 ExecStart=/bin/bash -c /sbin/fetch-unseal-token.sh
 Restart=on-failure
-RestartSec=10
-
-[Install]
-RequiredBy=vault.service
+RestartSec=2
