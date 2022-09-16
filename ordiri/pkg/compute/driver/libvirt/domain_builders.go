@@ -89,7 +89,6 @@ func WithCpu(cpus uint) DomainOption {
 		if domain.VCPU == nil {
 			domain.VCPU = &libvirtxml.DomainVCPU{}
 			domain.VCPU.Placement = "static"
-			domain.VCPU.Value = cpus
 		}
 		if domain.CPU == nil {
 			domain.CPU = &libvirtxml.DomainCPU{}
@@ -108,6 +107,7 @@ func WithCpu(cpus uint) DomainOption {
 			// <feature name='svm' policy='disable'/>
 
 		}
+		domain.VCPU.Value = cpus
 
 		return nil
 	}

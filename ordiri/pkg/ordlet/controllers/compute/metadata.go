@@ -56,6 +56,7 @@ func (r *MachineMetadataController) SetupWithManager(mgr ctrl.Manager) error {
 
 		return keys
 	})
+
 	return mgr.Add(manager.RunnableFunc(func(ctx context.Context) error {
 		log := log.FromContext(ctx).WithValues("name", "metadataserver")
 
@@ -71,14 +72,7 @@ func (r *MachineMetadataController) SetupWithManager(mgr ctrl.Manager) error {
 		}
 
 		log.Info("server starting")
-		server := http.Server{Handler: metadataServer.HTTPHandler()}
-		log.Info("Starting server")
 
-		if err := http.Serve(conn, metadataServer.HTTPHandler()); err != nil {
-			return err
-		}
-
-		log.Info("metadata server started")
-		return server.Shutdown(ctx)
+		return http.Serve(conn, metadataServer.HTTPHandler())
 	}))
 }
