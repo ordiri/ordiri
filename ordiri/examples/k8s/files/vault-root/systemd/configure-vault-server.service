@@ -1,9 +1,10 @@
 [Unit]
 Description=Configure Vault
 After=insecure-unseal-vault.service
-Wants=insecure-unseal-vault.service
+Requires=insecure-unseal-vault.service
 
 [Service]
+Type=oneshot
 ExecStart=/bin/bash -c /sbin/configure-vault.sh
 Restart=on-failure
 RestartSec=10

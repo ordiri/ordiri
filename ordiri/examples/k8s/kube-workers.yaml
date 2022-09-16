@@ -34,7 +34,7 @@ spec:
         curl -s -L -XGET https://vault-0.ordiri:8200/v1/pki/ca_chain  | awk 'BEGIN {c=0;} /BEGIN CERT/{c++} { print > "/usr/local/share/ca-certificates/vault." c ".crt"}'
         update-ca-certificates
         
-        local_ip=$(curl 169.254.169.254/latest/meta-data/local-ipv4)
+        local_ip=$(curl -f 169.254.169.254/latest/meta-data/local-ipv4)
 
         wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | tee /usr/share/keyrings/hashicorp-archive-keyring.gpg >/dev/null
         if [[ -z "$(gpg --no-default-keyring --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg --fingerprint | grep "E8A0 32E0 94D8 EB4E A189  D270 DA41 8C88 A321 9F7B")" ]]; then
@@ -50,8 +50,8 @@ spec:
 
         tmp=$(mktemp)
 
-        export local_hostname=$(curl 169.254.169.254/latest/meta-data/local-hostname)
-        export local_ip=$(curl 169.254.169.254/latest/meta-data/local-ipv4)
+        export local_hostname=$(curl -f 169.254.169.254/latest/meta-data/local-hostname)
+        export local_ip=$(curl -f 169.254.169.254/latest/meta-data/local-ipv4)
 
         VAULT_TOKEN=$(vault write auth/approle/login role_id=$VAULT_ROLE_ID -format=json | jq -r '.auth.client_token') \
           vault write --format=json $VAULT_PATH \
@@ -128,8 +128,8 @@ spec:
         systemctl enable --now cert-renewer@kube-master.service
         sleep 5
 
-        local_ip=$(curl 169.254.169.254/latest/meta-data/local-ipv4)
-        local_hostname=$(curl 169.254.169.254/latest/meta-data/local-hostname)
+        local_ip=$(curl -f 169.254.169.254/latest/meta-data/local-ipv4)
+        local_hostname=$(curl -f 169.254.169.254/latest/meta-data/local-hostname)
         echo "here"
         export local_ip
         export local_hostname # Export these so we can use them in envsubst call below

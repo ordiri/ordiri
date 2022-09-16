@@ -1,4 +1,6 @@
 #!/bin/bash
+{% import 'common/includes/install-cert-renewer.sh' as cert_renewer %}
+
 set -eou pipefail
 
 CLUSTER_PORT=2380
@@ -9,15 +11,14 @@ DOWNLOAD_URL=https://storage.googleapis.com/etcd
 cd $(mktemp -d)
 
 {% include 'common/includes/install-vault.sh' %}
-{% include 'common/includes/install-root-ca.sh' %}
-{% import 'common/includes/install-cert-renewer.sh' as renewer %}
-{{ renewer.vault_cert_renewer("etcd-node", "https://vault-0.ordiri:8200", "pki/issue/homelab-default") }}
+{% include 'common/includes/install-ca.sh' %}
+{{ cert_renewer.vault_cert_renewer("etcd-node", "https://vault-0.ordiri:8200", "pki/issue/homelab-default") }}
 
-local_ip=$(curl 169.254.169.254/latest/meta-data/local-ipv4)
-local_hostname=$(curl 169.254.169.254/latest/meta-data/local-hostname)
+local_ip=$(curl -fsSL 169.254.169.254/latest/meta-data/local-ipv4)
+local_hostname=$(curl -fsSL 169.254.169.254/latest/meta-data/local-hostname)
 export local_ip local_hostname # Export these so we can use them in envsubst call below
 
-curl -L ${DOWNLOAD_URL}/${ETCD_VER}/etcd-${ETCD_VER}-linux-amd64.tar.gz -o etcd-${ETCD_VER}-linux-amd64.tar.gz
+curl -fsSL ${DOWNLOAD_URL}/${ETCD_VER}/etcd-${ETCD_VER}-linux-amd64.tar.gz -o etcd-${ETCD_VER}-linux-amd64.tar.gz
 tar xzvf etcd-${ETCD_VER}-linux-amd64.tar.gz --strip-components=1
 rm -f etcd-${ETCD_VER}-linux-amd64.tar.gz
 mv ./{etcd,etcdctl} /sbin/.
@@ -41,20 +42,15 @@ done
 systemctl enable cert-renewer@etcd.timer
 systemctl enable cert-renewer@etcd.service
 systemctl enable /etc/systemd/system/etcd.service
-systemctl daemon-reload || true
 
-echo "export ETCDCTL_API=3
+echo "
+# Enable easy connection to ETCD
+export ETCDCTL_API=3
 export ETCDCTL_ENDPOINTS=$endpoints
 export ETCDCTL_INSECURE_TRANSPORT=false
 export ETCDCTL_CACERT=/etc/ssl/certs/etcd-ca.crt
 export ETCDCTL_CERT=/etc/ssl/certs/etcd.crt
-export ETCDCTL_KEY=/etc/ssl/private/etcd.key # todo: change this and ship tls certs via metadata server
-" > $HOME/.etcdctl
+export ETCDCTL_KEY=/etc/ssl/private/etcd.key
+" >> /root/.profile
 
-echo "
-# Etcd installed
-#
-# To test, please run
-source $HOME/.etcdctl
-etcdctl member list
-"
+echo "# Homelab ETCD Server" > /etc/motd

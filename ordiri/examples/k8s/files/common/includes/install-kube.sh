@@ -9,8 +9,8 @@ echo "deb [signed-by=/usr/share/keyrings/libcontainers-crio-archive-keyring.gpg]
 
 mkdir -p /usr/share/keyrings
 rm -f /usr/share/keyrings/libcontainers-*
-curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_11/Release.key | gpg --dearmor -o /usr/share/keyrings/libcontainers-archive-keyring.gpg
-curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.25/Debian_11/Release.key | gpg --dearmor -o /usr/share/keyrings/libcontainers-crio-archive-keyring.gpg
+curl -fsSL https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_11/Release.key | gpg --dearmor -o /usr/share/keyrings/libcontainers-archive-keyring.gpg
+curl -fsSL https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.25/Debian_11/Release.key | gpg --dearmor -o /usr/share/keyrings/libcontainers-crio-archive-keyring.gpg
 
 apt-get update
 apt-get install -y cri-o cri-o-runc

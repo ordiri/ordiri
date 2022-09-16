@@ -10,9 +10,8 @@ apt update && apt install -y ssl-cert
 {% include 'common/includes/install-vault.sh' %}
 {% include 'common/includes/install-root-ca.sh' %}
 
-
-local_ip=$(curl 169.254.169.254/latest/meta-data/local-ipv4)
-local_hostname=$(curl 169.254.169.254/latest/meta-data/local-hostname)
+local_ip=$(curl -fsSL 169.254.169.254/latest/meta-data/local-ipv4)
+local_hostname=$(curl -fsSL 169.254.169.254/latest/meta-data/local-hostname)
 export local_ip local_hostname # Export these so we can use them vault HCL files below
 
 {% import 'common/includes/install-cert-renewer.sh' as renewer %}

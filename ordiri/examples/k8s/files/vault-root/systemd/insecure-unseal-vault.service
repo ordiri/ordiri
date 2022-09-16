@@ -1,10 +1,10 @@
 [Unit]
 Description=Unseal vault
-Wants=vault.service
+Requires=vault.service
 After=vault.service
-BindsTo=vault.service
 
 [Service]
+Type=oneshot
 ExecStart=/bin/bash -c /sbin/insecure-unseal-vault.sh
 Restart=on-failure
 RestartSec=5

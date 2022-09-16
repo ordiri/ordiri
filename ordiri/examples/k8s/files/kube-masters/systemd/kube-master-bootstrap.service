@@ -2,6 +2,7 @@
 Description=Configure Kube Masters
 
 [Service]
+Type=oneshot
 ConditionPathExists=!/etc/kubernetes/admin.conf
 ExecStart=/bin/bash -c /sbin/bootstrap.sh
 Restart=on-failure

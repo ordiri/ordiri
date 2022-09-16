@@ -11,11 +11,14 @@ User=root
 Environment=CA_LOCATION=/etc/ssl/certs/%i-ca.crt
 Environment=CERT_LOCATION=/etc/ssl/certs/%i.crt
 Environment=KEY_LOCATION=/etc/ssl/private/%i.key
+Environment=VAULT_CERT_TTL={{vault_cert_ttl | default("1h", true) }}
 Environment=VAULT_ROLE_ID={{vault_role}} # 
 Environment=VAULT_ADDR={{vault_addr}} # https://vault-root-0.ordiri:8200
 Environment=VAULT_PATH={{vault_path}} # pki_int/issue/dmann-default
 
-ExecCondition=/usr/bin/env sh -c "! test -f ${CERT_LOCATION} || ! /usr/bin/openssl x509 -checkend 86400 -noout -in ${CERT_LOCATION}"
+ExecCondition=/usr/bin/env sh -c "(! test -s ${CERT_LOCATION} || ! /usr/bin/openssl x509 -checkend 1800 -noout -in ${CERT_LOCATION}) || true"
+Restart=on-failure
+RestartSec=10
 
 ; ExecStart renews the certificate, if ExecStartPre was successful.
 ExecStart=/usr/bin/vault-cert

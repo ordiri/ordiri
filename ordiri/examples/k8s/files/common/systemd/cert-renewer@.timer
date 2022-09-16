@@ -7,13 +7,13 @@ Documentation=https://github.com/smallstep/cli/blob/005920ad4122fa5838c338b567d6
 Persistent=true
 
 ; Run the timer unit every 15 minutes.
-OnCalendar=*:1/15
+OnCalendar=*:1/10
 
 ; Always run the timer on time.
 AccuracySec=1us
 
 ; Add jitter to prevent a "thundering hurd" of simultaneous certificate renewals.
-RandomizedDelaySec=5m
+RandomizedDelaySec=1m
 
 [Install]
 WantedBy=timers.target

@@ -5,6 +5,7 @@ After=vault-root.mount
 Requires=vault-root.mount
 
 [Service]
+Type=oneshot
 ExecStart=/bin/bash -c /sbin/vault-tls-configure.sh
 Restart=on-failure
 RestartSec=5

@@ -4,7 +4,10 @@ Requires=network-online.target
 Before=vault.service
 
 [Service]
+Type=oneshot
 ExecStart=/bin/bash -c /sbin/fetch-unseal-token.sh
+Restart=on-failure
+RestartSec=10
 
 [Install]
 RequiredBy=vault.service
