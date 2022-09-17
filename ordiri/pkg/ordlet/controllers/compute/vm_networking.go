@@ -54,7 +54,13 @@ func (r *VirtualMachineReconciler) ensureNetworkInterface(ctx context.Context, v
 		if err != nil {
 			return status, nil, fmt.Errorf("unable to parse ip addr %q - %w", ip, err)
 		}
-		opts = append(opts, network.InterfaceWithIps(ipAddr))
+
+		nodeCidr := netaddr.MustParseIPPrefix(r.Node.GetNode().Spec.PublicCidr)
+		if nodeCidr.Contains(ipAddr) {
+			opts = append(opts, network.InterfaceWithPublicIps(ipAddr))
+		} else {
+			opts = append(opts, network.InterfaceWithPrivateIps(ipAddr))
+		}
 		dnsIp := strings.ReplaceAll(ipAddr.String(), ".", "-")
 		hostnames = append(hostnames, dnsIp)
 		hostnames = append(hostnames, dnsIp+".ordiri")

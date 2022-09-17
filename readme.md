@@ -7,7 +7,7 @@ This project is an attepmt to solve my own personal problems when playing in my 
 
 Currently it supports the 3 main areas you would care about - compute, storage and network - and is able to provision overlapping tenant isolated networks which span multiple physical hosts by using VXLan tunnels and linux namespaces, launch a virtual machine and provide it with both host level or distributed (Rados) block storage.
 
-# [Ordiri](./ordiri)
+## [Ordiri](./ordiri)
 Main code base for the per-node ordlet as well as the control plane apiserver
 
 ## [Kubernetes Example](./ordiri/examples/)
@@ -19,19 +19,19 @@ The API Server uses the Kubernetes API server packages to provide a kubernetes s
 ## [Boot Server](./ordiri/cmd/bootserver/) - Deprecated
 A simple HTTP server that uses MachineProfiles to serve differing IPXE boot configurations to a machine
 
-# [Ordiri Dashboard](./ordiri-dashboard)
+## [Ordiri Dashboard](./ordiri-dashboard)
 A React UI for interacting with the API Server
 
-# [Ordiri Client Typescript](./ordiri-client-typescript/)
+## [Ordiri Client Typescript](./ordiri-client-typescript/)
 Open API client for use in a browser
 
-# Todo
+## Todo
 Need tenant API logins and API auth, lots of hard coded stuff to support tenant isolation, search "tenant1"
 Currently do a bunch of l3 routing in openflow rules but it's really inneficent and it all stems from a seperate vlan per subnet instead of per network.
 
 
 ----
-# Running locally
+## Running locally
 ```
 Terminal 1: make etcd
 Terminal 2: make run-apiserver # the apiserver-runtime 

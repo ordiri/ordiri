@@ -14,7 +14,7 @@ type VirtualMachine struct {
 	MetadataPort     string
 	MetadataMac      net.HardwareAddr
 	Mac              net.HardwareAddr
-	Ips              []netaddr.IP
+	PrivateIps       []netaddr.IP
 	Segment          int
 	StrictSourceDest bool
 }

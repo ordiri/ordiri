@@ -77,5 +77,6 @@ type Interface interface {
 	Name() string
 	Hostnames() []string
 	Mac() net.HardwareAddr
-	IP() []netaddr.IP
+	PrivateIp() []netaddr.IP
+	PublicIp() []netaddr.IP
 }

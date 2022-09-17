@@ -95,7 +95,7 @@ const ComputeResourcesPage = (props: ComputeResourceProps) => {
 
                         return <>
                             {res.map(it => {
-                                return <div>{it.network}/{it.subnet}@{it.mac} - {it.ip?.join(", ")}</div>
+                                return <div>{it.network}/{it.subnet}@{it.mac}{it._public ? "-  (Public) " : ""} - {it.ip?.join(", ")}</div>
                             })}
                         </>
                     }

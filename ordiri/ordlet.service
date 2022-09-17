@@ -1,0 +1,16 @@
+[Unit]
+Description=Ordle service
+Documentation=https://github.com/etcd-io/etcd
+After=network-online.target local-fs.target remote-fs.target time-sync.target
+Wants=network-online.target local-fs.target remote-fs.target time-sync.target
+
+[Service]
+Type=service
+Environment=KUBECONFIG=/etc/ordiri.conf
+
+ExecStart=/usr/local/bin/ordlet -zap-log-level=5
+Restart=always
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target

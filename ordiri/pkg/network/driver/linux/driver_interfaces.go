@@ -45,6 +45,11 @@ func (ln *linuxDriver) EnsureInterface(ctx context.Context, nw api.Network, sn a
 		return "", err
 	}
 
+	// create tun/tap device
+	if err := ln.createPublicIps(ctx, nw, sn, iface, br); err != nil {
+		return "", err
+	}
+
 	// install flow rules for vm
 	if err := ln.installInterfaceFlows(ctx, nw, sn, iface); err != nil {
 		return "", err
@@ -146,6 +151,20 @@ func (ln *linuxDriver) createInterfaceBridge(ctx context.Context, nw api.Network
 	return bridge, nil
 }
 
+func (ln *linuxDriver) createPublicIps(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface, ifaceBridge *netlink.Bridge) error {
+	namespace := namespaceForRouter(nw)
+
+	ipt, err := sdn.Iptables(namespace)
+	if err != nil {
+		return err
+	}
+
+	if err := ipt.AppendUnique("foo", "bar", "baz"); err != nil {
+
+	}
+
+	return fmt.Errorf("unknown error fetching existing tuntap device")
+}
 func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface, ifaceBridge *netlink.Bridge) (*netlink.Tuntap, error) {
 	tuntapName := interfaceTunTapName(nw, sn, iface)
 	nl, err := netlink.LinkByName(tuntapName)
@@ -153,15 +172,15 @@ func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network
 		return nil, fmt.Errorf("unknown error fetching existing tuntap device - %w", err)
 	}
 
-	if len(iface.IP()) > 0 {
+	if len(iface.PrivateIp()) > 0 {
 		// todo: This is pretty incorrect but it works for now
 		// it's incorrect because of the idea that hostnames are bound to an
 		// interface + ip in the vm_networking so here we would return
 		// the wrong ip for a multi ip interface
 		// post this comment the dns stuff was moved to the network to enable us
 		// to create dns records for the entire network
-		if len(iface.IP()) > 0 {
-			addr := iface.IP()[0]
+		if len(iface.PrivateIp()) > 0 {
+			addr := iface.PrivateIp()[0]
 			dhcpHostDir := dhcpHostMappingDir(nw, sn)
 			mapping := fmt.Sprintf("%s,%s,%s", iface.Mac(), addr.String(), iface.Hostnames()[0])
 			fileName := slug.Make(addr.String())
@@ -237,7 +256,7 @@ func (ln *linuxDriver) interfaceFlowRules(ctx context.Context, nw api.Network, s
 			MetadataMac:      metaMac(),
 			Mac:              iface.Mac(),
 			Segment:          sn.Segment(),
-			Ips:              iface.IP(),
+			PrivateIps:       iface.PrivateIp(),
 			StrictSourceDest: true,
 		},
 	}, nil
