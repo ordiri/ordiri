@@ -154,14 +154,14 @@ require (
 	github.com/digitalocean/go-openvswitch v0.0.0-20211105174344-2a0f99c6436b
 	github.com/insomniacslk/dhcp v0.0.0-20220812085412-509691fd59ec
 	github.com/mdlayher/netlink v1.6.0
-	github.com/vishvananda/netlink v1.1.0
-	github.com/vishvananda/netns v0.0.0-20191106174202-0a2b9b5464df
+	github.com/vishvananda/netlink v1.1.1-0.20210330154013-f5de75959ad5
+	github.com/vishvananda/netns v0.0.0-20200728191858-db3c7e526aae
 	inet.af/netaddr v0.0.0-20220617031823-097006376321
 	libvirt.org/go/libvirtxml v1.8005.0
 )
 
 require (
-	github.com/BurntSushi/toml v0.4.1 // indirect
+	github.com/BurntSushi/toml v1.0.0 // indirect
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/armon/go-metrics v0.4.1 // indirect
@@ -204,6 +204,7 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/oklog/run v1.1.0 // indirect
+	github.com/osrg/gobgp/v3 v3.6.0 // indirect
 	github.com/pierrec/lz4 v2.6.1+incompatible // indirect
 	github.com/ryanuber/go-glob v1.0.0 // indirect
 	github.com/u-root/uio v0.0.0-20210528114334-82958018845c // indirect

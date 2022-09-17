@@ -186,6 +186,14 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "MachineMetadataController")
 		os.Exit(1)
 	}
+	if err = (&network.BGPSpeakerReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+		Node:   nodeRunner,
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "BGPSpeaker")
+		os.Exit(1)
+	}
 
 	//+kubebuilder:scaffold:builder
 

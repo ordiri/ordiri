@@ -153,17 +153,25 @@ func (ln *linuxDriver) createInterfaceBridge(ctx context.Context, nw api.Network
 
 func (ln *linuxDriver) createPublicIps(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface, ifaceBridge *netlink.Bridge) error {
 	namespace := namespaceForRouter(nw)
+	publicGwCableName := publicGwCable(nw)
 
 	ipt, err := sdn.Iptables(namespace)
 	if err != nil {
 		return err
 	}
+	_ = ipt
+	_ = publicGwCableName
+	// Table: "nat",
+	// Chain: "POSTROUTING",
+	// Rules: [][]string{
+	// 	{"-o", publicInterface, "-j", "MASQUERADE"},
+	// },
+	// if err := ipt.AppendUnique("nat", "POSTROUTING", "-i", publicGwCableName.Namespace()); err != nil {
 
-	if err := ipt.AppendUnique("foo", "bar", "baz"); err != nil {
+	// }
 
-	}
-
-	return fmt.Errorf("unknown error fetching existing tuntap device")
+	// return fmt.Errorf("unknown error fetching existing tuntap device")
+	return nil
 }
 func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface, ifaceBridge *netlink.Bridge) (*netlink.Tuntap, error) {
 	tuntapName := interfaceTunTapName(nw, sn, iface)
