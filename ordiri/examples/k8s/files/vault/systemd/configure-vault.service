@@ -1,6 +1,6 @@
 [Unit]
 Description=Unseal vault
-Requires=vault.service
+Wants=vault.service
 After=vault.service
 
 [Service]

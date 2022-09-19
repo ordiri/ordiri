@@ -7,8 +7,8 @@ set -eou pipefail
 apt-get install -y dnsutils
 
 cd $(mktemp -d)
-local_ip=$(curl -fsSL 169.254.169.254/latest/meta-data/local-ipv4)
-local_hostname=$(curl -fsSL 169.254.169.254/latest/meta-data/local-hostname)
+local_ip=$(curl --retry 5 --retry-all-errors --retry-delay 5 --retry-max-time 120 -fsSL 169.254.169.254/latest/meta-data/local-ipv4)
+local_hostname=$(curl --retry 5 --retry-all-errors --retry-delay 5 --retry-max-time 120 -fsSL 169.254.169.254/latest/meta-data/local-hostname)
 export local_ip local_hostname # Export these so we can use them in envsubst call below
 
 {% include 'common/includes/install-vault.sh' %}
@@ -22,7 +22,6 @@ export local_ip local_hostname # Export these so we can use them in envsubst cal
 mkdir -p /etc/kubernetes/
 {{ with_local_file('kube-masters/modules-load.d/modules.conf', "/etc/modules-load.d/modules.conf") }}
 {{ with_local_file('kube-masters/sysctl.d/kubelet.conf', "/etc/sysctl.d/kubelet.conf") }}
-export cert_key=$(kubeadm certs certificate-key)
 {{ with_local_file('kube-masters/kubeadm/config.yaml', "/etc/kubernetes/kubeadm.yaml", executable=True) }}
 
 cluster_ip=$(dig +short kube-master-0.ordiri)

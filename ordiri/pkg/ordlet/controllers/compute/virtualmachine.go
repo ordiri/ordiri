@@ -21,6 +21,7 @@ import (
 	"encoding/xml"
 	"fmt"
 
+	"inet.af/netaddr"
 	k8err "k8s.io/apimachinery/pkg/api/errors"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -53,6 +54,8 @@ type VirtualMachineReconciler struct {
 	LibvirtClient  *internallibvirt.Libvirt
 	Node           ordlet.NodeProvider
 	NetworkManager api.Manager
+
+	PublicCidr netaddr.IPPrefix
 }
 
 //+kubebuilder:rbac:groups=compute,resources=virtualmachines,verbs=get;list;watch;create;update;patch;delete

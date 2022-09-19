@@ -70,9 +70,23 @@ func (r *MachineMetadataController) SetupWithManager(mgr ctrl.Manager) error {
 		if err != nil {
 			return err
 		}
+		srv := &http.Server{Handler: metadataServer.HTTPHandler()}
+
+		go func() {
+			<-ctx.Done()
+			if err := srv.Shutdown(ctx); err != nil {
+				log.Info("error shutting down metadata server - %w", err)
+			}
+		}()
 
 		log.Info("server starting")
 
-		return http.Serve(conn, metadataServer.HTTPHandler())
+		if err := srv.Serve(conn); err != nil {
+			if err != http.ErrServerClosed {
+				return err
+			}
+		}
+
+		return nil
 	}))
 }

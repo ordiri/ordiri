@@ -18,6 +18,7 @@ spec:
       networkInterfaces:
       - mac: ""
         network: kubevms
+        public: true
         subnet: kubevms-masters
       node: ""
       role: default

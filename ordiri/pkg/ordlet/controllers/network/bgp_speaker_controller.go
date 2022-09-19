@@ -18,20 +18,20 @@ package network
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os/exec"
+	"strings"
 	"time"
 
-	apb "google.golang.org/protobuf/types/known/anypb"
 	"inet.af/netaddr"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 
-	"github.com/ordiri/ordiri/pkg/log"
-	api "github.com/osrg/gobgp/v3/api"
-	"github.com/osrg/gobgp/v3/pkg/server"
+	"github.com/davecgh/go-spew/spew"
+	"github.com/ordiri/ordiri/pkg/network/bgp"
+	"github.com/ordiri/ordiri/pkg/network/sdn"
 
-	bgplog "github.com/osrg/gobgp/v3/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	"github.com/ordiri/ordiri/pkg/ordlet"
@@ -46,9 +46,10 @@ type BGPSpeakerReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
 
-	server *server.BgpServer
+	speaker *bgp.Speaker
 
-	Node ordlet.NodeProvider
+	PublicCidr netaddr.IPPrefix
+	Node       ordlet.NodeProvider
 }
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
@@ -75,171 +76,112 @@ func (r *BGPSpeakerReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 		}
 		return ctrl.Result{}, err
 	}
+	node, isScheduled := vm.ScheduledNode()
+	if !isScheduled {
+		return ctrl.Result{RequeueAfter: time.Second * 5}, nil
+	}
+	if node != r.Node.GetNode().Name {
+		return ctrl.Result{}, nil
+	}
 
-	nodeCidr := netaddr.MustParseIPPrefix(r.Node.GetNode().Spec.PublicCidr)
 	for _, iface := range vm.Spec.NetworkInterfaces {
 		if !iface.Public {
 			continue
 		}
-		privateIp := ""
+		vmInternalIp := ""
 		for _, ip := range iface.Ips {
 			ipAddr, err := netaddr.ParseIP(ip)
 			if err != nil {
 				return ctrl.Result{}, fmt.Errorf("unable to parse ip addr %q - %w", ip, err)
 			}
-			if nodeCidr.Contains(ipAddr) {
+			if r.PublicCidr.Contains(ipAddr) {
 				continue
 			}
-			privateIp = ipAddr.String()
+			vmInternalIp = ipAddr.String()
 			break
 		}
-		if privateIp == "" {
+		if vmInternalIp == "" {
 			return ctrl.Result{}, fmt.Errorf("missing private ip")
 		}
 		for _, ip := range iface.Ips {
-			ipAddr, err := netaddr.ParseIP(ip)
+			vmPublicIp, err := netaddr.ParseIP(ip)
 			if err != nil {
 				return ctrl.Result{}, fmt.Errorf("unable to parse ip addr %q - %w", ip, err)
 			}
-			if !nodeCidr.Contains(ipAddr) {
-				log.Info("Skipping IP as it's not a part of this node")
+			if !r.PublicCidr.Contains(vmPublicIp) {
+				log.Info("Skipping IP as it's not a part of the public range")
 				continue
 			}
 
-			// add routes
-			nlri, _ := apb.New(&api.IPAddressPrefix{
-				Prefix:    ipAddr.String(),
-				PrefixLen: 32,
-			})
-
-			cmd := exec.Command("ip", "netns", "exec", "ordiri-router-"+iface.Network, "iptables", "-t", "nat", "-A", "PREROUTING", "-i", "prtr-36138-in", "-d", ipAddr.String(), "-j", "DNAT", "--to-destination", privateIp)
-			if err := cmd.Run(); err != nil {
-				return ctrl.Result{}, err
-			}
-
-			a1, _ := apb.New(&api.OriginAttribute{
-				Origin: 0,
-			})
-			a2, _ := apb.New(&api.NextHopAttribute{
-				NextHop: "10.0.1.126",
-			})
-
-			// a3, _ := apb.New(&api.AsPathAttribute{
-			// 	Segments: []*api.AsSegment{
-			// 		{
-			// 			Type:    2,
-			// 			Numbers: []uint32{6762, 39919, 65000, 35753, 65000},
-			// 		},
-			// 	},
-			// })
-			// attrs := []*apb.Any{a1, a2, a3}
-			attrs := []*apb.Any{a1, a2}
-
-			res, err := r.server.AddPath(context.Background(), &api.AddPathRequest{
-				Path: &api.Path{
-					Family: &api.Family{Afi: api.Family_AFI_IP, Safi: api.Family_SAFI_UNICAST},
-					Nlri:   nlri,
-					Pattrs: attrs,
-				},
-			})
+			ipCmd := exec.Command("ip", "netns", "exec", "ordiri-router-"+iface.Network, "ip", "-json", "a")
+			out, err := ipCmd.Output()
 			if err != nil {
-				log.Error(err, "error running AddPath")
 				return ctrl.Result{}, err
 			}
-			log.Info("add path response", "res", res)
+
+			type IpRes struct {
+				Name  string `json:"ifname"`
+				Addrs []struct {
+					Ip    netaddr.IP `json:"local"`
+					Scope string     `json:"scope"`
+				} `json:"addr_info"`
+			}
+
+			res := []*IpRes{}
+			if err := json.Unmarshal(out, &res); err != nil {
+				return ctrl.Result{}, err
+			}
+			spew.Dump(string(out), res)
+
+			routerInterface := ""
+			routerIp := netaddr.IP{}
+			for _, iface := range res {
+				if !strings.HasPrefix(iface.Name, "prtr") {
+					continue
+				}
+				for _, addr := range iface.Addrs {
+					if addr.Scope != "global" {
+						continue
+					}
+					if addr.Ip.Is4() {
+						routerInterface = iface.Name
+						routerIp = addr.Ip
+						break
+					}
+				}
+			}
+			if routerInterface == "" {
+				return ctrl.Result{}, fmt.Errorf("unable to determine public router interface name")
+			}
+			ipt, err := sdn.Iptables("ordiri-router-" + iface.Network)
+			if err != nil {
+				return ctrl.Result{}, err
+			}
+
+			if err := ipt.AppendUnique("nat", "PREROUTING", "-i", routerInterface, "-d", vmPublicIp.String(), "-j", "DNAT", "--to-destination", vmInternalIp); err != nil {
+				return ctrl.Result{}, err
+			}
+			if r.speaker == nil {
+				log.Info("not announcing as no speaker configured")
+				return ctrl.Result{}, nil
+			}
+			log.V(5).Info("Announcing ip", "vmPublicIp", vmPublicIp, "routerIp", routerIp)
+			if err := r.speaker.Announce(ctx, vmPublicIp, routerIp); err != nil {
+				log.Error(err, "error announcing ip")
+				return ctrl.Result{}, err
+			}
 
 		}
-	}
-
-	if err := r.server.ListPeer(context.Background(), &api.ListPeerRequest{}, func(p *api.Peer) {
-		log.Info("Got the peer", "name", p.String())
-	}); err != nil {
-		return ctrl.Result{}, err
 	}
 
 	return ctrl.Result{RequeueAfter: time.Second * 30}, nil
 }
 
-func (r *BGPSpeakerReconciler) SetupWithManager(mgr ctrl.Manager) error {
-	logger := &bgpLogger{logger: mgr.GetLogger()}
-
-	r.server = server.NewBgpServer(server.LoggerOption(logger))
-	go r.server.Serve()
-
-	// global configuration
-	if err := r.server.StartBgp(context.Background(), &api.StartBgpRequest{
-		Global: &api.Global{
-			Asn:      65001,
-			RouterId: r.Node.GetNode().TunnelAddress(),
-			// ListenPort: -1, // gobgp won't listen on tcp:179
-		},
-	}); err != nil {
-		mgr.GetLogger().Error(err, "failed to startup bgp speaker")
-	}
-
-	// monitor the change of the peer state
-	if err := r.server.WatchEvent(context.Background(), &api.WatchEventRequest{Peer: &api.WatchEventRequest_Peer{}}, func(r *api.WatchEventResponse) {
-		// if p := r.GetPeer(); p != nil && p.Type == api.WatchEventResponse_PeerEvent_STATE {
-		// }
-		mgr.GetLogger().Info(r.String())
-	}); err != nil {
-		mgr.GetLogger().Error(err, "error running xyz")
-		return err
-	}
-
-	// neighbor configuration
-	peer := &api.Peer{
-		Conf: &api.PeerConf{
-			NeighborAddress: "10.0.1.1",
-			PeerAsn:         65000,
-		},
-	}
-
-	if err := r.server.AddPeer(context.Background(), &api.AddPeerRequest{
-		Peer: peer,
-	}); err != nil {
-		mgr.GetLogger().Error(err, "error running xyz")
-		return err
-	}
+func (r *BGPSpeakerReconciler) SetupWithManager(mgr ctrl.Manager, speaker *bgp.Speaker) error {
+	r.speaker = speaker
 
 	return ctrl.NewControllerManagedBy(mgr).
 		Named("bgp").
 		For(&computev1alpha1.VirtualMachine{}).
 		Complete(r)
-}
-
-// implement github.com/osrg/gobgp/v3/pkg/log/Logger interface
-type bgpLogger struct {
-	logger log.Log
-}
-
-func (l *bgpLogger) Panic(msg string, fields bgplog.Fields) {
-	l.logger.WithValues("fields", fields).Info(msg)
-}
-
-func (l *bgpLogger) Fatal(msg string, fields bgplog.Fields) {
-	l.logger.WithValues("fields", fields).Info(msg)
-}
-
-func (l *bgpLogger) Error(msg string, fields bgplog.Fields) {
-	l.logger.WithValues("fields", fields).Info(msg)
-}
-
-func (l *bgpLogger) Warn(msg string, fields bgplog.Fields) {
-	l.logger.WithValues("fields", fields).Info(msg)
-}
-
-func (l *bgpLogger) Info(msg string, fields bgplog.Fields) {
-	l.logger.WithValues("fields", fields).Info(msg)
-}
-
-func (l *bgpLogger) Debug(msg string, fields bgplog.Fields) {
-	l.logger.WithValues("fields", fields).Info(msg)
-}
-
-func (l *bgpLogger) SetLevel(level bgplog.LogLevel) {
-}
-
-func (l *bgpLogger) GetLevel() bgplog.LogLevel {
-	return bgplog.TraceLevel
 }

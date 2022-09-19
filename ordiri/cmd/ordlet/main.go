@@ -25,6 +25,7 @@ import (
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	// to ensure that exec-entrypoint and run can make use of them.
+	"inet.af/netaddr"
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 
 	"k8s.io/apimachinery/pkg/runtime"
@@ -38,6 +39,7 @@ import (
 	"github.com/ordiri/ordiri/pkg/generated/clientset/versioned"
 	nwman "github.com/ordiri/ordiri/pkg/network"
 	"github.com/ordiri/ordiri/pkg/network/api"
+	"github.com/ordiri/ordiri/pkg/network/bgp"
 	"github.com/ordiri/ordiri/pkg/network/driver/linux"
 	"github.com/ordiri/ordiri/pkg/ordlet"
 	"github.com/ordiri/ordiri/pkg/ordlet/controllers/compute"
@@ -65,6 +67,10 @@ func main() {
 	var nodeRole string
 	var nodeName string
 	var networkDriver string
+	var publicCidrStr string
+	var mgmtCidr string
+	var bgpPeerAsn uint
+	var bgpPeerIp string
 	hostname, err := os.Hostname()
 	if err != nil {
 		panic("unable to determine hostname - " + err.Error())
@@ -73,6 +79,10 @@ func main() {
 	flag.StringVar(&probeAddr, "health-probe-bind-address", ":8086", "The address the probe endpoint binds to.")
 	flag.StringVar(&nodeRole, "role", "compute,network,storage", "The roles this node has")
 	flag.StringVar(&networkDriver, "network-driver", "linux", "The driver for network operations on this node")
+	flag.StringVar(&mgmtCidr, "mgmt-cidr", "10.0.0.0/8", "The upstream management network cidr")
+	flag.StringVar(&publicCidrStr, "public-cidr", "172.20.0.2/24", "The public cidr in use")
+	flag.StringVar(&bgpPeerIp, "bgp-peer-ip", "10.0.1.1", "Ip of the upstream router to send BGP announcements to")
+	flag.UintVar(&bgpPeerAsn, "bgp-peer-asn", 65000, "The asn of the peer")
 	flag.StringVar(&nodeName, "name", hostname, "The name this node has")
 	opts := zap.Options{
 		Development: true,
@@ -80,7 +90,6 @@ func main() {
 	opts.BindFlags(flag.CommandLine)
 	flag.Parse()
 
-	mgmtCidr := "10.0.0.0/8"
 	_, mgmtNetwork, err := net.ParseCIDR(mgmtCidr)
 	if err != nil {
 		setupLog.Error(err, "unable to decode node mgmt cidr", "cidr", mgmtCidr)
@@ -96,6 +105,8 @@ func main() {
 		HealthProbeBindAddress: probeAddr,
 		LeaderElection:         false,
 	})
+
+	publicCidr := netaddr.MustParseIPPrefix(publicCidrStr)
 
 	if err != nil {
 		setupLog.Error(err, "unable to start manager")
@@ -115,18 +126,24 @@ func main() {
 		setupLog.Error(err, "unable to start node manager")
 		os.Exit(1)
 	}
+	bgpIP := netaddr.MustParseIP(bgpPeerIp)
+	speaker := bgp.NewSpeaker(nodeRunner.GetNode().TunnelAddress(), uint32(bgpPeerAsn), bgpIP)
+	mgr.Add(speaker)
 
-	nwManager, err := getNetworkManager(networkDriver)
+	setupLog.Info("Starting network manager")
+	nwManager, err := getNetworkManager(speaker, networkDriver)
 	if err != nil {
 		setupLog.Error(err, "unable to create network manager")
 		os.Exit(1)
 	}
 
+	setupLog.Info("Starting controllers")
 	if err = (&network.NetworkReconciler{
 		Client:         mgr.GetClient(),
 		Scheme:         mgr.GetScheme(),
 		Node:           nodeRunner,
 		NetworkManager: nwManager,
+		PublicCidr:     publicCidr,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Network")
 		os.Exit(1)
@@ -174,6 +191,7 @@ func main() {
 		Scheme:         mgr.GetScheme(),
 		Node:           nodeRunner,
 		NetworkManager: nwManager,
+		PublicCidr:     publicCidr,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "VirtualMachine")
 		os.Exit(1)
@@ -186,11 +204,13 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "MachineMetadataController")
 		os.Exit(1)
 	}
+
 	if err = (&network.BGPSpeakerReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
-		Node:   nodeRunner,
-	}).SetupWithManager(mgr); err != nil {
+		Client:     mgr.GetClient(),
+		Scheme:     mgr.GetScheme(),
+		Node:       nodeRunner,
+		PublicCidr: publicCidr,
+	}).SetupWithManager(mgr, nwManager.GetSpeaker()); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "BGPSpeaker")
 		os.Exit(1)
 	}
@@ -215,11 +235,16 @@ func main() {
 	}
 }
 
-func getNetworkManager(name string) (api.RunnableManager, error) {
-	driver, err := linux.New()
-	if err != nil {
-		return nil, err
-	}
+func getNetworkManager(speaker *bgp.Speaker, driverName string) (api.RunnableManager, error) {
+	if driverName == "linux" {
 
-	return nwman.NewManager(driver)
+		driver, err := linux.New()
+		if err != nil {
+			return nil, err
+		}
+
+		return nwman.NewManager(speaker, driver)
+
+	}
+	panic("unknown driver " + driverName)
 }

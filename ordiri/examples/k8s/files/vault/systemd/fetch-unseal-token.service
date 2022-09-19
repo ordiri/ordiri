@@ -1,7 +1,6 @@
 [Unit]
 Description=Get the unseal token
-Requires=network-online.target cert-renewer@vault.service
-After=cert-renewer@vault.service
+Requires=network-online.target
 
 [Service]
 Type=oneshot

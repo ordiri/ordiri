@@ -4,8 +4,8 @@ set -eou pipefail
 
 cd $(mktemp -d)
 
-export local_hostname=$(curl -fsSL 169.254.169.254/latest/meta-data/local-hostname)
-export local_ip=$(curl -fsSL 169.254.169.254/latest/meta-data/local-ipv4)
+export local_hostname=$(curl --retry 5 --retry-all-errors --retry-delay 5 --retry-max-time 120 -fsSL 169.254.169.254/latest/meta-data/local-hostname)
+export local_ip=$(curl --retry 5 --retry-all-errors --retry-delay 5 --retry-max-time 120 -fsSL 169.254.169.254/latest/meta-data/local-ipv4)
 
 {% include 'common/includes/install-vault.sh' %}
 

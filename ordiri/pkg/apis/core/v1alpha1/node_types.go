@@ -63,7 +63,6 @@ const (
 type NodeSpec struct {
 	NodeRoles           []NodeRole `json:"nodeRoles"`
 	ManagementAddresses []string   `json:"managementAddresses"`
-	PublicCidr          string     `json:"publicCidr"`
 }
 
 var _ resource.Object = &Node{}

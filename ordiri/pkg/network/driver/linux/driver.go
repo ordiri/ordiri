@@ -207,10 +207,11 @@ func (ln *linuxDriver) Start(ctx context.Context) error {
 
 	go func() {
 		<-ctx.Done()
-		stopCh <- ctx.Err()
+		stopCh <- nil
 	}()
 
 	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
 
 	// Get in this ns first
 	go func() {
@@ -237,7 +238,6 @@ func (ln *linuxDriver) Start(ctx context.Context) error {
 	}
 
 	err = <-stopCh
-	cancel()
 
 	return err
 }

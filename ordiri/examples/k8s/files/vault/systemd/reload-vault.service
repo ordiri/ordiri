@@ -1,0 +1,8 @@
+[Unit]
+Description=Reload vault
+After=vault.service
+StartLimitIntervalSec=0
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/systemctl reload vault.service

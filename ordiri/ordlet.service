@@ -5,9 +5,12 @@ After=network-online.target local-fs.target remote-fs.target time-sync.target
 Wants=network-online.target local-fs.target remote-fs.target time-sync.target
 
 [Service]
-Type=service
+Type=simple
 Environment=KUBECONFIG=/etc/ordiri.conf
 
+ExecStartPre=/bin/sh -c "/usr/bin/killall --wait ordiri-metadata || true"
+ExecStartPre=/bin/sh -c "/usr/bin/killall --wait dnsmasq || true"
+ExecStartPre=/bin/sh -c "/usr/bin/rm -rf /run/ordiri || true"
 ExecStart=/usr/local/bin/ordlet -zap-log-level=5
 Restart=always
 RestartSec=10s

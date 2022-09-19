@@ -14,8 +14,8 @@ cd $(mktemp -d)
 {% include 'common/includes/install-ca.sh' %}
 {{ cert_renewer.vault_cert_renewer("etcd-node", "https://vault-0.ordiri:8200", "pki/issue/homelab-default") }}
 
-local_ip=$(curl -fsSL 169.254.169.254/latest/meta-data/local-ipv4)
-local_hostname=$(curl -fsSL 169.254.169.254/latest/meta-data/local-hostname)
+local_ip=$(curl --retry 5 --retry-all-errors --retry-delay 5 --retry-max-time 120 -fsSL 169.254.169.254/latest/meta-data/local-ipv4)
+local_hostname=$(curl --retry 5 --retry-all-errors --retry-delay 5 --retry-max-time 120 -fsSL 169.254.169.254/latest/meta-data/local-hostname)
 export local_ip local_hostname # Export these so we can use them in envsubst call below
 
 curl -fsSL ${DOWNLOAD_URL}/${ETCD_VER}/etcd-${ETCD_VER}-linux-amd64.tar.gz -o etcd-${ETCD_VER}-linux-amd64.tar.gz

@@ -46,6 +46,7 @@ type NetworkReconciler struct {
 
 	Node           ordlet.NodeProvider
 	NetworkManager api.NetworkManager
+	PublicCidr     netaddr.IPPrefix
 }
 
 // Controls internet gateway & floating ip etc ona node
@@ -114,7 +115,9 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 					if err != nil {
 						return ctrl.Result{}, err
 					}
-					net.WithDns(parsedIp, []string{vm.Name})
+					if !r.PublicCidr.Contains(parsedIp) {
+						net.WithDns(parsedIp, []string{vm.Name})
+					}
 				}
 			}
 		}

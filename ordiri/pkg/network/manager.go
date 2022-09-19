@@ -5,14 +5,16 @@ import (
 	"sync"
 
 	"github.com/ordiri/ordiri/pkg/network/api"
+	"github.com/ordiri/ordiri/pkg/network/bgp"
 	"github.com/ordiri/ordiri/pkg/network/driver"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 )
 
-func NewManager(driver driver.Driver) (api.RunnableManager, error) {
+func NewManager(speaker *bgp.Speaker, driver driver.Driver) (api.RunnableManager, error) {
 	return &networkManager{
 		driver:   driver,
 		networks: []*managedNet{},
+		speaker:  speaker,
 	}, nil
 }
 
@@ -32,11 +34,15 @@ type networkManager struct {
 	// subnets    map[string][]api.Subnet
 	// routers    map[string]map[string][]api.Router
 	// interfaces map[string]map[string][]api.Interface
-	driver driver.Driver
+	driver  driver.Driver
+	speaker *bgp.Speaker
 
 	l sync.Mutex
 }
 
+func (ln *networkManager) GetSpeaker() *bgp.Speaker {
+	return ln.speaker
+}
 func (ln *networkManager) Close() error {
 	if closer, isCloser := ln.driver.(driver.RunnableDriver); isCloser {
 		if err := closer.Close(); err != nil {

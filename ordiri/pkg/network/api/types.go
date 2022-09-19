@@ -4,11 +4,13 @@ import (
 	"context"
 	"net"
 
+	"github.com/ordiri/ordiri/pkg/network/bgp"
 	"inet.af/netaddr"
 )
 
 type NetworkManager interface {
 	HasNetwork(name string) bool
+	GetSpeaker() *bgp.Speaker
 	GetNetwork(name string) Network
 	EnsureNetwork(context.Context, Network) error
 	RemoveNetwork(ctx context.Context, name string) error

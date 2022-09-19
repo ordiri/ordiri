@@ -19,7 +19,7 @@ type ArpResponder struct {
 
 func (wi *ArpResponder) matches() []ovs.Match {
 	matches := []ovs.Match{
-		ovs.NetworkDestination(wi.Ip.String()),
+		ovs.ARPTargetProtocolAddress(wi.Ip.String()),
 	}
 	if wi.VlanId > 0 {
 		matches = append(matches, ovs.DataLinkVLAN(wi.VlanId))
@@ -63,7 +63,7 @@ func (wi *ArpResponder) Remove(client *ovs.Client) error {
 		Protocol: ovs.ProtocolARP,
 		// Table:    OpenFlowTableTunnelArpResponder,
 		Matches: []ovs.Match{
-			ovs.NetworkDestination(wi.Ip.String()),
+			ovs.ARPTargetProtocolAddress(wi.Ip.String()),
 		},
 	})
 }

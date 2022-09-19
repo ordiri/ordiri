@@ -55,8 +55,7 @@ func (r *VirtualMachineReconciler) ensureNetworkInterface(ctx context.Context, v
 			return status, nil, fmt.Errorf("unable to parse ip addr %q - %w", ip, err)
 		}
 
-		nodeCidr := netaddr.MustParseIPPrefix(r.Node.GetNode().Spec.PublicCidr)
-		if nodeCidr.Contains(ipAddr) {
+		if r.PublicCidr.Contains(ipAddr) {
 			opts = append(opts, network.InterfaceWithPublicIps(ipAddr))
 		} else {
 			opts = append(opts, network.InterfaceWithPrivateIps(ipAddr))

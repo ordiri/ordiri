@@ -132,14 +132,14 @@ linux-md:
 deploy-debian-ordlet: linux-ordlet
 	scp kubeconfig root@debian:/etc/ordiri.conf
 	scp ordlet.service root@debian:/etc/systemd/system/ordlet.service
-	ssh root@debian 'systemctl enable ordlet.service'
+	ssh root@debian 'systemctl daemon-reload && systemctl enable ordlet.service'
 	scp bin/ordlet-amd64-linux root@debian:~/ordlet
 	ssh root@debian 'mv ~/ordlet /usr/local/bin/ordlet && systemctl daemon-reload'
 
 deploy-mothership-ordlet: linux-ordlet
 	scp kubeconfig mothership:/etc/ordiri.conf
 	scp ordlet.service mothership:/etc/systemd/system/ordlet.service
-	ssh mothership 'systemctl enable ordlet.service'
+	ssh mothership 'systemctl daemon-reload && systemctl enable ordlet.service'
 	scp bin/ordlet-amd64-linux mothership:~/ordlet
 	ssh mothership 'mv ~/ordlet /usr/local/bin/ordlet && systemctl daemon-reload'
 
@@ -157,11 +157,17 @@ run-remote: run-debian-remote run-mothership-remote
 
 run-mothership-remote: deploy-mothership-ordlet
 # modprobe nf_nat_tftp nf_conntrack && 
-	ssh mothership 'systemctl restart ordlet & journalctl -xefu ordlet'
+	ssh mothership 'systemctl restart ordlet'
+log-mothership-remote: deploy-mothership-ordlet
+# modprobe nf_nat_tftp nf_conntrack && 
+	ssh mothership 'journalctl -xefu ordlet'
 
 run-debian-remote: deploy-debian-ordlet
 # modprobe nf_nat_tftp nf_conntrack && 
-	ssh root@debian 'systemctl restart ordlet & journalctl -xefu ordlet'
+	ssh root@debian 'systemctl restart ordlet'
+log-debian-remote: deploy-debian-ordlet
+# modprobe nf_nat_tftp nf_conntrack && 
+	ssh root@debian 'journalctl -xefu ordlet'
 
 
 

@@ -23,7 +23,7 @@ func TestNewManager(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := NewManager(tt.args.driver)
+			got, err := NewManager(nil, tt.args.driver)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("NewManager() error = %v, wantErr %v", err, tt.wantErr)
 				return

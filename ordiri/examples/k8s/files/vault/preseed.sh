@@ -10,8 +10,8 @@ apt update && apt install -y ssl-cert
 {% include 'common/includes/install-vault.sh' %}
 {% include 'common/includes/install-root-ca.sh' %}
 
-local_ip=$(curl -fsSL 169.254.169.254/latest/meta-data/local-ipv4)
-local_hostname=$(curl -fsSL 169.254.169.254/latest/meta-data/local-hostname)
+local_ip=$(curl --retry 5 --retry-all-errors --retry-delay 5 --retry-max-time 120 -fsSL 169.254.169.254/latest/meta-data/local-ipv4)
+local_hostname=$(curl --retry 5 --retry-all-errors --retry-delay 5 --retry-max-time 120 -fsSL 169.254.169.254/latest/meta-data/local-hostname)
 export local_ip local_hostname # Export these so we can use them vault HCL files below
 
 {% import 'common/includes/install-cert-renewer.sh' as renewer %}
@@ -26,6 +26,7 @@ mkdir -p /etc/systemd/system/cert-renewer@vault.service.d/
 {{ with_local_file('vault/systemd/cert-renewer@vault.service.d/override.conf', "/etc/systemd/system/cert-renewer@vault.service.d/override.conf") }}
 {{ with_local_file('vault/systemd/fetch-unseal-token.service', "/etc/systemd/system/fetch-unseal-token.service") }}
 {{ with_local_file('vault/systemd/configure-vault.service', "/etc/systemd/system/configure-vault.service") }}
+{{ with_local_file('vault/systemd/reload-vault.service', "/etc/systemd/system/reload-vault.service") }}
 
 systemctl enable cert-renewer@vault.service cert-renewer@vault.timer configure-vault.service fetch-unseal-token.service vault
 
