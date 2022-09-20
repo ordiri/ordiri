@@ -31,16 +31,9 @@ func (wi *Node) meshTunPorts(client *ovs.Client) []int {
 
 	return outputs
 }
-func (wi *Node) flows(inboundPort int) []FlowRule {
-	flows := []FlowRule{
-		FlowRuleFunc(WorkloadSwitchName, ovs.Flow{
-			Priority: 1,
-			// Table:    OpenFlowTableEntrypoint,
-			Actions: []ovs.Action{
-				ovs.Normal(),
-			},
-		}),
 
+func (wi *Node) tunnelFlows(inboundPort int) []FlowRule {
+	flows := []FlowRule{
 		FlowRuleFunc(TunnelSwitchName, ovs.Flow{
 			Priority: 0,
 			Table:    OpenFlowTableTunnelEntrypoint,
@@ -129,18 +122,80 @@ func (wi *Node) flows(inboundPort int) []FlowRule {
 
 	return flows
 }
+func (wi *Node) workfloadFlows(inboundPort int) []FlowRule {
+	flows := []FlowRule{
+		FlowRuleFunc(WorkloadSwitchName, ovs.Flow{
+			Priority: 0,
+			Table:    OpenFlowTableWorkloadEntrypoint,
+			Actions: []ovs.Action{
+				ovs.Normal(),
+			},
+		}),
+
+		// FlowRuleFunc(WorkloadSwitchName, ovs.Flow{
+		// 	Priority: 1,
+		// 	Table:    OpenFlowTableWorkloadEntrypoint,
+		// 	Actions: []ovs.Action{
+		// 		ovs.Resubmit(0, OpenFlowTableWorkloadVmEgressEntrypoint),
+		// 	},
+		// }),
+
+		// // // If it's conming from the tunnel, normal actions apply, otherwise drop any non unicast traffic
+		// FlowRuleFunc(WorkloadSwitchName, ovs.Flow{
+		// 	Priority: 2,
+		// 	Table:    OpenFlowTableWorkloadEntrypoint,
+		// 	Actions: []ovs.Action{
+		// 		ovs.Normal(),
+		// 	},
+		// }),
+
+		// &Classifier{
+		// 	Switch:         WorkloadSwitchName,
+		// 	Table:          OpenFlowTableWorkloadVmEgressEntrypoint,
+		// 	ArpTable:       OpenFlowTableWorkloadVmEgressArp,
+		// 	UnicastTable:   OpenFlowTableWorkloadVmEgressUnicast,
+		// 	MulticastTable: OpenFlowTableWorkloadVmEgressMulticast,
+		// },
+		// FlowRuleFunc(WorkloadSwitchName, ovs.Flow{
+		// 	Priority: 1,
+		// 	Table:    OpenFlowTableWorkloadVmEgressArp,
+		// 	Actions: []ovs.Action{
+		// 		ovs.Normal(),
+		// 	},
+		// }),
+		// FlowRuleFunc(WorkloadSwitchName, ovs.Flow{
+		// 	Priority: 1,
+		// 	Table:    OpenFlowTableWorkloadVmEgressUnicast,
+		// 	Actions: []ovs.Action{
+		// 		ovs.Normal(),
+		// 	},
+		// }),
+		// FlowRuleFunc(WorkloadSwitchName, ovs.Flow{
+		// 	Priority: 1,
+		// 	Table:    OpenFlowTableWorkloadVmEgressMulticast,
+		// 	Actions: []ovs.Action{
+		// 		ovs.Drop(),
+		// 	},
+		// }),
+	}
+
+	return flows
+}
 
 func (wi *Node) clean(client *ovs.Client, br string) error {
 	err := client.OpenFlow.DelFlows(TunnelSwitchName, nil)
 	if err != nil {
 		return err
 	}
-	time.Sleep(time.Second * 2)
 	return nil
 }
 func (wi *Node) Install(client *ovs.Client) error {
 
-	vmPort, err := client.OpenFlow.DumpPort(TunnelSwitchName, "patch-vms")
+	tunnelVmPort, err := client.OpenFlow.DumpPort(TunnelSwitchName, "patch-vms")
+	if err != nil {
+		return err
+	}
+	workloadTunnelPort, err := client.OpenFlow.DumpPort(WorkloadSwitchName, "patch-internal")
 	if err != nil {
 		return err
 	}
@@ -155,7 +210,12 @@ func (wi *Node) Install(client *ovs.Client) error {
 	fmt.Print("Waiting 5 seconds for flows to be deleted\n")
 	time.Sleep(time.Second * 5)
 
-	for _, flow := range wi.flows(vmPort.PortID) {
+	for _, flow := range wi.tunnelFlows(tunnelVmPort.PortID) {
+		if err := flow.Install(client); err != nil {
+			return fmt.Errorf("error installing flow %v - %w", flow, err)
+		}
+	}
+	for _, flow := range wi.workfloadFlows(workloadTunnelPort.PortID) {
 		if err := flow.Install(client); err != nil {
 			return fmt.Errorf("error installing flow %v - %w", flow, err)
 		}
@@ -171,7 +231,12 @@ func (wi *Node) Remove(client *ovs.Client) error {
 		return err
 	}
 
-	for _, flow := range wi.flows(vmPort.PortID) {
+	for _, flow := range wi.tunnelFlows(vmPort.PortID) {
+		if err := flow.Remove(client); err != nil {
+			return fmt.Errorf("error installing flow %v - %w", flow, err)
+		}
+	}
+	for _, flow := range wi.workfloadFlows(vmPort.PortID) {
 		if err := flow.Remove(client); err != nil {
 			return fmt.Errorf("error installing flow %v - %w", flow, err)
 		}

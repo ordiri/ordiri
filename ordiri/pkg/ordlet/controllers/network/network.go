@@ -79,7 +79,11 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 	if r.NetworkManager.HasNetwork(nw.Name) {
 		net = r.NetworkManager.GetNetwork(nw.Name)
 	} else {
-		_net, err := network.NewNetwork(nw.Namespace, nw.Name, nw.Spec.Cidr, nw.Status.Vni)
+		localVlan, err := node.NetworkVlanId(nw.Name)
+		if err != nil {
+			return ctrl.Result{}, err
+		}
+		_net, err := network.NewNetwork(nw.Namespace, nw.Name, nw.Spec.Cidr, nw.Status.Vni, int64(localVlan))
 		if err != nil {
 			return ctrl.Result{}, err
 		}
@@ -161,8 +165,13 @@ func (r *NetworkReconciler) addNodeToNetworkStatus(ctx context.Context, nw *netw
 		}
 
 		if !networkContainsNode {
+			vlanId, err := node.NetworkVlanId(network.Name)
+			if err != nil {
+				return fmt.Errorf("can't get vlanid for the nw %s on %s - %w", nw.Name, node.Name, err)
+			}
 			network.Status.Hosts = append(network.Status.Hosts, networkv1alpha1.HostNetworkStatus{
-				Node: node.Name,
+				Node:   node.Name,
+				VlanId: vlanId,
 			})
 
 			if err := r.Client.Status().Update(ctx, network); err != nil {

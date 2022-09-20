@@ -117,8 +117,7 @@ type MetadataSubnetStatus struct {
 }
 
 type HostSubnetStatus struct {
-	Node   string `json:"node"`
-	VlanId int    `json:"vlanId"`
+	Node string `json:"node"`
 }
 
 func (in SubnetStatus) SubResourceName() string {

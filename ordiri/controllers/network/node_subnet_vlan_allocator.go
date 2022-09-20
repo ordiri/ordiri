@@ -66,11 +66,6 @@ func (r *NodeSubnetVlanAllocator) Reconcile(ctx context.Context, req ctrl.Reques
 			changed = true
 		}
 		previouslyAllocatedSubnets[subnet.ObjectReference.Name] = subnet
-		if _, exists := previouslyAllocatedVlanNumbers[subnet.VlanId]; exists {
-			log.Info("already allocated", "subnet", subnet)
-
-		}
-		previouslyAllocatedVlanNumbers[subnet.VlanId] = true
 	}
 
 	previouslyAllocatedNetworks := map[string]corev1alpha1.NodeNetworkStatus{}
@@ -79,6 +74,11 @@ func (r *NodeSubnetVlanAllocator) Reconcile(ctx context.Context, req ctrl.Reques
 			changed = true
 		}
 		previouslyAllocatedNetworks[network.ObjectReference.Name] = network
+		if _, exists := previouslyAllocatedVlanNumbers[network.VlanId]; exists {
+			log.Info("already allocated", "network", network)
+
+		}
+		previouslyAllocatedVlanNumbers[network.VlanId] = true
 	}
 
 	getNextUnallocatedVlan := func() int {
@@ -123,7 +123,13 @@ func (r *NodeSubnetVlanAllocator) Reconcile(ctx context.Context, req ctrl.Reques
 							UID:        nw.UID,
 							APIVersion: nw.APIVersion,
 						},
+						VlanId: getNextUnallocatedVlan(),
 					}
+					changed = true
+				}
+				if nw := hostNetworks[iface.Network]; nw.VlanId == 0 {
+					nw.VlanId = getNextUnallocatedVlan()
+					hostNetworks[iface.Network] = nw
 					changed = true
 				}
 			}
@@ -152,7 +158,6 @@ func (r *NodeSubnetVlanAllocator) Reconcile(ctx context.Context, req ctrl.Reques
 								UID:        subnet.UID,
 								APIVersion: subnet.APIVersion,
 							},
-							VlanId: getNextUnallocatedVlan(),
 						}
 						changed = true
 					}
@@ -161,7 +166,7 @@ func (r *NodeSubnetVlanAllocator) Reconcile(ctx context.Context, req ctrl.Reques
 		}
 	}
 
-	if len(previouslyAllocatedNetworks) > 0 || len(previouslyAllocatedSubnets) > 0 || changed {
+	if changed || len(previouslyAllocatedNetworks) > 0 || len(previouslyAllocatedSubnets) > 0 {
 		n.Status.Networks = []corev1alpha1.NodeNetworkStatus{}
 		for _, nw := range hostNetworks {
 			n.Status.Networks = append(n.Status.Networks, nw)

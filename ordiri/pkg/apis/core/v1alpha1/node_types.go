@@ -91,9 +91,18 @@ func (node *Node) Subnet(subnet string) (NodeSubnetStatus, error) {
 
 	return NodeSubnetStatus{}, fmt.Errorf("node has not been assigned this subnet yet")
 }
+func (node *Node) Network(subnet string) (NodeNetworkStatus, error) {
+	for _, NetworkStatus := range node.Status.Networks {
+		if NetworkStatus.Name == subnet {
+			return NetworkStatus, nil
+		}
+	}
 
-func (node *Node) SubnetVlanId(subnet string) (int, error) {
-	sn, err := node.Subnet(subnet)
+	return NodeNetworkStatus{}, fmt.Errorf("node has not been assigned this network yet")
+}
+
+func (node *Node) NetworkVlanId(nw string) (int, error) {
+	sn, err := node.Network(nw)
 	if err != nil {
 		return 0, err
 	}
@@ -177,10 +186,10 @@ type NodeVirtualMachineStatus struct {
 
 type NodeNetworkStatus struct {
 	v1.ObjectReference `json:",inline"`
+	VlanId             int `json:"vlanId"`
 }
 type NodeSubnetStatus struct {
 	v1.ObjectReference `json:",inline"`
-	VlanId             int `json:"vlanId"`
 }
 
 func (in NodeStatus) SubResourceName() string {

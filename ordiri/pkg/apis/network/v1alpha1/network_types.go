@@ -154,7 +154,8 @@ type NetworkStatus struct {
 }
 
 type HostNetworkStatus struct {
-	Node string `json:"node"`
+	Node   string `json:"node"`
+	VlanId int    `json:"vlanId"`
 }
 
 func (in NetworkStatus) SubResourceName() string {

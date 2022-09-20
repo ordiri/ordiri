@@ -18,7 +18,6 @@ package network
 
 import (
 	"context"
-	"fmt"
 
 	k8err "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/client-go/util/retry"
@@ -38,13 +37,8 @@ func (r *SubnetReconciler) addNodeToSubnetStatus(ctx context.Context, subnet *ne
 		}
 
 		if !subnetLinksToNode {
-			vlanId, err := node.SubnetVlanId(subnet.Name)
-			if err != nil {
-				return fmt.Errorf("can't get vlanid for the subnet %s on %s - %w", subnet.Name, node.Name, err)
-			}
 			subnet.Status.Hosts = append(subnet.Status.Hosts, networkv1alpha1.HostSubnetStatus{
-				Node:   node.Name,
-				VlanId: vlanId,
+				Node: node.Name,
 			})
 
 			if err := r.Client.Status().Update(ctx, subnet); err != nil {

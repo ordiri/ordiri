@@ -214,7 +214,7 @@ func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network
 	if tuntap == nil {
 		la := netlink.NewLinkAttrs()
 		la.Name = tuntapName
-		la.HardwareAddr = iface.Mac()
+		// la.HardwareAddr = iface.Mac()
 
 		la.MTU = sdn.OverlayMTU
 		tuntap = &netlink.Tuntap{
@@ -235,11 +235,11 @@ func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network
 		}
 	}
 
-	if tuntap.Attrs().HardwareAddr.String() != iface.Mac().String() {
-		if err := netlink.LinkSetHardwareAddr(tuntap, iface.Mac()); err != nil {
-			return nil, fmt.Errorf("unable to set the tuntap %s ethernet address to %s - %w", tuntap.Name, iface.Mac().String(), err)
-		}
-	}
+	// if tuntap.Attrs().HardwareAddr.String() != iface.Mac().String() {
+	// 	if err := netlink.LinkSetHardwareAddr(tuntap, iface.Mac()); err != nil {
+	// 		return nil, fmt.Errorf("unable to set the tuntap %s ethernet address to %s - %w", tuntap.Name, iface.Mac().String(), err)
+	// 	}
+	// }
 
 	// we could set it on create but this ensure it's always correct and you can't
 	// set master on a netlink create message so it's always 2 netlink requests anyway

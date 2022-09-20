@@ -2362,7 +2362,15 @@ func schema_pkg_apis_core_v1alpha1_NodeNetworkStatus(ref common.ReferenceCallbac
 							Format:      "",
 						},
 					},
+					"vlanId": {
+						SchemaProps: spec.SchemaProps{
+							Default: 0,
+							Type:    []string{"integer"},
+							Format:  "int32",
+						},
+					},
 				},
+				Required: []string{"vlanId"},
 			},
 		},
 	}
@@ -2403,15 +2411,8 @@ func schema_pkg_apis_core_v1alpha1_NodeSpec(ref common.ReferenceCallback) common
 							},
 						},
 					},
-					"publicCidr": {
-						SchemaProps: spec.SchemaProps{
-							Default: "",
-							Type:    []string{"string"},
-							Format:  "",
-						},
-					},
 				},
-				Required: []string{"nodeRoles", "managementAddresses", "publicCidr"},
+				Required: []string{"nodeRoles", "managementAddresses"},
 			},
 		},
 	}
@@ -2557,15 +2558,7 @@ func schema_pkg_apis_core_v1alpha1_NodeSubnetStatus(ref common.ReferenceCallback
 							Format:      "",
 						},
 					},
-					"vlanId": {
-						SchemaProps: spec.SchemaProps{
-							Default: 0,
-							Type:    []string{"integer"},
-							Format:  "int32",
-						},
-					},
 				},
-				Required: []string{"vlanId"},
 			},
 		},
 	}
@@ -2665,8 +2658,15 @@ func schema_pkg_apis_network_v1alpha1_HostNetworkStatus(ref common.ReferenceCall
 							Format:  "",
 						},
 					},
+					"vlanId": {
+						SchemaProps: spec.SchemaProps{
+							Default: 0,
+							Type:    []string{"integer"},
+							Format:  "int32",
+						},
+					},
 				},
-				Required: []string{"node"},
+				Required: []string{"node", "vlanId"},
 			},
 		},
 	}
@@ -2719,15 +2719,8 @@ func schema_pkg_apis_network_v1alpha1_HostSubnetStatus(ref common.ReferenceCallb
 							Format:  "",
 						},
 					},
-					"vlanId": {
-						SchemaProps: spec.SchemaProps{
-							Default: 0,
-							Type:    []string{"integer"},
-							Format:  "int32",
-						},
-					},
 				},
-				Required: []string{"node", "vlanId"},
+				Required: []string{"node"},
 			},
 		},
 	}

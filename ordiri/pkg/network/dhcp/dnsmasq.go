@@ -36,7 +36,7 @@ func DnsMasqConfig(confDir, name, ifaceName string, network netaddr.IPPrefix, ho
 			dnsmasq.DhcpOptionRouter.Option(routerAddr.String()),
 			dnsmasq.DhcpOptionDnsServer.Option(dhcpAddr.String()),
 		}),
-		dnsmasq.WithOption("dhcp-authoritative", ""),
+		// dnsmasq.WithOption("dhcp-authoritative", ""),
 
 		dnsmasq.WithOption("log-queries", ""),
 		dnsmasq.WithOption("log-facility", path.Join(confDir, "dnsmasq.log")),

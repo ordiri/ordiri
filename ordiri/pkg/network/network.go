@@ -16,7 +16,7 @@ func WithNetworkDns(ip netaddr.IP, hostnames ...string) NetworkOption {
 	}
 }
 
-func NewNetwork(tenant string, name string, cidr string, segment int64, opt ...NetworkOption) (*network, error) {
+func NewNetwork(tenant string, name string, cidr string, segment int64, localSegment int64, opt ...NetworkOption) (*network, error) {
 	ipnet, err := netaddr.ParseIPPrefix(cidr)
 	if err != nil {
 		return nil, err
@@ -25,6 +25,7 @@ func NewNetwork(tenant string, name string, cidr string, segment int64, opt ...N
 		tenant:        tenant,
 		name:          name,
 		segment:       segment,
+		localSegment:  localSegment,
 		cidr:          ipnet,
 		dnsRecordsets: make(map[netaddr.IP][]string),
 	}
@@ -43,6 +44,7 @@ type network struct {
 	name string
 	// segment is the globally unique tunnel identifier
 	segment       int64
+	localSegment  int64
 	cidr          netaddr.IPPrefix
 	dnsRecordsets map[netaddr.IP][]string
 	knownMacs     map[string][]netaddr.IP
@@ -57,6 +59,9 @@ func (nw *network) Tenant() string {
 
 func (nw *network) Segment() int64 {
 	return nw.segment
+}
+func (nw *network) LocalSegment() int64 {
+	return nw.localSegment
 }
 
 func (nw *network) Cidr() netaddr.IPPrefix {

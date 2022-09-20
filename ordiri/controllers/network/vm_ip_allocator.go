@@ -19,7 +19,6 @@ package network
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"inet.af/netaddr"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -28,7 +27,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	computev1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
-	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
 	"github.com/ordiri/ordiri/pkg/log"
 )
@@ -37,20 +35,10 @@ import (
 type VmIpAllocator struct {
 	client.Client
 	Scheme *runtime.Scheme
+
+	PublicCidr netaddr.IPPrefix
 }
 
-func (r *VmIpAllocator) publicRangeForNode(ctx context.Context, name string) (netaddr.IPPrefix, error) {
-	node := &corev1alpha1.Node{}
-	if err := r.Client.Get(ctx, client.ObjectKey{Name: name}, node); err != nil {
-		return netaddr.IPPrefix{}, fmt.Errorf("unable to get node - %w", err)
-	}
-
-	if node.Spec.PublicCidr == "" {
-		return netaddr.IPPrefix{}, fmt.Errorf("node %s has no public cidr", name)
-	}
-
-	return netaddr.ParseIPPrefix(node.Spec.PublicCidr)
-}
 func (r *VmIpAllocator) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := log.FromContext(ctx)
 	vm := &computev1alpha1.VirtualMachine{}
@@ -60,15 +48,7 @@ func (r *VmIpAllocator) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 		}
 		return ctrl.Result{}, err
 	}
-	node, scheduled := vm.ScheduledNode()
-	if !scheduled {
-		return ctrl.Result{RequeueAfter: time.Second * 2}, nil
-	}
 
-	publicRange, err := r.publicRangeForNode(ctx, node)
-	if err != nil {
-		return ctrl.Result{}, fmt.Errorf("error getting node public cidr - %w", err)
-	}
 	announcements := map[netaddr.IP]string{}
 	for _, iface := range vm.Spec.NetworkInterfaces {
 		sn := &networkv1alpha1.Subnet{}
@@ -97,7 +77,7 @@ func (r *VmIpAllocator) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 			if network.Contains(parsedIp) {
 				foundPrivate = true
 			}
-			if wantsPublic && publicRange.Contains(parsedIp) {
+			if wantsPublic && r.PublicCidr.Contains(parsedIp) {
 				foundPublic = true
 				announcements[parsedIp] = iface.Mac
 			}
@@ -122,10 +102,10 @@ func (r *VmIpAllocator) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 			if wantsPublic && !foundPublic {
 				// We don't bother skipping any ip range here as it's a public network routed directly at us
 				// we'll swap this with bird bgp routing eventually and clean all this fip stuff up
-				nextIp, err := r.getNextIp(ctx, vm.Namespace, publicRange, iface)
+				nextIp, err := r.getNextIp(ctx, vm.Namespace, r.PublicCidr, iface)
 				if err != nil {
 					// return ctrl.Result{}, fmt.Errorf("error with no public ip - %w", err)
-					log.Info("no public ip available", "range", publicRange)
+					log.Info("no public ip available", "range", r.PublicCidr)
 				} else {
 					iface.Ips = append(iface.Ips, nextIp.String())
 				}

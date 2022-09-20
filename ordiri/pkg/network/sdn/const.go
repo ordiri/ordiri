@@ -25,6 +25,27 @@ const (
 	// OpenFlowTableTunnelRouterIncoming = 32
 	// OpenFlowTableTunnelRouterOutgoing = 33
 )
+const (
+	OpenFlowTableWorkloadEntrypoint = 0
+
+	// When a packet is entering the tunnel switch from a VM port
+	OpenFlowTableWorkloadVmEgressEntrypoint       = 10
+	OpenFlowTableWorkloadVmEgressVxlanTranslation = 11
+	OpenFlowTableWorkloadVmEgressArp              = 12
+	OpenFlowTableWorkloadVmEgressMulticast        = 13
+	OpenFlowTableWorkloadVmEgressUnicast          = 14
+
+	// When a packet is entering the tunnel switch from a mesh port
+	OpenFlowTableWorkloadVmIngressEntrypoint       = 20
+	OpenFlowTableWorkloadVmIngressVxlanTranslation = 21
+	OpenFlowTableWorkloadVmIngressArp              = 22
+	OpenFlowTableWorkloadVmIngressMulticast        = 23
+	OpenFlowTableWorkloadVmIngressUnicast          = 24
+
+	// OpenFlowTableTunnelArpResponder   = 31
+	// OpenFlowTableTunnelRouterIncoming = 32
+	// OpenFlowTableTunnelRouterOutgoing = 33
+)
 
 const (
 	OpenFlowPriorityArpResponder    = 10

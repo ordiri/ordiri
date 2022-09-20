@@ -129,7 +129,7 @@ func (r *SubnetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 
 	var sn api.Subnet
 	if !r.NetworkManager.HasSubnet(net, subnet.Name) {
-		vlan, err := r.Node.GetNode().SubnetVlanId(subnet.Name)
+		vlan, err := r.Node.GetNode().NetworkVlanId(nw.Name)
 		if err != nil {
 			return ctrl.Result{}, fmt.Errorf("missing vlan on subnet")
 		}
