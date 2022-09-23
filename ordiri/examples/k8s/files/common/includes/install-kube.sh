@@ -17,3 +17,6 @@ apt-get install -y cri-o cri-o-runc
 
 systemctl enable crio
 sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+
+{{ with_local_file('common/kube/modules-load.d/modules.conf', "/etc/modules-load.d/modules.conf") }}
+{{ with_local_file('common/kube/sysctl.d/kubelet.conf', "/etc/sysctl.d/kubelet.conf") }}

@@ -45,6 +45,7 @@ import (
 	"github.com/ordiri/ordiri/pkg/ordlet/controllers/compute"
 	"github.com/ordiri/ordiri/pkg/ordlet/controllers/network"
 	"github.com/ordiri/ordiri/pkg/ordlet/controllers/storage"
+	"github.com/ordiri/ordiri/version"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -96,7 +97,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)).WithValues("host", hostname))
+	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)).WithValues("host", hostname).WithValues("version", version.BuildTime))
 
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 		Scheme:                 scheme,

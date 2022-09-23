@@ -57,7 +57,10 @@ manifests: controller-gen generate ## Generate WebhookConfiguration, ClusterRole
 	$(CONTROLLER_GEN) rbac:roleName=manager-role crd webhook paths="./pkg/apis/..." output:crd:artifacts:config=config/crd/bases
 
 .PHONY: generate
-generate: generate-controller generate-openapi generate-tsclient generate-client generate-lister generate-informer generate-defaulter
+generate: generate-proto generate-controller generate-openapi generate-tsclient generate-client generate-lister generate-informer generate-defaulter
+
+generate-proto: 
+	go generate ./...
 
 clientset_name = versioned
 gendir = pkg/generated
@@ -118,10 +121,12 @@ docker-push: ## Push docker image with the manager.
 ifndef ignore-not-found
   ignore-not-found = false
 endif
+BUILD_TIMESTAMP=$(shell date '+%Y-%m-%dT%H:%M:%S')
+
 
 .PHONY: linux-ordlet
 linux-ordlet: 
-	GOOS=linux GOARCH=amd64 go build -o bin/ordlet-amd64-linux ./cmd/ordlet
+	GOOS=linux GOARCH=amd64  go build -ldflags="-X 'github.com/ordiri/ordiri/version.BuildTime=${BUILD_TIMESTAMP}'" -o bin/ordlet-amd64-linux ./cmd/ordlet
 	chmod +x bin/ordlet-amd64-linux
 .PHONY: linux-md
 linux-md: 
@@ -274,7 +279,6 @@ $(INFORMER_GEN):
 .PHONY: $(CLIENT_GEN)
 $(CLIENT_GEN):
 	$(call go-get-tool,$(CLIENT_GEN),k8s.io/code-generator/cmd/client-gen@latest)
-
 
 .PHONY: $(KUSTOMIZE)
 $(KUSTOMIZE): ## Download kustomize locally if necessary.

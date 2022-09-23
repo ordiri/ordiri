@@ -1,0 +1,11 @@
+[Unit]
+Description=Configure Kube workers
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c /sbin/bootstrap.sh
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

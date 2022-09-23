@@ -20,7 +20,6 @@ import (
 	"context"
 	"fmt"
 	"reflect"
-	"time"
 
 	k8err "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -32,6 +31,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 
+	"github.com/davecgh/go-spew/spew"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
 	"github.com/ordiri/ordiri/pkg/network"
 	"github.com/ordiri/ordiri/pkg/network/api"
@@ -66,7 +66,7 @@ func (r *SubnetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	node := r.Node.GetNode()
 
 	nodeWantsSubnet := false
-	if _, err := node.Subnet(subnet.Name); err == nil {
+	if _, err := node.Subnet(subnet.Spec.Network.Name, subnet.Name); err == nil {
 		nodeWantsSubnet = true
 	}
 
@@ -90,15 +90,12 @@ func (r *SubnetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	// but the subnet is setup on it, we need to remove all the subnet configs from it
 	if !nodeWantsSubnet {
 		log.Info("node does not want subnet, removing")
-		if r.NetworkManager.HasNetwork(nw.Name) {
-			net := r.NetworkManager.GetNetwork(nw.Name)
-			if r.NetworkManager.HasSubnet(net, subnet.Name) {
-				log.V(5).Info("removing subnet from network manager")
-				if err := r.NetworkManager.RemoveSubnet(ctx, net, subnet.Name); err != nil {
-					return ctrl.Result{}, fmt.Errorf("unable to remove subnet from node - %w", err)
-				}
-				log.V(5).Info("removed subnet from network manager")
+		if sn, err := r.NetworkManager.GetSubnet(nw.Name, subnet.Name); err == nil {
+			log.V(5).Info("removing subnet from network manager", "subnet", sn)
+			if err := r.NetworkManager.RemoveSubnet(ctx, nw.Name, subnet.Name); err != nil {
+				return ctrl.Result{}, fmt.Errorf("unable to remove subnet from node - %w", err)
 			}
+			log.V(5).Info("removed subnet from network manager")
 		}
 
 		// We want to ensure we remove this node if we need
@@ -115,39 +112,34 @@ func (r *SubnetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 
 		return ctrl.Result{}, nil
 	}
-
-	if !r.NetworkManager.HasNetwork(nw.Name) {
-		log.Info("waiting for network manager to start", "name", nw.Name)
-		return ctrl.Result{RequeueAfter: time.Second * 1}, nil
-	}
-
 	if err := r.addNodeFinalizerToSubnet(ctx, subnet); err != nil {
 		return ctrl.Result{}, err
 	}
 
-	net := r.NetworkManager.GetNetwork(nw.Name)
-
-	var sn api.Subnet
-	if !r.NetworkManager.HasSubnet(net, subnet.Name) {
+	sn, err := r.NetworkManager.GetSubnet(nw.Name, subnet.Name)
+	if err != nil {
 		vlan, err := r.Node.GetNode().NetworkVlanId(nw.Name)
 		if err != nil {
 			return ctrl.Result{}, fmt.Errorf("missing vlan on subnet")
 		}
 
 		log.Info("network manager has not seen this subnet yet, creating a new one")
-		newSubnet, err := network.NewSubnet(subnet.Namespace, subnet.Name, subnet.Spec.Cidr, vlan)
+		newSubnet, err := network.NewSubnet(subnet.Name, subnet.Spec.Cidr, vlan)
 		if err != nil {
 			return ctrl.Result{}, err
 		}
 		sn = newSubnet
-	} else {
-		log.Info("network manager knows about this subnet, retrieving existing details")
-		newSubnet := r.NetworkManager.GetSubnet(net, subnet.Name)
-		sn = newSubnet
+		log.Info("got new subnet", "subnet", newSubnet)
 	}
 
-	log.Info("ensuring subnet is configured by the driver")
-	if err := r.NetworkManager.EnsureSubnet(ctx, net, sn); err != nil {
+	spew.Dump(sn)
+
+	if sn == nil {
+		return ctrl.Result{}, fmt.Errorf("unable to ensure subnet is configured correctly")
+	}
+
+	log.Info("ensuring subnet is configured by the driver", "subnet2o", sn)
+	if err := r.NetworkManager.RegisterSubnet(ctx, nw.Name, sn); err != nil {
 		return ctrl.Result{}, fmt.Errorf("unable to ensure subnet is configured correctly - %w", err)
 	}
 

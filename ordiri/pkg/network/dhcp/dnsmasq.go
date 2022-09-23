@@ -1,8 +1,6 @@
 package dhcp
 
 import (
-	"path"
-
 	"github.com/ordiri/ordiri/pkg/dnsmasq"
 	"inet.af/netaddr"
 )
@@ -39,6 +37,5 @@ func DnsMasqConfig(confDir, name, ifaceName string, network netaddr.IPPrefix, ho
 		// dnsmasq.WithOption("dhcp-authoritative", ""),
 
 		dnsmasq.WithOption("log-queries", ""),
-		dnsmasq.WithOption("log-facility", path.Join(confDir, "dnsmasq.log")),
 	)
 }

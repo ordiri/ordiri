@@ -7,6 +7,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/digitalocean/go-openvswitch/ovs"
 	"github.com/gosimple/slug"
@@ -15,7 +16,7 @@ import (
 	"github.com/vishvananda/netlink"
 )
 
-func (ln *linuxDriver) RemoveInterface(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface) error {
+func (ln *linuxDriver) DetatchInterface(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface) error {
 	// Remove the  flow rules for vm
 	if err := ln.removeInterfaceFlows(ctx, nw, sn, iface); err != nil {
 		return err
@@ -33,7 +34,7 @@ func (ln *linuxDriver) RemoveInterface(ctx context.Context, nw api.Network, sn a
 	return nil
 }
 
-func (ln *linuxDriver) EnsureInterface(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface) (string, error) {
+func (ln *linuxDriver) AttachInterface(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface) (string, error) {
 	br, err := ln.createInterfaceBridge(ctx, nw, sn, iface)
 	if err != nil {
 		return "", err
@@ -42,11 +43,6 @@ func (ln *linuxDriver) EnsureInterface(ctx context.Context, nw api.Network, sn a
 	tuntap, err := ln.createInterfaceTunTap(ctx, nw, sn, iface, br)
 	// create tun/tap device
 	if err != nil {
-		return "", err
-	}
-
-	// create tun/tap device
-	if err := ln.createPublicIps(ctx, nw, sn, iface, br); err != nil {
 		return "", err
 	}
 
@@ -113,12 +109,17 @@ func (ln *linuxDriver) createInterfaceBridge(ctx context.Context, nw api.Network
 		la := netlink.NewLinkAttrs()
 		la.Name = bridgeName
 		la.MTU = sdn.OverlayMTU
-		bridge = &netlink.Bridge{LinkAttrs: la}
+		bridge = &netlink.Bridge{
+			LinkAttrs: la,
+		}
 
 		if err := netlink.LinkAdd(bridge); err != nil {
 			return nil, fmt.Errorf("unable to add new bridge for vm - %w", err)
 		}
+		// Akward as hell but a new bridge will have it's forward delay set to 15000 and we don't have an interface to change that easily here yet :)
+		time.Sleep(time.Second * 10)
 	}
+
 	if bridge.MTU != sdn.OverlayMTU {
 		if err := netlink.LinkSetMTU(bridge, sdn.OverlayMTU); err != nil {
 			return nil, fmt.Errorf("unable to set mtu - %w", err)
@@ -151,28 +152,6 @@ func (ln *linuxDriver) createInterfaceBridge(ctx context.Context, nw api.Network
 	return bridge, nil
 }
 
-func (ln *linuxDriver) createPublicIps(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface, ifaceBridge *netlink.Bridge) error {
-	namespace := namespaceForRouter(nw)
-	publicGwCableName := publicGwCable(nw)
-
-	ipt, err := sdn.Iptables(namespace)
-	if err != nil {
-		return err
-	}
-	_ = ipt
-	_ = publicGwCableName
-	// Table: "nat",
-	// Chain: "POSTROUTING",
-	// Rules: [][]string{
-	// 	{"-o", publicInterface, "-j", "MASQUERADE"},
-	// },
-	// if err := ipt.AppendUnique("nat", "POSTROUTING", "-i", publicGwCableName.Namespace()); err != nil {
-
-	// }
-
-	// return fmt.Errorf("unknown error fetching existing tuntap device")
-	return nil
-}
 func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface, ifaceBridge *netlink.Bridge) (*netlink.Tuntap, error) {
 	tuntapName := interfaceTunTapName(nw, sn, iface)
 	nl, err := netlink.LinkByName(tuntapName)

@@ -112,7 +112,9 @@ func (r *VirtualMachineReplicaSetReconciler) Reconcile(ctx context.Context, req 
 		}
 
 		_, err := ctrl.CreateOrUpdate(ctx, r.Client, vm, func() error {
-			rs.Spec.Template.Spec.ScheduledNode = vm.Spec.ScheduledNode
+			if vm.Spec.ScheduledNode != "" {
+				rs.Spec.Template.Spec.ScheduledNode = vm.Spec.ScheduledNode
+			}
 			vm2 := vm.DeepCopy()
 			// vm3 := vm.DeepCopy()
 			// todo: hack remove this

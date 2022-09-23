@@ -53,9 +53,9 @@ type SubnetList struct {
 
 // SubnetSpec defines the desired state of Subnet
 type SubnetSpec struct {
-	Network     NetworkSelector      `json:"network"`
-	Cidr        string               `json:"cidr"`
-	RouteTables []RouteTableSelector `json:"routeTables"`
+	Network    NetworkSelector    `json:"network"`
+	Cidr       string             `json:"cidr"`
+	RouteTable RouteTableSelector `json:"routeTable"`
 
 	Dhcp DhcpConfiguration `json:"dhcp"`
 }

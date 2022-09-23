@@ -18,17 +18,18 @@ func (di DriverInfo) String() string {
 
 type Driver interface {
 	Info() DriverInfo
-	RemoveInterface(context.Context, api.Network, api.Subnet, api.Interface) error
-	EnsureInterface(context.Context, api.Network, api.Subnet, api.Interface) (string, error)
+
+	DetatchInterface(context.Context, api.Network, api.Subnet, api.Interface) error
+	AttachInterface(context.Context, api.Network, api.Subnet, api.Interface) (string, error)
 
 	RemoveRouter(context.Context, api.Network, api.Subnet, api.Router) error
 	EnsureRouter(context.Context, api.Network, api.Subnet, api.Router) error
 
 	RemoveSubnet(context.Context, api.Network, api.Subnet) error
-	EnsureSubnet(context.Context, api.Network, api.Subnet) error
+	RegisterSubnet(context.Context, api.Network, api.Subnet) error
 
 	RemoveNetwork(context.Context, api.Network) error
-	EnsureNetwork(context.Context, api.Network, []api.Subnet) error
+	RegisterNetwork(context.Context, api.Network) error
 }
 
 type RunnableDriver interface {

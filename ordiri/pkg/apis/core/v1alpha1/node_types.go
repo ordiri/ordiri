@@ -78,11 +78,7 @@ func (in *Node) HasRole(role NodeRole) bool {
 	return false
 }
 
-func (node *Node) HasSubnet(subnet string) bool {
-	_, err := node.Subnet(subnet)
-	return err == nil
-}
-func (node *Node) Subnet(subnet string) (NodeSubnetStatus, error) {
+func (node *Node) Subnet(network string, subnet string) (NodeSubnetStatus, error) {
 	for _, subnetStatus := range node.Status.Subnets {
 		if subnetStatus.Name == subnet {
 			return subnetStatus, nil
@@ -91,14 +87,25 @@ func (node *Node) Subnet(subnet string) (NodeSubnetStatus, error) {
 
 	return NodeSubnetStatus{}, fmt.Errorf("node has not been assigned this subnet yet")
 }
-func (node *Node) Network(subnet string) (NodeNetworkStatus, error) {
+
+func (node *Node) HasSubnet(network, subnet string) bool {
+	_, err := node.Subnet(network, subnet)
+	return err == nil
+}
+
+func (node *Node) Network(nw string) (NodeNetworkStatus, error) {
 	for _, NetworkStatus := range node.Status.Networks {
-		if NetworkStatus.Name == subnet {
+		if NetworkStatus.Name == nw {
 			return NetworkStatus, nil
 		}
 	}
 
 	return NodeNetworkStatus{}, fmt.Errorf("node has not been assigned this network yet")
+}
+
+func (node *Node) HasNetwork(network string) bool {
+	_, err := node.Network(network)
+	return err == nil
 }
 
 func (node *Node) NetworkVlanId(nw string) (int, error) {

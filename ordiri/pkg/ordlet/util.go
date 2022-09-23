@@ -10,9 +10,9 @@ import (
 
 func WaitForNetwork(ctx context.Context, nwm api.NetworkManager, nw string, timeout time.Duration) error {
 	err := waitFor(ctx, func() error {
-		if !nwm.HasNetwork(nw) {
-			return fmt.Errorf("no network")
-		}
+		return fmt.Errorf("no network")
+		// if nwm.GetNetwork(nw) == nil {
+		// }
 		return nil
 	}, timeout)
 	if err != nil {
@@ -23,40 +23,14 @@ func WaitForNetwork(ctx context.Context, nwm api.NetworkManager, nw string, time
 
 func WaitForSubnet(ctx context.Context, nwm api.SubnetManager, nw api.Network, sn string, timeout time.Duration) error {
 	err := waitFor(ctx, func() error {
-		if !nwm.HasSubnet(nw, sn) {
-			return fmt.Errorf("no subnet")
-		}
+		return fmt.Errorf("no subnet")
+		// if nwm.GetSubnet(nw, sn) == nil {
+		// }
 		return nil
 	}, timeout)
 
 	if err != nil {
 		return fmt.Errorf("timed out waiting for subnet  - %w", err)
-	}
-	return nil
-}
-
-func WaitForRouter(ctx context.Context, nwm api.RouterManager, nw api.Network, sn api.Subnet, rtr string, timeout time.Duration) error {
-	err := waitFor(ctx, func() error {
-		if !nwm.HasRouter(nw, sn, rtr) {
-			return fmt.Errorf("no router")
-		}
-		return nil
-	}, timeout)
-	if err != nil {
-		return fmt.Errorf("timed out waiting for router - %w", err)
-	}
-	return nil
-}
-
-func WaitForInterface(ctx context.Context, nwm api.InterfaceManager, nw api.Network, sn api.Subnet, iface string, timeout time.Duration) error {
-	err := waitFor(ctx, func() error {
-		if !nwm.HasInterface(nw, sn, iface) {
-			return fmt.Errorf("no interface")
-		}
-		return nil
-	}, timeout)
-	if err != nil {
-		return fmt.Errorf("timed out waiting for interface - %w", err)
 	}
 	return nil
 }

@@ -47,7 +47,7 @@ func (ln *linuxDriver) RemoveSubnet(ctx context.Context, nw api.Network, sn api.
 	return nil
 }
 
-func (ln *linuxDriver) EnsureSubnet(ctx context.Context, nw api.Network, sn api.Subnet) error {
+func (ln *linuxDriver) RegisterSubnet(ctx context.Context, nw api.Network, sn api.Subnet) error {
 	log := log.FromContext(ctx)
 	log.Info("Installing Services Network")
 	if err := ln.createSubnetServicesNs(ctx, nw, sn); err != nil {
@@ -181,51 +181,53 @@ func (ln *linuxDriver) removeDhcp(ctx context.Context, nw api.Network, subnet ap
 }
 
 func (ln *linuxDriver) installMetadataServer(ctx context.Context, nw api.Network, subnet api.Subnet) error {
-	log := log.FromContext(ctx)
-	namespace := namespaceForDhcp(nw, subnet)
-	cableName := metadataCableName(nw, subnet)
+	// log := log.FromContext(ctx)
+	// namespace := namespaceForDhcp(nw, subnet)
+	// cableName := metadataCableName(nw, subnet)
 
-	if err := ln.getOrCreateVeth(ctx, namespace, cableName, true, metaMac()); err != nil {
-		return fmt.Errorf("unable to create veth cable %s - %w", cableName, err)
-	}
+	// if err := ln.getOrCreateVeth(ctx, namespace, cableName, true, metaMac()); err != nil {
+	// 	return fmt.Errorf("unable to create veth cable %s - %w", cableName, err)
+	// }
 
-	// need to create flow rules taking this to the vxlan?
-	log.Info("adding metadata cable to workload switch", "cableName", cableName)
-	if err := sdn.Ovs().VSwitch.AddPort(sdn.WorkloadSwitchName, cableName.Root()); err != nil {
-		return err
-	}
-	log.Info("ensuring correct vlan tag on metadata cable", "cableName", cableName)
-	if err := sdn.Ovs().VSwitch.Set.Port(cableName.Root(), ovs.PortOptions{
-		Tag: int(subnet.Segment()),
-	}); err != nil {
-		return err
-	}
+	// // need to create flow rules taking this to the vxlan?
+	// log.Info("adding metadata cable to workload switch", "cableName", cableName)
+	// if err := sdn.Ovs().VSwitch.AddPort(sdn.WorkloadSwitchName, cableName.Root()); err != nil {
+	// 	return err
+	// }
+	// log.Info("ensuring correct vlan tag on metadata cable", "cableName", cableName)
+	// if err := sdn.Ovs().VSwitch.Set.Port(cableName.Root(), ovs.PortOptions{
+	// 	Tag: int(subnet.Segment()),
+	// }); err != nil {
+	// 	return err
+	// }
 
-	if err := setNsVethIp(namespace, "169.254.169.254/32", cableName.Namespace()); err != nil {
-		return fmt.Errorf("unable to set metadata ip on internal cable %s - %W", cableName, err)
-	}
+	// if err := setNsVethIp(namespace, "169.254.169.254/32", cableName.Namespace()); err != nil {
+	// 	return fmt.Errorf("unable to set metadata ip on internal cable %s - %W", cableName, err)
+	// }
 
-	// create the dnsmasq config to provide metadata for this subnet
-	baseDir := subnetConfDir(nw, subnet)
-	if err := os.MkdirAll(baseDir, os.ModePerm); err != nil {
-		return fmt.Errorf("unable to create directory %s - %w", baseDir, err)
-	}
+	// // create the dnsmasq config to provide metadata for this subnet
+	// baseDir := subnetConfDir(nw, subnet)
+	// if err := os.MkdirAll(baseDir, os.ModePerm); err != nil {
+	// 	return fmt.Errorf("unable to create directory %s - %w", baseDir, err)
+	// }
 
-	// startCmd := strings.Join(append([]string{"ip", "netns", "exec", namespace, "/usr/sbin/dnsmasq"}, dnsMasqOptions.Args()...), " ")
-	startCmd := strings.Join([]string{"/usr/local/bin/ordiri-metadata", "--network", nw.Name(), "--tenant", nw.Tenant(), "--subnet", subnet.Name(), "--cidr", subnet.Cidr().String(), "server"}, " ")
-	// create the systemd file to manage this metadata
-	unitName := metadataServerUnitName(subnet)
-	opts := []*unit.UnitOption{
-		unit.NewUnitOption("Unit", "Description", "Ordiri Metadata Service for "+unitName),
-		unit.NewUnitOption("Install", "WantedBy", "multi-user.target"),
-		// unit.NewUnitOption("Service", "PrivateMounts", "yes"),
-		unit.NewUnitOption("Service", "NetworkNamespacePath", namespacePath(namespace)),
-		unit.NewUnitOption("Service", "Environment", "KUBECONFIG=/etc/ordiri.conf"),
-		unit.NewUnitOption("Service", "ExecStart", startCmd),
-		unit.NewUnitOption("Service", "Restart", "on-failure"),
-	}
+	// // startCmd := strings.Join(append([]string{"ip", "netns", "exec", namespace, "/usr/sbin/dnsmasq"}, dnsMasqOptions.Args()...), " ")
+	// startCmd := strings.Join([]string{"/usr/local/bin/ordiri-metadata", "--network", nw.Name(), "--tenant", nw.Tenant(), "--subnet", subnet.Name(), "--cidr", subnet.Cidr().String(), "server"}, " ")
+	// // create the systemd file to manage this metadata
+	// unitName := metadataServerUnitName(subnet)
+	// opts := []*unit.UnitOption{
+	// 	unit.NewUnitOption("Unit", "Description", "Ordiri Metadata Service for "+unitName),
+	// 	unit.NewUnitOption("Install", "WantedBy", "multi-user.target"),
+	// 	// unit.NewUnitOption("Service", "PrivateMounts", "yes"),
+	// 	unit.NewUnitOption("Service", "NetworkNamespacePath", namespacePath(namespace)),
+	// 	unit.NewUnitOption("Service", "Environment", "KUBECONFIG=/etc/ordiri.conf"),
+	// 	unit.NewUnitOption("Service", "ExecStart", startCmd),
+	// 	unit.NewUnitOption("Service", "Restart", "on-failure"),
+	// }
 
-	return ln.enableUnitFile(ctx, baseDir, unitName, opts)
+	// return ln.enableUnitFile(ctx, baseDir, unitName, opts)
+	// This should not be part of the core network code
+	return nil
 }
 
 func (ln *linuxDriver) createSubnetServicesNs(ctx context.Context, nw api.Network, subnet api.Subnet) error {

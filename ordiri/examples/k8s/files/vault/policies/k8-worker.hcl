@@ -1,4 +1,3 @@
-
-    path "secret/data/k8s/worker/*" {
-        capabilities = [ "read" ]
-    }
+path "secret/data/k8s/worker/*" {
+    capabilities = [ "read" ]
+}

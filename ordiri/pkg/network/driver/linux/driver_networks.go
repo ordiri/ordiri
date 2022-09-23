@@ -3,9 +3,6 @@ package linux
 import (
 	"context"
 	"fmt"
-	"io/fs"
-	"os"
-	"path/filepath"
 
 	"github.com/ordiri/ordiri/pkg/log"
 	"github.com/ordiri/ordiri/pkg/mac"
@@ -13,7 +10,6 @@ import (
 	"github.com/vishvananda/netlink"
 	"github.com/vishvananda/netns"
 
-	"github.com/gosimple/slug"
 	"github.com/ordiri/ordiri/pkg/network/sdn"
 )
 
@@ -37,29 +33,29 @@ func (ln *linuxDriver) RemoveNetwork(ctx context.Context, nw api.Network) error 
 	return nil
 }
 
-func (ln *linuxDriver) EnsureNetwork(ctx context.Context, nw api.Network, sns []api.Subnet) error {
+func (ln *linuxDriver) RegisterNetwork(ctx context.Context, nw api.Network) error {
 	log := log.FromContext(ctx)
 	log.V(5).Info("Ensuring network", "nw", nw)
 	if err := ln.installNetworkNat(ctx, nw); err != nil {
 		return err
 	}
 
-	if len(nw.DnsRecords()) > 0 {
-		hostDir := etcHostMappingDir(nw)
-		if err := os.MkdirAll(hostDir, os.ModePerm); err != nil {
-			return err
-		}
-		for ip, hostnames := range nw.DnsRecords() {
-			for _, hostname := range hostnames {
-				mapping := fmt.Sprintf("%s %s", ip.String(), hostname)
-				fileName := slug.Make(hostname)
-				mappingFile := filepath.Join(hostDir, fileName)
-				if err := os.WriteFile(mappingFile, []byte(mapping), fs.ModePerm); err != nil {
-					return fmt.Errorf("unable to write mapping file - %w", err)
-				}
-			}
-		}
-	}
+	// if len(nw.DnsRecords()) > 0 {
+	// 	hostDir := etcHostMappingDir(nw)
+	// 	if err := os.MkdirAll(hostDir, os.ModePerm); err != nil {
+	// 		return err
+	// 	}
+	// 	for ip, hostnames := range nw.DnsRecords() {
+	// 		for _, hostname := range hostnames {
+	// 			mapping := fmt.Sprintf("%s %s", ip.String(), hostname)
+	// 			fileName := slug.Make(hostname)
+	// 			mappingFile := filepath.Join(hostDir, fileName)
+	// 			if err := os.WriteFile(mappingFile, []byte(mapping), fs.ModePerm); err != nil {
+	// 				return fmt.Errorf("unable to write mapping file - %w", err)
+	// 			}
+	// 		}
+	// 	}
+	// }
 
 	log.V(5).Info("Network ensured")
 	return nil

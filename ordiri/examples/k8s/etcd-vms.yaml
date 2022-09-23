@@ -8,6 +8,7 @@ spec:
     metadata:
       creationTimestamp: null
     spec:
+      node: "debian"
       resources:
         cpu: 2
         memory: 2Gi
@@ -19,7 +20,6 @@ spec:
       - mac: ""
         network: kubevms
         subnet: kubevms-etcd
-      node: ""
       role: default
       state: Running
       volumes:

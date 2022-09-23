@@ -1,0 +1,149 @@
+syntax = "proto3";
+
+option go_package = "github.com/ordiri/ordiri/pkg/network/api";
+
+package api;
+
+// Creates isolated logical networks 
+service Networkd {
+    //
+    // Creates a logical network on this node
+    //
+    rpc AddNetwork(AddNetworkRequest) returns (AddNetworkResponse) {}
+
+    //
+    // Remove a logical network from this node
+    //
+    rpc DeleteNetwork(DeleteNetworkRequest) returns (DeleteNetworkResponse) {}
+
+    //
+    // Add a subnet to a new or existing network
+    //
+    rpc AddSubnet(AddSubnetRequest) returns (AddSubnetResponse) {}
+
+    //
+    // Delete a subnet from a network
+    //
+    rpc DeleteSubnet(DeleteSubnetRequest) returns (DeleteSubnetResponse) {}
+    
+    //
+    // Add a subnet to a new or existing network
+    //
+    rpc AddNetworkInterface(AddNetworkInterfaceRequest) returns (AddNetworkInterfaceResponse) {}
+    
+    //
+    // Configure an interface on the active node
+    //
+    rpc AttachNetworkInterface(AttachNetworkInterfaceRequest) returns (AttachNetworkInterfaceResponse) {}
+    
+    //
+    // Configure an interface on active node
+    //
+    rpc DetachNetworkInterface(DetachNetworkInterfaceRequest) returns (DetachNetworkInterfaceResponse) {}
+
+    //
+    // Delete a subnet from a network
+    //
+    rpc DeleteNetworkInterface(DeleteNetworkInterfaceRequest) returns (DeleteNetworkInterfaceResponse) {}
+}
+
+message AddNetworkRequest {
+    LogicalNetwork Network = 1;
+}
+
+message DeleteNetworkRequest {
+    LogicalNetwork Network = 1;
+}
+
+message DeleteNetworkResponse {
+    LogicalNetwork Network = 1;
+}
+
+message AddNetworkResponse {
+    LogicalNetwork Network = 1;
+}
+
+message AddSubnetRequest {
+    LogicalSubnet Subnet = 1;
+}
+
+message AddSubnetResponse {
+    LogicalSubnet Subnet = 1;
+}
+
+message DeleteSubnetRequest {
+    LogicalSubnet Subnet = 1;
+}
+
+message DeleteSubnetResponse {
+    LogicalSubnet Subnet = 1;
+}
+
+message AttachNetworkInterfaceRequest {
+    NetworkInterface NetworkInterface = 1;
+}
+
+message AttachNetworkInterfaceResponse {
+    NetworkInterface NetworkInterface = 1;
+}
+
+message DetachNetworkInterfaceRequest {
+    NetworkInterface NetworkInterface = 1;
+}
+
+message DeleteNetworkInterfaceRequest {
+    NetworkInterface NetworkInterface = 1;
+}
+
+message DetachNetworkInterfaceResponse {
+    NetworkInterface NetworkInterface = 1;
+}
+
+message DeleteNetworkInterfaceResponse {
+    NetworkInterface NetworkInterface = 1;
+}
+
+message AddNetworkInterfaceRequest {
+    string Network = 1;
+    string Subnet = 2;
+    NetworkInterface NetworkInterface = 3;
+}
+
+message AddNetworkInterfaceResponse {
+    LogicalNetwork Network = 1;
+    LogicalSubnet Subnet = 2;
+    NetworkInterface NetworkInterface = 3;
+}
+
+message LogicalNetwork {
+    string Name = 1;
+    string CIDR = 2;
+    int32 Segment = 3;
+    RouteTable RouteTable = 4;
+}
+
+message LogicalSubnet {
+    string Name = 1;
+    string CIDR = 2;
+    RouteTable RouteTable = 3;
+}
+
+message NetworkInterface {
+    string Network = 1;
+    string Subnet = 2;
+    string Name = 3;
+    string HardwareAddr = 4;
+    string IpAddr = 5;
+}
+
+message RouteTable {
+    repeated Route Routes = 1;
+}
+
+message Route {
+    string Destination = 1;
+    oneof Target {
+        string Gateway = 2;
+        string NetworkInterface = 3;
+    }
+}

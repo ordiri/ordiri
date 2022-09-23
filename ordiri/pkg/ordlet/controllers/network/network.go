@@ -63,7 +63,7 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 	}
 
 	node := r.Node.GetNode()
-	nodeHasNetwork := r.NetworkManager.HasNetwork(nw.Name)
+	nodeHasNetwork := r.Node.GetNode().HasNetwork(nw.Name)
 	nodeWantsNetwork := false
 	for _, nws := range node.Status.Networks {
 		if nws.Name == nw.Name {
@@ -75,25 +75,15 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 		nodeWantsNetwork = false
 	}
 
-	var net api.Network
-	if r.NetworkManager.HasNetwork(nw.Name) {
-		net = r.NetworkManager.GetNetwork(nw.Name)
-	} else {
-		localVlan, err := node.NetworkVlanId(nw.Name)
-		if err != nil {
-			return ctrl.Result{}, err
-		}
-		_net, err := network.NewNetwork(nw.Namespace, nw.Name, nw.Spec.Cidr, nw.Status.Vni, int64(localVlan))
-		if err != nil {
-			return ctrl.Result{}, err
-		}
-		net = _net
+	localVlan, err := node.NetworkVlanId(nw.Name)
+	if err != nil {
+		return ctrl.Result{}, err
 	}
 
 	if !nodeWantsNetwork {
 		if nodeHasNetwork {
-			log.V(5).Info("removing node from network", "nodeWantsNetwork", nodeWantsNetwork, "nodeHasNetwork", nodeHasNetwork, "network", net)
-			if err := r.NetworkManager.RemoveNetwork(ctx, net.Name()); err != nil {
+			log.V(5).Info("removing node from network", "nodeWantsNetwork", nodeWantsNetwork, "nodeHasNetwork", nodeHasNetwork, "network", nw)
+			if err := r.NetworkManager.RemoveNetwork(ctx, nw.Name); err != nil {
 				return ctrl.Result{}, err
 			}
 			log.Info("network references the node but the node doesn't want it, removing")
@@ -106,12 +96,16 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 			return ctrl.Result{}, err
 		}
 	} else if nodeWantsNetwork {
-		log.V(5).Info("Starting to build networking", "nodeWantsNetwork", nodeWantsNetwork, "nodeHasNetwork", nodeHasNetwork, "network", net)
+		log.V(5).Info("Starting to build networking", "nodeWantsNetwork", nodeWantsNetwork, "nodeHasNetwork", nodeHasNetwork, "network", nw)
 		vmsInNetwork := &computev1alpha1.VirtualMachineList{}
 		if err := r.Client.List(ctx, vmsInNetwork, client.InNamespace(nw.Namespace), client.MatchingFields{"VmsByNetwork": nw.Name}); err != nil {
 			return ctrl.Result{}, fmt.Errorf("unable to get vms in this network - %w", err)
 		}
 
+		net, err := network.NewNetwork(nw.Name, nw.Spec.Cidr, nw.Status.Vni, int64(localVlan))
+		if err != nil {
+			return ctrl.Result{}, err
+		}
 		for _, vm := range vmsInNetwork.Items {
 			for _, iface := range vm.Spec.NetworkInterfaces {
 				for _, ip := range iface.Ips {
@@ -126,7 +120,7 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 			}
 		}
 
-		if err := r.NetworkManager.EnsureNetwork(ctx, net); err != nil {
+		if err := r.NetworkManager.RegisterNetwork(ctx, net); err != nil {
 			return ctrl.Result{}, err
 		}
 		log.Info("node wants the network")
