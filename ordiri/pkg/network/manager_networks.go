@@ -17,6 +17,22 @@ func (ln *networkManager) GetNetwork(nw string) (api.Network, error) {
 
 	return nil, fmt.Errorf("no network")
 }
+
+func (ln *networkManager) RegisterNetwork(ctx context.Context, nw api.Network) error {
+	ln.l.Lock()
+	defer ln.l.Unlock()
+
+	if _, ok := ln.networks[nw.Name()]; !ok {
+		ln.networks[nw.Name()] = &managedNet{
+			subnets: make(map[string]*managedSubnet),
+			l:       sync.RWMutex{},
+		}
+	}
+	ln.networks[nw.Name()].Network = nw
+
+	return nil
+}
+
 func (ln *networkManager) RemoveNetwork(ctx context.Context, nw string) error {
 	ln.l.Lock()
 	defer ln.l.Unlock()
@@ -28,24 +44,6 @@ func (ln *networkManager) RemoveNetwork(ctx context.Context, nw string) error {
 	}
 
 	delete(ln.networks, nw)
-	return nil
-}
-
-func (ln *networkManager) RegisterNetwork(ctx context.Context, nw api.Network) error {
-	ln.l.Lock()
-	defer ln.l.Unlock()
-	if err := ln.driver.RegisterNetwork(ctx, nw); err != nil {
-		return err
-	}
-
-	if _, ok := ln.networks[nw.Name()]; !ok {
-		ln.networks[nw.Name()] = &managedNet{
-			subnets: make(map[string]*managedSubnet),
-			l:       sync.RWMutex{},
-		}
-	}
-	ln.networks[nw.Name()].Network = nw
-
 	return nil
 }
 

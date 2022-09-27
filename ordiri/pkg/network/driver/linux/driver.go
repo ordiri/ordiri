@@ -34,7 +34,7 @@ var (
 
 type ifaceList struct {
 	interfaces map[string]map[int]NetworkInterface
-	l          sync.Mutex
+	l          sync.RWMutex
 }
 
 func (il *ifaceList) set(ns string, iface NetworkInterface) {
@@ -70,6 +70,8 @@ func (il *ifaceList) delete(ns string, iface NetworkInterface) bool {
 }
 
 func (il *ifaceList) get(ns string, name string) *NetworkInterface {
+	il.l.RLock()
+	defer il.l.RUnlock()
 	for _, iface := range il.interfaces[ns] {
 		if iface.Name() == name {
 			return &iface
@@ -78,6 +80,8 @@ func (il *ifaceList) get(ns string, name string) *NetworkInterface {
 	return nil
 }
 func (il *ifaceList) search(name string) (string, *NetworkInterface) {
+	il.l.RLock()
+	defer il.l.RUnlock()
 	for ns, ifaces := range il.interfaces {
 		for _, iface := range ifaces {
 			if iface.Name() == name {
@@ -101,7 +105,7 @@ func New() (driver.RunnableDriver, error) {
 			// unix.rtmgrp_i
 		},
 		dbus:       dbusConn,
-		interfaces: &ifaceList{},
+		interfaces: &ifaceList{l: sync.RWMutex{}},
 	}, nil
 }
 

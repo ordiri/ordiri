@@ -6,6 +6,7 @@ import (
 
 	"github.com/digitalocean/go-openvswitch/ovs"
 	"github.com/ordiri/ordiri/pkg/log"
+	"github.com/ordiri/ordiri/pkg/mac"
 	"github.com/ordiri/ordiri/pkg/network/api"
 	"github.com/ordiri/ordiri/pkg/network/sdn"
 	"github.com/vishvananda/netlink"
@@ -23,7 +24,7 @@ func (ld *linuxDriver) RemoveRouter(ctx context.Context, nw api.Network, sn api.
 	log := log.FromContext(ctx)
 	routerNetworkNamespace := namespaceForRouter(nw)
 
-	internalRouterCableName := internalRouterCable(nw, sn, rtr)
+	internalRouterCableName := internalRouterCable(nw, sn)
 
 	if _, iface := ld.interfaces.search(internalRouterCableName.Root()); iface != nil {
 		if err := netlink.LinkDel(iface); err != nil {
@@ -67,12 +68,12 @@ func (ld *linuxDriver) installRouter(ctx context.Context, nw api.Network, subnet
 		return fmt.Errorf("unable to create router network namespace - %w", err)
 	}
 
-	internalRouterCableName := internalRouterCable(nw, subnet, rtr)
-	if err := ld.getOrCreateVeth(ctx, routerNetworkNamespace, internalRouterCableName, true, rtr.GlobalMac()); err != nil {
+	internalRouterCableName := internalRouterCable(nw, subnet)
+	if err := ld.getOrCreateVeth(ctx, routerNetworkNamespace, internalRouterCableName, true, mac.Unicast()); err != nil {
 		return fmt.Errorf("unable to create internal veth cable - %w", err)
 	}
 
-	if err := setNsVethIp(routerNetworkNamespace, rtr.IP().String(), internalRouterCableName.Namespace()); err != nil {
+	if err := setNsVethIp(routerNetworkNamespace, subnet.Cidr().Masked().IP().Next().String(), internalRouterCableName.Namespace()); err != nil {
 		return fmt.Errorf("unable to set router address - %w", err)
 	}
 	ovsClient := sdn.Ovs()
@@ -88,43 +89,43 @@ func (ld *linuxDriver) installRouter(ctx context.Context, nw api.Network, subnet
 		return err
 	}
 
-	curNs, err := netns.Get()
-	if err != nil {
-		return fmt.Errorf("unable to get current network ns - %w", err)
-	}
-	curNs.Close()
-	handle, err := netns.GetFromName(routerNetworkNamespace)
-	if err != nil {
-		return fmt.Errorf("unable to get namespace for public gateway ns - %w", err)
-	}
+	// curNs, err := netns.Get()
+	// if err != nil {
+	// 	return fmt.Errorf("unable to get current network ns - %w", err)
+	// }
+	// curNs.Close()
+	// handle, err := netns.GetFromName(routerNetworkNamespace)
+	// if err != nil {
+	// 	return fmt.Errorf("unable to get namespace for public gateway ns - %w", err)
+	// }
 
-	defer handle.Close()
-	ctx, cancel := context.WithCancel(context.Background())
-	// only in a goroutine to keep it away from other namespaces
-	go func(targetNs netns.NsHandle, curNs netns.NsHandle) {
-		defer cancel()
-		handle, err := netlink.NewHandleAt(handle)
-		if err != nil {
-			panic(err.Error())
-		}
-		iface, err := handle.LinkByName(internalRouterCableName.Namespace())
-		if err != nil {
-			panic(err.Error())
-		}
-		for ip, mac := range rtr.KnownMacs() {
+	// defer handle.Close()
+	// ctx, cancel := context.WithCancel(context.Background())
+	// // only in a goroutine to keep it away from other namespaces
+	// go func(targetNs netns.NsHandle, curNs netns.NsHandle) {
+	// 	defer cancel()
+	// 	handle, err := netlink.NewHandleAt(handle)
+	// 	if err != nil {
+	// 		panic(err.Error())
+	// 	}
+	// 	iface, err := handle.LinkByName(internalRouterCableName.Namespace())
+	// 	if err != nil {
+	// 		panic(err.Error())
+	// 	}
+	// 	for ip, mac := range rtr.KnownMacs() {
 
-			err := handle.NeighSet(&netlink.Neigh{
-				LinkIndex:    iface.Attrs().Index,
-				State:        netlink.NUD_PERMANENT,
-				IP:           ip.IPAddr().IP,
-				HardwareAddr: mac,
-			})
-			if err != nil {
-				panic(err)
-			}
-		}
-	}(handle, curNs)
-	<-ctx.Done()
+	// 		err := handle.NeighSet(&netlink.Neigh{
+	// 			LinkIndex:    iface.Attrs().Index,
+	// 			State:        netlink.NUD_PERMANENT,
+	// 			IP:           ip.IPAddr().IP,
+	// 			HardwareAddr: mac,
+	// 		})
+	// 		if err != nil {
+	// 			panic(err)
+	// 		}
+	// 	}
+	// }(handle, curNs)
+	// <-ctx.Done()
 
 	routerFlow := &sdn.Router{
 		DistributedMac: rtr.GlobalMac(),

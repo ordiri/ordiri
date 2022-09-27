@@ -23,7 +23,8 @@ type SubnetManager interface {
 
 type InterfaceManager interface {
 	GetInterface(nw string, sn string, name string) (Interface, error)
-	RegisterInterface(ctx context.Context, nw string, sn string, iface Interface) (string, error)
+	RegisterInterface(ctx context.Context, nw string, sn string, iface Interface) error
+	AttachInterface(ctx context.Context, nw string, sn string, iface Interface) (string, error)
 	RemoveInterface(ctx context.Context, nw string, sn string, ifaceName string) error
 }
 
@@ -42,6 +43,7 @@ type Network interface {
 	Name() string
 	Cidr() netaddr.IPPrefix
 	Segment() int64
+	ExternalIp() netaddr.IP
 	// DnsRecords() map[netaddr.IP][]string
 
 	// WithDns(netaddr.IP, []string) bool

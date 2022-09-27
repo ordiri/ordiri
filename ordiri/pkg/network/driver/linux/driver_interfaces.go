@@ -7,7 +7,6 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
-	"time"
 
 	"github.com/digitalocean/go-openvswitch/ovs"
 	"github.com/gosimple/slug"
@@ -109,15 +108,15 @@ func (ln *linuxDriver) createInterfaceBridge(ctx context.Context, nw api.Network
 		la := netlink.NewLinkAttrs()
 		la.Name = bridgeName
 		la.MTU = sdn.OverlayMTU
+		forwardDelay := uint32(0)
 		bridge = &netlink.Bridge{
-			LinkAttrs: la,
+			LinkAttrs:    la,
+			ForwardDelay: &forwardDelay,
 		}
 
 		if err := netlink.LinkAdd(bridge); err != nil {
 			return nil, fmt.Errorf("unable to add new bridge for vm - %w", err)
 		}
-		// Akward as hell but a new bridge will have it's forward delay set to 15000 and we don't have an interface to change that easily here yet :)
-		time.Sleep(time.Second * 10)
 	}
 
 	if bridge.MTU != sdn.OverlayMTU {

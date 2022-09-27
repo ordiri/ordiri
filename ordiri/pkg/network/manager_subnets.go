@@ -21,15 +21,6 @@ func (ln *networkManager) GetSubnet(nw string, name string) (api.Subnet, error) 
 	return nil, fmt.Errorf("unknown subnet")
 }
 
-func (ln *networkManager) RemoveSubnet(ctx context.Context, nw string, sn string) error {
-	if net, err := ln.GetNetwork(nw); err != nil {
-		if subnet, err := ln.GetSubnet(nw, sn); err != nil {
-			return ln.driver.RemoveSubnet(ctx, net, subnet)
-		}
-	}
-	return nil
-}
-
 func (ln *networkManager) RegisterSubnet(ctx context.Context, nw string, sn api.Subnet) error {
 	ln.l.RLock()
 	defer ln.l.RUnlock()
@@ -48,7 +39,25 @@ func (ln *networkManager) RegisterSubnet(ctx context.Context, nw string, sn api.
 	}
 
 	return fmt.Errorf("unknown network")
+}
 
+func (ln *networkManager) RemoveSubnet(ctx context.Context, nw string, sn string) error {
+	ln.l.RLock()
+	defer ln.l.RUnlock()
+
+	if nw := ln.networks[nw]; nw != nil {
+		nw.l.Lock()
+		defer nw.l.Unlock()
+		if sn, ok := nw.subnets[sn]; ok {
+			if err := ln.driver.RemoveSubnet(ctx, nw, sn); err != nil {
+				return fmt.Errorf("unable to remove subnet - %w", err)
+			}
+		}
+		delete(nw.subnets, sn)
+		return nil
+	}
+
+	return fmt.Errorf("unknown network")
 }
 
 var _ api.SubnetManager = &networkManager{}

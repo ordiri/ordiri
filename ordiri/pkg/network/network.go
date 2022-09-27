@@ -15,6 +15,12 @@ func WithNetworkDns(ip netaddr.IP, hostnames ...string) NetworkOption {
 		return nil
 	}
 }
+func WithExternalGatewayIp(ip netaddr.IP) NetworkOption {
+	return func(n *network) error {
+		n.externalGatewayIp = ip
+		return nil
+	}
+}
 
 func NewNetwork(name string, cidr string, segment int64, localSegment int64, opt ...NetworkOption) (*network, error) {
 	ipnet, err := netaddr.ParseIPPrefix(cidr)
@@ -41,11 +47,12 @@ type network struct {
 	// The name for this network
 	name string
 	// segment is the globally unique tunnel identifier
-	segment       int64
-	localSegment  int64
-	cidr          netaddr.IPPrefix
-	dnsRecordsets map[netaddr.IP][]string
-	knownMacs     map[string][]netaddr.IP
+	segment           int64
+	localSegment      int64
+	cidr              netaddr.IPPrefix
+	externalGatewayIp netaddr.IP
+	dnsRecordsets     map[netaddr.IP][]string
+	knownMacs         map[string][]netaddr.IP
 }
 
 func (nw *network) Name() string {
@@ -86,6 +93,9 @@ func (nw *network) DnsRecords() map[netaddr.IP][]string {
 
 func (nw *network) MacAddrs() map[string][]netaddr.IP {
 	return nw.knownMacs
+}
+func (nw *network) ExternalIp() netaddr.IP {
+	return nw.externalGatewayIp
 }
 
 var _ api.Network = &network{}

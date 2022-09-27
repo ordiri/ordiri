@@ -34,8 +34,8 @@ func interfaceTunTapName(network api.Network, subnet api.Subnet, iface api.Inter
 func publicGwCable(network api.Network) VethCable {
 	return VethCable(PublicGatewayCablePrefix + hash(network.Name(), IfaceHashSize))
 }
-func internalRouterCable(network api.Network, subnet api.Subnet, rtr api.Router) VethCable {
-	return VethCable(InternalRouterCablePrefix + hash(network.Name()+subnet.Name()+rtr.Name(), IfaceHashSize))
+func internalRouterCable(network api.Network, subnet api.Subnet) VethCable {
+	return VethCable(InternalRouterCablePrefix + hash(network.Name()+subnet.Name(), IfaceHashSize))
 }
 func servicesCableName(network api.Network, subnet api.Subnet, svc string) VethCable {
 	return VethCable(NetworkServiceCablePrefix + hash(network.Name()+subnet.Name()+svc, IfaceHashSize))

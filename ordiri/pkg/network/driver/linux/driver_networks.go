@@ -3,12 +3,14 @@ package linux
 import (
 	"context"
 	"fmt"
+	"net"
 
 	"github.com/ordiri/ordiri/pkg/log"
 	"github.com/ordiri/ordiri/pkg/mac"
 	"github.com/ordiri/ordiri/pkg/network/api"
 	"github.com/vishvananda/netlink"
 	"github.com/vishvananda/netns"
+	"inet.af/netaddr"
 
 	"github.com/ordiri/ordiri/pkg/network/sdn"
 )
@@ -96,42 +98,25 @@ func (ln *linuxDriver) installNetworkNat(ctx context.Context, nw api.Network) er
 		}
 	}
 
-	log.V(5).Info("Renew DHCP")
-	curNs, err := netns.Get()
-	if err != nil {
-		return fmt.Errorf("unable to get current network ns - %w", err)
-	}
-	defer curNs.Close()
-	handle, err := netns.GetFromName(namespace)
-	if err != nil {
-		return fmt.Errorf("unable to get namespace for public gateway ns - %w", err)
-	}
-
-	defer handle.Close()
-
-	errCh := make(chan error)
-	// only in a goroutine to keep it away from other namespaces
-	go func(targetNs netns.NsHandle, curNs netns.NsHandle) {
-		close, err := ExecuteInNetns(targetNs, curNs)
+	// todo lol
+	if nw.ExternalIp().IsValid() {
+		if err := setNsVethIp(namespace, fmt.Sprintf("%s/%d", nw.ExternalIp().String(), 24), publicGwCableName.Namespace()); err != nil {
+			return fmt.Errorf("unable to set public gateway external address - %w", err)
+		}
+		handle, err := netns.GetFromName(namespace)
 		if err != nil {
-			errCh <- err
-			return
+			return fmt.Errorf("unable to get namespace - %w", err)
 		}
-		defer close()
-
-		log.V(5).Info("Running dhcp client")
-		if err := dhclient4(publicGwCableName.Namespace(), 5, true); err == nil {
-			log.V(5).Info("error running dhcp client")
-			errCh <- nil
-			return
+		nl, err := netlink.NewHandleAt(handle)
+		if err != nil {
+			return fmt.Errorf("unable to get netlink handle - %w", err)
 		}
-		log.V(5).Info("dhcp client completed")
-
-		errCh <- nil
-	}(handle, curNs)
-
-	if err := <-errCh; err != nil {
-		return fmt.Errorf("unable to get addr from dhcp - %w", err)
+		if err := nl.RouteReplace(&netlink.Route{
+			Dst: netaddr.MustParseIPPrefix("0.0.0.0/0").IPNet(),
+			Gw:  net.IPv4(10, 0, 1, 1),
+		}); err != nil {
+			return fmt.Errorf("error creating route - %w", err)
+		}
 	}
 
 	log.V(5).Info("Network NAT configured")

@@ -36,11 +36,11 @@ func (wi *MetadataServer) Install(client *ovs.Client) error {
 	// }
 	MetadataPort, err := client.OpenFlow.DumpPort(wi.Switch, wi.MetadataPort)
 	if err != nil {
-		return fmt.Errorf("unable to map get port information - %w", err)
+		return fmt.Errorf("unable to get metadata port information - %w", err)
 	}
 	WorkloadPort, err := client.OpenFlow.DumpPort(wi.Switch, wi.WorkloadPort)
 	if err != nil {
-		return fmt.Errorf("unable to map get port information - %w", err)
+		return fmt.Errorf("unable to get workload port information - %w", err)
 	}
 
 	if err := client.OpenFlow.AddFlow(wi.Switch, &ovs.Flow{
