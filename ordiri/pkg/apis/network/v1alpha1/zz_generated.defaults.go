@@ -28,21 +28,31 @@ import (
 // Public to allow building arbitrary schemes.
 // All generated defaulters are covering - they call all nested defaulters.
 func RegisterDefaults(scheme *runtime.Scheme) error {
-	scheme.AddTypeDefaultingFunc(&Router{}, func(obj interface{}) { SetObjectDefaults_Router(obj.(*Router)) })
-	scheme.AddTypeDefaultingFunc(&RouterList{}, func(obj interface{}) { SetObjectDefaults_RouterList(obj.(*RouterList)) })
+	scheme.AddTypeDefaultingFunc(&Network{}, func(obj interface{}) { SetObjectDefaults_Network(obj.(*Network)) })
+	scheme.AddTypeDefaultingFunc(&NetworkList{}, func(obj interface{}) { SetObjectDefaults_NetworkList(obj.(*NetworkList)) })
+	scheme.AddTypeDefaultingFunc(&Subnet{}, func(obj interface{}) { SetObjectDefaults_Subnet(obj.(*Subnet)) })
+	scheme.AddTypeDefaultingFunc(&SubnetList{}, func(obj interface{}) { SetObjectDefaults_SubnetList(obj.(*SubnetList)) })
 	return nil
 }
 
-func SetObjectDefaults_Router(in *Router) {
-	for i := range in.Spec.Subnets {
-		a := &in.Spec.Subnets[i]
-		SetDefaults_RouterSubnetReference(a)
+func SetObjectDefaults_Network(in *Network) {
+	SetDefaults_NetworkSpec(&in.Spec)
+}
+
+func SetObjectDefaults_NetworkList(in *NetworkList) {
+	for i := range in.Items {
+		a := &in.Items[i]
+		SetObjectDefaults_Network(a)
 	}
 }
 
-func SetObjectDefaults_RouterList(in *RouterList) {
+func SetObjectDefaults_Subnet(in *Subnet) {
+	SetDefaults_SubnetSpec(&in.Spec)
+}
+
+func SetObjectDefaults_SubnetList(in *SubnetList) {
 	for i := range in.Items {
 		a := &in.Items[i]
-		SetObjectDefaults_Router(a)
+		SetObjectDefaults_Subnet(a)
 	}
 }

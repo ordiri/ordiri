@@ -11,6 +11,7 @@ Environment=KUBECONFIG=/etc/ordiri.conf
 ExecStartPre=/bin/sh -c "/usr/bin/killall --wait ordiri-metadata || true"
 ExecStartPre=/bin/sh -c "/usr/bin/killall --wait dnsmasq || true"
 ExecStartPre=/bin/sh -c "/usr/bin/rm -rf /run/ordiri || true"
+ExecStartPre=/bin/sh -c "for iface in $(ip link | grep -e ': svc-' -e ': obr' -e ': ovm' -e ': irtr' -e ': prtr' | cut -d\\: -f2 | cut -d\\@ -f 1); do ovs-vsctl del-port ordiri-vms $iface; ovs-vsctl del-port ordiri-external $iface; ip link del $iface; done; killall qemu-system-x86_64 || true"
 ExecStart=/usr/local/bin/ordlet -zap-log-level=5
 Restart=always
 RestartSec=10s

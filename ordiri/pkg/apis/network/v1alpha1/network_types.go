@@ -58,18 +58,18 @@ type NetworkSpec struct {
 
 	// Cidr address to represent this network
 	// +optional
-	Router NetworkRouterSpec `json:"router"`
+	Router *NetworkRouterSpec `json:"router"`
 
 	// Cidr address to represent this network
 	// +optional
-	DNS NetworkDnsSpec `json:"dns"`
+	DNS *NetworkDnsSpec `json:"dns"`
 
 	// Cidr address to represent this network
 	// +optional
-	Nat NetworkNatSpec `json:"nat"`
+	Nat *NetworkNatSpec `json:"nat"`
 
 	// +optional
-	InternetGateway InternetGatewaySpec `json:"public,omitempty"`
+	InternetGateway *InternetGatewaySpec `json:"public,omitempty"`
 }
 
 type NetworkRouterSpec struct {
@@ -160,8 +160,14 @@ type NetworkStatus struct {
 }
 
 type HostNetworkStatus struct {
-	Node   string `json:"node"`
-	VlanId int    `json:"vlanId"`
+	NetworkInterface NetworkInterfaceStatus `json:"networkInterface"`
+	Node             string                 `json:"node"`
+	VlanId           int                    `json:"vlanId"`
+}
+
+type NetworkInterfaceStatus struct {
+	Ips []string `json:"ips"`
+	Mac string   `json:"mac"`
 }
 
 func (in NetworkStatus) SubResourceName() string {

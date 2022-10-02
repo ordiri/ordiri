@@ -15,7 +15,7 @@ func WithNetworkDns(ip netaddr.IP, hostnames ...string) NetworkOption {
 		return nil
 	}
 }
-func WithExternalGatewayIp(ip netaddr.IP) NetworkOption {
+func WithExternalGatewayIp(ip netaddr.IPPrefix) NetworkOption {
 	return func(n *network) error {
 		n.externalGatewayIp = ip
 		return nil
@@ -50,7 +50,7 @@ type network struct {
 	segment           int64
 	localSegment      int64
 	cidr              netaddr.IPPrefix
-	externalGatewayIp netaddr.IP
+	externalGatewayIp netaddr.IPPrefix
 	dnsRecordsets     map[netaddr.IP][]string
 	knownMacs         map[string][]netaddr.IP
 }
@@ -94,7 +94,7 @@ func (nw *network) DnsRecords() map[netaddr.IP][]string {
 func (nw *network) MacAddrs() map[string][]netaddr.IP {
 	return nw.knownMacs
 }
-func (nw *network) ExternalIp() netaddr.IP {
+func (nw *network) ExternalIp() netaddr.IPPrefix {
 	return nw.externalGatewayIp
 }
 

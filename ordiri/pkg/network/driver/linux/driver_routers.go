@@ -6,15 +6,15 @@ import (
 
 	"github.com/digitalocean/go-openvswitch/ovs"
 	"github.com/ordiri/ordiri/pkg/log"
-	"github.com/ordiri/ordiri/pkg/mac"
 	"github.com/ordiri/ordiri/pkg/network/api"
 	"github.com/ordiri/ordiri/pkg/network/sdn"
 	"github.com/vishvananda/netlink"
 	"github.com/vishvananda/netns"
+	"inet.af/netaddr"
 )
 
 func (ld *linuxDriver) EnsureRouter(ctx context.Context, nw api.Network, sn api.Subnet, rtr api.Router) error {
-	if err := ld.installRouter(ctx, nw, sn, rtr); err != nil {
+	if err := ld.installRouter(ctx, nw, sn); err != nil {
 		return err
 	}
 	return nil
@@ -61,7 +61,7 @@ func (ld *linuxDriver) RemoveRouter(ctx context.Context, nw api.Network, sn api.
 	return nil
 }
 
-func (ld *linuxDriver) installRouter(ctx context.Context, nw api.Network, subnet api.Subnet, rtr api.Router) error {
+func (ld *linuxDriver) installRouter(ctx context.Context, nw api.Network, subnet api.Subnet) error {
 	routerNetworkNamespace := namespaceForRouter(nw)
 	err := createNetworkNs(routerNetworkNamespace)
 	if err != nil {
@@ -69,11 +69,13 @@ func (ld *linuxDriver) installRouter(ctx context.Context, nw api.Network, subnet
 	}
 
 	internalRouterCableName := internalRouterCable(nw, subnet)
-	if err := ld.getOrCreateVeth(ctx, routerNetworkNamespace, internalRouterCableName, true, mac.Unicast()); err != nil {
+	if err := ld.getOrCreateVeth(ctx, routerNetworkNamespace, internalRouterCableName, true, subnet.RouterGlobalMac()); err != nil {
 		return fmt.Errorf("unable to create internal veth cable - %w", err)
 	}
 
-	if err := setNsVethIp(routerNetworkNamespace, subnet.Cidr().Masked().IP().Next().String(), internalRouterCableName.Namespace()); err != nil {
+	// Get the first ip
+	rtrIp := netaddr.IPPrefixFrom(subnet.Cidr().IP().Next(), subnet.Cidr().Bits())
+	if err := setNsVethIp(routerNetworkNamespace, rtrIp, internalRouterCableName.Namespace()); err != nil {
 		return fmt.Errorf("unable to set router address - %w", err)
 	}
 	ovsClient := sdn.Ovs()
@@ -128,10 +130,10 @@ func (ld *linuxDriver) installRouter(ctx context.Context, nw api.Network, subnet
 	// <-ctx.Done()
 
 	routerFlow := &sdn.Router{
-		DistributedMac: rtr.GlobalMac(),
-		HostLocalMac:   rtr.Mac(),
-		IP:             rtr.IP().IP(),
-		Segment:        rtr.Segment(),
+		DistributedMac: subnet.RouterGlobalMac(),
+		HostLocalMac:   subnet.RouterMac(),
+		IP:             subnet.Cidr().IP().Next(),
+		Segment:        subnet.Segment(),
 	}
 
 	if err := routerFlow.Install(ovsClient); err != nil {

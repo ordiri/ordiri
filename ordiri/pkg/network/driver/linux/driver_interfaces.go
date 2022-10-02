@@ -158,22 +158,20 @@ func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network
 		return nil, fmt.Errorf("unknown error fetching existing tuntap device - %w", err)
 	}
 
+	// todo: This is pretty incorrect but it works for now
+	// it's incorrect because of the idea that hostnames are bound to an
+	// interface + ip in the vm_networking so here we would return
+	// the wrong ip for a multi ip interface
+	// post this comment the dns stuff was moved to the network to enable us
+	// to create dns records for the entire network
 	if len(iface.PrivateIp()) > 0 {
-		// todo: This is pretty incorrect but it works for now
-		// it's incorrect because of the idea that hostnames are bound to an
-		// interface + ip in the vm_networking so here we would return
-		// the wrong ip for a multi ip interface
-		// post this comment the dns stuff was moved to the network to enable us
-		// to create dns records for the entire network
-		if len(iface.PrivateIp()) > 0 {
-			addr := iface.PrivateIp()[0]
-			dhcpHostDir := dhcpHostMappingDir(nw, sn)
-			mapping := fmt.Sprintf("%s,%s,%s", iface.Mac(), addr.String(), iface.Hostnames()[0])
-			fileName := slug.Make(addr.String())
-			hostFile := filepath.Join(dhcpHostDir, fileName)
-			if err := os.WriteFile(hostFile, []byte(mapping), fs.ModePerm); err != nil {
-				return nil, fmt.Errorf("unable to write host mapping file - %w", err)
-			}
+		addr := iface.PrivateIp()[0].IP()
+		dhcpHostDir := dhcpHostMappingDir(nw, sn)
+		mapping := fmt.Sprintf("%s,%s,%s", iface.Mac(), addr.String(), iface.Hostnames()[0])
+		fileName := slug.Make(addr.String())
+		hostFile := filepath.Join(dhcpHostDir, fileName)
+		if err := os.WriteFile(hostFile, []byte(mapping), fs.ModePerm); err != nil {
+			return nil, fmt.Errorf("unable to write host mapping file - %w", err)
 		}
 	}
 

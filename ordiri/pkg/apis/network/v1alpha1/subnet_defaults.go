@@ -16,12 +16,18 @@ limitations under the License.aoeaoeaoeao
 
 package v1alpha1
 
-import (
-	"github.com/ordiri/ordiri/pkg/mac"
-)
+import "github.com/ordiri/ordiri/pkg/mac"
 
-func SetDefaults_RouterSubnetReference(obj *RouterSubnetReference) {
-	if obj.Mac == "" {
-		obj.Mac = mac.Unicast().String()
+func SetDefaults_SubnetSpec(obj *SubnetSpec) {
+	if obj.RouteTable.Name == "" {
+		obj.RouteTable.Name = "default"
+	}
+
+	if obj.Router.Mac == "" {
+		obj.Router.Mac = mac.Unicast().String()
+	}
+
+	if obj.MetadataServer.Mac == "" {
+		obj.MetadataServer.Mac = mac.Unicast().String()
 	}
 }

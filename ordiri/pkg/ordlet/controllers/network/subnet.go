@@ -19,6 +19,7 @@ package network
 import (
 	"context"
 	"fmt"
+	"net"
 	"reflect"
 
 	k8err "k8s.io/apimachinery/pkg/api/errors"
@@ -31,8 +32,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 
-	"github.com/davecgh/go-spew/spew"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
+	"github.com/ordiri/ordiri/pkg/mac"
 	"github.com/ordiri/ordiri/pkg/network"
 	"github.com/ordiri/ordiri/pkg/network/api"
 
@@ -116,6 +117,19 @@ func (r *SubnetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 		return ctrl.Result{}, err
 	}
 
+	hostLocalMac := mac.Unicast()
+	for _, m := range subnet.Status.Hosts {
+		if m.Node == r.Node.GetNode().Name {
+			if m.Router.Mac != "" {
+				hlm, err := net.ParseMAC(m.Router.Mac)
+				if err == nil {
+					hostLocalMac = hlm
+				}
+			}
+			break
+		}
+	}
+
 	sn, err := r.NetworkManager.GetSubnet(nw.Name, subnet.Name)
 	if err != nil {
 		vlan, err := r.Node.GetNode().NetworkVlanId(nw.Name)
@@ -124,7 +138,11 @@ func (r *SubnetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 		}
 
 		log.Info("network manager has not seen this subnet yet, creating a new one")
-		newSubnet, err := network.NewSubnet(subnet.Name, subnet.Spec.Cidr, vlan)
+		routerMac, err := mac.Parse(subnet.Spec.Router.Mac)
+		if err != nil {
+			return ctrl.Result{}, fmt.Errorf("error parsing router mac - %w", err)
+		}
+		newSubnet, err := network.NewSubnet(subnet.Name, subnet.Spec.Cidr, vlan, hostLocalMac, routerMac)
 		if err != nil {
 			return ctrl.Result{}, err
 		}
@@ -132,20 +150,20 @@ func (r *SubnetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 		log.Info("got new subnet", "subnet", newSubnet)
 	}
 
-	spew.Dump(sn)
-
 	if sn == nil {
 		return ctrl.Result{}, fmt.Errorf("unable to ensure subnet is configured correctly")
 	}
 
-	log.Info("ensuring subnet is configured by the driver", "subnet2o", sn)
+	log.Info("ensuring subnet is configured by the driver", "subnet", sn)
 	if err := r.NetworkManager.RegisterSubnet(ctx, nw.Name, sn); err != nil {
 		return ctrl.Result{}, fmt.Errorf("unable to ensure subnet is configured correctly - %w", err)
 	}
 
-	if err := r.addNodeToSubnetStatus(ctx, subnet); err != nil {
+	log.Info("adding node to status", "subnet", subnet)
+	if err := r.addNodeToSubnetStatus(ctx, subnet, hostLocalMac); err != nil {
 		return ctrl.Result{}, err
 	}
+	log.Info("added node to status", "subnet", subnet)
 
 	return ctrl.Result{}, nil
 }

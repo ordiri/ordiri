@@ -57,7 +57,7 @@ manifests: controller-gen generate ## Generate WebhookConfiguration, ClusterRole
 	$(CONTROLLER_GEN) rbac:roleName=manager-role crd webhook paths="./pkg/apis/..." output:crd:artifacts:config=config/crd/bases
 
 .PHONY: generate
-generate: generate-proto generate-controller generate-openapi generate-tsclient generate-client generate-lister generate-informer generate-defaulter
+generate: generate-openapi generate-controller generate-defaulter generate-client generate-lister generate-informer generate-tsclient generate-proto 
 
 generate-proto: 
 	go generate ./...
@@ -68,6 +68,7 @@ INPUT_DIRS = "$(PACKAGE_NAME)/pkg/apis/core/v1alpha1,$(PACKAGE_NAME)/pkg/apis/ne
 CLIENT_INPUTS = "pkg/apis/core/v1alpha1,pkg/apis/network/v1alpha1,pkg/apis/compute/v1alpha1,pkg/apis/storage/v1alpha1,pkg/apis/authorization/v1alpha1"
 generate-controller: $(CONTROLLER_GEN)
 	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./pkg/apis/..."
+	
 generate-tsclient: $(CONTROLLER_GEN)
 	cd ../ordiri-client-typescript && ./client.sh
 

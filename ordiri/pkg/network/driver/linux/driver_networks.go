@@ -100,7 +100,7 @@ func (ln *linuxDriver) installNetworkNat(ctx context.Context, nw api.Network) er
 
 	// todo lol
 	if nw.ExternalIp().IsValid() {
-		if err := setNsVethIp(namespace, fmt.Sprintf("%s/%d", nw.ExternalIp().String(), 24), publicGwCableName.Namespace()); err != nil {
+		if err := setNsVethIp(namespace, nw.ExternalIp(), publicGwCableName.Namespace()); err != nil {
 			return fmt.Errorf("unable to set public gateway external address - %w", err)
 		}
 		handle, err := netns.GetFromName(namespace)
@@ -111,9 +111,21 @@ func (ln *linuxDriver) installNetworkNat(ctx context.Context, nw api.Network) er
 		if err != nil {
 			return fmt.Errorf("unable to get netlink handle - %w", err)
 		}
+		link, err := nl.LinkByName(publicGwCableName.Namespace())
+		if err != nil {
+			return fmt.Errorf("error fetching public gw link - %w", err)
+		}
 		if err := nl.RouteReplace(&netlink.Route{
-			Dst: netaddr.MustParseIPPrefix("0.0.0.0/0").IPNet(),
-			Gw:  net.IPv4(10, 0, 1, 1),
+			Dst:       netaddr.MustParseIPPrefix("10.0.1.0/24").IPNet(),
+			LinkIndex: link.Attrs().Index,
+			Scope:     netlink.SCOPE_LINK,
+		}); err != nil {
+			return fmt.Errorf("error creating route - %w", err)
+		}
+		if err := nl.RouteReplace(&netlink.Route{
+			Gw:        net.IPv4(10, 0, 1, 1),
+			Dst:       nil,
+			LinkIndex: link.Attrs().Index,
 		}); err != nil {
 			return fmt.Errorf("error creating route - %w", err)
 		}

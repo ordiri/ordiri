@@ -43,7 +43,7 @@ type Network interface {
 	Name() string
 	Cidr() netaddr.IPPrefix
 	Segment() int64
-	ExternalIp() netaddr.IP
+	ExternalIp() netaddr.IPPrefix
 	// DnsRecords() map[netaddr.IP][]string
 
 	// WithDns(netaddr.IP, []string) bool
@@ -53,6 +53,8 @@ type Subnet interface {
 	Name() string
 	Cidr() netaddr.IPPrefix
 	Segment() int
+	RouterGlobalMac() net.HardwareAddr
+	RouterMac() net.HardwareAddr
 }
 
 type Router interface {
@@ -69,6 +71,6 @@ type Interface interface {
 	Name() string
 	Hostnames() []string
 	Mac() net.HardwareAddr
-	PrivateIp() []netaddr.IP
-	PublicIp() []netaddr.IP
+	PrivateIp() []netaddr.IPPrefix
+	PublicIp() []netaddr.IPPrefix
 }

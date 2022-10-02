@@ -39,12 +39,12 @@ func (r *VirtualMachineReconciler) RegisterNetworkInterface(ctx context.Context,
 	}
 
 	for _, ip := range iface.Ips {
-		ipAddr, err := netaddr.ParseIP(ip)
+		ipAddr, err := netaddr.ParseIPPrefix(ip)
 		if err != nil {
 			return status, nil, fmt.Errorf("unable to parse ip addr %q - %w", ip, err)
 		}
 
-		if r.PublicCidr.Contains(ipAddr) {
+		if r.PublicCidr.Contains(ipAddr.IP()) {
 			opts = append(opts, network.InterfaceWithPublicIps(ipAddr))
 		} else {
 			opts = append(opts, network.InterfaceWithPrivateIps(ipAddr))
@@ -61,7 +61,7 @@ func (r *VirtualMachineReconciler) RegisterNetworkInterface(ctx context.Context,
 		return status, nil, fmt.Errorf("unable to create new interface obj - %w", err)
 	}
 
-	interfaceName, err := r.NetworkManager.RegisterInterface(ctx, iface.Network, iface.Subnet, netIface)
+	interfaceName, err := r.NetworkManager.AttachInterface(ctx, iface.Network, iface.Subnet, netIface)
 	if err != nil {
 		return status, nil, fmt.Errorf("unable to ensure interface - %w", err)
 	}

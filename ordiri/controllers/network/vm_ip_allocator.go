@@ -29,7 +29,10 @@ import (
 	computev1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
 	"github.com/ordiri/ordiri/pkg/log"
+	"github.com/ordiri/ordiri/pkg/network/api"
 )
+
+const publicIpamBlockName = "_shared::public"
 
 // VmIpAllocator reconciles a Subnet object
 type VmIpAllocator struct {
@@ -37,6 +40,7 @@ type VmIpAllocator struct {
 	Scheme *runtime.Scheme
 
 	PublicCidr netaddr.IPPrefix
+	Allocator  api.AddressAllocatorClient
 }
 
 func (r *VmIpAllocator) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
@@ -61,53 +65,70 @@ func (r *VmIpAllocator) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 			return ctrl.Result{}, err
 		}
 
+		subnetIpamBlockName := fmt.Sprintf("tenant::%s::%s", sn.Namespace, sn.Name)
+
 		network, err := netaddr.ParseIPPrefix(sn.Spec.Cidr)
 		if err != nil {
 			return ctrl.Result{}, fmt.Errorf("unable to parse subnet cidr - %q - %w", sn.Spec.Cidr, err)
 		}
+
+		network = network.Masked()
+		if _, err := r.Allocator.RegisterBlock(ctx, &api.RegisterBlockRequest{
+			BlockName: subnetIpamBlockName,
+			Ranges: []*api.AllocatableRange{
+				{
+					CIDR: network.String(),
+				},
+			},
+		}); err != nil {
+			return ctrl.Result{}, fmt.Errorf("error registering subnet block - %q - %w", sn.Spec.Cidr, err)
+		}
+
 		foundPrivate := false
 		foundPublic := false
 		wantsPublic := iface.Public
 		for _, ip := range iface.Ips {
-			parsedIp, err := netaddr.ParseIP(ip)
-			if err != nil {
-				return ctrl.Result{}, fmt.Errorf("unable to parse subnet cidr - %q - %w", sn.Spec.Cidr, err)
+			parsedIpNw, err := netaddr.ParseIPPrefix(ip)
+			if err != nil { // todo should we auto strip invalid ips?
+				return ctrl.Result{}, fmt.Errorf("unable to parse interface ip cidr - %q - %w", ip, err)
 			}
+			parsedIp := parsedIpNw.IP()
 
 			if network.Contains(parsedIp) {
 				foundPrivate = true
 			}
+
 			if wantsPublic && r.PublicCidr.Contains(parsedIp) {
 				foundPublic = true
 				announcements[parsedIp] = iface.Mac
 			}
 		}
 
-		if !foundPrivate || (wantsPublic && !foundPublic) {
-			network, err := netaddr.ParseIPPrefix(sn.Spec.Cidr)
-			if err != nil {
-				return ctrl.Result{}, fmt.Errorf("unable to parse subnet cidr - %q - %w", sn.Spec.Cidr, err)
-			}
+		wantsPublic = wantsPublic && !foundPublic
+
+		if !foundPrivate || wantsPublic {
 			if !foundPrivate {
-				// We skip the first 3 IP addrs (.0,.1,.2) as these represent the broadcast, router and dhcp srv IP
-				cidr := netaddr.IPPrefixFrom(network.IP().Next().Next().Next(), network.Bits())
-				nextIp, err := r.getNextIp(ctx, vm.Namespace, cidr, iface, client.MatchingFields{"VmBySubnet": iface.Network + iface.Subnet})
+				allocated, err := r.Allocator.Allocate(ctx, &api.AllocateRequest{
+					BlockName: subnetIpamBlockName,
+				})
 				if err != nil {
 					return ctrl.Result{}, err
 				}
 
-				iface.Ips = append(iface.Ips, nextIp.String())
+				iface.Ips = append(iface.Ips, allocated.Address)
 			}
 
-			if wantsPublic && !foundPublic {
+			if wantsPublic {
 				// We don't bother skipping any ip range here as it's a public network routed directly at us
 				// we'll swap this with bird bgp routing eventually and clean all this fip stuff up
-				nextIp, err := r.getNextIp(ctx, vm.Namespace, r.PublicCidr, iface)
+				allocated, err := r.Allocator.Allocate(ctx, &api.AllocateRequest{
+					BlockName: publicIpamBlockName,
+				})
 				if err != nil {
 					// return ctrl.Result{}, fmt.Errorf("error with no public ip - %w", err)
 					log.Info("no public ip available", "range", r.PublicCidr)
 				} else {
-					iface.Ips = append(iface.Ips, nextIp.String())
+					iface.Ips = append(iface.Ips, allocated.Address)
 				}
 			}
 
@@ -120,43 +141,6 @@ func (r *VmIpAllocator) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 	return ctrl.Result{}, nil
 }
 
-func (r *VmIpAllocator) getNextIp(ctx context.Context, ns string, network netaddr.IPPrefix, iface *computev1alpha1.VirtualMachineNetworkInterface, listOpts ...client.ListOption) (netaddr.IP, error) {
-
-	vmsInSubnet := &computev1alpha1.VirtualMachineList{}
-	listOpts = append([]client.ListOption{client.InNamespace(ns)}, listOpts...)
-	if err := r.Client.List(ctx, vmsInSubnet, listOpts...); err != nil {
-		return netaddr.IP{}, fmt.Errorf("error getting vm list - %w", err)
-	}
-
-	allocated := map[netaddr.IP]string{}
-	for _, vm := range vmsInSubnet.Items {
-		for _, iface := range vm.Spec.NetworkInterfaces {
-			for _, ip := range iface.Ips {
-				ipaddr, err := netaddr.ParseIP(ip)
-				if err != nil {
-					return netaddr.IP{}, fmt.Errorf("unable to parse ip addr - %q - %w", ip, err)
-				}
-				if network.Contains(ipaddr) {
-					allocated[ipaddr] = vm.Name
-				}
-			}
-		}
-	}
-
-	ip := network.IP()
-	for {
-		if !network.Contains(ip) {
-			return netaddr.IP{}, fmt.Errorf("no unallocated addresses available")
-		}
-		if _, ok := allocated[ip]; !ok {
-			break
-		}
-		ip = ip.Next()
-	}
-
-	return ip, nil
-
-}
 func (r *VmIpAllocator) SetupWithManager(mgr ctrl.Manager) error {
 	mgr.GetFieldIndexer().IndexField(context.Background(), &computev1alpha1.VirtualMachine{}, "VmBySubnet", func(o client.Object) []string {
 		keys := []string{}

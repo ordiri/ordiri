@@ -18,29 +18,45 @@ package network
 
 import (
 	"context"
+	"net"
 
 	k8err "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/client-go/util/retry"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
+	"github.com/davecgh/go-spew/spew"
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
 )
 
-func (r *SubnetReconciler) addNodeToSubnetStatus(ctx context.Context, subnet *networkv1alpha1.Subnet) error {
+func (r *SubnetReconciler) addNodeToSubnetStatus(ctx context.Context, subnet *networkv1alpha1.Subnet, macAddr net.HardwareAddr) error {
 	return retry.RetryOnConflict(retry.DefaultBackoff, func() error {
 		node := r.Node.GetNode()
 		subnetLinksToNode := false
-		for _, hostBinding := range subnet.Status.Hosts {
+		needsUpdate := false
+
+		for idx, hostBinding := range subnet.Status.Hosts {
 			if hostBinding.Node == node.Name {
 				subnetLinksToNode = true
+				if hostBinding.Router.Mac == "" {
+					subnet.Status.Hosts[idx].Router.Mac = macAddr.String()
+					needsUpdate = true
+				}
 			}
 		}
 
-		if !subnetLinksToNode {
-			subnet.Status.Hosts = append(subnet.Status.Hosts, networkv1alpha1.HostSubnetStatus{
-				Node: node.Name,
-			})
+		spew.Dump("Got the subnet status here", subnet, "subnetLinksToNode", subnetLinksToNode, "needsUpdate", needsUpdate)
 
+		if !subnetLinksToNode {
+			subnet.Status.Hosts = append(subnet.Status.Hosts, &networkv1alpha1.HostSubnetStatus{
+				Node: node.Name,
+				Router: networkv1alpha1.SubnetHostRouterStatus{
+					Mac: macAddr.String(),
+				},
+			})
+			needsUpdate = true
+		}
+
+		if needsUpdate {
 			if err := r.Client.Status().Update(ctx, subnet); err != nil {
 				return err
 			}
@@ -57,7 +73,7 @@ func (r *SubnetReconciler) removeNodeFromSubnetStatus(ctx context.Context, subne
 			return err
 		}
 		found := false
-		newHosts := []networkv1alpha1.HostSubnetStatus{}
+		newHosts := []*networkv1alpha1.HostSubnetStatus{}
 		for _, boundHosts := range subnet.Status.Hosts {
 			if boundHosts.Node == r.Node.GetNode().Name {
 				found = true

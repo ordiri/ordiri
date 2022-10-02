@@ -18,6 +18,7 @@ import (
 	"github.com/ordiri/ordiri/pkg/network/sdn"
 	"github.com/vishvananda/netlink"
 	"github.com/vishvananda/netns"
+	"inet.af/netaddr"
 )
 
 func metaMac() net.HardwareAddr {
@@ -65,6 +66,10 @@ func (ln *linuxDriver) RegisterSubnet(ctx context.Context, nw api.Network, sn ap
 
 	log.Info("Installing Subnet Flows")
 	if err := ln.installSubnetFlows(ctx, nw, sn); err != nil {
+		return err
+	}
+	log.Info("Installing Subnet router")
+	if err := ln.installRouter(ctx, nw, sn); err != nil {
 		return err
 	}
 
@@ -265,8 +270,9 @@ func (ln *linuxDriver) installDhcp(ctx context.Context, nw api.Network, subnet a
 
 	routerAddr := dhcpCidr.IP().Next()
 	dhcpAddr := routerAddr.Next()
+	dhcpIpCidr := netaddr.IPPrefixFrom(routerAddr.Next(), dhcpCidr.Bits())
 
-	if err := setNsVethIp(namespace, fmt.Sprintf("%s/%d", dhcpAddr.String(), dhcpCidr.Bits()), cableName.Namespace()); err != nil {
+	if err := setNsVethIp(namespace, dhcpIpCidr, cableName.Namespace()); err != nil {
 		return fmt.Errorf("unable to set dhcp ip on internal cable %s - %W", cableName, err)
 	}
 

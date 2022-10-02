@@ -32,6 +32,7 @@ func (ln *networkManager) RegisterSubnet(ctx context.Context, nw string, sn api.
 			nw.subnets[sn.Name()] = &managedSubnet{
 				ifaces: make(map[string]*managedIface),
 				l:      sync.RWMutex{},
+				Subnet: sn,
 			}
 		}
 		nw.subnets[sn.Name()].Subnet = sn

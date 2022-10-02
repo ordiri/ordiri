@@ -132,27 +132,27 @@ func (wi *Router) installIncomingRule(client *ovs.Client) error {
 // 		VlanId: wi.Segment,
 // 	}
 
-// 	return arpResponder.Install(client)
-// }
+//		return arpResponder.Install(client)
+//	}
 func (wi *Router) Install(client *ovs.Client) error {
 	// if err := wi.installArpResponder(client); err != nil {
 	// 	return err
 	// }
 	// return nil
 	if err := wi.installOutgoingRule(client); err != nil {
-		return err
+		return fmt.Errorf("installOutgoingRule: - %w", err)
 	}
 
 	if err := wi.installIncomingRule(client); err != nil {
-		return err
+		return fmt.Errorf("installIncomingRule: - %w", err)
 	}
 
 	if err := wi.installCrossTunnelBlockArpRule(client); err != nil {
-		return err
+		return fmt.Errorf("installCrossTunnelBlockArpRule: - %w", err)
 	}
 
 	if err := wi.installCrossTunnelBlockTrafficRule(client); err != nil {
-		return err
+		return fmt.Errorf("installCrossTunnelBlockTrafficRule: - %w", err)
 	}
 
 	for _, flow := range wi.rules() {

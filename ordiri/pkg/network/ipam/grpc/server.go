@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net"
-	"net/netip"
 	"strings"
 
 	"github.com/cilium/ipam/service/ipallocator"
@@ -75,12 +74,9 @@ func (a *Allocator) RegisterBlock(ctx context.Context, req *api.RegisterBlockReq
 	}, nil
 	// return nil, status.Errorf(codes.Unimplemented, "method RegisterBlock not implemented")
 }
+
 func keyFromParts(parts ...string) []byte {
 	return []byte(strings.Join(parts, "::"))
-}
-
-func (a *Allocator) allocateFromBlock(ctx context.Context, blockName, macAddr, preferredIp string, blockSize int) (netip.Prefix, error) {
-	return netip.Prefix{}, fmt.Errorf("not implemented")
 }
 
 func (a *Allocator) withIpSet(ctx context.Context, blockName string, handler func(ipallocator.Interface) (bool, error)) error {
@@ -145,7 +141,12 @@ func (a *Allocator) List(ctx context.Context, req *api.ListRequest) (*api.ListRe
 	res := &api.ListResponse{}
 	err := a.withIpSet(ctx, req.BlockName, func(alloc ipallocator.Interface) (bool, error) {
 		alloc.ForEach(func(i net.IP) {
-			res.Allocated = append(res.Allocated, i.String())
+			allocationCidr := alloc.CIDR()
+			allocationNw, _ := netaddr.FromStdIPNet(&allocationCidr)
+			allocatedIp, _ := netaddr.FromStdIP(i)
+			allocatedCidr := netaddr.IPPrefixFrom(allocatedIp, allocationNw.Bits())
+
+			res.Allocated = append(res.Allocated, allocatedCidr.String())
 		})
 		return false, nil
 	})
