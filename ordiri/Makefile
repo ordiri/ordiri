@@ -137,14 +137,14 @@ linux-md:
 .PHONY: deploy-debian-ordlet deploy-mothership-ordlet
 deploy-debian-ordlet: linux-ordlet
 	scp kubeconfig root@debian:/etc/ordiri.conf
-	scp ordlet.service root@debian:/etc/systemd/system/ordlet.service
+	scp *.service root@debian:/etc/systemd/system/.
 	ssh root@debian 'systemctl daemon-reload && systemctl enable ordlet.service'
 	scp bin/ordlet-amd64-linux root@debian:~/ordlet
 	ssh root@debian 'mv ~/ordlet /usr/local/bin/ordlet && systemctl daemon-reload'
 
 deploy-mothership-ordlet: linux-ordlet
 	scp kubeconfig mothership:/etc/ordiri.conf
-	scp ordlet.service mothership:/etc/systemd/system/ordlet.service
+	scp *.service mothership:/etc/systemd/system/.
 	ssh mothership 'systemctl daemon-reload && systemctl enable ordlet.service'
 	scp bin/ordlet-amd64-linux mothership:~/ordlet
 	ssh mothership 'mv ~/ordlet /usr/local/bin/ordlet && systemctl daemon-reload'

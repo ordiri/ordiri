@@ -156,7 +156,7 @@ type NetworkStatus struct {
 	Vni int64 `json:"vni"`
 
 	// All the hosts this network is currently deployed on
-	Hosts []HostNetworkStatus `json:"hosts"`
+	Hosts []*HostNetworkStatus `json:"hosts"`
 }
 
 type HostNetworkStatus struct {
@@ -166,7 +166,7 @@ type HostNetworkStatus struct {
 }
 
 type NetworkInterfaceStatus struct {
-	Ips []string `json:"ips"`
+	Ips []string `json:"ips,omitempty"`
 	Mac string   `json:"mac"`
 }
 

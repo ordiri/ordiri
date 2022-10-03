@@ -22,8 +22,8 @@ type Driver interface {
 	DetatchInterface(context.Context, api.Network, api.Subnet, api.Interface) error
 	AttachInterface(context.Context, api.Network, api.Subnet, api.Interface) (string, error)
 
-	RemoveRouter(context.Context, api.Network, api.Subnet, api.Router) error
-	EnsureRouter(context.Context, api.Network, api.Subnet, api.Router) error
+	RemoveRouter(context.Context, api.Network, api.Subnet) error
+	EnsureRouter(context.Context, api.Network, api.Subnet) error
 
 	RemoveSubnet(context.Context, api.Network, api.Subnet) error
 	RegisterSubnet(context.Context, api.Network, api.Subnet) error

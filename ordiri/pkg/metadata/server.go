@@ -7,6 +7,7 @@ import (
 	"path"
 	"strings"
 
+	"inet.af/netaddr"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	"github.com/davecgh/go-spew/spew"
@@ -32,8 +33,8 @@ func NewServer(client client.Client) *Server {
 
 const VirtualMachineByInterfaceIpKey = ".spec.virtual_machine_by_interface_ip"
 
-func KeyForVmInterface(network, subnet, ip string) string {
-	return fmt.Sprintf("%s:%s:%s", network, subnet, ip)
+func KeyForVmInterface(network, subnet string, ip netaddr.IP) string {
+	return fmt.Sprintf("%s:%s:%s", network, subnet, ip.String())
 }
 
 func (s *Server) HandleMissing(w http.ResponseWriter, r *http.Request) {
@@ -62,14 +63,21 @@ func (s *Server) vmForRequest(r *http.Request) (*computev1alpha1.VirtualMachine,
 	ip := r.Header.Get("X-Ordiri-Ip")
 	tenant := r.Header.Get("X-Ordiri-Tenant")
 
-	vmKey := KeyForVmInterface(network, subnet, ip)
+	addr, err := netaddr.ParseIP(ip)
+
+	if err != nil {
+		return nil, "", "", "", fmt.Errorf("invalid ip addr - %w", err)
+	}
+
+	vmKey := KeyForVmInterface(network, subnet, addr)
 	if subnet == "" || network == "" || ip == "" {
 		return nil, "", "", "", fmt.Errorf("invalid incoming request for %q", vmKey)
 	}
+	fmt.Printf("Getting vm by for tenant %s vmkey: %+v\n", tenant, vmKey)
 
 	vmByIp := &computev1alpha1.VirtualMachineList{}
 	if err := s.client.List(context.Background(), vmByIp, client.InNamespace(tenant), client.MatchingFields{VirtualMachineByInterfaceIpKey: vmKey}); err != nil {
-		return nil, "", "", "", fmt.Errorf("error listing machine for ip %q - %s", vmKey, err.Error())
+		return nil, "", "", "", fmt.Errorf("error listing machine for ip %q - %s", fmt.Sprintf("%s@%s", tenant, vmKey), err.Error())
 	}
 
 	if len(vmByIp.Items) == 0 {

@@ -19,9 +19,9 @@ package network
 import (
 	"context"
 	"fmt"
-	"net"
 	"reflect"
 
+	"inet.af/netaddr"
 	k8err "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
@@ -32,6 +32,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 
+	computev1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
 	"github.com/ordiri/ordiri/pkg/mac"
 	"github.com/ordiri/ordiri/pkg/network"
@@ -121,7 +122,7 @@ func (r *SubnetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	for _, m := range subnet.Status.Hosts {
 		if m.Node == r.Node.GetNode().Name {
 			if m.Router.Mac != "" {
-				hlm, err := net.ParseMAC(m.Router.Mac)
+				hlm, err := mac.Parse(m.Router.Mac)
 				if err == nil {
 					hostLocalMac = hlm
 				}
@@ -152,6 +153,29 @@ func (r *SubnetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 
 	if sn == nil {
 		return ctrl.Result{}, fmt.Errorf("unable to ensure subnet is configured correctly")
+	}
+	vms := &computev1alpha1.VirtualMachineList{}
+	if err := r.Client.List(ctx, vms, client.InNamespace(subnet.Namespace), client.MatchingFields{"VmsToSubnetIndex": nw.Name + subnet.Name}); err != nil {
+		return ctrl.Result{}, fmt.Errorf("aoe - %w", err)
+	}
+	for _, vm := range vms.Items {
+		for _, iface := range vm.Spec.NetworkInterfaces {
+			if len(iface.Ips) == 0 {
+				return ctrl.Result{}, fmt.Errorf("vm %q, interface %+v has no ip yet", vm.Name, iface)
+			}
+			macAddr, err := mac.Parse(iface.Mac)
+			if err != nil {
+				return ctrl.Result{}, fmt.Errorf("aoe - %w", err)
+			}
+			for _, ip := range iface.Ips {
+				addr, err := netaddr.ParseIPPrefix(ip)
+				if err != nil {
+					return ctrl.Result{}, fmt.Errorf("unable to parse ip for network interface - %w", err)
+				}
+
+				sn.RegisterMac(addr.IP(), macAddr)
+			}
+		}
 	}
 
 	log.Info("ensuring subnet is configured by the driver", "subnet", sn)

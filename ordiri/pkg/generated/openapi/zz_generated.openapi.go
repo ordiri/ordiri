@@ -2987,7 +2987,7 @@ func schema_pkg_apis_network_v1alpha1_NetworkInterfaceStatus(ref common.Referenc
 						},
 					},
 				},
-				Required: []string{"ips", "mac"},
+				Required: []string{"mac"},
 			},
 		},
 	}
@@ -3210,8 +3210,7 @@ func schema_pkg_apis_network_v1alpha1_NetworkStatus(ref common.ReferenceCallback
 							Items: &spec.SchemaOrArray{
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
-										Default: map[string]interface{}{},
-										Ref:     ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.HostNetworkStatus"),
+										Ref: ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.HostNetworkStatus"),
 									},
 								},
 							},

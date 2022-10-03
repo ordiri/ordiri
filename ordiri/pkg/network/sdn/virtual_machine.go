@@ -21,12 +21,12 @@ type VirtualMachine struct {
 
 func (wi *VirtualMachine) rules() []FlowRule {
 	rules := []FlowRule{
-		// &MetadataServer{
-		// 	Switch:       wi.WorkloadSwitch,
-		// 	Mac:          wi.MetadataMac,
-		// 	WorkloadPort: wi.WorkloadPort,
-		// 	MetadataPort: wi.MetadataPort,
-		// },
+		&MetadataServer{
+			Switch:       wi.WorkloadSwitch,
+			Mac:          wi.MetadataMac,
+			WorkloadPort: wi.WorkloadPort,
+			MetadataPort: wi.MetadataPort,
+		},
 	}
 
 	// for _, ip := range wi.Ips {

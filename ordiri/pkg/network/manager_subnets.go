@@ -36,7 +36,10 @@ func (ln *networkManager) RegisterSubnet(ctx context.Context, nw string, sn api.
 			}
 		}
 		nw.subnets[sn.Name()].Subnet = sn
-		return nil
+		if nw.subnets[sn.Name()].attached {
+			return ln.driver.RegisterSubnet(ctx, nw, sn)
+		}
+		return ln.driver.EnsureRouter(ctx, nw, sn)
 	}
 
 	return fmt.Errorf("unknown network")

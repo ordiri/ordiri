@@ -31,7 +31,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 
-	"github.com/ordiri/ordiri/config"
 	computev1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
@@ -115,7 +114,8 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 					if err != nil {
 						return ctrl.Result{}, fmt.Errorf("invalid ip on host - %w", err)
 					}
-					if config.NetworkInternetGatewayCidr.Contains(addr.IP()) {
+
+					if r.GatewayCidr.Contains(addr.IP()) {
 						networkOpts = append(networkOpts, network.WithExternalGatewayIp(addr))
 						hasGatewayIp = true
 						break
@@ -127,7 +127,7 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 						BlockName: "_shared::gateway",
 					})
 					if err != nil {
-						return ctrl.Result{}, err
+						return ctrl.Result{}, fmt.Errorf("unable ot allocate gateway ip - %w", err)
 					}
 
 					hasGatewayIp = true
@@ -142,7 +142,7 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 			}
 		}
 
-		net, err := network.NewNetwork(nw.Name, nw.Spec.Cidr, nw.Status.Vni, int64(localVlan), networkOpts...)
+		net, err := network.NewNetwork(nw.Namespace, nw.Name, nw.Spec.Cidr, nw.Status.Vni, int64(localVlan), networkOpts...)
 		if err != nil {
 			return ctrl.Result{}, err
 		}
@@ -202,7 +202,7 @@ func (r *NetworkReconciler) addNodeToNetworkStatus(ctx context.Context, nw *netw
 				return fmt.Errorf("can't get vlanid for the nw %s on %s - %w", nw.Name, node.Name, err)
 			}
 
-			network.Status.Hosts = append(network.Status.Hosts, networkv1alpha1.HostNetworkStatus{
+			network.Status.Hosts = append(network.Status.Hosts, &networkv1alpha1.HostNetworkStatus{
 				Node:   node.Name,
 				VlanId: vlanId,
 				NetworkInterface: networkv1alpha1.NetworkInterfaceStatus{
@@ -228,7 +228,7 @@ func (r *NetworkReconciler) removeNodeFromNetworkStatus(ctx context.Context, nw 
 			return err
 		}
 		found := false
-		newHosts := []networkv1alpha1.HostNetworkStatus{}
+		newHosts := []*networkv1alpha1.HostNetworkStatus{}
 		for _, boundHosts := range network.Status.Hosts {
 			if boundHosts.Node == r.Node.GetNode().Name {
 				found = true

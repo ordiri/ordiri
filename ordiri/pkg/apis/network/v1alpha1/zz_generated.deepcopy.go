@@ -378,9 +378,13 @@ func (in *NetworkStatus) DeepCopyInto(out *NetworkStatus) {
 	}
 	if in.Hosts != nil {
 		in, out := &in.Hosts, &out.Hosts
-		*out = make([]HostNetworkStatus, len(*in))
+		*out = make([]*HostNetworkStatus, len(*in))
 		for i := range *in {
-			(*in)[i].DeepCopyInto(&(*out)[i])
+			if (*in)[i] != nil {
+				in, out := &(*in)[i], &(*out)[i]
+				*out = new(HostNetworkStatus)
+				(*in).DeepCopyInto(*out)
+			}
 		}
 	}
 }

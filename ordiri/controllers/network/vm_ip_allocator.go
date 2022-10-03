@@ -112,7 +112,7 @@ func (r *VmIpAllocator) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 					BlockName: subnetIpamBlockName,
 				})
 				if err != nil {
-					return ctrl.Result{}, err
+					return ctrl.Result{}, fmt.Errorf("unable to allocate private ip - %w", err)
 				}
 
 				iface.Ips = append(iface.Ips, allocated.Address)
@@ -152,6 +152,7 @@ func (r *VmIpAllocator) SetupWithManager(mgr ctrl.Manager) error {
 	})
 
 	return ctrl.NewControllerManagedBy(mgr).
+		Named("vm_ip_allocator").
 		For(&computev1alpha1.VirtualMachine{}).
 		// Watches(&source.Kind{Type: &computev1alpha1.VirtualMachine{}}, enqueueRequestFromVirtualMachine).
 		// Watches(&source.Kind{Type: &networkv1alpha1.Network{}}, enqueueRequestFromNetwork).

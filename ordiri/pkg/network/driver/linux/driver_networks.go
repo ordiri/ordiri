@@ -3,8 +3,12 @@ package linux
 import (
 	"context"
 	"fmt"
+	"io/fs"
 	"net"
+	"os"
+	"path/filepath"
 
+	"github.com/gosimple/slug"
 	"github.com/ordiri/ordiri/pkg/log"
 	"github.com/ordiri/ordiri/pkg/mac"
 	"github.com/ordiri/ordiri/pkg/network/api"
@@ -42,22 +46,22 @@ func (ln *linuxDriver) RegisterNetwork(ctx context.Context, nw api.Network) erro
 		return err
 	}
 
-	// if len(nw.DnsRecords()) > 0 {
-	// 	hostDir := etcHostMappingDir(nw)
-	// 	if err := os.MkdirAll(hostDir, os.ModePerm); err != nil {
-	// 		return err
-	// 	}
-	// 	for ip, hostnames := range nw.DnsRecords() {
-	// 		for _, hostname := range hostnames {
-	// 			mapping := fmt.Sprintf("%s %s", ip.String(), hostname)
-	// 			fileName := slug.Make(hostname)
-	// 			mappingFile := filepath.Join(hostDir, fileName)
-	// 			if err := os.WriteFile(mappingFile, []byte(mapping), fs.ModePerm); err != nil {
-	// 				return fmt.Errorf("unable to write mapping file - %w", err)
-	// 			}
-	// 		}
-	// 	}
-	// }
+	if len(nw.DnsRecords()) > 0 {
+		hostDir := etcHostMappingDir(nw)
+		if err := os.MkdirAll(hostDir, os.ModePerm); err != nil {
+			return err
+		}
+		for ip, hostnames := range nw.DnsRecords() {
+			for _, hostname := range hostnames {
+				mapping := fmt.Sprintf("%s %s", ip.String(), hostname)
+				fileName := slug.Make(hostname)
+				mappingFile := filepath.Join(hostDir, fileName)
+				if err := os.WriteFile(mappingFile, []byte(mapping), fs.ModePerm); err != nil {
+					return fmt.Errorf("unable to write mapping file - %w", err)
+				}
+			}
+		}
+	}
 
 	log.V(5).Info("Network ensured")
 	return nil

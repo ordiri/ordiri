@@ -20,6 +20,7 @@ func NewSubnet(name string, cidr string, segment int, routerMac, hostLocalMac ne
 		vlanId:          segment,
 		routerGlobalMac: hostLocalMac,
 		routerMac:       routerMac,
+		knownMacs:       map[netaddr.IP]net.HardwareAddr{},
 	}
 	for _, f := range opt {
 		if err := f(s); err != nil {
@@ -37,6 +38,7 @@ type subnet struct {
 	cidr            netaddr.IPPrefix
 	routerGlobalMac net.HardwareAddr
 	routerMac       net.HardwareAddr
+	knownMacs       map[netaddr.IP]net.HardwareAddr
 }
 
 func (s *subnet) Segment() int {
@@ -57,6 +59,20 @@ func (s *subnet) RouterMac() net.HardwareAddr {
 	return s.routerMac
 }
 
+func (sn *subnet) RegisterMac(ip netaddr.IP, mac net.HardwareAddr) bool {
+	if _mac, ok := sn.knownMacs[ip]; ok && _mac.String() == mac.String() {
+		return false
+	}
+
+	sn.knownMacs[ip] = mac
+
+	return true
+}
+func (sn *subnet) KnownMacs() map[netaddr.IP]net.HardwareAddr {
+	return sn.knownMacs
+}
 func (s *subnet) Cidr() netaddr.IPPrefix {
 	return s.cidr.Masked()
 }
+
+var _ api.Subnet = &subnet{}

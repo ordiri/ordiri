@@ -32,6 +32,7 @@ func (ln *networkManager) AttachInterface(ctx context.Context, nw string, sn str
 	ln.l.RLock()
 	defer ln.l.RUnlock()
 	if nw, ok := ln.networks[nw]; ok {
+		nw.attached = true
 		if err := ln.driver.RegisterNetwork(ctx, nw); err != nil {
 			return "", fmt.Errorf("error creating network - %w", err)
 		}
@@ -41,13 +42,12 @@ func (ln *networkManager) AttachInterface(ctx context.Context, nw string, sn str
 			if err := ln.driver.RegisterSubnet(ctx, nw, sn); err != nil {
 				return "", fmt.Errorf("error creating subnet - %w", err)
 			}
-
+			sn.attached = true
 			name, err := ln.driver.AttachInterface(ctx, nw, sn, iface)
 			if err != nil {
 				return "", fmt.Errorf("error attaching interface - %w", err)
 			}
 
-			sn.attached = true
 			return name, nil
 		}
 		return "", fmt.Errorf("missing subnet")

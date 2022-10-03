@@ -113,7 +113,7 @@ func main() {
 		setupLog.Error(err, "unable to decode node mgmt cidr", "cidr", mgmtCidrStr)
 		os.Exit(1)
 	}
-	gatewayCidr, err := netaddr.ParseIPPrefix(mgmtCidrStr)
+	gatewayCidr, err := netaddr.ParseIPPrefix(gatewayCidrStr)
 	if err != nil {
 		setupLog.Error(err, "unable to decode node mgmt cidr", "cidr", mgmtCidrStr)
 		os.Exit(1)

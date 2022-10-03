@@ -40,13 +40,14 @@ type RunnableManager interface {
 }
 
 type Network interface {
+	Tenant() string
 	Name() string
 	Cidr() netaddr.IPPrefix
 	Segment() int64
 	ExternalIp() netaddr.IPPrefix
-	// DnsRecords() map[netaddr.IP][]string
+	DnsRecords() map[netaddr.IP][]string
 
-	// WithDns(netaddr.IP, []string) bool
+	WithDns(netaddr.IP, []string) bool
 }
 
 type Subnet interface {
@@ -55,6 +56,8 @@ type Subnet interface {
 	Segment() int
 	RouterGlobalMac() net.HardwareAddr
 	RouterMac() net.HardwareAddr
+	KnownMacs() map[netaddr.IP]net.HardwareAddr
+	RegisterMac(netaddr.IP, net.HardwareAddr) bool
 }
 
 type Router interface {
