@@ -61,6 +61,12 @@ export interface ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeNetworkStatus {
      * @memberof ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeNetworkStatus
      */
     uid?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeNetworkStatus
+     */
+    vlanId: number;
 }
 
 /**
@@ -68,6 +74,7 @@ export interface ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeNetworkStatus {
  */
 export function instanceOfComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeNetworkStatus(value: object): boolean {
     let isInstance = true;
+    isInstance = isInstance && "vlanId" in value;
 
     return isInstance;
 }
@@ -89,6 +96,7 @@ export function ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeNetworkStatusFromJSO
         'namespace': !exists(json, 'namespace') ? undefined : json['namespace'],
         'resourceVersion': !exists(json, 'resourceVersion') ? undefined : json['resourceVersion'],
         'uid': !exists(json, 'uid') ? undefined : json['uid'],
+        'vlanId': json['vlanId'],
     };
 }
 
@@ -108,6 +116,7 @@ export function ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeNetworkStatusToJSON(
         'namespace': value.namespace,
         'resourceVersion': value.resourceVersion,
         'uid': value.uid,
+        'vlanId': value.vlanId,
     };
 }
 

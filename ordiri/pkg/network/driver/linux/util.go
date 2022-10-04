@@ -110,7 +110,7 @@ func createNetworkNs(name string) error {
 	return nil
 }
 
-func setNsVethIp(namespace string, addr string, cableName string) error {
+func setNsVethIp(namespace string, addr netaddr.IPPrefix, cableName string) error {
 	nsHandle, err := netns.GetFromName(namespace)
 	if err != nil {
 		return fmt.Errorf("unable to get namespace %q - %w", namespace, err)
@@ -126,11 +126,10 @@ func setNsVethIp(namespace string, addr string, cableName string) error {
 		return fmt.Errorf("unable to get interface %q in namespace %q - %w", cableName, namespace, err)
 	}
 
-	ipNw := netaddr.MustParseIPPrefix(addr)
 	if err := nl.AddrReplace(link, &netlink.Addr{
-		IPNet: ipNw.IPNet(),
+		IPNet: addr.IPNet(),
 	}); err != nil {
-		return fmt.Errorf("unable to add address %q to interface %q in namespace %q - %w", ipNw.String(), cableName, namespace, err)
+		return fmt.Errorf("unable to add address %q to interface %q in namespace %q - %w", addr.String(), cableName, namespace, err)
 	}
 
 	return nil

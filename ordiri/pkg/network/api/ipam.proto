@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+option go_package = "github.com/ordiri/ordiri/pkg/network/api";
+
+package api;
+
+// Creates isolated logical networks 
+service AddressAllocator {
+    //
+    // Adds a block that can be allocated from
+    //
+    rpc RegisterBlock(RegisterBlockRequest) returns (RegisterBlockResponse) {}
+
+    //
+    // Request an ip from a block
+    //
+    rpc Allocate(AllocateRequest) returns (AllocateResponse) {}
+    //
+    // Request an ip from a block
+    //
+    rpc List(ListRequest) returns (ListResponse) {}
+
+    //
+    // Request an ip from a block
+    //
+    rpc Release(ReleaseRequest) returns (ReleaseResponse) {}
+}
+
+message AllocatableRange {
+    string CIDR = 1;
+}
+
+message RegisterBlockRequest {
+    string BlockName = 1;
+    repeated AllocatableRange Ranges = 2;
+}
+
+message RegisterBlockResponse {
+    string BlockName = 1;
+    repeated AllocatableRange Ranges = 2;
+}
+
+message AllocateRequest {
+    string BlockName = 1;
+}
+
+message AllocateResponse {
+    string BlockName = 1;
+    string Address = 2;
+}
+
+
+message ReleaseRequest {
+    string BlockName = 1;
+    string Address = 2;
+}
+
+message ReleaseResponse {
+    string BlockName = 1;
+    string Address = 2;
+}
+
+
+message ListRequest {
+    string BlockName = 1;
+}
+
+message ListResponse {
+    string BlockName = 1;
+    repeated string Allocated = 2;
+}
+

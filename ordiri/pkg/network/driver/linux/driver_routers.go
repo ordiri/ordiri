@@ -10,20 +10,21 @@ import (
 	"github.com/ordiri/ordiri/pkg/network/sdn"
 	"github.com/vishvananda/netlink"
 	"github.com/vishvananda/netns"
+	"inet.af/netaddr"
 )
 
-func (ld *linuxDriver) EnsureRouter(ctx context.Context, nw api.Network, sn api.Subnet, rtr api.Router) error {
-	if err := ld.installRouter(ctx, nw, sn, rtr); err != nil {
+func (ld *linuxDriver) EnsureRouter(ctx context.Context, nw api.Network, sn api.Subnet) error {
+	if err := ld.installRouter(ctx, nw, sn); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (ld *linuxDriver) RemoveRouter(ctx context.Context, nw api.Network, sn api.Subnet, rtr api.Router) error {
+func (ld *linuxDriver) RemoveRouter(ctx context.Context, nw api.Network, sn api.Subnet) error {
 	log := log.FromContext(ctx)
 	routerNetworkNamespace := namespaceForRouter(nw)
 
-	internalRouterCableName := internalRouterCable(nw, sn, rtr)
+	internalRouterCableName := internalRouterCable(nw, sn)
 
 	if _, iface := ld.interfaces.search(internalRouterCableName.Root()); iface != nil {
 		if err := netlink.LinkDel(iface); err != nil {
@@ -60,19 +61,21 @@ func (ld *linuxDriver) RemoveRouter(ctx context.Context, nw api.Network, sn api.
 	return nil
 }
 
-func (ld *linuxDriver) installRouter(ctx context.Context, nw api.Network, subnet api.Subnet, rtr api.Router) error {
+func (ld *linuxDriver) installRouter(ctx context.Context, nw api.Network, subnet api.Subnet) error {
 	routerNetworkNamespace := namespaceForRouter(nw)
 	err := createNetworkNs(routerNetworkNamespace)
 	if err != nil {
 		return fmt.Errorf("unable to create router network namespace - %w", err)
 	}
 
-	internalRouterCableName := internalRouterCable(nw, subnet, rtr)
-	if err := ld.getOrCreateVeth(ctx, routerNetworkNamespace, internalRouterCableName, true, rtr.GlobalMac()); err != nil {
+	internalRouterCableName := internalRouterCable(nw, subnet)
+	if err := ld.getOrCreateVeth(ctx, routerNetworkNamespace, internalRouterCableName, true, subnet.RouterGlobalMac()); err != nil {
 		return fmt.Errorf("unable to create internal veth cable - %w", err)
 	}
 
-	if err := setNsVethIp(routerNetworkNamespace, rtr.IP().String(), internalRouterCableName.Namespace()); err != nil {
+	// Get the first ip
+	rtrIp := netaddr.IPPrefixFrom(subnet.Cidr().IP().Next(), subnet.Cidr().Bits())
+	if err := setNsVethIp(routerNetworkNamespace, rtrIp, internalRouterCableName.Namespace()); err != nil {
 		return fmt.Errorf("unable to set router address - %w", err)
 	}
 	ovsClient := sdn.Ovs()
@@ -111,7 +114,7 @@ func (ld *linuxDriver) installRouter(ctx context.Context, nw api.Network, subnet
 		if err != nil {
 			panic(err.Error())
 		}
-		for ip, mac := range rtr.KnownMacs() {
+		for ip, mac := range subnet.KnownMacs() {
 
 			err := handle.NeighSet(&netlink.Neigh{
 				LinkIndex:    iface.Attrs().Index,
@@ -127,10 +130,10 @@ func (ld *linuxDriver) installRouter(ctx context.Context, nw api.Network, subnet
 	<-ctx.Done()
 
 	routerFlow := &sdn.Router{
-		DistributedMac: rtr.GlobalMac(),
-		HostLocalMac:   rtr.Mac(),
-		IP:             rtr.IP().IP(),
-		Segment:        rtr.Segment(),
+		DistributedMac: subnet.RouterGlobalMac(),
+		HostLocalMac:   subnet.RouterMac(),
+		IP:             subnet.Cidr().IP().Next(),
+		Segment:        subnet.Segment(),
 	}
 
 	if err := routerFlow.Install(ovsClient); err != nil {

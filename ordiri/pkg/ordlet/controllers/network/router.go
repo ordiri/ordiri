@@ -21,9 +21,7 @@ import (
 	"fmt"
 	"net"
 	"reflect"
-	"time"
 
-	"inet.af/netaddr"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
@@ -35,12 +33,9 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 
-	"github.com/davecgh/go-spew/spew"
 	computev1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
-	"github.com/ordiri/ordiri/pkg/mac"
-	"github.com/ordiri/ordiri/pkg/network"
 	"github.com/ordiri/ordiri/pkg/network/api"
 	"github.com/ordiri/ordiri/pkg/ordlet"
 )
@@ -79,123 +74,124 @@ func (r *RouterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	}
 
 	node := r.Node.GetNode()
+	_ = node
+	_ = log
+	// make every net have a single router, better
 
-	// For each of the selected subnets this router is deployed too
-	// check if this node contains the subnet
-	for _, selector := range router.Spec.Subnets {
-		nodeWantsRouter := false // The node wants the router if the current node has it's subnet in the list of node subnets
-		if _, err := node.Subnet(selector.Name); err == nil {
-			log.Info("node wants router", "subnet", selector)
-			nodeWantsRouter = true
-		}
+	// // For each of the selected subnets this router is deployed too
+	// // check if this node contains the subnet
+	// for _, selector := range router.Spec.Subnets {
+	// 	nodeWantsRouter := false // The node wants the router if the current node has it's subnet in the list of node subnets
+	// 	if _, err := node.Subnet(router.Spec.Net selector.Name); err == nil {
+	// 		log.Info("node wants router", "subnet", selector)
+	// 		nodeWantsRouter = true
+	// 	}
 
-		nodeHasRouter := false
-		nodeLocalMac := mac.Unicast()
-		for _, snh := range router.Status.Hosts {
-			if snh.Node == node.Name && snh.Subnet == selector.Name {
-				log.Info("node has router", "subnet", selector)
-				nodeHasRouter = true
-				nlc, err := net.ParseMAC(snh.Mac)
-				if err != nil {
-					return ctrl.Result{}, fmt.Errorf("node local mac was not a valid mac addr")
-				}
-				nodeLocalMac = nlc
-			}
-		}
+	// 	nodeHasRouter := false
+	// 	nodeLocalMac := mac.Unicast()
+	// 	for _, snh := range router.Status.Hosts {
+	// 		if snh.Node == node.Name && snh.Subnet == selector.Name {
+	// 			log.Info("node has router", "subnet", selector)
+	// 			nodeHasRouter = true
+	// 			nlc, err := net.ParseMAC(snh.Mac)
+	// 			if err != nil {
+	// 				return ctrl.Result{}, fmt.Errorf("node local mac was not a valid mac addr")
+	// 			}
+	// 			nodeLocalMac = nlc
+	// 		}
+	// 	}
 
-		if nodeWantsRouter && !node.HasRole(corev1alpha1.NodeRoleNetwork) {
-			nodeWantsRouter = false
-		}
+	// 	if nodeWantsRouter && !node.HasRole(corev1alpha1.NodeRoleNetwork) {
+	// 		nodeWantsRouter = false
+	// 	}
 
-		if !nodeHasRouter && !nodeWantsRouter {
-			continue
-		}
+	// 	if !nodeHasRouter && !nodeWantsRouter {
+	// 		continue
+	// 	}
 
-		subnet := &networkv1alpha1.Subnet{}
-		subnet.Namespace = selector.Namespace
-		if subnet.Namespace == "" { // cross account?
-			subnet.Namespace = router.Namespace
-		}
-		subnet.Name = selector.Name
-		if err := r.Client.Get(ctx, client.ObjectKeyFromObject(subnet), subnet); err != nil {
-			return ctrl.Result{}, fmt.Errorf("subnet does not exist - %w", err)
-		}
+	// 	subnet := &networkv1alpha1.Subnet{}
+	// 	subnet.Namespace = selector.Namespace
+	// 	if subnet.Namespace == "" { // cross account?
+	// 		subnet.Namespace = router.Namespace
+	// 	}
+	// 	subnet.Name = selector.Name
+	// 	if err := r.Client.Get(ctx, client.ObjectKeyFromObject(subnet), subnet); err != nil {
+	// 		return ctrl.Result{}, fmt.Errorf("subnet does not exist - %w", err)
+	// 	}
 
-		nw := &networkv1alpha1.Network{}
-		if err := r.Client.Get(ctx, client.ObjectKey{Namespace: subnet.Namespace, Name: subnet.Spec.Network.Name}, nw); err != nil {
-			return ctrl.Result{}, fmt.Errorf("network does not exist - %w", err)
-		}
+	// 	nw := &networkv1alpha1.Network{}
+	// 	if err := r.Client.Get(ctx, client.ObjectKey{Namespace: subnet.Namespace, Name: subnet.Spec.Network.Name}, nw); err != nil {
+	// 		return ctrl.Result{}, fmt.Errorf("network does not exist - %w", err)
+	// 	}
 
-		if !r.NetworkManager.HasNetwork(nw.Name) {
-			return ctrl.Result{RequeueAfter: time.Second * 1}, fmt.Errorf("network manager has no network %s", nw.Name)
-		}
-		net := r.NetworkManager.GetNetwork(nw.Name)
+	// 	net := r.NetworkManager.GetNetwork(nw.Name)
+	// 	if net == nil {
+	// 		return ctrl.Result{RequeueAfter: time.Second * 1}, fmt.Errorf("network manager has no network %s", nw.Name)
+	// 	}
 
-		if !r.NetworkManager.HasSubnet(net, subnet.Name) {
-			return ctrl.Result{RequeueAfter: time.Second * 1}, fmt.Errorf("network %q has no subnet %q", nw.Name, subnet.Name)
-		}
+	// 	sn := r.NetworkManager.GetSubnet(net, subnet.Name)
+	// 	if sn == nil {
+	// 		return ctrl.Result{RequeueAfter: time.Second * 1}, fmt.Errorf("network %q has no subnet %q", nw.Name, subnet.Name)
+	// 	}
 
-		sn := r.NetworkManager.GetSubnet(net, subnet.Name)
-		var rtr api.Router
-		if r.NetworkManager.HasRouter(net, sn, router.Name) {
-			rtr = r.NetworkManager.GetRouter(net, sn, router.Name)
-		} else {
-			macAddr, err := mac.Parse(selector.Mac)
-			if err != nil {
-				return ctrl.Result{}, fmt.Errorf("invalid mac address - %w", err)
-			}
+	// 	rtr := r.NetworkManager.GetRouter(net, sn, router.Name)
+	// 	if rtr == nil {
+	// 		macAddr, err := mac.Parse(selector.Mac)
+	// 		if err != nil {
+	// 			return ctrl.Result{}, fmt.Errorf("invalid mac address - %w", err)
+	// 		}
 
-			// the router ip is always the first ip in the range (10.0.0.0/24 === router ip 10.0.0.1/24)
-			ip := netaddr.IPPrefixFrom(sn.Cidr().IP().Next(), sn.Cidr().Bits())
-			rtr, err = network.NewRouter(router.Name, ip, sn.Segment(), network.WithDistributedMac(macAddr), network.WithLocalMac(nodeLocalMac))
-			if err != nil {
-				return ctrl.Result{}, fmt.Errorf("unable to create router - %w", err)
-			}
-		}
+	// 		// the router ip is always the first ip in the range (10.0.0.0/24 === router ip 10.0.0.1/24)
+	// 		ip := netaddr.IPPrefixFrom(sn.Cidr().IP().Next(), sn.Cidr().Bits())
+	// 		rtr, err = network.NewRouter(router.Name, ip, sn.Segment(), network.WithDistributedMac(macAddr), network.WithLocalMac(nodeLocalMac))
+	// 		if err != nil {
+	// 			return ctrl.Result{}, fmt.Errorf("unable to create router - %w", err)
+	// 		}
+	// 	}
 
-		if !nodeWantsRouter {
-			log.Info("removing router", "subnet", subnet, "wants_router", nodeWantsRouter)
-			if err := r.NetworkManager.RemoveRouter(ctx, net, sn, rtr); err != nil {
-				return ctrl.Result{}, fmt.Errorf("aoeaoeao - %w", err)
-			}
-			if err := r.removeNodeSubnetFromRouterStatus(ctx, subnet, router); err != nil {
-				return ctrl.Result{}, fmt.Errorf("aoeaoeao - %w", err)
-			}
-		} else {
-			log.Info("installing router", "subnet", subnet, "wants_router", nodeWantsRouter)
-			if err := r.addNodeSubnetToRouterStatus(ctx, subnet, router, nodeLocalMac); err != nil {
-				return ctrl.Result{}, fmt.Errorf("aoeaoeao - %w", err)
-			}
+	// 	if !nodeWantsRouter {
+	// 		log.Info("removing router", "subnet", subnet, "wants_router", nodeWantsRouter)
+	// 		if err := r.NetworkManager.RemoveRouter(ctx, net, sn, rtr); err != nil {
+	// 			return ctrl.Result{}, fmt.Errorf("aoeaoeao - %w", err)
+	// 		}
+	// 		if err := r.removeNodeSubnetFromRouterStatus(ctx, subnet, router); err != nil {
+	// 			return ctrl.Result{}, fmt.Errorf("aoeaoeao - %w", err)
+	// 		}
+	// 	} else {
+	// 		log.Info("installing router", "subnet", subnet, "wants_router", nodeWantsRouter)
+	// 		if err := r.addNodeSubnetToRouterStatus(ctx, subnet, router, nodeLocalMac); err != nil {
+	// 			return ctrl.Result{}, fmt.Errorf("aoeaoeao - %w", err)
+	// 		}
 
-			vms := &computev1alpha1.VirtualMachineList{}
-			if err := r.Client.List(ctx, vms, client.InNamespace(router.Namespace), client.MatchingFields{"VmsToSubnetIndex": nw.Name + subnet.Name}); err != nil {
-				return ctrl.Result{}, fmt.Errorf("aoe - %w", err)
-			}
-			for _, vm := range vms.Items {
-				for _, iface := range vm.Spec.NetworkInterfaces {
-					if len(iface.Ips) == 0 {
-						return ctrl.Result{}, fmt.Errorf("vm %q, interface %+v has no ip yet", vm.Name, iface)
-					}
-					macAddr, err := mac.Parse(iface.Mac)
-					if err != nil {
-						return ctrl.Result{}, fmt.Errorf("aoe - %w", err)
-					}
-					ip, err := netaddr.ParseIP(iface.Ips[0])
-					if err != nil {
-						return ctrl.Result{}, fmt.Errorf("aoe - %w", err)
-					}
+	// 		vms := &computev1alpha1.VirtualMachineList{}
+	// 		if err := r.Client.List(ctx, vms, client.InNamespace(router.Namespace), client.MatchingFields{"VmsToSubnetIndex": nw.Name + subnet.Name}); err != nil {
+	// 			return ctrl.Result{}, fmt.Errorf("aoe - %w", err)
+	// 		}
+	// 		for _, vm := range vms.Items {
+	// 			for _, iface := range vm.Spec.NetworkInterfaces {
+	// 				if len(iface.Ips) == 0 {
+	// 					return ctrl.Result{}, fmt.Errorf("vm %q, interface %+v has no ip yet", vm.Name, iface)
+	// 				}
+	// 				macAddr, err := mac.Parse(iface.Mac)
+	// 				if err != nil {
+	// 					return ctrl.Result{}, fmt.Errorf("aoe - %w", err)
+	// 				}
+	// 				ip, err := netaddr.ParseIP(iface.Ips[0])
+	// 				if err != nil {
+	// 					return ctrl.Result{}, fmt.Errorf("aoe - %w", err)
+	// 				}
 
-					rtr.RegisterMac(ip, macAddr)
-				}
-			}
+	// 				rtr.RegisterMac(ip, macAddr)
+	// 			}
+	// 		}
 
-			spew.Dump(rtr)
+	// 		spew.Dump(rtr)
 
-			if err := r.NetworkManager.EnsureRouter(ctx, net, sn, rtr); err != nil {
-				return ctrl.Result{}, fmt.Errorf("aoeaoeao - %w", err)
-			}
-		}
-	}
+	// 		if err := r.NetworkManager.EnsureRouter(ctx, net, sn, rtr); err != nil {
+	// 			return ctrl.Result{}, fmt.Errorf("aoeaoeao - %w", err)
+	// 		}
+	// 	}
+	// }
 
 	return ctrl.Result{}, nil
 }

@@ -15,7 +15,7 @@ import (
 	"github.com/vishvananda/netlink"
 )
 
-func (ln *linuxDriver) RemoveInterface(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface) error {
+func (ln *linuxDriver) DetatchInterface(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface) error {
 	// Remove the  flow rules for vm
 	if err := ln.removeInterfaceFlows(ctx, nw, sn, iface); err != nil {
 		return err
@@ -33,7 +33,7 @@ func (ln *linuxDriver) RemoveInterface(ctx context.Context, nw api.Network, sn a
 	return nil
 }
 
-func (ln *linuxDriver) EnsureInterface(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface) (string, error) {
+func (ln *linuxDriver) AttachInterface(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface) (string, error) {
 	br, err := ln.createInterfaceBridge(ctx, nw, sn, iface)
 	if err != nil {
 		return "", err
@@ -42,11 +42,6 @@ func (ln *linuxDriver) EnsureInterface(ctx context.Context, nw api.Network, sn a
 	tuntap, err := ln.createInterfaceTunTap(ctx, nw, sn, iface, br)
 	// create tun/tap device
 	if err != nil {
-		return "", err
-	}
-
-	// create tun/tap device
-	if err := ln.createPublicIps(ctx, nw, sn, iface, br); err != nil {
 		return "", err
 	}
 
@@ -113,12 +108,17 @@ func (ln *linuxDriver) createInterfaceBridge(ctx context.Context, nw api.Network
 		la := netlink.NewLinkAttrs()
 		la.Name = bridgeName
 		la.MTU = sdn.OverlayMTU
-		bridge = &netlink.Bridge{LinkAttrs: la}
+		forwardDelay := uint32(0)
+		bridge = &netlink.Bridge{
+			LinkAttrs:    la,
+			ForwardDelay: &forwardDelay,
+		}
 
 		if err := netlink.LinkAdd(bridge); err != nil {
 			return nil, fmt.Errorf("unable to add new bridge for vm - %w", err)
 		}
 	}
+
 	if bridge.MTU != sdn.OverlayMTU {
 		if err := netlink.LinkSetMTU(bridge, sdn.OverlayMTU); err != nil {
 			return nil, fmt.Errorf("unable to set mtu - %w", err)
@@ -151,28 +151,6 @@ func (ln *linuxDriver) createInterfaceBridge(ctx context.Context, nw api.Network
 	return bridge, nil
 }
 
-func (ln *linuxDriver) createPublicIps(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface, ifaceBridge *netlink.Bridge) error {
-	namespace := namespaceForRouter(nw)
-	publicGwCableName := publicGwCable(nw)
-
-	ipt, err := sdn.Iptables(namespace)
-	if err != nil {
-		return err
-	}
-	_ = ipt
-	_ = publicGwCableName
-	// Table: "nat",
-	// Chain: "POSTROUTING",
-	// Rules: [][]string{
-	// 	{"-o", publicInterface, "-j", "MASQUERADE"},
-	// },
-	// if err := ipt.AppendUnique("nat", "POSTROUTING", "-i", publicGwCableName.Namespace()); err != nil {
-
-	// }
-
-	// return fmt.Errorf("unknown error fetching existing tuntap device")
-	return nil
-}
 func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface, ifaceBridge *netlink.Bridge) (*netlink.Tuntap, error) {
 	tuntapName := interfaceTunTapName(nw, sn, iface)
 	nl, err := netlink.LinkByName(tuntapName)
@@ -180,22 +158,20 @@ func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network
 		return nil, fmt.Errorf("unknown error fetching existing tuntap device - %w", err)
 	}
 
+	// todo: This is pretty incorrect but it works for now
+	// it's incorrect because of the idea that hostnames are bound to an
+	// interface + ip in the vm_networking so here we would return
+	// the wrong ip for a multi ip interface
+	// post this comment the dns stuff was moved to the network to enable us
+	// to create dns records for the entire network
 	if len(iface.PrivateIp()) > 0 {
-		// todo: This is pretty incorrect but it works for now
-		// it's incorrect because of the idea that hostnames are bound to an
-		// interface + ip in the vm_networking so here we would return
-		// the wrong ip for a multi ip interface
-		// post this comment the dns stuff was moved to the network to enable us
-		// to create dns records for the entire network
-		if len(iface.PrivateIp()) > 0 {
-			addr := iface.PrivateIp()[0]
-			dhcpHostDir := dhcpHostMappingDir(nw, sn)
-			mapping := fmt.Sprintf("%s,%s,%s", iface.Mac(), addr.String(), iface.Hostnames()[0])
-			fileName := slug.Make(addr.String())
-			hostFile := filepath.Join(dhcpHostDir, fileName)
-			if err := os.WriteFile(hostFile, []byte(mapping), fs.ModePerm); err != nil {
-				return nil, fmt.Errorf("unable to write host mapping file - %w", err)
-			}
+		addr := iface.PrivateIp()[0].IP()
+		dhcpHostDir := dhcpHostMappingDir(nw, sn)
+		mapping := fmt.Sprintf("%s,%s,%s", iface.Mac(), addr.String(), iface.Hostnames()[0])
+		fileName := slug.Make(addr.String())
+		hostFile := filepath.Join(dhcpHostDir, fileName)
+		if err := os.WriteFile(hostFile, []byte(mapping), fs.ModePerm); err != nil {
+			return nil, fmt.Errorf("unable to write host mapping file - %w", err)
 		}
 	}
 
@@ -214,7 +190,7 @@ func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network
 	if tuntap == nil {
 		la := netlink.NewLinkAttrs()
 		la.Name = tuntapName
-		la.HardwareAddr = iface.Mac()
+		// la.HardwareAddr = iface.Mac()
 
 		la.MTU = sdn.OverlayMTU
 		tuntap = &netlink.Tuntap{
@@ -235,11 +211,11 @@ func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network
 		}
 	}
 
-	if tuntap.Attrs().HardwareAddr.String() != iface.Mac().String() {
-		if err := netlink.LinkSetHardwareAddr(tuntap, iface.Mac()); err != nil {
-			return nil, fmt.Errorf("unable to set the tuntap %s ethernet address to %s - %w", tuntap.Name, iface.Mac().String(), err)
-		}
-	}
+	// if tuntap.Attrs().HardwareAddr.String() != iface.Mac().String() {
+	// 	if err := netlink.LinkSetHardwareAddr(tuntap, iface.Mac()); err != nil {
+	// 		return nil, fmt.Errorf("unable to set the tuntap %s ethernet address to %s - %w", tuntap.Name, iface.Mac().String(), err)
+	// 	}
+	// }
 
 	// we could set it on create but this ensure it's always correct and you can't
 	// set master on a netlink create message so it's always 2 netlink requests anyway

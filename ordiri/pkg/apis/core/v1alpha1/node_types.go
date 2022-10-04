@@ -78,11 +78,7 @@ func (in *Node) HasRole(role NodeRole) bool {
 	return false
 }
 
-func (node *Node) HasSubnet(subnet string) bool {
-	_, err := node.Subnet(subnet)
-	return err == nil
-}
-func (node *Node) Subnet(subnet string) (NodeSubnetStatus, error) {
+func (node *Node) Subnet(network string, subnet string) (NodeSubnetStatus, error) {
 	for _, subnetStatus := range node.Status.Subnets {
 		if subnetStatus.Name == subnet {
 			return subnetStatus, nil
@@ -92,8 +88,28 @@ func (node *Node) Subnet(subnet string) (NodeSubnetStatus, error) {
 	return NodeSubnetStatus{}, fmt.Errorf("node has not been assigned this subnet yet")
 }
 
-func (node *Node) SubnetVlanId(subnet string) (int, error) {
-	sn, err := node.Subnet(subnet)
+func (node *Node) HasSubnet(network, subnet string) bool {
+	_, err := node.Subnet(network, subnet)
+	return err == nil
+}
+
+func (node *Node) Network(nw string) (NodeNetworkStatus, error) {
+	for _, NetworkStatus := range node.Status.Networks {
+		if NetworkStatus.Name == nw {
+			return NetworkStatus, nil
+		}
+	}
+
+	return NodeNetworkStatus{}, fmt.Errorf("node has not been assigned this network yet")
+}
+
+func (node *Node) HasNetwork(network string) bool {
+	_, err := node.Network(network)
+	return err == nil
+}
+
+func (node *Node) NetworkVlanId(nw string) (int, error) {
+	sn, err := node.Network(nw)
 	if err != nil {
 		return 0, err
 	}
@@ -177,10 +193,10 @@ type NodeVirtualMachineStatus struct {
 
 type NodeNetworkStatus struct {
 	v1.ObjectReference `json:",inline"`
+	VlanId             int `json:"vlanId"`
 }
 type NodeSubnetStatus struct {
 	v1.ObjectReference `json:",inline"`
-	VlanId             int `json:"vlanId"`
 }
 
 func (in NodeStatus) SubResourceName() string {

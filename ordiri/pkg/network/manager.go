@@ -10,39 +10,45 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 )
 
-func NewManager(speaker *bgp.Speaker, driver driver.Driver) (api.RunnableManager, error) {
-	return &networkManager{
-		driver:   driver,
-		networks: []*managedNet{},
-		speaker:  speaker,
-	}, nil
+type managedNet struct {
+	api.Network
+	l        sync.RWMutex
+	subnets  map[string]*managedSubnet
+	attached bool
 }
 
 type managedSubnet struct {
-	sn         api.Subnet
-	routers    []api.Router
-	interfaces []api.Interface
+	api.Subnet
+	l        sync.RWMutex
+	ifaces   map[string]*managedIface
+	attached bool
 }
 
-type managedNet struct {
-	nw      api.Network
-	subnets []*managedSubnet
+type managedIface struct {
+	api.Interface
+	attached bool
+}
+
+func NewManager(speaker *bgp.Speaker, driver driver.Driver) (api.RunnableManager, error) {
+	return &networkManager{
+		driver:   driver,
+		speaker:  speaker,
+		networks: make(map[string]*managedNet),
+		l:        sync.RWMutex{},
+	}, nil
 }
 
 type networkManager struct {
-	networks []*managedNet
-	// subnets    map[string][]api.Subnet
-	// routers    map[string]map[string][]api.Router
-	// interfaces map[string]map[string][]api.Interface
-	driver  driver.Driver
-	speaker *bgp.Speaker
-
-	l sync.Mutex
+	driver   driver.Driver
+	speaker  *bgp.Speaker
+	networks map[string]*managedNet
+	l        sync.RWMutex
 }
 
 func (ln *networkManager) GetSpeaker() *bgp.Speaker {
 	return ln.speaker
 }
+
 func (ln *networkManager) Close() error {
 	if closer, isCloser := ln.driver.(driver.RunnableDriver); isCloser {
 		if err := closer.Close(); err != nil {

@@ -140,7 +140,6 @@ func (r *VirtualMachineReconciler) unschedule(ctx context.Context, vm *computev1
 }
 
 func (r *VirtualMachineReconciler) schedule(ctx context.Context, vm *computev1alpha1.VirtualMachine) error {
-	var scheduledNode *corev1alpha1.Node
 	// actuall schedule the node
 	log := log.FromContext(ctx)
 
@@ -150,9 +149,9 @@ func (r *VirtualMachineReconciler) schedule(ctx context.Context, vm *computev1al
 			return fmt.Errorf("error fetching node list - %w", err)
 		}
 		log.Info("finding node to schedule on out of", "nodes", nodes.Items)
-		scheduledNode = r.Scheduler(nodes.Items)
-		if scheduledNode == nil {
-			return fmt.Errorf("couldn't schedule node")
+		scheduledNode, err := r.Scheduler(nodes.Items)
+		if err != nil {
+			return fmt.Errorf("couldn't schedule node - %w", err)
 		}
 		if err := vm.Schedule(scheduledNode.Name); err != nil {
 			return fmt.Errorf("unable to schedule vm - %w", err)

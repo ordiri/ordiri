@@ -18,6 +18,7 @@ import (
 	"github.com/ordiri/ordiri/pkg/network/sdn"
 	"github.com/vishvananda/netlink"
 	"github.com/vishvananda/netns"
+	"inet.af/netaddr"
 )
 
 func metaMac() net.HardwareAddr {
@@ -47,7 +48,7 @@ func (ln *linuxDriver) RemoveSubnet(ctx context.Context, nw api.Network, sn api.
 	return nil
 }
 
-func (ln *linuxDriver) EnsureSubnet(ctx context.Context, nw api.Network, sn api.Subnet) error {
+func (ln *linuxDriver) RegisterSubnet(ctx context.Context, nw api.Network, sn api.Subnet) error {
 	log := log.FromContext(ctx)
 	log.Info("Installing Services Network")
 	if err := ln.createSubnetServicesNs(ctx, nw, sn); err != nil {
@@ -65,6 +66,10 @@ func (ln *linuxDriver) EnsureSubnet(ctx context.Context, nw api.Network, sn api.
 
 	log.Info("Installing Subnet Flows")
 	if err := ln.installSubnetFlows(ctx, nw, sn); err != nil {
+		return err
+	}
+	log.Info("Installing Subnet router")
+	if err := ln.installRouter(ctx, nw, sn); err != nil {
 		return err
 	}
 
@@ -194,6 +199,7 @@ func (ln *linuxDriver) installMetadataServer(ctx context.Context, nw api.Network
 	if err := sdn.Ovs().VSwitch.AddPort(sdn.WorkloadSwitchName, cableName.Root()); err != nil {
 		return err
 	}
+
 	log.Info("ensuring correct vlan tag on metadata cable", "cableName", cableName)
 	if err := sdn.Ovs().VSwitch.Set.Port(cableName.Root(), ovs.PortOptions{
 		Tag: int(subnet.Segment()),
@@ -201,7 +207,7 @@ func (ln *linuxDriver) installMetadataServer(ctx context.Context, nw api.Network
 		return err
 	}
 
-	if err := setNsVethIp(namespace, "169.254.169.254/32", cableName.Namespace()); err != nil {
+	if err := setNsVethIp(namespace, netaddr.MustParseIPPrefix("169.254.169.254/32"), cableName.Namespace()); err != nil {
 		return fmt.Errorf("unable to set metadata ip on internal cable %s - %W", cableName, err)
 	}
 
@@ -226,6 +232,8 @@ func (ln *linuxDriver) installMetadataServer(ctx context.Context, nw api.Network
 	}
 
 	return ln.enableUnitFile(ctx, baseDir, unitName, opts)
+	// This should not be part of the core network code
+	// return nil
 }
 
 func (ln *linuxDriver) createSubnetServicesNs(ctx context.Context, nw api.Network, subnet api.Subnet) error {
@@ -263,8 +271,9 @@ func (ln *linuxDriver) installDhcp(ctx context.Context, nw api.Network, subnet a
 
 	routerAddr := dhcpCidr.IP().Next()
 	dhcpAddr := routerAddr.Next()
+	dhcpIpCidr := netaddr.IPPrefixFrom(routerAddr.Next(), dhcpCidr.Bits())
 
-	if err := setNsVethIp(namespace, fmt.Sprintf("%s/%d", dhcpAddr.String(), dhcpCidr.Bits()), cableName.Namespace()); err != nil {
+	if err := setNsVethIp(namespace, dhcpIpCidr, cableName.Namespace()); err != nil {
 		return fmt.Errorf("unable to set dhcp ip on internal cable %s - %W", cableName, err)
 	}
 

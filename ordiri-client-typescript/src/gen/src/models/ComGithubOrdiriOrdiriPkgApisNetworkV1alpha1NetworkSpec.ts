@@ -13,24 +13,30 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1InternetGatewaySpec } from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1InternetGatewaySpec';
+import {
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1InternetGatewaySpecFromJSON,
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1InternetGatewaySpecFromJSONTyped,
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1InternetGatewaySpecToJSON,
+} from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1InternetGatewaySpec';
+import type { ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkDnsSpec } from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkDnsSpec';
+import {
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkDnsSpecFromJSON,
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkDnsSpecFromJSONTyped,
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkDnsSpecToJSON,
+} from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkDnsSpec';
 import type { ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkNatSpec } from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkNatSpec';
 import {
     ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkNatSpecFromJSON,
     ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkNatSpecFromJSONTyped,
     ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkNatSpecToJSON,
 } from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkNatSpec';
-import type { ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkPublicSpec } from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkPublicSpec';
+import type { ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkRouterSpec } from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkRouterSpec';
 import {
-    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkPublicSpecFromJSON,
-    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkPublicSpecFromJSONTyped,
-    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkPublicSpecToJSON,
-} from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkPublicSpec';
-import type { ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableSelector } from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableSelector';
-import {
-    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableSelectorFromJSON,
-    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableSelectorFromJSONTyped,
-    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableSelectorToJSON,
-} from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableSelector';
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkRouterSpecFromJSON,
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkRouterSpecFromJSONTyped,
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkRouterSpecToJSON,
+} from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkRouterSpec';
 
 /**
  * NetworkSpec defines the desired state of Network
@@ -46,22 +52,28 @@ export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSpec {
     cidr: string;
     /**
      * 
+     * @type {ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkDnsSpec}
+     * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSpec
+     */
+    dns?: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkDnsSpec;
+    /**
+     * 
      * @type {ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkNatSpec}
      * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSpec
      */
     nat?: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkNatSpec;
     /**
      * 
-     * @type {ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkPublicSpec}
+     * @type {ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1InternetGatewaySpec}
      * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSpec
      */
-    _public?: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkPublicSpec;
+    _public?: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1InternetGatewaySpec;
     /**
      * 
-     * @type {Array<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableSelector>}
+     * @type {ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkRouterSpec}
      * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSpec
      */
-    routeTables?: Array<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableSelector>;
+    router?: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkRouterSpec;
 }
 
 /**
@@ -85,9 +97,10 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSpecFromJSONTy
     return {
         
         'cidr': json['cidr'],
+        'dns': !exists(json, 'dns') ? undefined : ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkDnsSpecFromJSON(json['dns']),
         'nat': !exists(json, 'nat') ? undefined : ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkNatSpecFromJSON(json['nat']),
-        '_public': !exists(json, 'public') ? undefined : ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkPublicSpecFromJSON(json['public']),
-        'routeTables': !exists(json, 'routeTables') ? undefined : ((json['routeTables'] as Array<any>).map(ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableSelectorFromJSON)),
+        '_public': !exists(json, 'public') ? undefined : ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1InternetGatewaySpecFromJSON(json['public']),
+        'router': !exists(json, 'router') ? undefined : ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkRouterSpecFromJSON(json['router']),
     };
 }
 
@@ -101,9 +114,10 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSpecToJSON(val
     return {
         
         'cidr': value.cidr,
+        'dns': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkDnsSpecToJSON(value.dns),
         'nat': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkNatSpecToJSON(value.nat),
-        'public': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkPublicSpecToJSON(value._public),
-        'routeTables': value.routeTables === undefined ? undefined : ((value.routeTables as Array<any>).map(ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableSelectorToJSON)),
+        'public': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1InternetGatewaySpecToJSON(value._public),
+        'router': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkRouterSpecToJSON(value.router),
     };
 }
 

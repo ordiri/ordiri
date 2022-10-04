@@ -31,6 +31,18 @@ import {
     ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableSelectorFromJSONTyped,
     ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableSelectorToJSON,
 } from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableSelector';
+import type { ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetMetadataServer } from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetMetadataServer';
+import {
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetMetadataServerFromJSON,
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetMetadataServerFromJSONTyped,
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetMetadataServerToJSON,
+} from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetMetadataServer';
+import type { ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetRouter } from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetRouter';
+import {
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetRouterFromJSON,
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetRouterFromJSONTyped,
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetRouterToJSON,
+} from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetRouter';
 
 /**
  * SubnetSpec defines the desired state of Subnet
@@ -52,16 +64,28 @@ export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetSpec {
     dhcp: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1DhcpConfiguration;
     /**
      * 
+     * @type {ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetMetadataServer}
+     * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetSpec
+     */
+    metadataServer: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetMetadataServer;
+    /**
+     * 
      * @type {ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSelector}
      * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetSpec
      */
     network: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSelector;
     /**
      * 
-     * @type {Array<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableSelector>}
+     * @type {ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableSelector}
      * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetSpec
      */
-    routeTables: Array<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableSelector>;
+    routeTable: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableSelector;
+    /**
+     * 
+     * @type {ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetRouter}
+     * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetSpec
+     */
+    router: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetRouter;
 }
 
 /**
@@ -71,8 +95,10 @@ export function instanceOfComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetSpec(
     let isInstance = true;
     isInstance = isInstance && "cidr" in value;
     isInstance = isInstance && "dhcp" in value;
+    isInstance = isInstance && "metadataServer" in value;
     isInstance = isInstance && "network" in value;
-    isInstance = isInstance && "routeTables" in value;
+    isInstance = isInstance && "routeTable" in value;
+    isInstance = isInstance && "router" in value;
 
     return isInstance;
 }
@@ -89,8 +115,10 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetSpecFromJSONTyp
         
         'cidr': json['cidr'],
         'dhcp': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1DhcpConfigurationFromJSON(json['dhcp']),
+        'metadataServer': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetMetadataServerFromJSON(json['metadataServer']),
         'network': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSelectorFromJSON(json['network']),
-        'routeTables': ((json['routeTables'] as Array<any>).map(ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableSelectorFromJSON)),
+        'routeTable': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableSelectorFromJSON(json['routeTable']),
+        'router': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetRouterFromJSON(json['router']),
     };
 }
 
@@ -105,8 +133,10 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetSpecToJSON(valu
         
         'cidr': value.cidr,
         'dhcp': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1DhcpConfigurationToJSON(value.dhcp),
+        'metadataServer': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetMetadataServerToJSON(value.metadataServer),
         'network': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSelectorToJSON(value.network),
-        'routeTables': ((value.routeTables as Array<any>).map(ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableSelectorToJSON)),
+        'routeTable': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableSelectorToJSON(value.routeTable),
+        'router': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetRouterToJSON(value.router),
     };
 }
 

@@ -57,7 +57,10 @@ manifests: controller-gen generate ## Generate WebhookConfiguration, ClusterRole
 	$(CONTROLLER_GEN) rbac:roleName=manager-role crd webhook paths="./pkg/apis/..." output:crd:artifacts:config=config/crd/bases
 
 .PHONY: generate
-generate: generate-controller generate-openapi generate-tsclient generate-client generate-lister generate-informer generate-defaulter
+generate: generate-openapi generate-controller generate-defaulter generate-client generate-lister generate-informer generate-tsclient generate-proto 
+
+generate-proto: 
+	go generate ./...
 
 clientset_name = versioned
 gendir = pkg/generated
@@ -65,6 +68,7 @@ INPUT_DIRS = "$(PACKAGE_NAME)/pkg/apis/core/v1alpha1,$(PACKAGE_NAME)/pkg/apis/ne
 CLIENT_INPUTS = "pkg/apis/core/v1alpha1,pkg/apis/network/v1alpha1,pkg/apis/compute/v1alpha1,pkg/apis/storage/v1alpha1,pkg/apis/authorization/v1alpha1"
 generate-controller: $(CONTROLLER_GEN)
 	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./pkg/apis/..."
+	
 generate-tsclient: $(CONTROLLER_GEN)
 	cd ../ordiri-client-typescript && ./client.sh
 
@@ -118,10 +122,12 @@ docker-push: ## Push docker image with the manager.
 ifndef ignore-not-found
   ignore-not-found = false
 endif
+BUILD_TIMESTAMP=$(shell date '+%Y-%m-%dT%H:%M:%S')
+
 
 .PHONY: linux-ordlet
 linux-ordlet: 
-	GOOS=linux GOARCH=amd64 go build -o bin/ordlet-amd64-linux ./cmd/ordlet
+	GOOS=linux GOARCH=amd64  go build -ldflags="-X 'github.com/ordiri/ordiri/version.BuildTime=${BUILD_TIMESTAMP}'" -o bin/ordlet-amd64-linux ./cmd/ordlet
 	chmod +x bin/ordlet-amd64-linux
 .PHONY: linux-md
 linux-md: 
@@ -131,14 +137,14 @@ linux-md:
 .PHONY: deploy-debian-ordlet deploy-mothership-ordlet
 deploy-debian-ordlet: linux-ordlet
 	scp kubeconfig root@debian:/etc/ordiri.conf
-	scp ordlet.service root@debian:/etc/systemd/system/ordlet.service
+	scp *.service root@debian:/etc/systemd/system/.
 	ssh root@debian 'systemctl daemon-reload && systemctl enable ordlet.service'
 	scp bin/ordlet-amd64-linux root@debian:~/ordlet
 	ssh root@debian 'mv ~/ordlet /usr/local/bin/ordlet && systemctl daemon-reload'
 
 deploy-mothership-ordlet: linux-ordlet
 	scp kubeconfig mothership:/etc/ordiri.conf
-	scp ordlet.service mothership:/etc/systemd/system/ordlet.service
+	scp *.service mothership:/etc/systemd/system/.
 	ssh mothership 'systemctl daemon-reload && systemctl enable ordlet.service'
 	scp bin/ordlet-amd64-linux mothership:~/ordlet
 	ssh mothership 'mv ~/ordlet /usr/local/bin/ordlet && systemctl daemon-reload'
@@ -274,7 +280,6 @@ $(INFORMER_GEN):
 .PHONY: $(CLIENT_GEN)
 $(CLIENT_GEN):
 	$(call go-get-tool,$(CLIENT_GEN),k8s.io/code-generator/cmd/client-gen@latest)
-
 
 .PHONY: $(KUSTOMIZE)
 $(KUSTOMIZE): ## Download kustomize locally if necessary.

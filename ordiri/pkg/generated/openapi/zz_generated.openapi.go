@@ -90,15 +90,17 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.HostNetworkStatus":                    schema_pkg_apis_network_v1alpha1_HostNetworkStatus(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.HostRouterStatus":                     schema_pkg_apis_network_v1alpha1_HostRouterStatus(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.HostSubnetStatus":                     schema_pkg_apis_network_v1alpha1_HostSubnetStatus(ref),
+		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.InternetGatewaySpec":                  schema_pkg_apis_network_v1alpha1_InternetGatewaySpec(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.LoadBalancer":                         schema_pkg_apis_network_v1alpha1_LoadBalancer(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.LoadBalancerList":                     schema_pkg_apis_network_v1alpha1_LoadBalancerList(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.LoadBalancerSpec":                     schema_pkg_apis_network_v1alpha1_LoadBalancerSpec(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.LoadBalancerStatus":                   schema_pkg_apis_network_v1alpha1_LoadBalancerStatus(ref),
-		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.MetadataSubnetStatus":                 schema_pkg_apis_network_v1alpha1_MetadataSubnetStatus(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.Network":                              schema_pkg_apis_network_v1alpha1_Network(ref),
+		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkDnsSpec":                       schema_pkg_apis_network_v1alpha1_NetworkDnsSpec(ref),
+		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkInterfaceStatus":               schema_pkg_apis_network_v1alpha1_NetworkInterfaceStatus(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkList":                          schema_pkg_apis_network_v1alpha1_NetworkList(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkNatSpec":                       schema_pkg_apis_network_v1alpha1_NetworkNatSpec(ref),
-		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkPublicSpec":                    schema_pkg_apis_network_v1alpha1_NetworkPublicSpec(ref),
+		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkRouterSpec":                    schema_pkg_apis_network_v1alpha1_NetworkRouterSpec(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkSelector":                      schema_pkg_apis_network_v1alpha1_NetworkSelector(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkSpec":                          schema_pkg_apis_network_v1alpha1_NetworkSpec(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkStatus":                        schema_pkg_apis_network_v1alpha1_NetworkStatus(ref),
@@ -117,7 +119,10 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.RouterStatus":                         schema_pkg_apis_network_v1alpha1_RouterStatus(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.RouterSubnetReference":                schema_pkg_apis_network_v1alpha1_RouterSubnetReference(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.Subnet":                               schema_pkg_apis_network_v1alpha1_Subnet(ref),
+		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.SubnetHostRouterStatus":               schema_pkg_apis_network_v1alpha1_SubnetHostRouterStatus(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.SubnetList":                           schema_pkg_apis_network_v1alpha1_SubnetList(ref),
+		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.SubnetMetadataServer":                 schema_pkg_apis_network_v1alpha1_SubnetMetadataServer(ref),
+		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.SubnetRouter":                         schema_pkg_apis_network_v1alpha1_SubnetRouter(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.SubnetSpec":                           schema_pkg_apis_network_v1alpha1_SubnetSpec(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.SubnetStatus":                         schema_pkg_apis_network_v1alpha1_SubnetStatus(ref),
 		"github.com/ordiri/ordiri/pkg/apis/storage/v1alpha1.Volume":                               schema_pkg_apis_storage_v1alpha1_Volume(ref),
@@ -2362,7 +2367,15 @@ func schema_pkg_apis_core_v1alpha1_NodeNetworkStatus(ref common.ReferenceCallbac
 							Format:      "",
 						},
 					},
+					"vlanId": {
+						SchemaProps: spec.SchemaProps{
+							Default: 0,
+							Type:    []string{"integer"},
+							Format:  "int32",
+						},
+					},
 				},
+				Required: []string{"vlanId"},
 			},
 		},
 	}
@@ -2403,15 +2416,8 @@ func schema_pkg_apis_core_v1alpha1_NodeSpec(ref common.ReferenceCallback) common
 							},
 						},
 					},
-					"publicCidr": {
-						SchemaProps: spec.SchemaProps{
-							Default: "",
-							Type:    []string{"string"},
-							Format:  "",
-						},
-					},
 				},
-				Required: []string{"nodeRoles", "managementAddresses", "publicCidr"},
+				Required: []string{"nodeRoles", "managementAddresses"},
 			},
 		},
 	}
@@ -2557,15 +2563,7 @@ func schema_pkg_apis_core_v1alpha1_NodeSubnetStatus(ref common.ReferenceCallback
 							Format:      "",
 						},
 					},
-					"vlanId": {
-						SchemaProps: spec.SchemaProps{
-							Default: 0,
-							Type:    []string{"integer"},
-							Format:  "int32",
-						},
-					},
 				},
-				Required: []string{"vlanId"},
 			},
 		},
 	}
@@ -2658,6 +2656,12 @@ func schema_pkg_apis_network_v1alpha1_HostNetworkStatus(ref common.ReferenceCall
 			SchemaProps: spec.SchemaProps{
 				Type: []string{"object"},
 				Properties: map[string]spec.Schema{
+					"networkInterface": {
+						SchemaProps: spec.SchemaProps{
+							Default: map[string]interface{}{},
+							Ref:     ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkInterfaceStatus"),
+						},
+					},
 					"node": {
 						SchemaProps: spec.SchemaProps{
 							Default: "",
@@ -2665,10 +2669,19 @@ func schema_pkg_apis_network_v1alpha1_HostNetworkStatus(ref common.ReferenceCall
 							Format:  "",
 						},
 					},
+					"vlanId": {
+						SchemaProps: spec.SchemaProps{
+							Default: 0,
+							Type:    []string{"integer"},
+							Format:  "int32",
+						},
+					},
 				},
-				Required: []string{"node"},
+				Required: []string{"networkInterface", "node", "vlanId"},
 			},
 		},
+		Dependencies: []string{
+			"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkInterfaceStatus"},
 	}
 }
 
@@ -2719,15 +2732,36 @@ func schema_pkg_apis_network_v1alpha1_HostSubnetStatus(ref common.ReferenceCallb
 							Format:  "",
 						},
 					},
-					"vlanId": {
+					"router": {
 						SchemaProps: spec.SchemaProps{
-							Default: 0,
-							Type:    []string{"integer"},
-							Format:  "int32",
+							Default: map[string]interface{}{},
+							Ref:     ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.SubnetHostRouterStatus"),
 						},
 					},
 				},
-				Required: []string{"node", "vlanId"},
+				Required: []string{"node", "router"},
+			},
+		},
+		Dependencies: []string{
+			"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.SubnetHostRouterStatus"},
+	}
+}
+
+func schema_pkg_apis_network_v1alpha1_InternetGatewaySpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"enabled": {
+						SchemaProps: spec.SchemaProps{
+							Default: false,
+							Type:    []string{"boolean"},
+							Format:  "",
+						},
+					},
+				},
+				Required: []string{"enabled"},
 			},
 		},
 	}
@@ -2851,26 +2885,6 @@ func schema_pkg_apis_network_v1alpha1_LoadBalancerStatus(ref common.ReferenceCal
 	}
 }
 
-func schema_pkg_apis_network_v1alpha1_MetadataSubnetStatus(ref common.ReferenceCallback) common.OpenAPIDefinition {
-	return common.OpenAPIDefinition{
-		Schema: spec.Schema{
-			SchemaProps: spec.SchemaProps{
-				Type: []string{"object"},
-				Properties: map[string]spec.Schema{
-					"mac": {
-						SchemaProps: spec.SchemaProps{
-							Default: "",
-							Type:    []string{"string"},
-							Format:  "",
-						},
-					},
-				},
-				Required: []string{"mac"},
-			},
-		},
-	}
-}
-
 func schema_pkg_apis_network_v1alpha1_Network(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
@@ -2915,6 +2929,67 @@ func schema_pkg_apis_network_v1alpha1_Network(ref common.ReferenceCallback) comm
 		},
 		Dependencies: []string{
 			"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkSpec", "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkStatus", "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"},
+	}
+}
+
+func schema_pkg_apis_network_v1alpha1_NetworkDnsSpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"enabled": {
+						SchemaProps: spec.SchemaProps{
+							Default: false,
+							Type:    []string{"boolean"},
+							Format:  "",
+						},
+					},
+					"ip": {
+						SchemaProps: spec.SchemaProps{
+							Default: "",
+							Type:    []string{"string"},
+							Format:  "",
+						},
+					},
+				},
+				Required: []string{"enabled", "ip"},
+			},
+		},
+	}
+}
+
+func schema_pkg_apis_network_v1alpha1_NetworkInterfaceStatus(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"ips": {
+						SchemaProps: spec.SchemaProps{
+							Type: []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: "",
+										Type:    []string{"string"},
+										Format:  "",
+									},
+								},
+							},
+						},
+					},
+					"mac": {
+						SchemaProps: spec.SchemaProps{
+							Default: "",
+							Type:    []string{"string"},
+							Format:  "",
+						},
+					},
+				},
+				Required: []string{"mac"},
+			},
+		},
 	}
 }
 
@@ -2973,7 +3048,7 @@ func schema_pkg_apis_network_v1alpha1_NetworkNatSpec(ref common.ReferenceCallbac
 			SchemaProps: spec.SchemaProps{
 				Type: []string{"object"},
 				Properties: map[string]spec.Schema{
-					"nat": {
+					"enabled": {
 						SchemaProps: spec.SchemaProps{
 							Default: false,
 							Type:    []string{"boolean"},
@@ -2981,27 +3056,34 @@ func schema_pkg_apis_network_v1alpha1_NetworkNatSpec(ref common.ReferenceCallbac
 						},
 					},
 				},
-				Required: []string{"nat"},
+				Required: []string{"enabled"},
 			},
 		},
 	}
 }
 
-func schema_pkg_apis_network_v1alpha1_NetworkPublicSpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
+func schema_pkg_apis_network_v1alpha1_NetworkRouterSpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
 				Type: []string{"object"},
 				Properties: map[string]spec.Schema{
-					"nat": {
+					"enabled": {
 						SchemaProps: spec.SchemaProps{
 							Default: false,
 							Type:    []string{"boolean"},
 							Format:  "",
 						},
 					},
+					"ip": {
+						SchemaProps: spec.SchemaProps{
+							Default: "",
+							Type:    []string{"string"},
+							Format:  "",
+						},
+					},
 				},
-				Required: []string{"nat"},
+				Required: []string{"enabled", "ip"},
 			},
 		},
 	}
@@ -3042,30 +3124,27 @@ func schema_pkg_apis_network_v1alpha1_NetworkSpec(ref common.ReferenceCallback) 
 							Format:      "",
 						},
 					},
+					"router": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Cidr address to represent this network",
+							Ref:         ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkRouterSpec"),
+						},
+					},
+					"dns": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Cidr address to represent this network",
+							Ref:         ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkDnsSpec"),
+						},
+					},
 					"nat": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Cidr address to represent this network",
-							Default:     map[string]interface{}{},
 							Ref:         ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkNatSpec"),
 						},
 					},
 					"public": {
 						SchemaProps: spec.SchemaProps{
-							Default: map[string]interface{}{},
-							Ref:     ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkPublicSpec"),
-						},
-					},
-					"routeTables": {
-						SchemaProps: spec.SchemaProps{
-							Type: []string{"array"},
-							Items: &spec.SchemaOrArray{
-								Schema: &spec.Schema{
-									SchemaProps: spec.SchemaProps{
-										Default: map[string]interface{}{},
-										Ref:     ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.RouteTableSelector"),
-									},
-								},
-							},
+							Ref: ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.InternetGatewaySpec"),
 						},
 					},
 				},
@@ -3073,7 +3152,7 @@ func schema_pkg_apis_network_v1alpha1_NetworkSpec(ref common.ReferenceCallback) 
 			},
 		},
 		Dependencies: []string{
-			"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkNatSpec", "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkPublicSpec", "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.RouteTableSelector"},
+			"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.InternetGatewaySpec", "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkDnsSpec", "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkNatSpec", "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkRouterSpec"},
 	}
 }
 
@@ -3118,19 +3197,20 @@ func schema_pkg_apis_network_v1alpha1_NetworkStatus(ref common.ReferenceCallback
 					},
 					"vni": {
 						SchemaProps: spec.SchemaProps{
-							Default: 0,
-							Type:    []string{"integer"},
-							Format:  "int64",
+							Description: "Virtual Network Identifier used for cross-node tunneling",
+							Default:     0,
+							Type:        []string{"integer"},
+							Format:      "int64",
 						},
 					},
 					"hosts": {
 						SchemaProps: spec.SchemaProps{
-							Type: []string{"array"},
+							Description: "All the hosts this network is currently deployed on",
+							Type:        []string{"array"},
 							Items: &spec.SchemaOrArray{
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
-										Default: map[string]interface{}{},
-										Ref:     ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.HostNetworkStatus"),
+										Ref: ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.HostNetworkStatus"),
 									},
 								},
 							},
@@ -3705,6 +3785,26 @@ func schema_pkg_apis_network_v1alpha1_Subnet(ref common.ReferenceCallback) commo
 	}
 }
 
+func schema_pkg_apis_network_v1alpha1_SubnetHostRouterStatus(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"mac": {
+						SchemaProps: spec.SchemaProps{
+							Default: "",
+							Type:    []string{"string"},
+							Format:  "",
+						},
+					},
+				},
+				Required: []string{"mac"},
+			},
+		},
+	}
+}
+
 func schema_pkg_apis_network_v1alpha1_SubnetList(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
@@ -3754,6 +3854,46 @@ func schema_pkg_apis_network_v1alpha1_SubnetList(ref common.ReferenceCallback) c
 	}
 }
 
+func schema_pkg_apis_network_v1alpha1_SubnetMetadataServer(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"mac": {
+						SchemaProps: spec.SchemaProps{
+							Default: "",
+							Type:    []string{"string"},
+							Format:  "",
+						},
+					},
+				},
+				Required: []string{"mac"},
+			},
+		},
+	}
+}
+
+func schema_pkg_apis_network_v1alpha1_SubnetRouter(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"mac": {
+						SchemaProps: spec.SchemaProps{
+							Default: "",
+							Type:    []string{"string"},
+							Format:  "",
+						},
+					},
+				},
+				Required: []string{"mac"},
+			},
+		},
+	}
+}
+
 func schema_pkg_apis_network_v1alpha1_SubnetSpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
@@ -3774,17 +3914,23 @@ func schema_pkg_apis_network_v1alpha1_SubnetSpec(ref common.ReferenceCallback) c
 							Format:  "",
 						},
 					},
-					"routeTables": {
+					"routeTable": {
 						SchemaProps: spec.SchemaProps{
-							Type: []string{"array"},
-							Items: &spec.SchemaOrArray{
-								Schema: &spec.Schema{
-									SchemaProps: spec.SchemaProps{
-										Default: map[string]interface{}{},
-										Ref:     ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.RouteTableSelector"),
-									},
-								},
-							},
+							Default: map[string]interface{}{},
+							Ref:     ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.RouteTableSelector"),
+						},
+					},
+					"router": {
+						SchemaProps: spec.SchemaProps{
+							Default: map[string]interface{}{},
+							Ref:     ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.SubnetRouter"),
+						},
+					},
+					"metadataServer": {
+						SchemaProps: spec.SchemaProps{
+							Description: "todo make this some sort of \"network applications\"",
+							Default:     map[string]interface{}{},
+							Ref:         ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.SubnetMetadataServer"),
 						},
 					},
 					"dhcp": {
@@ -3794,11 +3940,11 @@ func schema_pkg_apis_network_v1alpha1_SubnetSpec(ref common.ReferenceCallback) c
 						},
 					},
 				},
-				Required: []string{"network", "cidr", "routeTables", "dhcp"},
+				Required: []string{"network", "cidr", "routeTable", "router", "metadataServer", "dhcp"},
 			},
 		},
 		Dependencies: []string{
-			"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.DhcpConfiguration", "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkSelector", "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.RouteTableSelector"},
+			"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.DhcpConfiguration", "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkSelector", "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.RouteTableSelector", "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.SubnetMetadataServer", "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.SubnetRouter"},
 	}
 }
 
@@ -3815,25 +3961,18 @@ func schema_pkg_apis_network_v1alpha1_SubnetStatus(ref common.ReferenceCallback)
 							Items: &spec.SchemaOrArray{
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
-										Default: map[string]interface{}{},
-										Ref:     ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.HostSubnetStatus"),
+										Ref: ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.HostSubnetStatus"),
 									},
 								},
 							},
 						},
 					},
-					"metadataServer": {
-						SchemaProps: spec.SchemaProps{
-							Default: map[string]interface{}{},
-							Ref:     ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.MetadataSubnetStatus"),
-						},
-					},
 				},
-				Required: []string{"hosts", "metadataServer"},
+				Required: []string{"hosts"},
 			},
 		},
 		Dependencies: []string{
-			"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.HostSubnetStatus", "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.MetadataSubnetStatus"},
+			"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.HostSubnetStatus"},
 	}
 }
 

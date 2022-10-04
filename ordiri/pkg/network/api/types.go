@@ -9,36 +9,27 @@ import (
 )
 
 type NetworkManager interface {
-	HasNetwork(name string) bool
 	GetSpeaker() *bgp.Speaker
-	GetNetwork(name string) Network
-	EnsureNetwork(context.Context, Network) error
-	RemoveNetwork(ctx context.Context, name string) error
+	GetNetwork(name string) (Network, error)
+	RegisterNetwork(ctx context.Context, nw Network) error
+	RemoveNetwork(ctx context.Context, nw string) error
 }
 
 type SubnetManager interface {
-	HasSubnet(nw Network, name string) bool
-	GetSubnet(nw Network, name string) Subnet
-	EnsureSubnet(ctx context.Context, nw Network, sn Subnet) error
-	RemoveSubnet(ctx context.Context, nw Network, name string) error
+	GetSubnet(nw string, name string) (Subnet, error)
+	RegisterSubnet(ctx context.Context, nw string, sn Subnet) error
+	RemoveSubnet(ctx context.Context, nw string, sn string) error
 }
 
-type RouterManager interface {
-	HasRouter(nw Network, sn Subnet, name string) bool
-	GetRouter(nw Network, sn Subnet, name string) Router
-	EnsureRouter(ctx context.Context, nw Network, sn Subnet, rtr Router) error
-	RemoveRouter(ctx context.Context, nw Network, sn Subnet, rtr Router) error
-}
 type InterfaceManager interface {
-	HasInterface(nw Network, sn Subnet, name string) bool
-	GetInterface(nw Network, sn Subnet, name string) Interface
-	EnsureInterface(ctx context.Context, nw Network, sn Subnet, iface Interface) (string, error)
-	RemoveInterface(ctx context.Context, nw Network, sn Subnet, iface Interface) error
+	GetInterface(nw string, sn string, name string) (Interface, error)
+	RegisterInterface(ctx context.Context, nw string, sn string, iface Interface) error
+	AttachInterface(ctx context.Context, nw string, sn string, iface Interface) (string, error)
+	RemoveInterface(ctx context.Context, nw string, sn string, ifaceName string) error
 }
 
 type Manager interface {
 	InterfaceManager
-	RouterManager
 	NetworkManager
 	SubnetManager
 }
@@ -53,16 +44,20 @@ type Network interface {
 	Name() string
 	Cidr() netaddr.IPPrefix
 	Segment() int64
+	ExternalIp() netaddr.IPPrefix
 	DnsRecords() map[netaddr.IP][]string
 
 	WithDns(netaddr.IP, []string) bool
 }
 
 type Subnet interface {
-	Tenant() string
 	Name() string
 	Cidr() netaddr.IPPrefix
 	Segment() int
+	RouterGlobalMac() net.HardwareAddr
+	RouterMac() net.HardwareAddr
+	KnownMacs() map[netaddr.IP]net.HardwareAddr
+	RegisterMac(netaddr.IP, net.HardwareAddr) bool
 }
 
 type Router interface {
@@ -79,6 +74,6 @@ type Interface interface {
 	Name() string
 	Hostnames() []string
 	Mac() net.HardwareAddr
-	PrivateIp() []netaddr.IP
-	PublicIp() []netaddr.IP
+	PrivateIp() []netaddr.IPPrefix
+	PublicIp() []netaddr.IPPrefix
 }

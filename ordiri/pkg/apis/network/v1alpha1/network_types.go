@@ -58,36 +58,41 @@ type NetworkSpec struct {
 
 	// Cidr address to represent this network
 	// +optional
-	Nat NetworkNatSpec `json:"nat"`
+	Router *NetworkRouterSpec `json:"router"`
+
+	// Cidr address to represent this network
+	// +optional
+	DNS *NetworkDnsSpec `json:"dns"`
+
+	// Cidr address to represent this network
+	// +optional
+	Nat *NetworkNatSpec `json:"nat"`
 
 	// +optional
-	Public NetworkPublicSpec `json:"public,omitempty"`
-
-	// +optional
-	RouteTables []RouteTableSelector `json:"routeTables,omitempty"`
+	InternetGateway *InternetGatewaySpec `json:"public,omitempty"`
 }
 
-type NetworkPublicSpec struct {
-	Enabled bool `json:"nat"`
+type NetworkRouterSpec struct {
+	Enabled bool   `json:"enabled"`
+	Ip      string `json:"ip"`
+}
+
+type NetworkDnsSpec struct {
+	Enabled bool   `json:"enabled"`
+	Ip      string `json:"ip"`
+}
+
+type InternetGatewaySpec struct {
+	Enabled bool `json:"enabled"`
 }
 
 type NetworkNatSpec struct {
-	Enabled bool `json:"nat"`
+	Enabled bool `json:"enabled"`
 }
-
-// +kubebuilder:validation:Enum=host
-type NetworkMode string
-
-const (
-	NetworkModeHost NetworkMode = "host"
-)
 
 var _ resource.Object = &Network{}
 var _ resourcestrategy.Validater = &Network{}
 
-func (nw *Network) DefaultRouterName() string {
-	return fmt.Sprintf("router-%s", nw.Name)
-}
 func (nw *Network) RouterNetworkNamespace() string {
 	return fmt.Sprintf("router-%s", nw.Name)
 }
@@ -101,9 +106,6 @@ func (in *Network) GetObjectMeta() *metav1.ObjectMeta {
 	return &in.ObjectMeta
 }
 
-func (in *Network) NatEnabled() bool {
-	return true
-}
 func (in *Network) NamespaceScoped() bool {
 	return true
 }
@@ -148,13 +150,24 @@ type NetworkStatus struct {
 	// +listType=map
 	// +listMapKey=type
 	// +kubebuilder:default=[{type: "MachineCreated", status: "False"}, {type: "MachineRunning", status: "False"}]
-	Conditions []metav1.Condition  `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type" protobuf:"bytes,1,rep,name=conditions"`
-	Vni        int64               `json:"vni"`
-	Hosts      []HostNetworkStatus `json:"hosts"`
+	Conditions []metav1.Condition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type" protobuf:"bytes,1,rep,name=conditions"`
+
+	// Virtual Network Identifier used for cross-node tunneling
+	Vni int64 `json:"vni"`
+
+	// All the hosts this network is currently deployed on
+	Hosts []*HostNetworkStatus `json:"hosts"`
 }
 
 type HostNetworkStatus struct {
-	Node string `json:"node"`
+	NetworkInterface NetworkInterfaceStatus `json:"networkInterface"`
+	Node             string                 `json:"node"`
+	VlanId           int                    `json:"vlanId"`
+}
+
+type NetworkInterfaceStatus struct {
+	Ips []string `json:"ips,omitempty"`
+	Mac string   `json:"mac"`
 }
 
 func (in NetworkStatus) SubResourceName() string {

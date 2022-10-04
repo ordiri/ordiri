@@ -1,8 +1,6 @@
 package network
 
 import (
-	"net"
-
 	"github.com/ordiri/ordiri/pkg/network/api"
 	"inet.af/netaddr"
 )
@@ -15,8 +13,14 @@ func WithNetworkDns(ip netaddr.IP, hostnames ...string) NetworkOption {
 		return nil
 	}
 }
+func WithExternalGatewayIp(ip netaddr.IPPrefix) NetworkOption {
+	return func(n *network) error {
+		n.externalGatewayIp = ip
+		return nil
+	}
+}
 
-func NewNetwork(tenant string, name string, cidr string, segment int64, opt ...NetworkOption) (*network, error) {
+func NewNetwork(tenant string, name string, cidr string, segment int64, localSegment int64, opt ...NetworkOption) (*network, error) {
 	ipnet, err := netaddr.ParseIPPrefix(cidr)
 	if err != nil {
 		return nil, err
@@ -25,6 +29,7 @@ func NewNetwork(tenant string, name string, cidr string, segment int64, opt ...N
 		tenant:        tenant,
 		name:          name,
 		segment:       segment,
+		localSegment:  localSegment,
 		cidr:          ipnet,
 		dnsRecordsets: make(map[netaddr.IP][]string),
 	}
@@ -38,38 +43,34 @@ func NewNetwork(tenant string, name string, cidr string, segment int64, opt ...N
 }
 
 type network struct {
+	// The name for this network
 	tenant string
 	// The name for this network
 	name string
 	// segment is the globally unique tunnel identifier
-	segment       int64
-	cidr          netaddr.IPPrefix
-	dnsRecordsets map[netaddr.IP][]string
-	knownMacs     map[string][]netaddr.IP
+	segment           int64
+	localSegment      int64
+	cidr              netaddr.IPPrefix
+	externalGatewayIp netaddr.IPPrefix
+	dnsRecordsets     map[netaddr.IP][]string
+}
+
+func (nw *network) Tenant() string {
+	return nw.tenant
 }
 
 func (nw *network) Name() string {
 	return nw.name
 }
-func (nw *network) Tenant() string {
-	return nw.tenant
-}
-
 func (nw *network) Segment() int64 {
 	return nw.segment
+}
+func (nw *network) LocalSegment() int64 {
+	return nw.localSegment
 }
 
 func (nw *network) Cidr() netaddr.IPPrefix {
 	return nw.cidr.Masked()
-}
-
-func (nw *network) WithMacAddr(mac net.HardwareAddr, ips []netaddr.IP) bool {
-	if len(ips) == 0 {
-		delete(nw.knownMacs, mac.String())
-		return false
-	}
-	nw.knownMacs[mac.String()] = append(nw.knownMacs[mac.String()], ips...)
-	return true
 }
 
 func (nw *network) WithDns(ip netaddr.IP, hostnames []string) bool {
@@ -85,8 +86,8 @@ func (nw *network) DnsRecords() map[netaddr.IP][]string {
 	return nw.dnsRecordsets
 }
 
-func (nw *network) MacAddrs() map[string][]netaddr.IP {
-	return nw.knownMacs
+func (nw *network) ExternalIp() netaddr.IPPrefix {
+	return nw.externalGatewayIp
 }
 
 var _ api.Network = &network{}

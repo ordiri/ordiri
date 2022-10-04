@@ -20,8 +20,8 @@ import (
 	"context"
 	"fmt"
 	"reflect"
-	"time"
 
+	"inet.af/netaddr"
 	k8err "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
@@ -32,7 +32,9 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 
+	computev1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
+	"github.com/ordiri/ordiri/pkg/mac"
 	"github.com/ordiri/ordiri/pkg/network"
 	"github.com/ordiri/ordiri/pkg/network/api"
 
@@ -66,7 +68,7 @@ func (r *SubnetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	node := r.Node.GetNode()
 
 	nodeWantsSubnet := false
-	if _, err := node.Subnet(subnet.Name); err == nil {
+	if _, err := node.Subnet(subnet.Spec.Network.Name, subnet.Name); err == nil {
 		nodeWantsSubnet = true
 	}
 
@@ -90,15 +92,12 @@ func (r *SubnetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	// but the subnet is setup on it, we need to remove all the subnet configs from it
 	if !nodeWantsSubnet {
 		log.Info("node does not want subnet, removing")
-		if r.NetworkManager.HasNetwork(nw.Name) {
-			net := r.NetworkManager.GetNetwork(nw.Name)
-			if r.NetworkManager.HasSubnet(net, subnet.Name) {
-				log.V(5).Info("removing subnet from network manager")
-				if err := r.NetworkManager.RemoveSubnet(ctx, net, subnet.Name); err != nil {
-					return ctrl.Result{}, fmt.Errorf("unable to remove subnet from node - %w", err)
-				}
-				log.V(5).Info("removed subnet from network manager")
+		if sn, err := r.NetworkManager.GetSubnet(nw.Name, subnet.Name); err == nil {
+			log.V(5).Info("removing subnet from network manager", "subnet", sn)
+			if err := r.NetworkManager.RemoveSubnet(ctx, nw.Name, subnet.Name); err != nil {
+				return ctrl.Result{}, fmt.Errorf("unable to remove subnet from node - %w", err)
 			}
+			log.V(5).Info("removed subnet from network manager")
 		}
 
 		// We want to ensure we remove this node if we need
@@ -115,45 +114,80 @@ func (r *SubnetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 
 		return ctrl.Result{}, nil
 	}
-
-	if !r.NetworkManager.HasNetwork(nw.Name) {
-		log.Info("waiting for network manager to start", "name", nw.Name)
-		return ctrl.Result{RequeueAfter: time.Second * 1}, nil
-	}
-
 	if err := r.addNodeFinalizerToSubnet(ctx, subnet); err != nil {
 		return ctrl.Result{}, err
 	}
 
-	net := r.NetworkManager.GetNetwork(nw.Name)
+	hostLocalMac := mac.Unicast()
+	for _, m := range subnet.Status.Hosts {
+		if m.Node == r.Node.GetNode().Name {
+			if m.Router.Mac != "" {
+				hlm, err := mac.Parse(m.Router.Mac)
+				if err == nil {
+					hostLocalMac = hlm
+				}
+			}
+			break
+		}
+	}
 
-	var sn api.Subnet
-	if !r.NetworkManager.HasSubnet(net, subnet.Name) {
-		vlan, err := r.Node.GetNode().SubnetVlanId(subnet.Name)
+	sn, err := r.NetworkManager.GetSubnet(nw.Name, subnet.Name)
+	if err != nil {
+		vlan, err := r.Node.GetNode().NetworkVlanId(nw.Name)
 		if err != nil {
 			return ctrl.Result{}, fmt.Errorf("missing vlan on subnet")
 		}
 
 		log.Info("network manager has not seen this subnet yet, creating a new one")
-		newSubnet, err := network.NewSubnet(subnet.Namespace, subnet.Name, subnet.Spec.Cidr, vlan)
+		routerMac, err := mac.Parse(subnet.Spec.Router.Mac)
+		if err != nil {
+			return ctrl.Result{}, fmt.Errorf("error parsing router mac - %w", err)
+		}
+		newSubnet, err := network.NewSubnet(subnet.Name, subnet.Spec.Cidr, vlan, hostLocalMac, routerMac)
 		if err != nil {
 			return ctrl.Result{}, err
 		}
 		sn = newSubnet
-	} else {
-		log.Info("network manager knows about this subnet, retrieving existing details")
-		newSubnet := r.NetworkManager.GetSubnet(net, subnet.Name)
-		sn = newSubnet
+		log.Info("got new subnet", "subnet", newSubnet)
 	}
 
-	log.Info("ensuring subnet is configured by the driver")
-	if err := r.NetworkManager.EnsureSubnet(ctx, net, sn); err != nil {
+	if sn == nil {
+		return ctrl.Result{}, fmt.Errorf("unable to ensure subnet is configured correctly")
+	}
+	vms := &computev1alpha1.VirtualMachineList{}
+	if err := r.Client.List(ctx, vms, client.InNamespace(subnet.Namespace), client.MatchingFields{"VmsToSubnetIndex": nw.Name + subnet.Name}); err != nil {
+		return ctrl.Result{}, fmt.Errorf("aoe - %w", err)
+	}
+	for _, vm := range vms.Items {
+		for _, iface := range vm.Spec.NetworkInterfaces {
+			if len(iface.Ips) == 0 {
+				return ctrl.Result{}, fmt.Errorf("vm %q, interface %+v has no ip yet", vm.Name, iface)
+			}
+			macAddr, err := mac.Parse(iface.Mac)
+			if err != nil {
+				return ctrl.Result{}, fmt.Errorf("aoe - %w", err)
+			}
+			for _, ip := range iface.Ips {
+				addr, err := netaddr.ParseIPPrefix(ip)
+				if err != nil {
+					return ctrl.Result{}, fmt.Errorf("unable to parse ip for network interface - %w", err)
+				}
+
+				sn.RegisterMac(addr.IP(), macAddr)
+			}
+		}
+	}
+
+	log.Info("ensuring subnet is configured by the driver", "subnet", sn)
+	if err := r.NetworkManager.RegisterSubnet(ctx, nw.Name, sn); err != nil {
 		return ctrl.Result{}, fmt.Errorf("unable to ensure subnet is configured correctly - %w", err)
 	}
 
-	if err := r.addNodeToSubnetStatus(ctx, subnet); err != nil {
+	log.Info("adding node to status", "subnet", subnet)
+	if err := r.addNodeToSubnetStatus(ctx, subnet, hostLocalMac); err != nil {
 		return ctrl.Result{}, err
 	}
+	log.Info("added node to status", "subnet", subnet)
 
 	return ctrl.Result{}, nil
 }

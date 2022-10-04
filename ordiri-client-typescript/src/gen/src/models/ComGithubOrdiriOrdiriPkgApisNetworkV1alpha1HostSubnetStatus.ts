@@ -13,6 +13,13 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetHostRouterStatus } from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetHostRouterStatus';
+import {
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetHostRouterStatusFromJSON,
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetHostRouterStatusFromJSONTyped,
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetHostRouterStatusToJSON,
+} from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetHostRouterStatus';
+
 /**
  * 
  * @export
@@ -27,10 +34,10 @@ export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostSubnetStatus {
     node: string;
     /**
      * 
-     * @type {number}
+     * @type {ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetHostRouterStatus}
      * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostSubnetStatus
      */
-    vlanId: number;
+    router: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetHostRouterStatus;
 }
 
 /**
@@ -39,7 +46,7 @@ export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostSubnetStatus {
 export function instanceOfComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostSubnetStatus(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "node" in value;
-    isInstance = isInstance && "vlanId" in value;
+    isInstance = isInstance && "router" in value;
 
     return isInstance;
 }
@@ -55,7 +62,7 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostSubnetStatusFromJ
     return {
         
         'node': json['node'],
-        'vlanId': json['vlanId'],
+        'router': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetHostRouterStatusFromJSON(json['router']),
     };
 }
 
@@ -69,7 +76,7 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostSubnetStatusToJSO
     return {
         
         'node': value.node,
-        'vlanId': value.vlanId,
+        'router': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetHostRouterStatusToJSON(value.router),
     };
 }
 

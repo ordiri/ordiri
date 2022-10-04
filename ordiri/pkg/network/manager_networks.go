@@ -3,82 +3,48 @@ package network
 import (
 	"context"
 	"fmt"
+	"sync"
 
 	"github.com/ordiri/ordiri/pkg/network/api"
 )
 
-func (ln *networkManager) network(name string) *managedNet {
-	nws := ln.networks
-	for _, nw := range nws {
-		if nw != nil && nw.nw.Name() == name {
-			return nw
-		}
-	}
-	return nil
-}
-
-func (ln *networkManager) HasNetwork(name string) bool {
-	return ln.network(name) != nil
-}
-
-func (ln *networkManager) GetNetwork(name string) api.Network {
-	if nw := ln.network(name); nw != nil {
-		return nw.nw
+func (ln *networkManager) GetNetwork(nw string) (api.Network, error) {
+	ln.l.RLock()
+	defer ln.l.RUnlock()
+	if nw, ok := ln.networks[nw]; ok {
+		return nw.Network, nil
 	}
 
-	panic("no such network " + name)
+	return nil, fmt.Errorf("no network")
 }
 
-func (ln *networkManager) RemoveNetwork(ctx context.Context, name string) error {
+func (ln *networkManager) RegisterNetwork(ctx context.Context, nw api.Network) error {
 	ln.l.Lock()
 	defer ln.l.Unlock()
 
-	nw := ln.network(name)
-	if nw == nil {
-		return nil
-	}
-
-	if len(nw.subnets) > 0 {
-		names := []string{}
-		for _, sn := range nw.subnets {
-			names = append(names, sn.sn.Name())
+	if _, ok := ln.networks[nw.Name()]; !ok {
+		ln.networks[nw.Name()] = &managedNet{
+			subnets: make(map[string]*managedSubnet),
+			l:       sync.RWMutex{},
 		}
-		return fmt.Errorf("network still has active subnets - %+v", names)
 	}
+	ln.networks[nw.Name()].Network = nw
 
-	if err := ln.driver.RemoveNetwork(ctx, nw.nw); err != nil {
-		return err
-	}
-
-	nws := []*managedNet{}
-	for _, net := range ln.networks {
-		if nw == net {
-			continue
-		}
-		nws = append(nws, net)
-	}
-	ln.networks = nws
 	return nil
 }
 
-func (ln *networkManager) EnsureNetwork(ctx context.Context, nw api.Network) error {
+func (ln *networkManager) RemoveNetwork(ctx context.Context, nw string) error {
 	ln.l.Lock()
 	defer ln.l.Unlock()
 
-	subnets := []api.Subnet{}
-	if mn := ln.network(nw.Name()); mn != nil {
-		for _, msn := range mn.subnets {
-			subnets = append(subnets, msn.sn)
+	if net, err := ln.GetNetwork(nw); err != nil {
+		if err := ln.driver.RemoveNetwork(ctx, net); err != nil {
+			return err
 		}
 	}
 
-	if err := ln.driver.EnsureNetwork(ctx, nw, subnets); err != nil {
-		return err
-	}
-
-	if !ln.HasNetwork(nw.Name()) {
-		ln.networks = append(ln.networks, &managedNet{nw: nw, subnets: []*managedSubnet{}})
-	}
-
+	delete(ln.networks, nw)
 	return nil
 }
+
+var _ api.NetworkManager = &networkManager{}

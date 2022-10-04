@@ -24,7 +24,7 @@ export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkNatSpec {
      * @type {boolean}
      * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkNatSpec
      */
-    nat: boolean;
+    enabled: boolean;
 }
 
 /**
@@ -32,7 +32,7 @@ export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkNatSpec {
  */
 export function instanceOfComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkNatSpec(value: object): boolean {
     let isInstance = true;
-    isInstance = isInstance && "nat" in value;
+    isInstance = isInstance && "enabled" in value;
 
     return isInstance;
 }
@@ -47,7 +47,7 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkNatSpecFromJSO
     }
     return {
         
-        'nat': json['nat'],
+        'enabled': json['enabled'],
     };
 }
 
@@ -60,7 +60,7 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkNatSpecToJSON(
     }
     return {
         
-        'nat': value.nat,
+        'enabled': value.enabled,
     };
 }
 

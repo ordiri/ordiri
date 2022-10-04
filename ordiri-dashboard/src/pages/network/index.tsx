@@ -63,16 +63,16 @@ const NetworkResourcesPage = (props: NetworkResourceProps) => {
                             return "N/A"
                         }
                         const grouped = hosts.reduce((all, it) => {
-                            const key = it.vlanId
+                            const key = it.node
                             if(!all[key]) {
-                                all[key] = { vlan: it.vlanId , items: []}
+                                all[key] = { node: it.node , items: []}
                             }
                             all[key].items.push(it.node)
                             
                             return all
-                        }, {} as Record<number, {vlan: number, items: string[]}>)
+                        }, {} as Record<string, {node: string, items: string[]}>)
                         
-                        return Object.entries(grouped).map(([vlanId, { items }]) => <Chip color={vlanColors[Number(vlanId)]} key={vlanId} label={`${vlanId} - ${items.join(", ")}`} size="small" />)
+                        return Object.entries(hosts).map(([_, { node }]) => <Chip  key={node} label={`${node}}`} size="small" />)
                     }
                 }
             }

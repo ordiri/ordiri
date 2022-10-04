@@ -53,9 +53,13 @@ type SubnetList struct {
 
 // SubnetSpec defines the desired state of Subnet
 type SubnetSpec struct {
-	Network     NetworkSelector      `json:"network"`
-	Cidr        string               `json:"cidr"`
-	RouteTables []RouteTableSelector `json:"routeTables"`
+	Network    NetworkSelector    `json:"network"`
+	Cidr       string             `json:"cidr"`
+	RouteTable RouteTableSelector `json:"routeTable"`
+	Router     SubnetRouter       `json:"router"`
+
+	// todo make this some sort of "network applications"
+	MetadataServer SubnetMetadataServer `json:"metadataServer"`
 
 	Dhcp DhcpConfiguration `json:"dhcp"`
 }
@@ -108,17 +112,24 @@ func (in *SubnetList) GetListMeta() *metav1.ListMeta {
 
 // SubnetStatus defines the observed state of Subnet
 type SubnetStatus struct {
-	Hosts          []HostSubnetStatus   `json:"hosts"`
-	MetadataServer MetadataSubnetStatus `json:"metadataServer"`
+	Hosts []*HostSubnetStatus `json:"hosts"`
 }
 
-type MetadataSubnetStatus struct {
+type SubnetMetadataServer struct {
+	Mac string `json:"mac"`
+}
+
+type SubnetRouter struct {
 	Mac string `json:"mac"`
 }
 
 type HostSubnetStatus struct {
-	Node   string `json:"node"`
-	VlanId int    `json:"vlanId"`
+	Node   string                 `json:"node"`
+	Router SubnetHostRouterStatus `json:"router"`
+}
+
+type SubnetHostRouterStatus struct {
+	Mac string `json:"mac"`
 }
 
 func (in SubnetStatus) SubResourceName() string {

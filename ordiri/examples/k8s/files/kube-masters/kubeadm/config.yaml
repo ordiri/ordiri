@@ -41,3 +41,4 @@ kind: InitConfiguration
 localAPIEndpoint:
   advertiseAddress: "${local_ip}"
   bindPort: 6443
+certificateKey: ${cert_key}

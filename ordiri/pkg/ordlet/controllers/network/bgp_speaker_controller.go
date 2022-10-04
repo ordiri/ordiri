@@ -28,7 +28,6 @@ import (
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/ordiri/ordiri/pkg/network/bgp"
 	"github.com/ordiri/ordiri/pkg/network/sdn"
 
@@ -48,8 +47,9 @@ type BGPSpeakerReconciler struct {
 
 	speaker *bgp.Speaker
 
-	PublicCidr netaddr.IPPrefix
-	Node       ordlet.NodeProvider
+	PublicCidr  netaddr.IPPrefix
+	GatewayCidr netaddr.IPPrefix
+	Node        ordlet.NodeProvider
 }
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
@@ -90,25 +90,25 @@ func (r *BGPSpeakerReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 		}
 		vmInternalIp := ""
 		for _, ip := range iface.Ips {
-			ipAddr, err := netaddr.ParseIP(ip)
+			ipAddr, err := netaddr.ParseIPPrefix(ip)
 			if err != nil {
 				return ctrl.Result{}, fmt.Errorf("unable to parse ip addr %q - %w", ip, err)
 			}
-			if r.PublicCidr.Contains(ipAddr) {
+			if r.PublicCidr.Contains(ipAddr.IP()) {
 				continue
 			}
-			vmInternalIp = ipAddr.String()
+			vmInternalIp = ipAddr.IP().String()
 			break
 		}
 		if vmInternalIp == "" {
 			return ctrl.Result{}, fmt.Errorf("missing private ip")
 		}
 		for _, ip := range iface.Ips {
-			vmPublicIp, err := netaddr.ParseIP(ip)
+			vmPublicIp, err := netaddr.ParseIPPrefix(ip)
 			if err != nil {
 				return ctrl.Result{}, fmt.Errorf("unable to parse ip addr %q - %w", ip, err)
 			}
-			if !r.PublicCidr.Contains(vmPublicIp) {
+			if !r.PublicCidr.Contains(vmPublicIp.IP()) {
 				log.Info("Skipping IP as it's not a part of the public range")
 				continue
 			}
@@ -131,10 +131,10 @@ func (r *BGPSpeakerReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 			if err := json.Unmarshal(out, &res); err != nil {
 				return ctrl.Result{}, err
 			}
-			spew.Dump(string(out), res)
 
 			routerInterface := ""
 			routerIp := netaddr.IP{}
+			//todo: we have this in the status now on the network as it's external gateway ip
 			for _, iface := range res {
 				if !strings.HasPrefix(iface.Name, "prtr") {
 					continue
@@ -158,7 +158,7 @@ func (r *BGPSpeakerReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 				return ctrl.Result{}, err
 			}
 
-			if err := ipt.AppendUnique("nat", "PREROUTING", "-i", routerInterface, "-d", vmPublicIp.String(), "-j", "DNAT", "--to-destination", vmInternalIp); err != nil {
+			if err := ipt.AppendUnique("nat", "PREROUTING", "-i", routerInterface, "-d", vmPublicIp.IP().String(), "-j", "DNAT", "--to-destination", vmInternalIp); err != nil {
 				return ctrl.Result{}, err
 			}
 			if r.speaker == nil {
@@ -166,11 +166,10 @@ func (r *BGPSpeakerReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 				return ctrl.Result{}, nil
 			}
 			log.V(5).Info("Announcing ip", "vmPublicIp", vmPublicIp, "routerIp", routerIp)
-			if err := r.speaker.Announce(ctx, vmPublicIp, routerIp); err != nil {
+			if err := r.speaker.Announce(ctx, vmPublicIp.IP(), routerIp); err != nil {
 				log.Error(err, "error announcing ip")
 				return ctrl.Result{}, err
 			}
-
 		}
 	}
 

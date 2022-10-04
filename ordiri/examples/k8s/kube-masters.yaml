@@ -8,6 +8,7 @@ spec:
     metadata:
       creationTimestamp: null
     spec:
+      node: "debian"
       resources:
         cpu: 2
         memory: 2Gi
@@ -20,7 +21,6 @@ spec:
         network: kubevms
         public: true
         subnet: kubevms-masters
-      node: ""
       role: default
       state: Running
       volumes:

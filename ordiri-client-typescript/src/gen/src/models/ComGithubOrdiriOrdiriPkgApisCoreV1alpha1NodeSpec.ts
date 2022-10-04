@@ -31,12 +31,6 @@ export interface ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeSpec {
      * @memberof ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeSpec
      */
     nodeRoles: Array<string>;
-    /**
-     * 
-     * @type {string}
-     * @memberof ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeSpec
-     */
-    publicCidr: string;
 }
 
 /**
@@ -46,7 +40,6 @@ export function instanceOfComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeSpec(value
     let isInstance = true;
     isInstance = isInstance && "managementAddresses" in value;
     isInstance = isInstance && "nodeRoles" in value;
-    isInstance = isInstance && "publicCidr" in value;
 
     return isInstance;
 }
@@ -63,7 +56,6 @@ export function ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeSpecFromJSONTyped(js
         
         'managementAddresses': json['managementAddresses'],
         'nodeRoles': json['nodeRoles'],
-        'publicCidr': json['publicCidr'],
     };
 }
 
@@ -78,7 +70,6 @@ export function ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeSpecToJSON(value?: C
         
         'managementAddresses': value.managementAddresses,
         'nodeRoles': value.nodeRoles,
-        'publicCidr': value.publicCidr,
     };
 }
 

@@ -34,6 +34,7 @@ import (
 	computev1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
+	"github.com/ordiri/ordiri/pkg/mac"
 	"github.com/ordiri/ordiri/pkg/network"
 	"github.com/ordiri/ordiri/pkg/network/api"
 	"github.com/ordiri/ordiri/pkg/ordlet"
@@ -46,7 +47,10 @@ type NetworkReconciler struct {
 
 	Node           ordlet.NodeProvider
 	NetworkManager api.NetworkManager
+	GatewayCidr    netaddr.IPPrefix
 	PublicCidr     netaddr.IPPrefix
+
+	Allocator api.AddressAllocatorClient
 }
 
 // Controls internet gateway & floating ip etc ona node
@@ -63,7 +67,7 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 	}
 
 	node := r.Node.GetNode()
-	nodeHasNetwork := r.NetworkManager.HasNetwork(nw.Name)
+	nodeHasNetwork := r.Node.GetNode().HasNetwork(nw.Name)
 	nodeWantsNetwork := false
 	for _, nws := range node.Status.Networks {
 		if nws.Name == nw.Name {
@@ -75,21 +79,15 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 		nodeWantsNetwork = false
 	}
 
-	var net api.Network
-	if r.NetworkManager.HasNetwork(nw.Name) {
-		net = r.NetworkManager.GetNetwork(nw.Name)
-	} else {
-		_net, err := network.NewNetwork(nw.Namespace, nw.Name, nw.Spec.Cidr, nw.Status.Vni)
-		if err != nil {
-			return ctrl.Result{}, err
-		}
-		net = _net
+	localVlan, err := node.NetworkVlanId(nw.Name)
+	if err != nil {
+		return ctrl.Result{}, err
 	}
 
 	if !nodeWantsNetwork {
 		if nodeHasNetwork {
-			log.V(5).Info("removing node from network", "nodeWantsNetwork", nodeWantsNetwork, "nodeHasNetwork", nodeHasNetwork, "network", net)
-			if err := r.NetworkManager.RemoveNetwork(ctx, net.Name()); err != nil {
+			log.V(5).Info("removing node from network", "nodeWantsNetwork", nodeWantsNetwork, "nodeHasNetwork", nodeHasNetwork, "network", nw)
+			if err := r.NetworkManager.RemoveNetwork(ctx, nw.Name); err != nil {
 				return ctrl.Result{}, err
 			}
 			log.Info("network references the node but the node doesn't want it, removing")
@@ -101,28 +99,68 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 		if err := r.removeNodeFromNetworkStatus(ctx, nw); err != nil {
 			return ctrl.Result{}, err
 		}
-	} else if nodeWantsNetwork {
-		log.V(5).Info("Starting to build networking", "nodeWantsNetwork", nodeWantsNetwork, "nodeHasNetwork", nodeHasNetwork, "network", net)
+	} else {
+		log.V(5).Info("Starting to build networking", "nodeWantsNetwork", nodeWantsNetwork, "nodeHasNetwork", nodeHasNetwork, "network", nw)
 		vmsInNetwork := &computev1alpha1.VirtualMachineList{}
 		if err := r.Client.List(ctx, vmsInNetwork, client.InNamespace(nw.Namespace), client.MatchingFields{"VmsByNetwork": nw.Name}); err != nil {
 			return ctrl.Result{}, fmt.Errorf("unable to get vms in this network - %w", err)
 		}
+		networkOpts := []network.NetworkOption{}
+		for _, host := range nw.Status.Hosts {
+			if host.Node == r.Node.GetNode().Name {
+				hasGatewayIp := false
+				for _, ip := range host.NetworkInterface.Ips {
+					addr, err := netaddr.ParseIPPrefix(ip)
+					if err != nil {
+						return ctrl.Result{}, fmt.Errorf("invalid ip on host - %w", err)
+					}
 
+					if r.GatewayCidr.Contains(addr.IP()) {
+						networkOpts = append(networkOpts, network.WithExternalGatewayIp(addr))
+						hasGatewayIp = true
+						break
+					}
+				}
+
+				if !hasGatewayIp {
+					allocated, err := r.Allocator.Allocate(ctx, &api.AllocateRequest{
+						BlockName: "_shared::gateway",
+					})
+					if err != nil {
+						return ctrl.Result{}, fmt.Errorf("unable ot allocate gateway ip - %w", err)
+					}
+
+					hasGatewayIp = true
+					addr := netaddr.MustParseIPPrefix(allocated.Address)
+					networkOpts = append(networkOpts, network.WithExternalGatewayIp(addr))
+					host.NetworkInterface.Ips = append(host.NetworkInterface.Ips, addr.String())
+				}
+
+				if !hasGatewayIp {
+					return ctrl.Result{}, fmt.Errorf("network is pending gateway ip")
+				}
+			}
+		}
+
+		net, err := network.NewNetwork(nw.Namespace, nw.Name, nw.Spec.Cidr, nw.Status.Vni, int64(localVlan), networkOpts...)
+		if err != nil {
+			return ctrl.Result{}, err
+		}
 		for _, vm := range vmsInNetwork.Items {
 			for _, iface := range vm.Spec.NetworkInterfaces {
 				for _, ip := range iface.Ips {
-					parsedIp, err := netaddr.ParseIP(ip)
+					parsedIp, err := netaddr.ParseIPPrefix(ip)
 					if err != nil {
 						return ctrl.Result{}, err
 					}
-					if !r.PublicCidr.Contains(parsedIp) {
-						net.WithDns(parsedIp, []string{vm.Name})
+					if !r.PublicCidr.Contains(parsedIp.IP()) {
+						net.WithDns(parsedIp.IP(), []string{vm.Name})
 					}
 				}
 			}
 		}
 
-		if err := r.NetworkManager.EnsureNetwork(ctx, net); err != nil {
+		if err := r.NetworkManager.RegisterNetwork(ctx, net); err != nil {
 			return ctrl.Result{}, err
 		}
 		log.Info("node wants the network")
@@ -135,8 +173,6 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 				return ctrl.Result{}, err
 			}
 		}
-	} else {
-		return ctrl.Result{}, fmt.Errorf("unknown action?")
 	}
 
 	return ctrl.Result{}, nil
@@ -161,8 +197,18 @@ func (r *NetworkReconciler) addNodeToNetworkStatus(ctx context.Context, nw *netw
 		}
 
 		if !networkContainsNode {
-			network.Status.Hosts = append(network.Status.Hosts, networkv1alpha1.HostNetworkStatus{
-				Node: node.Name,
+			vlanId, err := node.NetworkVlanId(network.Name)
+			if err != nil {
+				return fmt.Errorf("can't get vlanid for the nw %s on %s - %w", nw.Name, node.Name, err)
+			}
+
+			network.Status.Hosts = append(network.Status.Hosts, &networkv1alpha1.HostNetworkStatus{
+				Node:   node.Name,
+				VlanId: vlanId,
+				NetworkInterface: networkv1alpha1.NetworkInterfaceStatus{
+					Mac: mac.Unicast().String(),
+					Ips: []string{},
+				},
 			})
 
 			if err := r.Client.Status().Update(ctx, network); err != nil {
@@ -182,7 +228,7 @@ func (r *NetworkReconciler) removeNodeFromNetworkStatus(ctx context.Context, nw 
 			return err
 		}
 		found := false
-		newHosts := []networkv1alpha1.HostNetworkStatus{}
+		newHosts := []*networkv1alpha1.HostNetworkStatus{}
 		for _, boundHosts := range network.Status.Hosts {
 			if boundHosts.Node == r.Node.GetNode().Name {
 				found = true

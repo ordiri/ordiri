@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"strings"
-	"time"
 
 	"inet.af/netaddr"
 	"libvirt.org/go/libvirtxml"
@@ -12,13 +11,12 @@ import (
 	internallibvirt "github.com/ordiri/ordiri/pkg/compute/driver/libvirt"
 	"github.com/ordiri/ordiri/pkg/mac"
 	"github.com/ordiri/ordiri/pkg/network"
-	"github.com/ordiri/ordiri/pkg/ordlet"
 
 	computev1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
 )
 
-// ensureNetworkInterface configures the virtual network for a virtual machine
-func (r *VirtualMachineReconciler) ensureNetworkInterface(ctx context.Context, vm *computev1alpha1.VirtualMachine, iface *computev1alpha1.VirtualMachineNetworkInterface) (computev1alpha1.VirtualMachineNetworkInterfaceStatus, internallibvirt.DomainOption, error) {
+// RegisterNetworkInterface configures the virtual network for a virtual machine
+func (r *VirtualMachineReconciler) RegisterNetworkInterface(ctx context.Context, vm *computev1alpha1.VirtualMachine, iface *computev1alpha1.VirtualMachineNetworkInterface) (computev1alpha1.VirtualMachineNetworkInterfaceStatus, internallibvirt.DomainOption, error) {
 	status := computev1alpha1.VirtualMachineNetworkInterfaceStatus{
 		Name: iface.Key(),
 		Mac:  iface.Mac,
@@ -26,16 +24,6 @@ func (r *VirtualMachineReconciler) ensureNetworkInterface(ctx context.Context, v
 	if len(iface.Ips) == 0 {
 		return status, nil, fmt.Errorf("vm has not been allocated an IP for %+v yet", iface)
 	}
-	if err := ordlet.WaitForNetwork(ctx, r.NetworkManager, iface.Network, time.Second*5); err != nil {
-		return status, nil, fmt.Errorf("error waiting for network %s - %w", iface.Network, err)
-	}
-	net := r.NetworkManager.GetNetwork(iface.Network)
-
-	if err := ordlet.WaitForSubnet(ctx, r.NetworkManager, net, iface.Subnet, time.Second*5); err != nil {
-		return status, nil, fmt.Errorf("error waiting for subnet %s - %w", iface.Subnet, err)
-	}
-
-	subnet := r.NetworkManager.GetSubnet(net, iface.Subnet)
 
 	mac, err := mac.Parse(iface.Mac)
 	if err != nil {
@@ -49,13 +37,14 @@ func (r *VirtualMachineReconciler) ensureNetworkInterface(ctx context.Context, v
 	opts := []network.InterfaceOption{
 		network.InterfaceWithMac(mac),
 	}
+
 	for _, ip := range iface.Ips {
-		ipAddr, err := netaddr.ParseIP(ip)
+		ipAddr, err := netaddr.ParseIPPrefix(ip)
 		if err != nil {
 			return status, nil, fmt.Errorf("unable to parse ip addr %q - %w", ip, err)
 		}
 
-		if r.PublicCidr.Contains(ipAddr) {
+		if r.PublicCidr.Contains(ipAddr.IP()) {
 			opts = append(opts, network.InterfaceWithPublicIps(ipAddr))
 		} else {
 			opts = append(opts, network.InterfaceWithPrivateIps(ipAddr))
@@ -72,7 +61,7 @@ func (r *VirtualMachineReconciler) ensureNetworkInterface(ctx context.Context, v
 		return status, nil, fmt.Errorf("unable to create new interface obj - %w", err)
 	}
 
-	interfaceName, err := r.NetworkManager.EnsureInterface(ctx, net, subnet, netIface)
+	interfaceName, err := r.NetworkManager.AttachInterface(ctx, iface.Network, iface.Subnet, netIface)
 	if err != nil {
 		return status, nil, fmt.Errorf("unable to ensure interface - %w", err)
 	}

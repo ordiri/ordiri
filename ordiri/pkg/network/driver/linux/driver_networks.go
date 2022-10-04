@@ -4,16 +4,18 @@ import (
 	"context"
 	"fmt"
 	"io/fs"
+	"net"
 	"os"
 	"path/filepath"
 
+	"github.com/gosimple/slug"
 	"github.com/ordiri/ordiri/pkg/log"
 	"github.com/ordiri/ordiri/pkg/mac"
 	"github.com/ordiri/ordiri/pkg/network/api"
 	"github.com/vishvananda/netlink"
 	"github.com/vishvananda/netns"
+	"inet.af/netaddr"
 
-	"github.com/gosimple/slug"
 	"github.com/ordiri/ordiri/pkg/network/sdn"
 )
 
@@ -37,7 +39,7 @@ func (ln *linuxDriver) RemoveNetwork(ctx context.Context, nw api.Network) error 
 	return nil
 }
 
-func (ln *linuxDriver) EnsureNetwork(ctx context.Context, nw api.Network, sns []api.Subnet) error {
+func (ln *linuxDriver) RegisterNetwork(ctx context.Context, nw api.Network) error {
 	log := log.FromContext(ctx)
 	log.V(5).Info("Ensuring network", "nw", nw)
 	if err := ln.installNetworkNat(ctx, nw); err != nil {
@@ -100,42 +102,37 @@ func (ln *linuxDriver) installNetworkNat(ctx context.Context, nw api.Network) er
 		}
 	}
 
-	log.V(5).Info("Renew DHCP")
-	curNs, err := netns.Get()
-	if err != nil {
-		return fmt.Errorf("unable to get current network ns - %w", err)
-	}
-	defer curNs.Close()
-	handle, err := netns.GetFromName(namespace)
-	if err != nil {
-		return fmt.Errorf("unable to get namespace for public gateway ns - %w", err)
-	}
-
-	defer handle.Close()
-
-	errCh := make(chan error)
-	// only in a goroutine to keep it away from other namespaces
-	go func(targetNs netns.NsHandle, curNs netns.NsHandle) {
-		close, err := ExecuteInNetns(targetNs, curNs)
+	// todo lol
+	if nw.ExternalIp().IsValid() {
+		if err := setNsVethIp(namespace, nw.ExternalIp(), publicGwCableName.Namespace()); err != nil {
+			return fmt.Errorf("unable to set public gateway external address - %w", err)
+		}
+		handle, err := netns.GetFromName(namespace)
 		if err != nil {
-			errCh <- err
-			return
+			return fmt.Errorf("unable to get namespace - %w", err)
 		}
-		defer close()
-
-		log.V(5).Info("Running dhcp client")
-		if err := dhclient4(publicGwCableName.Namespace(), 5, true); err == nil {
-			log.V(5).Info("error running dhcp client")
-			errCh <- nil
-			return
+		nl, err := netlink.NewHandleAt(handle)
+		if err != nil {
+			return fmt.Errorf("unable to get netlink handle - %w", err)
 		}
-		log.V(5).Info("dhcp client completed")
-
-		errCh <- nil
-	}(handle, curNs)
-
-	if err := <-errCh; err != nil {
-		return fmt.Errorf("unable to get addr from dhcp - %w", err)
+		link, err := nl.LinkByName(publicGwCableName.Namespace())
+		if err != nil {
+			return fmt.Errorf("error fetching public gw link - %w", err)
+		}
+		if err := nl.RouteReplace(&netlink.Route{
+			Dst:       netaddr.MustParseIPPrefix("10.0.1.0/24").IPNet(),
+			LinkIndex: link.Attrs().Index,
+			Scope:     netlink.SCOPE_LINK,
+		}); err != nil {
+			return fmt.Errorf("error creating route - %w", err)
+		}
+		if err := nl.RouteReplace(&netlink.Route{
+			Gw:        net.IPv4(10, 0, 1, 1),
+			Dst:       nil,
+			LinkIndex: link.Attrs().Index,
+		}); err != nil {
+			return fmt.Errorf("error creating route - %w", err)
+		}
 	}
 
 	log.V(5).Info("Network NAT configured")

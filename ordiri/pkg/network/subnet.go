@@ -1,22 +1,26 @@
 package network
 
 import (
+	"net"
+
 	"github.com/ordiri/ordiri/pkg/network/api"
 	"inet.af/netaddr"
 )
 
 type SubnetOption func(api.Subnet) error
 
-func NewSubnet(tenant string, name string, cidr string, segment int, opt ...SubnetOption) (api.Subnet, error) {
+func NewSubnet(name string, cidr string, segment int, routerMac, hostLocalMac net.HardwareAddr, opt ...SubnetOption) (api.Subnet, error) {
 	ipnet, err := netaddr.ParseIPPrefix(cidr)
 	if err != nil {
 		return nil, err
 	}
 	s := &subnet{
-		tenant: tenant,
-		name:   name,
-		cidr:   ipnet,
-		vlanId: segment,
+		name:            name,
+		cidr:            ipnet,
+		vlanId:          segment,
+		routerGlobalMac: hostLocalMac,
+		routerMac:       routerMac,
+		knownMacs:       map[netaddr.IP]net.HardwareAddr{},
 	}
 	for _, f := range opt {
 		if err := f(s); err != nil {
@@ -28,20 +32,19 @@ func NewSubnet(tenant string, name string, cidr string, segment int, opt ...Subn
 }
 
 type subnet struct {
-	tenant string
-	name   string
-	vlanId int
-	hosts  []string
-	cidr   netaddr.IPPrefix
+	name            string
+	vlanId          int
+	hosts           []string
+	cidr            netaddr.IPPrefix
+	routerGlobalMac net.HardwareAddr
+	routerMac       net.HardwareAddr
+	knownMacs       map[netaddr.IP]net.HardwareAddr
 }
 
 func (s *subnet) Segment() int {
 	return s.vlanId
 }
 
-func (s *subnet) Tenant() string {
-	return s.tenant
-}
 func (s *subnet) Name() string {
 	return s.name
 }
@@ -49,6 +52,27 @@ func (s *subnet) Name() string {
 func (s *subnet) Hosts() []string {
 	return s.hosts
 }
+func (s *subnet) RouterGlobalMac() net.HardwareAddr {
+	return s.routerGlobalMac
+}
+func (s *subnet) RouterMac() net.HardwareAddr {
+	return s.routerMac
+}
+
+func (sn *subnet) RegisterMac(ip netaddr.IP, mac net.HardwareAddr) bool {
+	if _mac, ok := sn.knownMacs[ip]; ok && _mac.String() == mac.String() {
+		return false
+	}
+
+	sn.knownMacs[ip] = mac
+
+	return true
+}
+func (sn *subnet) KnownMacs() map[netaddr.IP]net.HardwareAddr {
+	return sn.knownMacs
+}
 func (s *subnet) Cidr() netaddr.IPPrefix {
 	return s.cidr.Masked()
 }
+
+var _ api.Subnet = &subnet{}

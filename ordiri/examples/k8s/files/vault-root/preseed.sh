@@ -31,7 +31,7 @@ eval $(blkid /dev/vdb1 --output export)
 {{ with_local_file('vault-root/systemd/insecure-unseal-vault.service', "/etc/systemd/system/insecure-unseal-vault.service") }}
 {{ with_local_file('vault-root/systemd/configure-vault-server.service', "/etc/systemd/system/configure-vault-server.service") }}
 
-systemctl enable vault-root.mount vault configure-vault-server.service insecure-unseal-vault.service vault-tls-configure.service
+systemctl enable vault-root.mount vault.service configure-vault-server.service insecure-unseal-vault.service vault-tls-configure.service
 
 chown -Rf vault:vault /vault/root 
 echo "Completed preseed sucessfully"

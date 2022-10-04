@@ -17,13 +17,15 @@ limitations under the License.
 package main
 
 import (
+	"context"
 	"flag"
+	"fmt"
 	"os"
+	"time"
 
-	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
-	// to ensure that exec-entrypoint and run can make use of them.
 	"go.uber.org/zap/zapcore"
-	"inet.af/netaddr"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 
 	"k8s.io/apimachinery/pkg/runtime"
@@ -33,12 +35,14 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
+	"github.com/ordiri/ordiri/config"
 	authorizationcontrollers "github.com/ordiri/ordiri/controllers/authorization"
 	computecontrollers "github.com/ordiri/ordiri/controllers/compute"
 	corecontrollers "github.com/ordiri/ordiri/controllers/core"
 	networkcontrollers "github.com/ordiri/ordiri/controllers/network"
 	storagecontrollers "github.com/ordiri/ordiri/controllers/storage"
 	"github.com/ordiri/ordiri/pkg/apis"
+	"github.com/ordiri/ordiri/pkg/network/api"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -60,9 +64,15 @@ func main() {
 	var enableLeaderElection bool
 	var probeAddr string
 	var publicCidrStr string
+	var gatewayCidrStr string
+	var mgmtCidrStr string
+	var ipamAddr string
 	flag.StringVar(&metricsAddr, "metrics-bind-address", ":8080", "The address the metric endpoint binds to.")
 	flag.StringVar(&probeAddr, "health-probe-bind-address", ":8081", "The address the probe endpoint binds to.")
-	flag.StringVar(&publicCidrStr, "public-cidr", "172.20.0.2/24", "The cidr to allocate public ip addrs from.")
+	flag.StringVar(&mgmtCidrStr, "mgmt-cidr", config.ManagementCidr.String(), "The upstream management network cidr")
+	flag.StringVar(&publicCidrStr, "public-cidr", config.VmPublicCidr.String(), "The public cidr in use")
+	flag.StringVar(&gatewayCidrStr, "gateway-cidr", config.NetworkInternetGatewayCidr.String(), "The range of ip's used to egress vm traffic to the network")
+	flag.StringVar(&ipamAddr, "ipam", config.IpamAddr.String(), "Ip of the upstream router to send BGP announcements to")
 	flag.BoolVar(&enableLeaderElection, "leader-elect", false,
 		"Enable leader election for controller manager. "+
 			"Enabling this will ensure there is only one active controller manager.")
@@ -74,8 +84,6 @@ func main() {
 	flag.Parse()
 
 	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
-
-	publicCidr := netaddr.MustParseIPPrefix(publicCidrStr)
 
 	cfg := ctrl.GetConfigOrDie()
 	mgr, err := ctrl.NewManager(cfg, ctrl.Options{
@@ -90,11 +98,44 @@ func main() {
 		setupLog.Error(err, "unable to start manager")
 		os.Exit(1)
 	}
-	// mgr.Add(nodeRunner)
+
+	// Set up a connection to the server.
+	conn, err := grpc.Dial(ipamAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+
+		setupLog.Error(err, "unable to connect to allocator")
+		os.Exit(1)
+	}
+	defer conn.Close()
+	allocator := api.NewAddressAllocatorClient(conn)
+
+	// Contact the server and print out its response.
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+
+	for k, v := range map[string]string{
+		"mgmt":   mgmtCidrStr,
+		"public": publicCidrStr,
+		"gateway":     gatewayCidrStr,
+	} {
+		res, err := allocator.RegisterBlock(ctx, &api.RegisterBlockRequest{
+			BlockName: fmt.Sprintf("_shared::%s", k),
+			Ranges: []*api.AllocatableRange{
+				{
+					CIDR: v,
+				},
+			},
+		})
+		if err != nil {
+			setupLog.Error(err, "unable to register shared cidr ranges")
+			os.Exit(1)
+		}
+
+		setupLog.Info("registered ip ranges", "name", res.BlockName, "ranges", res.Ranges)
+	}
 
 	if err = (&corecontrollers.MachineReconciler{
 		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Machine")
 		os.Exit(1)
@@ -130,7 +171,8 @@ func main() {
 	if err = (&networkcontrollers.VmIpAllocator{
 		Client:     mgr.GetClient(),
 		Scheme:     mgr.GetScheme(),
-		PublicCidr: publicCidr,
+		PublicCidr: config.VmPublicCidr,
+		Allocator:  allocator,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "VmIpAllocator")
 		os.Exit(1)

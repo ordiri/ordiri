@@ -19,12 +19,6 @@ import {
     ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostSubnetStatusFromJSONTyped,
     ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostSubnetStatusToJSON,
 } from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostSubnetStatus';
-import type { ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1MetadataSubnetStatus } from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1MetadataSubnetStatus';
-import {
-    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1MetadataSubnetStatusFromJSON,
-    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1MetadataSubnetStatusFromJSONTyped,
-    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1MetadataSubnetStatusToJSON,
-} from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1MetadataSubnetStatus';
 
 /**
  * SubnetStatus defines the observed state of Subnet
@@ -38,12 +32,6 @@ export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetStatus {
      * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetStatus
      */
     hosts: Array<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostSubnetStatus>;
-    /**
-     * 
-     * @type {ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1MetadataSubnetStatus}
-     * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetStatus
-     */
-    metadataServer: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1MetadataSubnetStatus;
 }
 
 /**
@@ -52,7 +40,6 @@ export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetStatus {
 export function instanceOfComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetStatus(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "hosts" in value;
-    isInstance = isInstance && "metadataServer" in value;
 
     return isInstance;
 }
@@ -68,7 +55,6 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetStatusFromJSONT
     return {
         
         'hosts': ((json['hosts'] as Array<any>).map(ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostSubnetStatusFromJSON)),
-        'metadataServer': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1MetadataSubnetStatusFromJSON(json['metadataServer']),
     };
 }
 
@@ -82,7 +68,6 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetStatusToJSON(va
     return {
         
         'hosts': ((value.hosts as Array<any>).map(ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostSubnetStatusToJSON)),
-        'metadataServer': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1MetadataSubnetStatusToJSON(value.metadataServer),
     };
 }
 

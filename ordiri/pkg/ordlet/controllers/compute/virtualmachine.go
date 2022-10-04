@@ -150,7 +150,7 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 
 	ifaces := []computev1alpha1.VirtualMachineNetworkInterfaceStatus{}
 	for _, iface := range vm.Spec.NetworkInterfaces {
-		ifaceStatus, ifaceOption, err := r.ensureNetworkInterface(ctx, vm, iface)
+		ifaceStatus, ifaceOption, err := r.RegisterNetworkInterface(ctx, vm, iface)
 		if err != nil {
 			return ctrl.Result{}, fmt.Errorf("error ensuring network - %w", err)
 		}
@@ -264,25 +264,24 @@ func (r *VirtualMachineReconciler) ReconcileDeletion(ctx context.Context, vm *co
 	}
 
 	for _, iface := range vm.Spec.NetworkInterfaces {
-		if !r.NetworkManager.HasNetwork(iface.Network) {
+		net, err := r.NetworkManager.GetNetwork(iface.Network)
+		if err != nil {
 			log.V(5).Info("network already removed", "iface", iface)
 			continue
 		}
-		net := r.NetworkManager.GetNetwork(iface.Network)
 
-		if !r.NetworkManager.HasSubnet(net, iface.Subnet) {
+		subnet, err := r.NetworkManager.GetSubnet(net.Name(), iface.Subnet)
+		if err != nil {
 			log.V(5).Info("subnet already removed", "iface", iface)
 			continue
 		}
 
-		subnet := r.NetworkManager.GetSubnet(net, iface.Subnet)
-
-		if !r.NetworkManager.HasInterface(net, subnet, iface.Key()) {
+		netIface, err := r.NetworkManager.GetInterface(net.Name(), subnet.Name(), iface.Key())
+		if err != nil {
 			log.V(5).Info("interface already removed", "iface", iface)
 			continue
 		}
-		netIface := r.NetworkManager.GetInterface(net, subnet, iface.Key())
-		if err := r.NetworkManager.RemoveInterface(ctx, net, subnet, netIface); err != nil {
+		if err := r.NetworkManager.RemoveInterface(ctx, net.Name(), subnet.Name(), netIface.Name()); err != nil {
 			return ctrl.Result{}, fmt.Errorf("unable to remove network interface - %w", err)
 		}
 		log.V(5).Info("interface was successfully removed", "iface", iface)

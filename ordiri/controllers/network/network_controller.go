@@ -73,11 +73,6 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 	}
 
 	if !nw.DeletionTimestamp.IsZero() {
-		err := r.removeDefaultRouter(ctx, nw)
-		if err != nil {
-			return ctrl.Result{}, err
-		}
-
 		if controllerutil.RemoveFinalizer(nw, NetworkCreatedFinalizer) {
 			if err := r.Client.Update(ctx, nw); err != nil {
 				return ctrl.Result{}, err
@@ -105,13 +100,6 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 		changed = true
 	}
 
-	routerChanged, _, err := r.ensureDefaultRouter(ctx, nw)
-	if err != nil {
-		return ctrl.Result{}, err
-	}
-
-	changed = changed || routerChanged != controllerutil.OperationResultNone
-
 	if changed {
 		err := r.Status().Update(ctx, nw)
 		if err != nil {
@@ -127,7 +115,7 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 func (r *NetworkReconciler) removeDefaultRouter(ctx context.Context, network *networkv1alpha1.Network) error {
 	router := &networkv1alpha1.Router{}
 	router.Namespace = network.Namespace
-	router.Name = network.DefaultRouterName()
+	router.Name = fmt.Sprintf("")
 	if err := r.Client.Get(ctx, client.ObjectKeyFromObject(router), router); err != nil {
 		if errors.IsNotFound(err) {
 			return nil
@@ -141,7 +129,7 @@ func (r *NetworkReconciler) removeDefaultRouter(ctx context.Context, network *ne
 // ensure the default network router exists and is bound to all the subnets in the network
 func (r *NetworkReconciler) ensureDefaultRouter(ctx context.Context, network *networkv1alpha1.Network) (controllerutil.OperationResult, *networkv1alpha1.Router, error) {
 	router := &networkv1alpha1.Router{}
-	router.Name = network.DefaultRouterName()
+	router.Name = fmt.Sprintf("")
 	router.Namespace = network.Namespace
 	result, err := ctrl.CreateOrUpdate(ctx, r.Client, router, func() error {
 		subnets := &networkv1alpha1.SubnetList{}

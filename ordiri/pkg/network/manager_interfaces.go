@@ -7,77 +7,96 @@ import (
 	"github.com/ordiri/ordiri/pkg/network/api"
 )
 
-func (ln *networkManager) HasInterface(nw api.Network, sn api.Subnet, name string) bool {
-	_, subnet := ln.subnet(nw, sn.Name())
-	if subnet == nil {
-		return false
-	}
-	for _, rtr := range subnet.interfaces {
-		if rtr.Name() == name {
-			return true
+func (ln *networkManager) GetInterface(nw string, sn string, name string) (api.Interface, error) {
+	ln.l.RLock()
+	defer ln.l.RUnlock()
+	if nw, ok := ln.networks[nw]; ok {
+		nw.l.RLock()
+		defer nw.l.RUnlock()
+		if subnet, ok := nw.subnets[sn]; ok {
+			subnet.l.RLock()
+			defer subnet.l.RUnlock()
+			if iface, ok := subnet.ifaces[name]; ok {
+				return iface.Interface, nil
+			}
 		}
 	}
-	return false
+	return nil, fmt.Errorf("no such interface")
 }
 
-func (ln *networkManager) GetInterface(nw api.Network, sn api.Subnet, name string) api.Interface {
-	_, subnet := ln.subnet(nw, sn.Name())
-	if subnet == nil {
-		return nil
+func (ln *networkManager) AttachInterface(ctx context.Context, nw string, sn string, iface api.Interface) (string, error) {
+	if err := ln.RegisterInterface(ctx, nw, sn, iface); err != nil {
+		return "", fmt.Errorf("unable to register interface - %w", err)
 	}
-	interfaces := subnet.interfaces
-	for _, iface := range interfaces {
-		if iface.Name() == name {
-			return iface
+
+	ln.l.RLock()
+	defer ln.l.RUnlock()
+	if nw, ok := ln.networks[nw]; ok {
+		nw.attached = true
+		if err := ln.driver.RegisterNetwork(ctx, nw); err != nil {
+			return "", fmt.Errorf("error creating network - %w", err)
 		}
-	}
-	return nil
-}
+		nw.l.RLock()
+		defer nw.l.RUnlock()
+		if sn, ok := nw.subnets[sn]; ok {
+			if err := ln.driver.RegisterSubnet(ctx, nw, sn); err != nil {
+				return "", fmt.Errorf("error creating subnet - %w", err)
+			}
+			sn.attached = true
+			name, err := ln.driver.AttachInterface(ctx, nw, sn, iface)
+			if err != nil {
+				return "", fmt.Errorf("error attaching interface - %w", err)
+			}
 
-func (ln *networkManager) EnsureInterface(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface) (string, error) {
-	ln.l.Lock()
-	defer ln.l.Unlock()
-	_, subnet := ln.subnet(nw, sn.Name())
-	if subnet == nil {
-		return "", fmt.Errorf("subnet does not exist")
-	}
-
-	ifaceName, err := ln.driver.EnsureInterface(ctx, nw, sn, iface)
-	if err != nil {
-		return "", err
-	}
-
-	for i, _iface := range subnet.interfaces {
-		if iface.Name() == _iface.Name() {
-			subnet.interfaces[i] = iface
-			return ifaceName, nil
+			return name, nil
 		}
+		return "", fmt.Errorf("missing subnet")
 	}
-	subnet.interfaces = append(subnet.interfaces, iface)
-
-	return ifaceName, nil
+	return "", fmt.Errorf("missing network")
 }
 
-func (ln *networkManager) RemoveInterface(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface) error {
-	ln.l.Lock()
-	defer ln.l.Unlock()
-	_, subnet := ln.subnet(nw, sn.Name())
-	if subnet == nil {
-		return fmt.Errorf("subnet does not exist")
-	}
+func (ln *networkManager) RegisterInterface(ctx context.Context, nw string, sn string, iface api.Interface) error {
+	ln.l.RLock()
+	defer ln.l.RUnlock()
 
-	if err := ln.driver.RemoveInterface(ctx, nw, sn, iface); err != nil {
-		return fmt.Errorf("unable to remove interface - %w", err)
-	}
-
-	ifaces := []api.Interface{}
-	for _, _iface := range subnet.interfaces {
-		if _iface.Name() == iface.Name() {
-			continue
+	if nw, ok := ln.networks[nw]; ok {
+		nw.l.RLock()
+		defer nw.l.RUnlock()
+		if subnet, ok := nw.subnets[sn]; ok {
+			subnet.l.Lock()
+			defer subnet.l.Unlock()
+			subnet.ifaces[iface.Name()] = &managedIface{
+				attached:  false,
+				Interface: iface,
+			}
+			return nil
 		}
-		ifaces = append(ifaces, _iface)
+		return fmt.Errorf("unknown subnet")
 	}
-	subnet.interfaces = ifaces
-
-	return nil
+	return fmt.Errorf("unknown network")
 }
+
+func (ln *networkManager) RemoveInterface(ctx context.Context, nw string, sn string, iface string) error {
+	ln.l.RLock()
+	defer ln.l.RUnlock()
+
+	if nw, ok := ln.networks[nw]; ok {
+		nw.l.RLock()
+		defer nw.l.RUnlock()
+		if subnet, ok := nw.subnets[sn]; ok {
+			subnet.l.Lock()
+			defer subnet.l.Unlock()
+			if iface, ok := subnet.ifaces[iface]; ok {
+				if err := ln.driver.DetatchInterface(ctx, nw, subnet, iface); err != nil {
+					return fmt.Errorf("error removing interface - %w", err)
+				}
+			}
+			delete(subnet.ifaces, iface)
+			return nil
+		}
+		return fmt.Errorf("unknown subnet")
+	}
+	return fmt.Errorf("unknown network")
+}
+
+var _ api.InterfaceManager = &networkManager{}

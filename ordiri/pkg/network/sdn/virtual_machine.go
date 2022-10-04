@@ -14,32 +14,18 @@ type VirtualMachine struct {
 	MetadataPort     string
 	MetadataMac      net.HardwareAddr
 	Mac              net.HardwareAddr
-	PrivateIps       []netaddr.IP
+	PrivateIps       []netaddr.IPPrefix
 	Segment          int
 	StrictSourceDest bool
 }
 
 func (wi *VirtualMachine) rules() []FlowRule {
 	rules := []FlowRule{
-		&ArpResponder{
-			Switch:   wi.WorkloadSwitch,
-			Mac:      wi.Mac,
-			Ip:       wi.PrivateIps[0],
-			VlanId:   wi.Segment,
-			Table:    0,
-			Priority: 100,
-		},
 		&MetadataServer{
 			Switch:       wi.WorkloadSwitch,
 			Mac:          wi.MetadataMac,
 			WorkloadPort: wi.WorkloadPort,
 			MetadataPort: wi.MetadataPort,
-		},
-		&StaticPortEntry{
-			Switch:  wi.WorkloadSwitch,
-			Port:    wi.WorkloadPort,
-			Segment: wi.Segment,
-			MacAddr: wi.Mac,
 		},
 	}
 

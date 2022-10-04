@@ -13,6 +13,13 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkInterfaceStatus } from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkInterfaceStatus';
+import {
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkInterfaceStatusFromJSON,
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkInterfaceStatusFromJSONTyped,
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkInterfaceStatusToJSON,
+} from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkInterfaceStatus';
+
 /**
  * 
  * @export
@@ -21,10 +28,22 @@ import { exists, mapValues } from '../runtime';
 export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostNetworkStatus {
     /**
      * 
+     * @type {ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkInterfaceStatus}
+     * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostNetworkStatus
+     */
+    networkInterface: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkInterfaceStatus;
+    /**
+     * 
      * @type {string}
      * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostNetworkStatus
      */
     node: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostNetworkStatus
+     */
+    vlanId: number;
 }
 
 /**
@@ -32,7 +51,9 @@ export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostNetworkStatus {
  */
 export function instanceOfComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostNetworkStatus(value: object): boolean {
     let isInstance = true;
+    isInstance = isInstance && "networkInterface" in value;
     isInstance = isInstance && "node" in value;
+    isInstance = isInstance && "vlanId" in value;
 
     return isInstance;
 }
@@ -47,7 +68,9 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostNetworkStatusFrom
     }
     return {
         
+        'networkInterface': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkInterfaceStatusFromJSON(json['networkInterface']),
         'node': json['node'],
+        'vlanId': json['vlanId'],
     };
 }
 
@@ -60,7 +83,9 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostNetworkStatusToJS
     }
     return {
         
+        'networkInterface': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkInterfaceStatusToJSON(value.networkInterface),
         'node': value.node,
+        'vlanId': value.vlanId,
     };
 }
 

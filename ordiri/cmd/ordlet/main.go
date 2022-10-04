@@ -19,12 +19,15 @@ package main
 import (
 	"context"
 	"flag"
+	"log"
 	"net"
 	"os"
 	"strings"
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	// to ensure that exec-entrypoint and run can make use of them.
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"inet.af/netaddr"
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 
@@ -35,6 +38,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
+	"github.com/ordiri/ordiri/config"
 	"github.com/ordiri/ordiri/pkg/apis"
 	"github.com/ordiri/ordiri/pkg/generated/clientset/versioned"
 	nwman "github.com/ordiri/ordiri/pkg/network"
@@ -45,6 +49,7 @@ import (
 	"github.com/ordiri/ordiri/pkg/ordlet/controllers/compute"
 	"github.com/ordiri/ordiri/pkg/ordlet/controllers/network"
 	"github.com/ordiri/ordiri/pkg/ordlet/controllers/storage"
+	"github.com/ordiri/ordiri/version"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -68,9 +73,11 @@ func main() {
 	var nodeName string
 	var networkDriver string
 	var publicCidrStr string
-	var mgmtCidr string
+	var gatewayCidrStr string
+	var mgmtCidrStr string
 	var bgpPeerAsn uint
 	var bgpPeerIp string
+	var ipamAddr string
 	hostname, err := os.Hostname()
 	if err != nil {
 		panic("unable to determine hostname - " + err.Error())
@@ -79,10 +86,12 @@ func main() {
 	flag.StringVar(&probeAddr, "health-probe-bind-address", ":8086", "The address the probe endpoint binds to.")
 	flag.StringVar(&nodeRole, "role", "compute,network,storage", "The roles this node has")
 	flag.StringVar(&networkDriver, "network-driver", "linux", "The driver for network operations on this node")
-	flag.StringVar(&mgmtCidr, "mgmt-cidr", "10.0.0.0/8", "The upstream management network cidr")
-	flag.StringVar(&publicCidrStr, "public-cidr", "172.20.0.2/24", "The public cidr in use")
-	flag.StringVar(&bgpPeerIp, "bgp-peer-ip", "10.0.1.1", "Ip of the upstream router to send BGP announcements to")
-	flag.UintVar(&bgpPeerAsn, "bgp-peer-asn", 65000, "The asn of the peer")
+	flag.StringVar(&mgmtCidrStr, "mgmt-cidr", config.ManagementCidr.String(), "The upstream management network cidr")
+	flag.StringVar(&publicCidrStr, "public-cidr", config.VmPublicCidr.String(), "The public cidr in use")
+	flag.StringVar(&gatewayCidrStr, "gateway-cidr", config.NetworkInternetGatewayCidr.String(), "The range of ip's used to egress vm traffic to the network")
+	flag.StringVar(&bgpPeerIp, "bgp-peer-ip", config.BgpPeerIp.String(), "Ip of the upstream router to send BGP announcements to")
+	flag.StringVar(&ipamAddr, "ipam", config.IpamAddr.String(), "Ip of the upstream router to send BGP announcements to")
+	flag.UintVar(&bgpPeerAsn, "bgp-peer-asn", config.BgpPeerAsn, "The asn of the peer")
 	flag.StringVar(&nodeName, "name", hostname, "The name this node has")
 	opts := zap.Options{
 		Development: true,
@@ -90,13 +99,27 @@ func main() {
 	opts.BindFlags(flag.CommandLine)
 	flag.Parse()
 
-	_, mgmtNetwork, err := net.ParseCIDR(mgmtCidr)
+	// Set up a connection to the server.
+	conn, err := grpc.Dial(ipamAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		setupLog.Error(err, "unable to decode node mgmt cidr", "cidr", mgmtCidr)
+		log.Fatalf("did not connect: %v", err)
+	}
+	defer conn.Close()
+	allocator := api.NewAddressAllocatorClient(conn)
+	_ = allocator
+
+	_, mgmtNetwork, err := net.ParseCIDR(mgmtCidrStr)
+	if err != nil {
+		setupLog.Error(err, "unable to decode node mgmt cidr", "cidr", mgmtCidrStr)
+		os.Exit(1)
+	}
+	gatewayCidr, err := netaddr.ParseIPPrefix(gatewayCidrStr)
+	if err != nil {
+		setupLog.Error(err, "unable to decode node mgmt cidr", "cidr", mgmtCidrStr)
 		os.Exit(1)
 	}
 
-	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)).WithValues("host", hostname))
+	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)).WithValues("host", hostname).WithValues("version", version.BuildTime))
 
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 		Scheme:                 scheme,
@@ -126,8 +149,10 @@ func main() {
 		setupLog.Error(err, "unable to start node manager")
 		os.Exit(1)
 	}
+	node := nodeRunner.GetNode()
+
 	bgpIP := netaddr.MustParseIP(bgpPeerIp)
-	speaker := bgp.NewSpeaker(nodeRunner.GetNode().TunnelAddress(), uint32(bgpPeerAsn), bgpIP)
+	speaker := bgp.NewSpeaker(node.TunnelAddress(), uint32(bgpPeerAsn), bgpIP)
 	mgr.Add(speaker)
 
 	setupLog.Info("Starting network manager")
@@ -144,6 +169,8 @@ func main() {
 		Node:           nodeRunner,
 		NetworkManager: nwManager,
 		PublicCidr:     publicCidr,
+		GatewayCidr:    gatewayCidr,
+		Allocator:      allocator,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Network")
 		os.Exit(1)
@@ -206,10 +233,11 @@ func main() {
 	}
 
 	if err = (&network.BGPSpeakerReconciler{
-		Client:     mgr.GetClient(),
-		Scheme:     mgr.GetScheme(),
-		Node:       nodeRunner,
-		PublicCidr: publicCidr,
+		Client:      mgr.GetClient(),
+		Scheme:      mgr.GetScheme(),
+		Node:        nodeRunner,
+		PublicCidr:  publicCidr,
+		GatewayCidr: gatewayCidr,
 	}).SetupWithManager(mgr, nwManager.GetSpeaker()); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "BGPSpeaker")
 		os.Exit(1)

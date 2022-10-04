@@ -6,13 +6,12 @@ import (
 )
 
 /*
-NodeSubnetIngress := newFlow([]&ovs.Flow{
-	{
-		Matches: []ovs.Match{ MatchInPort }
-		Actions: []ovs.Action{ TagVlan }
-	}
-})
-
+	NodeSubnetIngress := newFlow([]&ovs.Flow{
+		{
+			Matches: []ovs.Match{ MatchInPort }
+			Actions: []ovs.Action{ TagVlan }
+		}
+	})
 */
 type NodeSubnetIngress struct {
 	NodeLocalVlan int
@@ -22,7 +21,7 @@ type NodeSubnetIngress struct {
 
 func (sti *NodeSubnetIngress) matches(client *ovs.Client) ([]ovs.Match, error) {
 	matches := []ovs.Match{
-		ovs.NetworkDestination(sti.Cidr.String()),
+		// ovs.NetworkDestination(sti.Cidr.String()),
 		ovs.TunnelID(uint64(sti.TunnelId)),
 	}
 
@@ -53,38 +52,38 @@ func (sti *NodeSubnetIngress) Install(client *ovs.Client) error {
 		Matches:  matches,
 		Actions:  actions,
 		Priority: 2,
-		Protocol: ovs.ProtocolIPv4,
+		// Protocol: ovs.ProtocolIPv4,
 	}); err != nil {
 		return err
 	}
 
-	if err := client.OpenFlow.AddFlow(TunnelSwitchName, &ovs.Flow{
-		Table:    OpenFlowTableTunnelIngressNodeVxlanTranslation,
-		Matches:  matches,
-		Actions:  actions,
-		Priority: 2,
-		Protocol: ovs.ProtocolICMPv4,
-	}); err != nil {
-		return err
-	}
-	if err := client.OpenFlow.AddFlow(TunnelSwitchName, &ovs.Flow{
-		Table:    OpenFlowTableTunnelIngressNodeVxlanTranslation,
-		Matches:  matches,
-		Actions:  actions,
-		Priority: 2,
-		Protocol: ovs.ProtocolARP,
-	}); err != nil {
-		return err
-	}
-	if err := client.OpenFlow.AddFlow(TunnelSwitchName, &ovs.Flow{
-		Table:    OpenFlowTableTunnelIngressNodeVxlanTranslation,
-		Matches:  matches,
-		Actions:  actions,
-		Priority: 2,
-		Protocol: ovs.ProtocolUDPv4,
-	}); err != nil {
-		return err
-	}
+	// if err := client.OpenFlow.AddFlow(TunnelSwitchName, &ovs.Flow{
+	// 	Table:    OpenFlowTableTunnelIngressNodeVxlanTranslation,
+	// 	Matches:  matches,
+	// 	Actions:  actions,
+	// 	Priority: 2,
+	// 	Protocol: ovs.ProtocolICMPv4,
+	// }); err != nil {
+	// 	return err
+	// }
+	// if err := client.OpenFlow.AddFlow(TunnelSwitchName, &ovs.Flow{
+	// 	Table:    OpenFlowTableTunnelIngressNodeVxlanTranslation,
+	// 	Matches:  matches,
+	// 	Actions:  actions,
+	// 	Priority: 2,
+	// 	Protocol: ovs.ProtocolARP,
+	// }); err != nil {
+	// 	return err
+	// }
+	// if err := client.OpenFlow.AddFlow(TunnelSwitchName, &ovs.Flow{
+	// 	Table:    OpenFlowTableTunnelIngressNodeVxlanTranslation,
+	// 	Matches:  matches,
+	// 	Actions:  actions,
+	// 	Priority: 2,
+	// 	Protocol: ovs.ProtocolUDPv4,
+	// }); err != nil {
+	// 	return err
+	// }
 	return nil
 }
 

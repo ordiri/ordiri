@@ -39,7 +39,7 @@ export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkStatus {
      */
     conditions?: Array<IoK8sApimachineryPkgApisMetaV1Condition>;
     /**
-     * 
+     * All the hosts this network is currently deployed on
      * @type {Array<ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1HostNetworkStatus>}
      * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkStatus
      */
@@ -51,7 +51,7 @@ export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkStatus {
      */
     observedGeneration?: number;
     /**
-     * 
+     * Virtual Network Identifier used for cross-node tunneling
      * @type {number}
      * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkStatus
      */
