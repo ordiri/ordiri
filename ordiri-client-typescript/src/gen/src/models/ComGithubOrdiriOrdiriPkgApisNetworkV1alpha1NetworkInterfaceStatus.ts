@@ -24,7 +24,7 @@ export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkInterfaceStat
      * @type {Array<string>}
      * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkInterfaceStatus
      */
-    ips: Array<string>;
+    ips?: Array<string>;
     /**
      * 
      * @type {string}
@@ -38,7 +38,6 @@ export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkInterfaceStat
  */
 export function instanceOfComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkInterfaceStatus(value: object): boolean {
     let isInstance = true;
-    isInstance = isInstance && "ips" in value;
     isInstance = isInstance && "mac" in value;
 
     return isInstance;
@@ -54,7 +53,7 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkInterfaceStatu
     }
     return {
         
-        'ips': json['ips'],
+        'ips': !exists(json, 'ips') ? undefined : json['ips'],
         'mac': json['mac'],
     };
 }

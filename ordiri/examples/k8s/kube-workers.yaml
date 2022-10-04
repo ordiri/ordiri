@@ -25,7 +25,7 @@ spec:
       volumes:
       - device: vda
         hostLocal:
-          poolName: etcd
+          poolName: kube-workers
           size: 30Gi
           volName: root
         name: root

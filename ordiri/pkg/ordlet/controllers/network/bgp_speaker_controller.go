@@ -97,7 +97,7 @@ func (r *BGPSpeakerReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 			if r.PublicCidr.Contains(ipAddr.IP()) {
 				continue
 			}
-			vmInternalIp = ipAddr.String()
+			vmInternalIp = ipAddr.IP().String()
 			break
 		}
 		if vmInternalIp == "" {
@@ -158,7 +158,7 @@ func (r *BGPSpeakerReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 				return ctrl.Result{}, err
 			}
 
-			if err := ipt.AppendUnique("nat", "PREROUTING", "-i", routerInterface, "-d", vmPublicIp.String(), "-j", "DNAT", "--to-destination", vmInternalIp); err != nil {
+			if err := ipt.AppendUnique("nat", "PREROUTING", "-i", routerInterface, "-d", vmPublicIp.IP().String(), "-j", "DNAT", "--to-destination", vmInternalIp); err != nil {
 				return ctrl.Result{}, err
 			}
 			if r.speaker == nil {
@@ -170,7 +170,6 @@ func (r *BGPSpeakerReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 				log.Error(err, "error announcing ip")
 				return ctrl.Result{}, err
 			}
-
 		}
 	}
 
