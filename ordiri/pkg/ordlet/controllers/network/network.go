@@ -79,11 +79,6 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 		nodeWantsNetwork = false
 	}
 
-	localVlan, err := node.NetworkVlanId(nw.Name)
-	if err != nil {
-		return ctrl.Result{}, err
-	}
-
 	if !nodeWantsNetwork {
 		if nodeHasNetwork {
 			log.V(5).Info("removing node from network", "nodeWantsNetwork", nodeWantsNetwork, "nodeHasNetwork", nodeHasNetwork, "network", nw)
@@ -105,6 +100,12 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 		if err := r.Client.List(ctx, vmsInNetwork, client.InNamespace(nw.Namespace), client.MatchingFields{"VmsByNetwork": nw.Name}); err != nil {
 			return ctrl.Result{}, fmt.Errorf("unable to get vms in this network - %w", err)
 		}
+
+		localVlan, err := node.NetworkVlanId(nw.Name)
+		if err != nil {
+			return ctrl.Result{}, err
+		}
+
 		networkOpts := []network.NetworkOption{}
 		for _, host := range nw.Status.Hosts {
 			if host.Node == r.Node.GetNode().Name {
@@ -123,11 +124,12 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 				}
 
 				if !hasGatewayIp {
+					log.Info("allocating gateway IP", "blockName", "_shared::gateway")
 					allocated, err := r.Allocator.Allocate(ctx, &api.AllocateRequest{
 						BlockName: "_shared::gateway",
 					})
 					if err != nil {
-						return ctrl.Result{}, fmt.Errorf("unable ot allocate gateway ip - %w", err)
+						return ctrl.Result{}, fmt.Errorf("unable to allocate gateway ip - %w", err)
 					}
 
 					hasGatewayIp = true
@@ -164,14 +166,10 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 			return ctrl.Result{}, err
 		}
 		log.Info("node wants the network")
-		if !nodeHasNetwork {
-			log.Info("a link from the node to the network")
-			// ensure we are referencing the node we are running on in the subnets status so we can decommission the node
-			// when removed
-			err := r.addNodeToNetworkStatus(ctx, nw)
-			if err != nil {
-				return ctrl.Result{}, err
-			}
+		// ensure we are referencing the node we are running on in the subnets status so we can decommission the node
+		// when removed
+		if err := r.addNodeToNetworkStatus(ctx, nw); err != nil {
+			return ctrl.Result{}, err
 		}
 	}
 

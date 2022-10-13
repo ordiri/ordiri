@@ -53,15 +53,19 @@ type SubnetList struct {
 
 // SubnetSpec defines the desired state of Subnet
 type SubnetSpec struct {
-	Network    NetworkSelector    `json:"network"`
-	Cidr       string             `json:"cidr"`
-	RouteTable RouteTableSelector `json:"routeTable"`
-	Router     SubnetRouter       `json:"router"`
+	Network NetworkSelector `json:"network"`
+	Cidr    string          `json:"cidr"`
+	// +optional
+	RouteTable *RouteTableSelector `json:"routeTable,omitempty"`
+	// +optional
+	Router *SubnetRouter `json:"router,omitempty"`
 
 	// todo make this some sort of "network applications"
-	MetadataServer SubnetMetadataServer `json:"metadataServer"`
+	// +optional
+	MetadataServer *SubnetMetadataServer `json:"metadataServer,omitempty"`
 
-	Dhcp DhcpConfiguration `json:"dhcp"`
+	// +optional
+	Dhcp *DhcpConfiguration `json:"dhcp,omitempty"`
 }
 
 type DhcpConfiguration struct {

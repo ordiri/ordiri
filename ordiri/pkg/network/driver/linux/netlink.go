@@ -21,7 +21,7 @@ func (ni *NetworkInterface) Name() string {
 	return ni.Attrs().Name
 }
 
-func (ln *linuxDriver) getOrCreateVeth(ctx context.Context, namespace string, cableName VethCable, enforceMac bool, macAddr net.HardwareAddr) error {
+func (ln *linuxDriver) getOrCreateVeth(ctx context.Context, namespace, name string, cableName VethCable, enforceMac bool, macAddr net.HardwareAddr) error {
 	log := log.FromContext(ctx)
 	log.V(5).Info("Searching for existing veth cable", "namespace", namespace, "cableName", cableName)
 	existingIface := ln.interfaces.get(namespace, cableName.Namespace())
@@ -39,6 +39,7 @@ func (ln *linuxDriver) getOrCreateVeth(ctx context.Context, namespace string, ca
 				Flags:        net.FlagUp,
 				HardwareAddr: macAddr,
 				MTU:          sdn.OverlayMTU,
+				AltNames:     []string{namespace + ":" + name},
 			},
 			PeerName: cableName.Root(),
 		}
@@ -53,7 +54,7 @@ func (ln *linuxDriver) getOrCreateVeth(ctx context.Context, namespace string, ca
 
 		log.V(5).Info("veth not found, creating", "namespace", namespace, "cableName", cableName)
 		if err := netlink.LinkAdd(link); err != nil {
-			return fmt.Errorf("unable to create public gateway veth '%s' - %w", cableName+"-in", err)
+			return fmt.Errorf("unable to create veth '%s' - %w", cableName+"-in", err)
 		}
 		log.V(5).Info("veth cable was created", "namespace", namespace, "cableName", cableName)
 	} else {
@@ -62,12 +63,12 @@ func (ln *linuxDriver) getOrCreateVeth(ctx context.Context, namespace string, ca
 
 	handle, err := netns.GetFromName(namespace)
 	if err != nil {
-		return fmt.Errorf("unable to get namespace for public gateway ns - %w", err)
+		return fmt.Errorf("unable to get namespace - %w", err)
 	}
 	defer handle.Close()
 	nlhandle, err := netlink.NewHandleAt(handle)
 	if err != nil {
-		return fmt.Errorf("unable to get namespace for public gateway ns - %w", err)
+		return fmt.Errorf("unable to get namespace - %w", err)
 	}
 
 	namespaceLink, err := nlhandle.LinkByName(cableName.Namespace())

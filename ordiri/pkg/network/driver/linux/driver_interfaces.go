@@ -108,6 +108,7 @@ func (ln *linuxDriver) createInterfaceBridge(ctx context.Context, nw api.Network
 		la := netlink.NewLinkAttrs()
 		la.Name = bridgeName
 		la.MTU = sdn.OverlayMTU
+		la.AltNames = append(la.AltNames, fmt.Sprintf("%s-%s-%s-bridge", nw.Name(), subnet.Name(), iface.Name()))
 		forwardDelay := uint32(0)
 		bridge = &netlink.Bridge{
 			LinkAttrs:    la,
@@ -190,7 +191,7 @@ func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network
 	if tuntap == nil {
 		la := netlink.NewLinkAttrs()
 		la.Name = tuntapName
-		// la.HardwareAddr = iface.Mac()
+		la.AltNames = append(la.AltNames, fmt.Sprintf("%s-%s-%s-vm", nw.Name(), sn.Name(), iface.Name()))
 
 		la.MTU = sdn.OverlayMTU
 		tuntap = &netlink.Tuntap{
@@ -210,12 +211,6 @@ func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network
 			return nil, fmt.Errorf("unable to set mtu - %w", err)
 		}
 	}
-
-	// if tuntap.Attrs().HardwareAddr.String() != iface.Mac().String() {
-	// 	if err := netlink.LinkSetHardwareAddr(tuntap, iface.Mac()); err != nil {
-	// 		return nil, fmt.Errorf("unable to set the tuntap %s ethernet address to %s - %w", tuntap.Name, iface.Mac().String(), err)
-	// 	}
-	// }
 
 	// we could set it on create but this ensure it's always correct and you can't
 	// set master on a netlink create message so it's always 2 netlink requests anyway

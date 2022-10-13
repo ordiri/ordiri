@@ -51,7 +51,33 @@ type LoadBalancerList struct {
 
 // LoadBalancerSpec defines the desired state of LoadBalancer
 type LoadBalancerSpec struct {
+	Network string `json:"network"`
+	Subnet  string `json:"subnet"`
+	Ip      string `json:"ip"`
+
+	Listeners    []*LoadBalancerListener    `json:"listeners"`
+	TargetGroups []*LoadBalancerTargetGroup `json:"targetGroups"`
 }
+
+type LoadBalancerListener struct {
+	Port        uint32 `json:"port"`
+	TargetGroup string `json:"targetGroup"`
+}
+
+type LoadBalancerTargetGroup struct {
+	Name    string                `json:"name"`
+	Targets []*LoadBalancerTarget `json:"targets"`
+}
+
+type LoadBalancerTarget struct {
+	Instance *InstanceTarget `json:"instance"`
+	Ip       *IpAddrTarget   `json:"ip"`
+	Port     uint32          `json:"port"`
+}
+
+type InstanceTarget string
+
+type IpAddrTarget string
 
 var _ resource.Object = &LoadBalancer{}
 var _ resourcestrategy.Validater = &LoadBalancer{}

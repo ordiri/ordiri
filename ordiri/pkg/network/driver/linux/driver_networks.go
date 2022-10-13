@@ -77,7 +77,7 @@ func (ln *linuxDriver) installNetworkNat(ctx context.Context, nw api.Network) er
 		return fmt.Errorf("error creating network namespace for NAT")
 	}
 
-	if err := ln.getOrCreateVeth(ctx, namespace, publicGwCableName, false, mac.Unicast()); err != nil {
+	if err := ln.getOrCreateVeth(ctx, namespace, "public:"+nw.Name(), publicGwCableName, false, mac.Unicast()); err != nil {
 		return err
 	}
 

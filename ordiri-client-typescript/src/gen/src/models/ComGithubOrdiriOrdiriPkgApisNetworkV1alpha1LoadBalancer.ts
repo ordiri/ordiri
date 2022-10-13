@@ -13,6 +13,12 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerSpec } from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerSpec';
+import {
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerSpecFromJSON,
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerSpecFromJSONTyped,
+    ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerSpecToJSON,
+} from './ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerSpec';
 import type { IoK8sApimachineryPkgApisMetaV1ObjectMeta } from './IoK8sApimachineryPkgApisMetaV1ObjectMeta';
 import {
     IoK8sApimachineryPkgApisMetaV1ObjectMetaFromJSON,
@@ -45,11 +51,11 @@ export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancer {
      */
     metadata?: IoK8sApimachineryPkgApisMetaV1ObjectMeta;
     /**
-     * LoadBalancerSpec defines the desired state of LoadBalancer
-     * @type {object}
+     * 
+     * @type {ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerSpec}
      * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancer
      */
-    spec?: object;
+    spec?: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerSpec;
     /**
      * LoadBalancerStatus defines the observed state of LoadBalancer
      * @type {object}
@@ -80,7 +86,7 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerFromJSONT
         'apiVersion': !exists(json, 'apiVersion') ? undefined : json['apiVersion'],
         'kind': !exists(json, 'kind') ? undefined : json['kind'],
         'metadata': !exists(json, 'metadata') ? undefined : IoK8sApimachineryPkgApisMetaV1ObjectMetaFromJSON(json['metadata']),
-        'spec': !exists(json, 'spec') ? undefined : json['spec'],
+        'spec': !exists(json, 'spec') ? undefined : ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerSpecFromJSON(json['spec']),
         'status': !exists(json, 'status') ? undefined : json['status'],
     };
 }
@@ -97,7 +103,7 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerToJSON(va
         'apiVersion': value.apiVersion,
         'kind': value.kind,
         'metadata': IoK8sApimachineryPkgApisMetaV1ObjectMetaToJSON(value.metadata),
-        'spec': value.spec,
+        'spec': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1LoadBalancerSpecToJSON(value.spec),
         'status': value.status,
     };
 }

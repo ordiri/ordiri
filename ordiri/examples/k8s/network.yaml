@@ -3,6 +3,12 @@ kind: Network
 metadata:
   name: kubevms
 spec:
-  cidr: 10.128.0.0/9
+  cidr: 10.200.0.0/12
+  dns:
+    enabled: true
   nat:
-    nat: true # should be some sort of nat gateway object really so you can route at it per subnet
+    enabled: true
+  router:
+    enabled: true
+  internetGateway:
+    enabled: true

@@ -61,13 +61,13 @@ export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetSpec {
      * @type {ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1DhcpConfiguration}
      * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetSpec
      */
-    dhcp: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1DhcpConfiguration;
+    dhcp?: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1DhcpConfiguration;
     /**
      * 
      * @type {ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetMetadataServer}
      * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetSpec
      */
-    metadataServer: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetMetadataServer;
+    metadataServer?: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetMetadataServer;
     /**
      * 
      * @type {ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSelector}
@@ -79,13 +79,13 @@ export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetSpec {
      * @type {ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableSelector}
      * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetSpec
      */
-    routeTable: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableSelector;
+    routeTable?: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableSelector;
     /**
      * 
      * @type {ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetRouter}
      * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetSpec
      */
-    router: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetRouter;
+    router?: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetRouter;
 }
 
 /**
@@ -94,11 +94,7 @@ export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetSpec {
 export function instanceOfComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetSpec(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "cidr" in value;
-    isInstance = isInstance && "dhcp" in value;
-    isInstance = isInstance && "metadataServer" in value;
     isInstance = isInstance && "network" in value;
-    isInstance = isInstance && "routeTable" in value;
-    isInstance = isInstance && "router" in value;
 
     return isInstance;
 }
@@ -114,11 +110,11 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetSpecFromJSONTyp
     return {
         
         'cidr': json['cidr'],
-        'dhcp': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1DhcpConfigurationFromJSON(json['dhcp']),
-        'metadataServer': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetMetadataServerFromJSON(json['metadataServer']),
+        'dhcp': !exists(json, 'dhcp') ? undefined : ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1DhcpConfigurationFromJSON(json['dhcp']),
+        'metadataServer': !exists(json, 'metadataServer') ? undefined : ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetMetadataServerFromJSON(json['metadataServer']),
         'network': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSelectorFromJSON(json['network']),
-        'routeTable': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableSelectorFromJSON(json['routeTable']),
-        'router': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetRouterFromJSON(json['router']),
+        'routeTable': !exists(json, 'routeTable') ? undefined : ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1RouteTableSelectorFromJSON(json['routeTable']),
+        'router': !exists(json, 'router') ? undefined : ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetRouterFromJSON(json['router']),
     };
 }
 

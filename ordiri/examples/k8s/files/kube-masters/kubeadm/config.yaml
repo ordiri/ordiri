@@ -8,11 +8,11 @@ address: "::"
 apiVersion: kubeadm.k8s.io/v1beta3
 kind: ClusterConfiguration
 kubernetesVersion: stable
-controlPlaneEndpoint: "cluster.homelab.dmann.xyz:6443"
+controlPlaneEndpoint: "cluster.homelab.dmann.xyz:443"
 clusterName: "homelab"
 networking:
-  podSubnet: "10.200.1.0/24"
-  serviceSubnet: "10.200.2.0/24"
+  podSubnet: "10.240.0.0/16,2403:5806:97ec:6300::/56"
+  serviceSubnet: "10.241.0.0/16,2403:5806:97ec:6400::/112"
 apiServer:
   certSANs:
   - cluster.homelab.dmann.xyz
@@ -40,5 +40,5 @@ apiVersion: kubeadm.k8s.io/v1beta3
 kind: InitConfiguration
 localAPIEndpoint:
   advertiseAddress: "${local_ip}"
-  bindPort: 6443
+  bindPort: 443
 certificateKey: ${cert_key}

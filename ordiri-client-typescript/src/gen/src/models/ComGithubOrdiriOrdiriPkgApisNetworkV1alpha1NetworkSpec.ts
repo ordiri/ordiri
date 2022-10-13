@@ -58,16 +58,16 @@ export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSpec {
     dns?: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkDnsSpec;
     /**
      * 
+     * @type {ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1InternetGatewaySpec}
+     * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSpec
+     */
+    internetGateway?: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1InternetGatewaySpec;
+    /**
+     * 
      * @type {ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkNatSpec}
      * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSpec
      */
     nat?: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkNatSpec;
-    /**
-     * 
-     * @type {ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1InternetGatewaySpec}
-     * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSpec
-     */
-    _public?: ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1InternetGatewaySpec;
     /**
      * 
      * @type {ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkRouterSpec}
@@ -98,8 +98,8 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSpecFromJSONTy
         
         'cidr': json['cidr'],
         'dns': !exists(json, 'dns') ? undefined : ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkDnsSpecFromJSON(json['dns']),
+        'internetGateway': !exists(json, 'internetGateway') ? undefined : ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1InternetGatewaySpecFromJSON(json['internetGateway']),
         'nat': !exists(json, 'nat') ? undefined : ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkNatSpecFromJSON(json['nat']),
-        '_public': !exists(json, 'public') ? undefined : ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1InternetGatewaySpecFromJSON(json['public']),
         'router': !exists(json, 'router') ? undefined : ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkRouterSpecFromJSON(json['router']),
     };
 }
@@ -115,8 +115,8 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSpecToJSON(val
         
         'cidr': value.cidr,
         'dns': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkDnsSpecToJSON(value.dns),
+        'internetGateway': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1InternetGatewaySpecToJSON(value.internetGateway),
         'nat': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkNatSpecToJSON(value.nat),
-        'public': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1InternetGatewaySpecToJSON(value._public),
         'router': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkRouterSpecToJSON(value.router),
     };
 }

@@ -3,7 +3,7 @@ kind: VirtualMachineDeployment
 metadata:
   name: kube-master
 spec:
-  replicas: 3
+  replicas: 2
   template:
     metadata:
       creationTimestamp: null

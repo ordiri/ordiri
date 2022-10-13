@@ -8,6 +8,7 @@ You may obtain a copy of the License at
     http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
+Unless na by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
@@ -58,28 +59,30 @@ type NetworkSpec struct {
 
 	// Cidr address to represent this network
 	// +optional
-	Router *NetworkRouterSpec `json:"router"`
+	Router *NetworkRouterSpec `json:"router,omitempty"`
 
 	// Cidr address to represent this network
 	// +optional
-	DNS *NetworkDnsSpec `json:"dns"`
+	DNS *NetworkDnsSpec `json:"dns,omitempty"`
 
 	// Cidr address to represent this network
 	// +optional
-	Nat *NetworkNatSpec `json:"nat"`
+	Nat *NetworkNatSpec `json:"nat,omitempty"`
 
 	// +optional
-	InternetGateway *InternetGatewaySpec `json:"public,omitempty"`
+	InternetGateway *InternetGatewaySpec `json:"internetGateway,omitempty"`
 }
 
 type NetworkRouterSpec struct {
-	Enabled bool   `json:"enabled"`
-	Ip      string `json:"ip"`
+	Enabled bool `json:"enabled"`
+	// +optional
+	Ip string `json:"ip"`
 }
 
 type NetworkDnsSpec struct {
-	Enabled bool   `json:"enabled"`
-	Ip      string `json:"ip"`
+	Enabled bool `json:"enabled"`
+	// +optional
+	Ip string `json:"ip,omitempty"`
 }
 
 type InternetGatewaySpec struct {

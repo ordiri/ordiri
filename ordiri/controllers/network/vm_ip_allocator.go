@@ -108,6 +108,7 @@ func (r *VmIpAllocator) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 
 		if !foundPrivate || wantsPublic {
 			if !foundPrivate {
+				log.Info("allocating IP", "blockName", subnetIpamBlockName)
 				allocated, err := r.Allocator.Allocate(ctx, &api.AllocateRequest{
 					BlockName: subnetIpamBlockName,
 				})
@@ -121,6 +122,7 @@ func (r *VmIpAllocator) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 			if wantsPublic {
 				// We don't bother skipping any ip range here as it's a public network routed directly at us
 				// we'll swap this with bird bgp routing eventually and clean all this fip stuff up
+				log.Info("allocating IP", "blockName", publicIpamBlockName)
 				allocated, err := r.Allocator.Allocate(ctx, &api.AllocateRequest{
 					BlockName: publicIpamBlockName,
 				})

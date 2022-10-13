@@ -3,7 +3,6 @@ package sdn
 import (
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/digitalocean/go-openvswitch/ovs"
 )
@@ -182,13 +181,6 @@ func (wi *Node) workfloadFlows(inboundPort int) []FlowRule {
 	return flows
 }
 
-func (wi *Node) clean(client *ovs.Client, br string) error {
-	err := client.OpenFlow.DelFlows(TunnelSwitchName, nil)
-	if err != nil {
-		return err
-	}
-	return nil
-}
 func (wi *Node) Install(client *ovs.Client) error {
 
 	tunnelVmPort, err := client.OpenFlow.DumpPort(TunnelSwitchName, "patch-vms")
@@ -199,16 +191,6 @@ func (wi *Node) Install(client *ovs.Client) error {
 	if err != nil {
 		return err
 	}
-
-	if err := wi.clean(client, TunnelSwitchName); err != nil {
-		return err
-	}
-	if err := wi.clean(client, WorkloadSwitchName); err != nil {
-		return err
-	}
-	// Otherwise there is some weirdness with the flows restoring
-	fmt.Print("Waiting 5 seconds for flows to be deleted\n")
-	time.Sleep(time.Second * 5)
 
 	for _, flow := range wi.tunnelFlows(tunnelVmPort.PortID) {
 		if err := flow.Install(client); err != nil {
@@ -225,7 +207,6 @@ func (wi *Node) Install(client *ovs.Client) error {
 }
 
 func (wi *Node) Remove(client *ovs.Client) error {
-
 	vmPort, err := client.OpenFlow.DumpPort(TunnelSwitchName, "patch-vms")
 	if err != nil {
 		return err

@@ -93,8 +93,11 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.InternetGatewaySpec":                  schema_pkg_apis_network_v1alpha1_InternetGatewaySpec(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.LoadBalancer":                         schema_pkg_apis_network_v1alpha1_LoadBalancer(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.LoadBalancerList":                     schema_pkg_apis_network_v1alpha1_LoadBalancerList(ref),
+		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.LoadBalancerListener":                 schema_pkg_apis_network_v1alpha1_LoadBalancerListener(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.LoadBalancerSpec":                     schema_pkg_apis_network_v1alpha1_LoadBalancerSpec(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.LoadBalancerStatus":                   schema_pkg_apis_network_v1alpha1_LoadBalancerStatus(ref),
+		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.LoadBalancerTarget":                   schema_pkg_apis_network_v1alpha1_LoadBalancerTarget(ref),
+		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.LoadBalancerTargetGroup":              schema_pkg_apis_network_v1alpha1_LoadBalancerTargetGroup(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.Network":                              schema_pkg_apis_network_v1alpha1_Network(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkDnsSpec":                       schema_pkg_apis_network_v1alpha1_NetworkDnsSpec(ref),
 		"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkInterfaceStatus":               schema_pkg_apis_network_v1alpha1_NetworkInterfaceStatus(ref),
@@ -2863,14 +2866,91 @@ func schema_pkg_apis_network_v1alpha1_LoadBalancerList(ref common.ReferenceCallb
 	}
 }
 
+func schema_pkg_apis_network_v1alpha1_LoadBalancerListener(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"port": {
+						SchemaProps: spec.SchemaProps{
+							Default: 0,
+							Type:    []string{"integer"},
+							Format:  "int64",
+						},
+					},
+					"targetGroup": {
+						SchemaProps: spec.SchemaProps{
+							Default: "",
+							Type:    []string{"string"},
+							Format:  "",
+						},
+					},
+				},
+				Required: []string{"port", "targetGroup"},
+			},
+		},
+	}
+}
+
 func schema_pkg_apis_network_v1alpha1_LoadBalancerSpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
 				Description: "LoadBalancerSpec defines the desired state of LoadBalancer",
 				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"network": {
+						SchemaProps: spec.SchemaProps{
+							Default: "",
+							Type:    []string{"string"},
+							Format:  "",
+						},
+					},
+					"subnet": {
+						SchemaProps: spec.SchemaProps{
+							Default: "",
+							Type:    []string{"string"},
+							Format:  "",
+						},
+					},
+					"ip": {
+						SchemaProps: spec.SchemaProps{
+							Default: "",
+							Type:    []string{"string"},
+							Format:  "",
+						},
+					},
+					"listeners": {
+						SchemaProps: spec.SchemaProps{
+							Type: []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Ref: ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.LoadBalancerListener"),
+									},
+								},
+							},
+						},
+					},
+					"targetGroups": {
+						SchemaProps: spec.SchemaProps{
+							Type: []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Ref: ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.LoadBalancerTargetGroup"),
+									},
+								},
+							},
+						},
+					},
+				},
+				Required: []string{"network", "subnet", "ip", "listeners", "targetGroups"},
 			},
 		},
+		Dependencies: []string{
+			"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.LoadBalancerListener", "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.LoadBalancerTargetGroup"},
 	}
 }
 
@@ -2882,6 +2962,72 @@ func schema_pkg_apis_network_v1alpha1_LoadBalancerStatus(ref common.ReferenceCal
 				Type:        []string{"object"},
 			},
 		},
+	}
+}
+
+func schema_pkg_apis_network_v1alpha1_LoadBalancerTarget(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"instance": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
+					"ip": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
+					"port": {
+						SchemaProps: spec.SchemaProps{
+							Default: 0,
+							Type:    []string{"integer"},
+							Format:  "int64",
+						},
+					},
+				},
+				Required: []string{"instance", "ip", "port"},
+			},
+		},
+	}
+}
+
+func schema_pkg_apis_network_v1alpha1_LoadBalancerTargetGroup(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"name": {
+						SchemaProps: spec.SchemaProps{
+							Default: "",
+							Type:    []string{"string"},
+							Format:  "",
+						},
+					},
+					"targets": {
+						SchemaProps: spec.SchemaProps{
+							Type: []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Ref: ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.LoadBalancerTarget"),
+									},
+								},
+							},
+						},
+					},
+				},
+				Required: []string{"name", "targets"},
+			},
+		},
+		Dependencies: []string{
+			"github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.LoadBalancerTarget"},
 	}
 }
 
@@ -2947,13 +3093,12 @@ func schema_pkg_apis_network_v1alpha1_NetworkDnsSpec(ref common.ReferenceCallbac
 					},
 					"ip": {
 						SchemaProps: spec.SchemaProps{
-							Default: "",
-							Type:    []string{"string"},
-							Format:  "",
+							Type:   []string{"string"},
+							Format: "",
 						},
 					},
 				},
-				Required: []string{"enabled", "ip"},
+				Required: []string{"enabled"},
 			},
 		},
 	}
@@ -3083,7 +3228,7 @@ func schema_pkg_apis_network_v1alpha1_NetworkRouterSpec(ref common.ReferenceCall
 						},
 					},
 				},
-				Required: []string{"enabled", "ip"},
+				Required: []string{"enabled"},
 			},
 		},
 	}
@@ -3142,7 +3287,7 @@ func schema_pkg_apis_network_v1alpha1_NetworkSpec(ref common.ReferenceCallback) 
 							Ref:         ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.NetworkNatSpec"),
 						},
 					},
-					"public": {
+					"internetGateway": {
 						SchemaProps: spec.SchemaProps{
 							Ref: ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.InternetGatewaySpec"),
 						},
@@ -3916,31 +4061,27 @@ func schema_pkg_apis_network_v1alpha1_SubnetSpec(ref common.ReferenceCallback) c
 					},
 					"routeTable": {
 						SchemaProps: spec.SchemaProps{
-							Default: map[string]interface{}{},
-							Ref:     ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.RouteTableSelector"),
+							Ref: ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.RouteTableSelector"),
 						},
 					},
 					"router": {
 						SchemaProps: spec.SchemaProps{
-							Default: map[string]interface{}{},
-							Ref:     ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.SubnetRouter"),
+							Ref: ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.SubnetRouter"),
 						},
 					},
 					"metadataServer": {
 						SchemaProps: spec.SchemaProps{
 							Description: "todo make this some sort of \"network applications\"",
-							Default:     map[string]interface{}{},
 							Ref:         ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.SubnetMetadataServer"),
 						},
 					},
 					"dhcp": {
 						SchemaProps: spec.SchemaProps{
-							Default: map[string]interface{}{},
-							Ref:     ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.DhcpConfiguration"),
+							Ref: ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.DhcpConfiguration"),
 						},
 					},
 				},
-				Required: []string{"network", "cidr", "routeTable", "router", "metadataServer", "dhcp"},
+				Required: []string{"network", "cidr"},
 			},
 		},
 		Dependencies: []string{

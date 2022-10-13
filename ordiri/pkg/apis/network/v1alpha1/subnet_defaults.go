@@ -19,12 +19,22 @@ package v1alpha1
 import "github.com/ordiri/ordiri/pkg/mac"
 
 func SetDefaults_SubnetSpec(obj *SubnetSpec) {
+	if obj.RouteTable == nil {
+		obj.RouteTable = &RouteTableSelector{}
+	}
 	if obj.RouteTable.Name == "" {
 		obj.RouteTable.Name = "default"
+	}
+	if obj.Router == nil {
+		obj.Router = &SubnetRouter{}
 	}
 
 	if obj.Router.Mac == "" {
 		obj.Router.Mac = mac.Unicast().String()
+	}
+
+	if obj.MetadataServer == nil {
+		obj.MetadataServer = &SubnetMetadataServer{}
 	}
 
 	if obj.MetadataServer.Mac == "" {

@@ -19,13 +19,11 @@ package network
 import (
 	"context"
 	"fmt"
-	"net"
 	"reflect"
 
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
-	"k8s.io/client-go/util/retry"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
@@ -196,74 +194,74 @@ func (r *RouterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	return ctrl.Result{}, nil
 }
 
-func (r *RouterReconciler) addNodeSubnetToRouterStatus(ctx context.Context, subnet *networkv1alpha1.Subnet, rtr *networkv1alpha1.Router, nodeLocalMac net.HardwareAddr) error {
-	return retry.RetryOnConflict(retry.DefaultBackoff, func() error {
-		node := r.Node.GetNode()
-		router := &networkv1alpha1.Router{}
-		if err := r.Client.Get(ctx, client.ObjectKeyFromObject(rtr), router); err != nil {
-			if errors.IsNotFound(err) {
-				return nil
-			}
-			return err
-		}
+// func (r *RouterReconciler) addNodeSubnetToRouterStatus(ctx context.Context, subnet *networkv1alpha1.Subnet, rtr *networkv1alpha1.Router, nodeLocalMac net.HardwareAddr) error {
+// 	return retry.RetryOnConflict(retry.DefaultBackoff, func() error {
+// 		node := r.Node.GetNode()
+// 		router := &networkv1alpha1.Router{}
+// 		if err := r.Client.Get(ctx, client.ObjectKeyFromObject(rtr), router); err != nil {
+// 			if errors.IsNotFound(err) {
+// 				return nil
+// 			}
+// 			return err
+// 		}
 
-		needsUpdate := false
-		routerContainsNodeSubnet := false
-		for _, hostBinding := range router.Status.Hosts {
-			if hostBinding.Node == node.Name && hostBinding.Subnet == subnet.Name {
-				routerContainsNodeSubnet = true
-				if hostBinding.Mac != nodeLocalMac.String() {
-					hostBinding.Mac = nodeLocalMac.String()
-					needsUpdate = true
-				}
-			}
-		}
+// 		needsUpdate := false
+// 		routerContainsNodeSubnet := false
+// 		for _, hostBinding := range router.Status.Hosts {
+// 			if hostBinding.Node == node.Name && hostBinding.Subnet == subnet.Name {
+// 				routerContainsNodeSubnet = true
+// 				if hostBinding.Mac != nodeLocalMac.String() {
+// 					hostBinding.Mac = nodeLocalMac.String()
+// 					needsUpdate = true
+// 				}
+// 			}
+// 		}
 
-		if !routerContainsNodeSubnet {
-			needsUpdate = true
-			router.Status.Hosts = append(router.Status.Hosts, networkv1alpha1.HostRouterStatus{
-				Node:   node.Name,
-				Subnet: subnet.Name,
-				Mac:    nodeLocalMac.String(),
-			})
+// 		if !routerContainsNodeSubnet {
+// 			needsUpdate = true
+// 			router.Status.Hosts = append(router.Status.Hosts, networkv1alpha1.HostRouterStatus{
+// 				Node:   node.Name,
+// 				Subnet: subnet.Name,
+// 				Mac:    nodeLocalMac.String(),
+// 			})
 
-		}
-		if needsUpdate {
-			if err := r.Client.Status().Update(ctx, router); err != nil {
-				return err
-			}
-		}
-		return nil
-	})
-}
-func (r *RouterReconciler) removeNodeSubnetFromRouterStatus(ctx context.Context, subnet *networkv1alpha1.Subnet, rtr *networkv1alpha1.Router) error {
-	return retry.RetryOnConflict(retry.DefaultBackoff, func() error {
-		router := &networkv1alpha1.Router{}
-		if err := r.Client.Get(ctx, client.ObjectKeyFromObject(rtr), router); err != nil {
-			if errors.IsNotFound(err) {
-				return nil
-			}
-			return err
-		}
-		found := false
-		newHosts := []networkv1alpha1.HostRouterStatus{}
-		for _, boundHosts := range router.Status.Hosts {
-			if boundHosts.Node == r.Node.GetNode().Name && boundHosts.Subnet == subnet.Name {
-				found = true
-				continue
-			}
-			newHosts = append(newHosts, boundHosts)
-		}
+// 		}
+// 		if needsUpdate {
+// 			if err := r.Client.Status().Update(ctx, router); err != nil {
+// 				return err
+// 			}
+// 		}
+// 		return nil
+// 	})
+// }
+// func (r *RouterReconciler) removeNodeSubnetFromRouterStatus(ctx context.Context, subnet *networkv1alpha1.Subnet, rtr *networkv1alpha1.Router) error {
+// 	return retry.RetryOnConflict(retry.DefaultBackoff, func() error {
+// 		router := &networkv1alpha1.Router{}
+// 		if err := r.Client.Get(ctx, client.ObjectKeyFromObject(rtr), router); err != nil {
+// 			if errors.IsNotFound(err) {
+// 				return nil
+// 			}
+// 			return err
+// 		}
+// 		found := false
+// 		newHosts := []networkv1alpha1.HostRouterStatus{}
+// 		for _, boundHosts := range router.Status.Hosts {
+// 			if boundHosts.Node == r.Node.GetNode().Name && boundHosts.Subnet == subnet.Name {
+// 				found = true
+// 				continue
+// 			}
+// 			newHosts = append(newHosts, boundHosts)
+// 		}
 
-		if found {
-			router.Status.Hosts = newHosts
-			if err := r.Client.Status().Update(ctx, router); err != nil {
-				return err
-			}
-		}
-		return nil
-	})
-}
+// 		if found {
+// 			router.Status.Hosts = newHosts
+// 			if err := r.Client.Status().Update(ctx, router); err != nil {
+// 				return err
+// 			}
+// 		}
+// 		return nil
+// 	})
+// }
 
 // SetupWithManager sets up the controller with the Manager.
 func (r *RouterReconciler) SetupWithManager(mgr ctrl.Manager) error {

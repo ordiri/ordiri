@@ -30,7 +30,7 @@ export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkRouterSpec {
      * @type {string}
      * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkRouterSpec
      */
-    ip: string;
+    ip?: string;
 }
 
 /**
@@ -39,7 +39,6 @@ export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkRouterSpec {
 export function instanceOfComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkRouterSpec(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "enabled" in value;
-    isInstance = isInstance && "ip" in value;
 
     return isInstance;
 }
@@ -55,7 +54,7 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkRouterSpecFrom
     return {
         
         'enabled': json['enabled'],
-        'ip': json['ip'],
+        'ip': !exists(json, 'ip') ? undefined : json['ip'],
     };
 }
 
