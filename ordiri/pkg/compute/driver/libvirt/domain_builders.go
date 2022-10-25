@@ -9,6 +9,8 @@ import (
 	"libvirt.org/go/libvirtxml"
 )
 
+const CephSecretUUID = "4eadcf35-dc7d-4d80-a7fe-5f599d1ec49f"
+
 type DomainOption func(*libvirtxml.Domain) error
 
 func WithUuid(uuid string) DomainOption {
@@ -261,7 +263,7 @@ func WithCephVolume(tenant, name, device string) DomainOption {
 					Name:     fmt.Sprintf("%s/%s", tenant, name),
 					Hosts: []libvirtxml.DomainDiskSourceHost{
 						{
-							Name: "debian.mgmt",
+							Name: "ceph",
 							Port: "6789",
 						},
 					},
@@ -271,7 +273,7 @@ func WithCephVolume(tenant, name, device string) DomainOption {
 				Username: "libvirt",
 				Secret: &libvirtxml.DomainDiskSecret{
 					Type: "ceph",
-					UUID: "4eadcf35-dc7d-4d80-a7fe-5f599d1ec49f", // todo: bring from somewhere else
+					UUID: CephSecretUUID, // todo: bring from somewhere else
 				},
 			},
 			Target: &libvirtxml.DomainDiskTarget{

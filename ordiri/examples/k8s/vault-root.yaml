@@ -31,7 +31,6 @@ spec:
     metadata:
       creationTimestamp: null
     spec:
-      node: "mothership"
       resources:
         cpu: 1
         memory: 512M

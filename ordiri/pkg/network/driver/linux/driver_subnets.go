@@ -223,12 +223,14 @@ func (ln *linuxDriver) installMetadataServer(ctx context.Context, nw api.Network
 	unitName := metadataServerUnitName(subnet)
 	opts := []*unit.UnitOption{
 		unit.NewUnitOption("Unit", "Description", "Ordiri Metadata Service for "+unitName),
-		unit.NewUnitOption("Install", "WantedBy", "multi-user.target"),
+		unit.NewUnitOption("Unit", "After", "ordlet"),
+		unit.NewUnitOption("Unit", "BindsTo", "ordlet"),
 		// unit.NewUnitOption("Service", "PrivateMounts", "yes"),
 		unit.NewUnitOption("Service", "NetworkNamespacePath", namespacePath(namespace)),
 		unit.NewUnitOption("Service", "Environment", "KUBECONFIG=/etc/ordiri.conf"),
 		unit.NewUnitOption("Service", "ExecStart", startCmd),
-		unit.NewUnitOption("Service", "Restart", "on-failure"),
+		unit.NewUnitOption("Service", "Restart", "always"),
+		unit.NewUnitOption("Install", "WantedBy", "multi-user.target"),
 	}
 
 	return ln.enableUnitFile(ctx, baseDir, unitName, opts)
@@ -337,6 +339,8 @@ func (ln *linuxDriver) installDhcp(ctx context.Context, nw api.Network, subnet a
 	unitName := dhcpUnitName(subnet)
 	opts := []*unit.UnitOption{
 		unit.NewUnitOption("Unit", "Description", "DHCP Service for "+unitName),
+		unit.NewUnitOption("Unit", "After", "ordlet"),
+		unit.NewUnitOption("Unit", "BindsTo", "ordlet"),
 		unit.NewUnitOption("Install", "WantedBy", "multi-user.target"),
 		// unit.NewUnitOption("Service", "PrivateMounts", "yes"),
 		unit.NewUnitOption("Service", "BindPaths", strings.Join([]string{
@@ -345,7 +349,7 @@ func (ln *linuxDriver) installDhcp(ctx context.Context, nw api.Network, subnet a
 		}, " ")),
 		unit.NewUnitOption("Service", "NetworkNamespacePath", namespacePath(namespace)),
 		unit.NewUnitOption("Service", "ExecStart", startCmd),
-		unit.NewUnitOption("Service", "Restart", "on-failure"),
+		unit.NewUnitOption("Service", "Restart", "always"),
 	}
 
 	return ln.enableUnitFile(ctx, baseDir, unitName, opts)

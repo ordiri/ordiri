@@ -16,7 +16,7 @@ if [[ -z "$(lsblk /dev/vdb --json | jq -r '.blockdevices[].children // ""')" ]];
     mkfs -t ext4 /dev/vdb1
 fi
 
-mkdir -p /vault/root 
+mkdir -p /vault/root /etc/systemd/system/vault.service.d/
 
 {{ with_local_file('vault-root/vault/vault.hcl', "/etc/vault.d/vault.hcl", owner="vault", group="vault") }}
 {{ with_local_file('vault-root/bin/vault-tls-configure.sh', "/sbin/vault-tls-configure.sh", mode="+x") }}
@@ -30,8 +30,8 @@ eval $(blkid /dev/vdb1 --output export)
 {{ with_local_file('vault-root/systemd/vault-tls-configure.service', "/etc/systemd/system/vault-tls-configure.service") }}
 {{ with_local_file('vault-root/systemd/insecure-unseal-vault.service', "/etc/systemd/system/insecure-unseal-vault.service") }}
 {{ with_local_file('vault-root/systemd/configure-vault-server.service', "/etc/systemd/system/configure-vault-server.service") }}
+{{ with_local_file('vault-root/systemd/vault.service.d/override.conf', "/etc/systemd/system/vault.service.d/override.conf") }}
 
 systemctl enable vault-root.mount vault.service configure-vault-server.service insecure-unseal-vault.service vault-tls-configure.service
 
-chown -Rf vault:vault /vault/root 
 echo "Completed preseed sucessfully"

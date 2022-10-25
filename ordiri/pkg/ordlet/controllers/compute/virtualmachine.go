@@ -20,6 +20,7 @@ import (
 	"context"
 	"encoding/xml"
 	"fmt"
+	"time"
 
 	"inet.af/netaddr"
 	k8err "k8s.io/apimachinery/pkg/api/errors"
@@ -159,7 +160,10 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	}
 	vm.Status.NetworkInterfaces = ifaces
 
-	domain, _, result, err := internallibvirt.Ensure(ctx, r.LibvirtClient, vm.Namespace, vm.Name, libvirtStatus(vm.Spec.State), domainOptions...)
+	ensureCtx, cancel := context.WithTimeout(ctx, time.Second*10)
+	defer cancel()
+
+	domain, _, result, err := internallibvirt.Ensure(ensureCtx, r.LibvirtClient, vm.Namespace, vm.Name, libvirtStatus(vm.Spec.State), domainOptions...)
 
 	if err != nil {
 		return ctrl.Result{}, fmt.Errorf("error ensuring domain - %w", err)

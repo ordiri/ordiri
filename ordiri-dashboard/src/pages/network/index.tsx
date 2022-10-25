@@ -72,7 +72,7 @@ const NetworkResourcesPage = (props: NetworkResourceProps) => {
                             return all
                         }, {} as Record<string, {node: string, items: string[]}>)
                         
-                        return Object.entries(hosts).map(([_, { node }]) => <Chip  key={node} label={`${node}}`} size="small" />)
+                        return Object.entries(hosts).map(([_, { node }]) => <Chip  key={node} label={node} size="small" />)
                     }
                 }
             }

@@ -84,9 +84,6 @@ func (clnr *createLocalNodeRunnable) Start(ctx context.Context) error {
 
 	log := clnr.log.WithValues("hostname", clnr.Node.Name)
 	log.Info("Starting local node runner")
-	if err := clnr.Refresh(ctx); err != nil {
-		return err
-	}
 
 	ovsClient := sdn.Ovs()
 	if err := ovsClient.VSwitch.AddBridge(sdn.ExternalSwitchName); err != nil {
@@ -111,6 +108,30 @@ func (clnr *createLocalNodeRunnable) Start(ctx context.Context) error {
 	if err := ovsClient.VSwitch.Set.Interface(sdn.WorkloadSwitchName, ovs.InterfaceOptions{
 		MTURequest: sdn.UnderlayMTU,
 	}); err != nil {
+		return err
+	}
+
+	if err := ovsClient.VSwitch.AddPort(sdn.WorkloadSwitchName, "patch-internal"); err != nil {
+		return fmt.Errorf("unable to create patch-internal patch port - %w", err)
+	}
+	if err := ovsClient.VSwitch.AddPort(sdn.TunnelSwitchName, "patch-vms"); err != nil {
+		return fmt.Errorf("unable to create patch-vms patch port - %w", err)
+	}
+
+	if err := ovsClient.VSwitch.Set.Interface("patch-vms", ovs.InterfaceOptions{
+		Type: ovs.InterfaceTypePatch,
+		Peer: "patch-internal",
+	}); err != nil {
+		return fmt.Errorf("unable to wire patch-vm peer - %w", err)
+	}
+	if err := ovsClient.VSwitch.Set.Interface("patch-internal", ovs.InterfaceOptions{
+		Type: ovs.InterfaceTypePatch,
+		Peer: "patch-vms",
+	}); err != nil {
+		return fmt.Errorf("unable to wire patch-internal peer - %w", err)
+	}
+
+	if err := clnr.Refresh(ctx); err != nil {
 		return err
 	}
 
@@ -147,6 +168,12 @@ func (clnr *createLocalNodeRunnable) Start(ctx context.Context) error {
 		clnr.Node.Spec.NodeRoles = append(clnr.Node.Spec.NodeRoles, corev1alpha1.NodeRole(role))
 	}
 
+	for _, role := range clnr.Node.Spec.NodeRoles {
+		if role == "compute" {
+			clnr.load
+		}
+	}
+
 	if clnr.Node.UID == "" {
 		log.Info("creating node")
 		node, err := clnr.client.CoreV1alpha1().Nodes().Create(ctx, clnr.Node, v1.CreateOptions{})
@@ -168,6 +195,9 @@ func (clnr *createLocalNodeRunnable) Start(ctx context.Context) error {
 	return nil
 }
 
+func (clnr *createLocalNodeRunnable) loadVaultSecrets() error {
+	return nil
+}
 func (clnr *createLocalNodeRunnable) NeedLeaderElection() bool {
 	return false
 }

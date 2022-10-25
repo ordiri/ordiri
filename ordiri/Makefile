@@ -134,13 +134,20 @@ linux-md:
 	GOOS=linux GOARCH=amd64 go build -o bin/metadata-amd64-linux ./cmd/vmmetaserver
 	chmod +x bin/metadata-amd64-linux
 
-.PHONY: deploy-debian-ordlet deploy-mothership-ordlet
+.PHONY: deploy-debian-ordlet deploy-debian2-ordlet
 deploy-debian-ordlet: linux-ordlet
 	scp kubeconfig root@debian:/etc/ordiri.conf
 	scp *.service root@debian:/etc/systemd/system/.
 	ssh root@debian 'systemctl daemon-reload && systemctl enable ordlet.service'
 	scp bin/ordlet-amd64-linux root@debian:~/ordlet
 	ssh root@debian 'mv ~/ordlet /usr/local/bin/ordlet && systemctl daemon-reload'
+
+deploy-debian2-ordlet: linux-ordlet
+	scp kubeconfig root@debian2:/etc/ordiri.conf
+	scp *.service root@debian2:/etc/systemd/system/.
+	ssh root@debian2 'systemctl daemon-reload && systemctl enable ordlet.service'
+	scp bin/ordlet-amd64-linux root@debian2:~/ordlet
+	ssh root@debian2 'mv ~/ordlet /usr/local/bin/ordlet && systemctl daemon-reload'
 
 deploy-mothership-ordlet: linux-ordlet
 	scp kubeconfig mothership:/etc/ordiri.conf
@@ -153,12 +160,16 @@ deploy-debian-md: linux-md
 	scp bin/metadata-amd64-linux root@debian:~/ordiri-metadata
 	ssh root@debian 'mv ~/ordiri-metadata /usr/local/bin/ordiri-metadata'
 
+deploy-debian2-md: linux-md
+	scp bin/metadata-amd64-linux root@debian2:~/ordiri-metadata
+	ssh root@debian2 'mv ~/ordiri-metadata /usr/local/bin/ordiri-metadata'
+
 deploy-mothership-md: linux-md
 	scp bin/metadata-amd64-linux mothership:~/ordiri-metadata
 	ssh mothership 'mv ~/ordiri-metadata /usr/local/bin/ordiri-metadata'
 
 .PHONY: run-remote
-run-remote: run-debian-remote run-mothership-remote
+run-remote: run-debian-remote run-debian2-remote
 	@echo "starting"
 
 run-mothership-remote: deploy-mothership-ordlet
@@ -174,6 +185,9 @@ run-debian-remote: deploy-debian-ordlet
 log-debian-remote: deploy-debian-ordlet
 # modprobe nf_nat_tftp nf_conntrack && 
 	ssh root@debian 'journalctl -xefu ordlet'
+log-debian2-remote: deploy-debian2-ordlet
+# modprobe nf_nat_tftp nf_conntrack && 
+	ssh root@debian2 'journalctl -xefu ordlet'
 
 
 

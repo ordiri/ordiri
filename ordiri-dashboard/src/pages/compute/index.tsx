@@ -129,6 +129,8 @@ const ComputeResourcesPage = (props: ComputeResourceProps) => {
                                 url = "10.0.1.110"
                             } else if (host === "mothership") {
                                 url = "10.0.1.196"
+                            } else if (host === "debian2") {
+                                url = "10.0.1.108"
                             }
                         }
 

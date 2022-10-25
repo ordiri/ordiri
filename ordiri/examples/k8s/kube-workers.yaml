@@ -8,7 +8,6 @@ spec:
     metadata:
       creationTimestamp: null
     spec:
-      node: "mothership"
       userData: !include kube-workers/preseed.sh
       bootDevices:
       - hd

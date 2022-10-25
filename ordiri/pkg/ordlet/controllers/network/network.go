@@ -141,6 +141,11 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 				if !hasGatewayIp {
 					return ctrl.Result{}, fmt.Errorf("network is pending gateway ip")
 				}
+
+			}
+			if err := r.Status().Update(ctx, nw); err != nil {
+				// todo change this we do it later as well in addNodeToNetworkStatus....
+				return ctrl.Result{}, fmt.Errorf("error hacking network status")
 			}
 		}
 
