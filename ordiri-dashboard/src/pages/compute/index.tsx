@@ -125,13 +125,14 @@ const ComputeResourcesPage = (props: ComputeResourceProps) => {
                         if (!port || port <= 0) {
                             disabled = true
                         } else {
-                            if (host === "debian") {
-                                url = "10.0.1.110"
-                            } else if (host === "mothership") {
-                                url = "10.0.1.196"
-                            } else if (host === "debian2") {
-                                url = "10.0.1.108"
-                            }
+                            // if (host === "debian") {
+                            //     url = "10.0.1.110"
+                            // } else if (host === "mothership") {
+                            //     url = "10.0.1.196"
+                            // } else if (host === "debian2") {
+                            //     url = "10.0.1.108"
+                            // }
+                            url = host || ""
                         }
 
                         return <>

@@ -44,6 +44,7 @@ type Network interface {
 	Name() string
 	Cidr() netaddr.IPPrefix
 	Segment() int64
+	MgmtIp() netaddr.IPPrefix
 	ExternalIp() netaddr.IPPrefix
 	DnsRecords() map[netaddr.IP][]string
 

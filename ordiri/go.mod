@@ -155,7 +155,7 @@ require (
 	github.com/digitalocean/go-libvirt v0.0.0-20220704152101-6d260d9c16a3
 	github.com/digitalocean/go-openvswitch v0.0.0-20211105174344-2a0f99c6436b
 	github.com/gosimple/slug v1.12.0
-	github.com/hashicorp/vault/api v1.7.2
+	github.com/hashicorp/vault/api v1.8.1
 	github.com/insomniacslk/dhcp v0.0.0-20220812085412-509691fd59ec
 	github.com/mdlayher/netlink v1.6.0
 	github.com/mitchellh/mapstructure v1.5.0
@@ -201,7 +201,7 @@ require (
 	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
-	github.com/hashicorp/vault/sdk v0.5.3 // indirect
+	github.com/hashicorp/vault/sdk v0.6.0 // indirect
 	github.com/hashicorp/yamux v0.1.1 // indirect
 	github.com/huandu/xstrings v1.3.2 // indirect
 	github.com/josharian/native v1.0.0 // indirect

@@ -22,7 +22,9 @@ resource "vault_identity_entity" "node" {
   for_each = local.nodes
 
   name      = "node-${each.key}"
-  policies  = []
+  policies  = [
+    
+  ]
 
   metadata = {
     "node" = each.key
@@ -84,7 +86,8 @@ resource "vault_cert_auth_backend_role" "node" {
     token_max_ttl  = 600
     token_policies = [
       vault_policy.node.name, 
-      vault_policy.node-provisioner.name
+      vault_policy.node-provisioner.name,
+      vault_policy.vault-ceph-store.name
     ]
 }
 

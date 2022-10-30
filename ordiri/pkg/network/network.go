@@ -19,6 +19,12 @@ func WithExternalGatewayIp(ip netaddr.IPPrefix) NetworkOption {
 		return nil
 	}
 }
+func WithMgmtIp(ip netaddr.IPPrefix) NetworkOption {
+	return func(n *network) error {
+		n.mgmtIp = ip
+		return nil
+	}
+}
 
 func NewNetwork(tenant string, name string, cidr string, segment int64, localSegment int64, opt ...NetworkOption) (*network, error) {
 	ipnet, err := netaddr.ParseIPPrefix(cidr)
@@ -52,6 +58,7 @@ type network struct {
 	localSegment      int64
 	cidr              netaddr.IPPrefix
 	externalGatewayIp netaddr.IPPrefix
+	mgmtIp            netaddr.IPPrefix
 	dnsRecordsets     map[netaddr.IP][]string
 }
 
@@ -88,6 +95,9 @@ func (nw *network) DnsRecords() map[netaddr.IP][]string {
 
 func (nw *network) ExternalIp() netaddr.IPPrefix {
 	return nw.externalGatewayIp
+}
+func (nw *network) MgmtIp() netaddr.IPPrefix {
+	return nw.mgmtIp
 }
 
 var _ api.Network = &network{}

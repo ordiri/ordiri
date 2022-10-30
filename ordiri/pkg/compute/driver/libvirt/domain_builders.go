@@ -252,7 +252,7 @@ func WithBiosOemString(entries ...string) DomainOption {
 	}
 }
 
-func WithCephVolume(tenant, name, device string) DomainOption {
+func WithCephVolume(secret, tenant, name, device string) DomainOption {
 	return func(d *libvirtxml.Domain) error {
 		return WithDisk(libvirtxml.DomainDisk{
 			Device: "disk",
@@ -273,7 +273,8 @@ func WithCephVolume(tenant, name, device string) DomainOption {
 				Username: "libvirt",
 				Secret: &libvirtxml.DomainDiskSecret{
 					Type: "ceph",
-					UUID: CephSecretUUID, // todo: bring from somewhere else
+					// Usage: "ordiri",
+					UUID: secret, // todo: bring from somewhere else
 				},
 			},
 			Target: &libvirtxml.DomainDiskTarget{

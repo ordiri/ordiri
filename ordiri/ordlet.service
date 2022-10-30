@@ -7,6 +7,7 @@ Wants=network-online.target local-fs.target remote-fs.target time-sync.target
 [Service]
 Type=simple
 Environment=KUBECONFIG=/etc/ordiri.conf
+Environment=VAULT_ADDR=https://vault.homelab.dmann.xyz:8200
 
 ExecStart=/usr/local/bin/ordlet -zap-log-level=5
 Restart=always

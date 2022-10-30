@@ -5,6 +5,7 @@ After=vault.service
 
 [Service]
 Type=oneshot
+ExecStartPre=/usr/bin/chown vault:vault /vault/root
 ExecStart=/bin/bash -c /sbin/insecure-unseal-vault.sh
 Restart=on-failure
 RestartSec=5

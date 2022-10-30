@@ -85,7 +85,7 @@ func (r *MeshReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 
 		if err := ovsClient.VSwitch.Set.Interface(portName, ovs.InterfaceOptions{
 			Type:     ovs.InterfaceTypeVXLAN,
-			RemoteIP: node.TunnelAddress(),
+			RemoteIP: node.MgmtIp().IP().String(),
 			Key:      "",
 			ExtraArgs: []ovs.ExtraArg{
 				func() []string {

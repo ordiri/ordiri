@@ -6,9 +6,14 @@ import (
 	"io/fs"
 	"net"
 	"os"
+	"os/user"
 	"path/filepath"
+	"strconv"
+	"strings"
 
+	"github.com/coreos/go-systemd/unit"
 	"github.com/gosimple/slug"
+	"github.com/ordiri/ordiri/config"
 	"github.com/ordiri/ordiri/pkg/log"
 	"github.com/ordiri/ordiri/pkg/mac"
 	"github.com/ordiri/ordiri/pkg/network/api"
@@ -46,6 +51,13 @@ func (ln *linuxDriver) RegisterNetwork(ctx context.Context, nw api.Network) erro
 		return err
 	}
 
+	if err := ln.installNetworkZebra(ctx, nw); err != nil {
+		return err
+	}
+	if err := ln.installNetworkBgp(ctx, nw); err != nil {
+		return err
+	}
+
 	if len(nw.DnsRecords()) > 0 {
 		hostDir := etcHostMappingDir(nw)
 		if err := os.MkdirAll(hostDir, os.ModePerm); err != nil {
@@ -65,6 +77,120 @@ func (ln *linuxDriver) RegisterNetwork(ctx context.Context, nw api.Network) erro
 
 	log.V(5).Info("Network ensured")
 	return nil
+}
+
+func (ln *linuxDriver) installNetworkBgp(ctx context.Context, nw api.Network) error {
+	if !nw.MgmtIp().IsValid() {
+		return nil
+	}
+	namespace := namespaceForRouter(nw)
+
+	// create the dnsmasq config to provide metadata for this subnet
+	baseDir := subnetConfDir(nw, nil)
+	if err := os.MkdirAll(baseDir, os.ModePerm); err != nil {
+		return fmt.Errorf("unable to create directory %s - %w", baseDir, err)
+	}
+
+	cfgFile := filepath.Join(baseDir, "gobgpd.yaml")
+	zebraSocketFile := filepath.Join(baseDir, "zebra/zebra.socket")
+	pidFile := filepath.Join(baseDir, "gobgpd.socket")
+	cfg := fmt.Sprintf(`global:
+  config:
+    as: %d
+    router-id: %s
+peer-groups:
+- config:
+    peer-group-name: subnet-nodes
+    peer-as: %d
+
+dynamic-neighbors:
+- config:
+    prefix: %s
+    peer-group: subnet-nodes
+neighbors:
+- config:
+    neighbor-address: %s
+    peer-as: %d
+
+zebra:
+  config:
+    enabled: true
+    url: unix:%s
+    redistribute-route-type-list: [connect]
+    version: 6
+    software-name: frr7.5
+`, config.CloudRouterAsn, nw.ExternalIp().IP().String(), config.CustomerAsn, nw.Cidr().String(), nw.MgmtIp().IP().String(), config.LocalAsn, zebraSocketFile)
+
+	os.WriteFile(cfgFile, []byte(cfg), 0644)
+
+	// startCmd := strings.Join(append([]string{"ip", "netns", "exec", namespace, "/usr/sbin/dnsmasq"}, dnsMasqOptions.Args()...), " ")
+	cleanupCommand := strings.Join([]string{"/usr/bin/rm", "-f", pidFile}, " ")
+	startCmd := strings.Join([]string{"/usr/local/bin/gobgpd", "-t", "yaml", "-f", cfgFile, "--api-hosts", fmt.Sprintf("unix://%s", pidFile)}, " ")
+	// create the systemd file to manage this metadata
+	unitName := networkBgpRouterUnitName(nw)
+	zebraUnitName := networkBgpZebraUnitName(nw)
+	opts := []*unit.UnitOption{
+		unit.NewUnitOption("Unit", "Description", "Ordiri BGP Service for "+unitName),
+		unit.NewUnitOption("Unit", "After", "ordlet.service "+zebraUnitName),
+		unit.NewUnitOption("Unit", "Wants", zebraUnitName),
+		unit.NewUnitOption("Unit", "BindsTo", "ordlet.service"),
+		// unit.NewUnitOption("Service", "PrivateMounts", "yes"),
+		unit.NewUnitOption("Service", "NetworkNamespacePath", namespacePath(namespace)),
+		unit.NewUnitOption("Service", "ExecStartPre", cleanupCommand),
+		unit.NewUnitOption("Service", "ExecStart", startCmd),
+		unit.NewUnitOption("Service", "Restart", "always"),
+		unit.NewUnitOption("Install", "WantedBy", "multi-user.target"),
+	}
+
+	return ln.enableUnitFile(ctx, baseDir, unitName, opts)
+}
+func (ln *linuxDriver) installNetworkZebra(ctx context.Context, nw api.Network) error {
+	if !nw.MgmtIp().IsValid() {
+		return nil
+	}
+	namespace := namespaceForRouter(nw)
+
+	// create the dnsmasq config to provide metadata for this subnet
+	baseDir := filepath.Join(subnetConfDir(nw, nil), "zebra")
+	if err := os.MkdirAll(baseDir, os.ModePerm); err != nil {
+		return fmt.Errorf("unable to create directory %s - %w", baseDir, err)
+	}
+	frrUser, err := user.Lookup("frr")
+	if err != nil {
+		return fmt.Errorf("unable to find frr user - %w", err)
+	}
+	uid, err := strconv.Atoi(frrUser.Uid)
+	if err != nil {
+		return fmt.Errorf("error converting uid to an int - %q - %w", frrUser.Uid, err)
+	}
+	gid, err := strconv.Atoi(frrUser.Gid)
+	if err != nil {
+		return fmt.Errorf("error converting gid to an int - %q - %w", frrUser.Gid, err)
+	}
+
+	if err := os.Chown(baseDir, uid, gid); err != nil {
+		return fmt.Errorf("unable to chown zebra dir to zebra user")
+	}
+
+	zebraSocketFile := filepath.Join(baseDir, "zebra.socket")
+	zebraPidFile := filepath.Join(baseDir, "zebra.pid")
+
+	// startCmd := strings.Join(append([]string{"ip", "netns", "exec", namespace, "/usr/sbin/dnsmasq"}, dnsMasqOptions.Args()...), " ")
+	startCmd := strings.Join([]string{"/usr/lib/frr/zebra", "--config_file", "/dev/null", "--socket", zebraSocketFile, "--pid_file", zebraPidFile, "--log-level", "debug"}, " ")
+	// create the systemd file to manage this metadata
+	unitName := networkBgpZebraUnitName(nw)
+	opts := []*unit.UnitOption{
+		unit.NewUnitOption("Unit", "Description", "Ordiri Zebra Service for "+unitName),
+		unit.NewUnitOption("Unit", "After", "ordlet.service"),
+		unit.NewUnitOption("Unit", "BindsTo", "ordlet.service"),
+		// unit.NewUnitOption("Service", "PrivateMounts", "yes"),
+		unit.NewUnitOption("Service", "NetworkNamespacePath", namespacePath(namespace)),
+		unit.NewUnitOption("Service", "ExecStart", startCmd),
+		unit.NewUnitOption("Service", "Restart", "always"),
+		unit.NewUnitOption("Install", "WantedBy", "multi-user.target"),
+	}
+
+	return ln.enableUnitFile(ctx, baseDir, unitName, opts)
 }
 
 func (ln *linuxDriver) installNetworkNat(ctx context.Context, nw api.Network) error {

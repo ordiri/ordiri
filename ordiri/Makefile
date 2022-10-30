@@ -134,6 +134,10 @@ linux-md:
 	GOOS=linux GOARCH=amd64 go build -o bin/metadata-amd64-linux ./cmd/vmmetaserver
 	chmod +x bin/metadata-amd64-linux
 
+bin/gobgpd-%: 
+	curl -sSL -o- https://github.com/osrg/gobgp/releases/download/v$*/gobgp_$*_linux_amd64.tar.gz | tar -C bin -xzf - gobgpd
+	mv bin/gobgpd bin/gobgpd-$*
+
 .PHONY: deploy-debian-ordlet deploy-debian2-ordlet
 deploy-debian-ordlet: linux-ordlet
 	scp kubeconfig root@debian:/etc/ordiri.conf
@@ -160,9 +164,18 @@ deploy-debian-md: linux-md
 	scp bin/metadata-amd64-linux root@debian:~/ordiri-metadata
 	ssh root@debian 'mv ~/ordiri-metadata /usr/local/bin/ordiri-metadata'
 
+deploy-debian-bgp: bin/gobgpd-3.7.0
+	scp bin/gobgpd-3.7.0 root@debian:~/gobgpd
+	ssh root@debian 'mv ~/gobgpd /usr/local/bin/gobgpd'
+
 deploy-debian2-md: linux-md
 	scp bin/metadata-amd64-linux root@debian2:~/ordiri-metadata
 	ssh root@debian2 'mv ~/ordiri-metadata /usr/local/bin/ordiri-metadata'
+
+deploy-debian2-bgp: bin/gobgpd-3.7.0
+	scp bin/gobgpd-3.7.0 root@debian2:~/gobgpd
+	ssh root@debian2 'mv ~/gobgpd /usr/local/bin/gobgpd'
+
 
 deploy-mothership-md: linux-md
 	scp bin/metadata-amd64-linux mothership:~/ordiri-metadata
@@ -182,6 +195,9 @@ log-mothership-remote: deploy-mothership-ordlet
 run-debian-remote: deploy-debian-ordlet
 # modprobe nf_nat_tftp nf_conntrack && 
 	ssh root@debian 'systemctl restart ordlet'
+run-debian2-remote: deploy-debian2-ordlet
+# modprobe nf_nat_tftp nf_conntrack && 
+	ssh root@debian2 'systemctl restart ordlet'
 log-debian-remote: deploy-debian-ordlet
 # modprobe nf_nat_tftp nf_conntrack && 
 	ssh root@debian 'journalctl -xefu ordlet'

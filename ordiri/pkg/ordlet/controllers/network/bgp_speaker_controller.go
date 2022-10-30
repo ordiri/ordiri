@@ -150,9 +150,11 @@ func (r *BGPSpeakerReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 					}
 				}
 			}
+
 			if routerInterface == "" {
 				return ctrl.Result{}, fmt.Errorf("unable to determine public router interface name")
 			}
+
 			ipt, err := sdn.Iptables("ordiri-router-" + iface.Network)
 			if err != nil {
 				return ctrl.Result{}, err
@@ -161,10 +163,12 @@ func (r *BGPSpeakerReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 			if err := ipt.AppendUnique("nat", "PREROUTING", "-i", routerInterface, "-d", vmPublicIp.IP().String(), "-j", "DNAT", "--to-destination", vmInternalIp); err != nil {
 				return ctrl.Result{}, err
 			}
+
 			if r.speaker == nil {
 				log.Info("not announcing as no speaker configured")
 				return ctrl.Result{}, nil
 			}
+
 			log.V(5).Info("Announcing ip", "vmPublicIp", vmPublicIp, "routerIp", routerIp)
 			if err := r.speaker.Announce(ctx, vmPublicIp.IP(), routerIp); err != nil {
 				log.Error(err, "error announcing ip")

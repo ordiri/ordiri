@@ -2,7 +2,10 @@ package bgp
 
 import (
 	"context"
+	"fmt"
+	"strings"
 
+	"github.com/ordiri/ordiri/config"
 	api "github.com/osrg/gobgp/v3/api"
 	"github.com/osrg/gobgp/v3/pkg/server"
 
@@ -72,6 +75,41 @@ func (s *Speaker) AddPeer(ctx context.Context, conf api.PeerConf) error {
 	if err := s.server.AddPeer(context.Background(), &api.AddPeerRequest{
 		Peer: peer,
 	}); err != nil {
+		if strings.Contains(err.Error(), "can't overwrite the existing peer") {
+			return nil
+		}
+		s.server.Log().Error(err.Error(), nil)
+		return err
+	}
+	return nil
+}
+func (s *Speaker) AddDynamicNeighbor(ctx context.Context, conf api.DynamicNeighbor) error {
+	// neighbor configuration
+
+	if err := s.server.AddDynamicNeighbor(context.Background(), &api.AddDynamicNeighborRequest{
+		DynamicNeighbor: &conf,
+	}); err != nil {
+		s.server.Log().Error(err.Error(), nil)
+		return err
+	}
+	return nil
+}
+func (s *Speaker) AddPeerGroup(ctx context.Context, conf api.PeerGroup) error {
+	// neighbor configuration
+
+	if err := s.server.AddPeerGroup(context.Background(), &api.AddPeerGroupRequest{
+		PeerGroup: &conf,
+	}); err != nil {
+		s.server.Log().Error(err.Error(), nil)
+		return err
+	}
+	return nil
+}
+func (s *Speaker) AddPolicy(ctx context.Context, conf api.Policy) error {
+	// neighbor configuration
+	if err := s.server.AddPolicy(context.Background(), &api.AddPolicyRequest{
+		Policy: &conf,
+	}); err != nil {
 		s.server.Log().Error(err.Error(), nil)
 		return err
 	}
@@ -84,28 +122,73 @@ func (s *Speaker) Start(ctx context.Context) error {
 	// global configuration
 	if err := s.server.StartBgp(context.Background(), &api.StartBgpRequest{
 		Global: &api.Global{
-			Asn:      65001,
+			Asn:      uint32(config.LocalAsn),
 			RouterId: s.routerId,
-			// ListenPort: -1, // gobgp won't listen on tcp:179
 		},
 	}); err != nil {
 		s.server.Log().Error(err.Error(), nil)
 	}
-
-	if err := s.server.AddPeer(context.Background(), &api.AddPeerRequest{
-		Peer: &api.Peer{
-			Conf: &api.PeerConf{
-				NeighborAddress: s.NeighborAddress.String(),
-				PeerAsn:         uint32(s.NeighbourAsn),
+	err := s.AddPolicy(ctx, api.Policy{
+		Name: "unchanged-nexthop",
+		Statements: []*api.Statement{
+			{
+				Name: "next-hop",
+				Actions: &api.Actions{
+					Nexthop: &api.NexthopAction{
+						Self:      false,
+						Unchanged: true,
+					},
+					RouteAction: api.RouteAction_ACCEPT,
+				},
 			},
 		},
+	})
+	if err != nil {
+		return fmt.Errorf("failed to create unchanged nexthop policy - %w", err)
+	}
+
+	err = s.AddPeerGroup(ctx, api.PeerGroup{
+		Conf: &api.PeerGroupConf{
+			PeerGroupName: "upstream-router",
+			PeerAsn:       uint32(s.NeighbourAsn),
+		},
+		RouteReflector: &api.RouteReflector{
+			RouteReflectorClient:    true,
+			RouteReflectorClusterId: s.routerId,
+		},
+	})
+
+	if err != nil {
+		return fmt.Errorf("error registering upstream BGP peer group - %w", err)
+	}
+
+	if err := s.AddPeer(context.Background(), api.PeerConf{
+		NeighborAddress: s.NeighborAddress.String(),
+		PeerGroup:       "upstream-router",
 	}); err != nil {
 		return err
 	}
 
-	// monitor the change of the peer state
+	// monitor the change of the peer & routing state
 	if err := s.server.WatchEvent(context.Background(), &api.WatchEventRequest{Peer: &api.WatchEventRequest_Peer{}}, func(r *api.WatchEventResponse) {
-		s.server.Log().Info(r.String(), nil)
+		s.server.Log().Info("got bgp peer data: "+r.String(), nil)
+	}); err != nil {
+		s.server.Log().Error(err.Error(), nil)
+		return err
+	}
+
+	// monitor the change of the peer & routing state
+	if err := s.server.WatchEvent(context.Background(), &api.WatchEventRequest{Table: &api.WatchEventRequest_Table{
+		Filters: []*api.WatchEventRequest_Table_Filter{
+			{
+				Type: api.WatchEventRequest_Table_Filter_BEST,
+			},
+			{
+				Type: api.WatchEventRequest_Table_Filter_POST_POLICY,
+			},
+		},
+	}}, func(r *api.WatchEventResponse) {
+		s.server.Log().Info("got bgp table data: "+r.String(), nil)
 	}); err != nil {
 		s.server.Log().Error(err.Error(), nil)
 		return err

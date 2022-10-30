@@ -2433,6 +2433,13 @@ func schema_pkg_apis_core_v1alpha1_NodeStatus(ref common.ReferenceCallback) comm
 				Description: "NodeStatus defines the observed state of Node",
 				Type:        []string{"object"},
 				Properties: map[string]spec.Schema{
+					"cephSecretUuid": {
+						SchemaProps: spec.SchemaProps{
+							Default: "",
+							Type:    []string{"string"},
+							Format:  "",
+						},
+					},
 					"virtualMachines": {
 						VendorExtensible: spec.VendorExtensible{
 							Extensions: spec.Extensions{
@@ -2503,7 +2510,7 @@ func schema_pkg_apis_core_v1alpha1_NodeStatus(ref common.ReferenceCallback) comm
 						},
 					},
 				},
-				Required: []string{"virtualMachines", "subnets", "networks"},
+				Required: []string{"cephSecretUuid", "virtualMachines", "subnets", "networks"},
 			},
 		},
 		Dependencies: []string{

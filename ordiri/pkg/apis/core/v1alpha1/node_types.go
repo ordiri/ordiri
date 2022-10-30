@@ -20,6 +20,7 @@ import (
 	"context"
 	"fmt"
 
+	"inet.af/netaddr"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -121,10 +122,24 @@ func (in *Node) TunnelAddress() string {
 }
 
 func (in *Node) MgmtAddress() string {
-	if len(in.Spec.ManagementAddresses) == 0 {
-		return ""
+	addr := in.MgmtIp()
+	if addr.IP().IsValid() {
+		return addr.IP().String()
 	}
-	return in.Spec.ManagementAddresses[0]
+
+	return ""
+}
+func (in *Node) MgmtIp() netaddr.IPPrefix {
+	if len(in.Spec.ManagementAddresses) == 0 {
+		return netaddr.IPPrefix{}
+	}
+
+	ip, err := netaddr.ParseIPPrefix(in.Spec.ManagementAddresses[0])
+	if err != nil {
+		return netaddr.IPPrefix{}
+	}
+
+	return ip
 }
 
 func (in *Node) GetObjectMeta() *metav1.ObjectMeta {
@@ -168,6 +183,8 @@ func (in *NodeList) GetListMeta() *metav1.ListMeta {
 
 // NodeStatus defines the observed state of Node
 type NodeStatus struct {
+	CephSecretUuid string `json:"cephSecretUuid"`
+
 	// +patchMergeKey=name
 	// +patchStrategy=merge
 	// +listType=map

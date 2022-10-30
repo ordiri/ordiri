@@ -7,6 +7,7 @@ Requires=vault-root.mount
 [Service]
 Type=oneshot
 ExecStart=/bin/bash -c /sbin/vault-tls-configure.sh
+ExecStartPost=/usr/bin/chown vault:vault /vault/root
 Restart=on-failure
 RestartSec=5
 

@@ -5,12 +5,20 @@ Description=Ordlet rebuild service
 Type=oneshot
 
 ExecStartPre=/usr/bin/systemctl stop ordlet
+ExecStart=/bin/sh -c "/usr/bin/rm -rf /run/ordiri || true"
+ExecStart=/usr/bin/systemctl daemon-reload
+ExecStart=/usr/bin/systemctl reset-failed
 ExecStart=/bin/sh -c "/usr/bin/killall --wait ordiri-metadata || true"
 ExecStart=/bin/sh -c "/usr/bin/killall --wait dnsmasq || true"
-ExecStart=/bin/sh -c "/usr/bin/rm -rf /run/ordiri || true"
-ExecStart=/bin/sh -c "for iface in $(ip link | grep -e ': svc-' -e ': obr' -e ': ovm' -e ': irtr' -e ': prtr' | cut -d\\: -f2 | cut -d\\@ -f 1); do ovs-vsctl del-port ordiri-vms $iface; ovs-vsctl del-port ordiri-external $iface; ip link del $iface; done; killall qemu-system-x86_64 || true"
-ExecStart=/bin/sh -c "ip -all netns delete"
-ExecStart=/bin/sh -c "/usr/bin/ovs-ofctl del-flows ordiri-vms"
-ExecStart=/bin/sh -c "/usr/bin/ovs-ofctl del-flows ordiri-internal"
-ExecStart=/bin/sh -c "/usr/bin/systemctl daemon-reload"
-ExecStart=/bin/sh -c "/usr/bin/systemctl reset-failed"
+ExecStart=/bin/sh -c "/usr/bin/killall --wait gobgpd || true"
+ExecStart=/bin/sh -c "for iface in $(ip link | grep -e ': svc-' -e ': obr' -e ': ovm' -e ': irtr' -e ': prtr' | cut -d\\: -f2 | cut -d\\@ -f 1); do \
+    ovs-vsctl del-port ordiri-vms $iface; \
+    ovs-vsctl del-port ordiri-external $iface; \
+    ip link del $iface; \
+done"
+ExecStart=ip -all netns delete
+ExecStart=/usr/bin/ovs-ofctl del-flows ordiri-vms
+ExecStart=/usr/bin/ovs-ofctl del-flows ordiri-internal
+ExecStart=/usr/bin/systemctl daemon-reload
+ExecStart=/usr/bin/systemctl reset-failed
+ExecStart=/bin/sh -c "/usr/bin/killall qemu-system-x86_64 || true"

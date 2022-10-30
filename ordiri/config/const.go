@@ -15,8 +15,11 @@ var (
 	IPXEBootHost = netaddr.MustParseIP("10.0.1.196")
 )
 var (
-	BgpPeerIp  = netaddr.MustParseIP("10.0.1.1")
-	BgpPeerAsn = uint(65000)
+	BgpPeerIp      = netaddr.MustParseIP("10.0.1.1")
+	BgpPeerAsn     = uint(65000)
+	LocalAsn       = uint(65000)
+	CloudRouterAsn = uint(65002)
+	CustomerAsn    = uint(65003)
 )
 
 var (

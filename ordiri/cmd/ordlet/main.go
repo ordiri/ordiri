@@ -152,7 +152,7 @@ func main() {
 	node := nodeRunner.GetNode()
 
 	bgpIP := netaddr.MustParseIP(bgpPeerIp)
-	speaker := bgp.NewSpeaker(node.TunnelAddress(), uint32(bgpPeerAsn), bgpIP)
+	speaker := bgp.NewSpeaker(node.MgmtAddress(), uint32(bgpPeerAsn), bgpIP)
 	mgr.Add(speaker)
 
 	setupLog.Info("Starting network manager")

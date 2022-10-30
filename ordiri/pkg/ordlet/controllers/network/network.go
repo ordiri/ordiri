@@ -106,7 +106,9 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 			return ctrl.Result{}, err
 		}
 
-		networkOpts := []network.NetworkOption{}
+		networkOpts := []network.NetworkOption{
+			network.WithMgmtIp(r.Node.GetNode().MgmtIp()),
+		}
 		for _, host := range nw.Status.Hosts {
 			if host.Node == r.Node.GetNode().Name {
 				hasGatewayIp := false

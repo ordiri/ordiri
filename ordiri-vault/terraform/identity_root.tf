@@ -67,6 +67,11 @@ path "sys/mounts"
 {
   capabilities = ["read"]
 }
+# List existing secrets engines.
+path "sys/internal/ui/*"
+{
+  capabilities = ["read"]
+}
 EOT
 }
 

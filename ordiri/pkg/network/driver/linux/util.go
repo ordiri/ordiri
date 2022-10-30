@@ -23,6 +23,12 @@ func dhcpUnitName(subnet api.Subnet) string {
 func metadataServerUnitName(subnet api.Subnet) string {
 	return fmt.Sprintf("ordiri-md-%s.service", subnet.Name())
 }
+func networkBgpRouterUnitName(nw api.Network) string {
+	return fmt.Sprintf("ordiri-bgp-%s.service", nw.Name())
+}
+func networkBgpZebraUnitName(nw api.Network) string {
+	return fmt.Sprintf("ordiri-zebra-%s.service", nw.Name())
+}
 
 func namespacePath(namespace string) string {
 	return fmt.Sprintf("/var/run/netns/%s", namespace)
