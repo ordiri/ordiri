@@ -1,0 +1,15 @@
+[Unit]
+Description=Ordiri ETCD server
+Documentation=https://github.com/ordiri
+
+[Service]
+Type=notify
+Environment=ETCD_DATA_DIR=/var/lib/ordiri-etcd
+Environment=ETCD_NAME=%m
+LimitNOFILE=40000
+ExecStart=/usr/local/bin/etcd
+Restart=always
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target

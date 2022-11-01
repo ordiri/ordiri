@@ -23,5 +23,5 @@ var (
 )
 
 var (
-	IpamAddr = netaddr.MustParseIPPort("10.0.2.102:50051")
+	IpamAddr = "ipam.ordiri.homelab.dmann.xyz:50051"
 )

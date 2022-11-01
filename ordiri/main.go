@@ -72,7 +72,7 @@ func main() {
 	flag.StringVar(&mgmtCidrStr, "mgmt-cidr", config.ManagementCidr.String(), "The upstream management network cidr")
 	flag.StringVar(&publicCidrStr, "public-cidr", config.VmPublicCidr.String(), "The public cidr in use")
 	flag.StringVar(&gatewayCidrStr, "gateway-cidr", config.NetworkInternetGatewayCidr.String(), "The range of ip's used to egress vm traffic to the network")
-	flag.StringVar(&ipamAddr, "ipam", config.IpamAddr.String(), "Ip of the upstream router to send BGP announcements to")
+	flag.StringVar(&ipamAddr, "ipam", config.IpamAddr, "Ip of the upstream router to send BGP announcements to")
 	flag.BoolVar(&enableLeaderElection, "leader-elect", false,
 		"Enable leader election for controller manager. "+
 			"Enabling this will ensure there is only one active controller manager.")
@@ -114,9 +114,9 @@ func main() {
 	defer cancel()
 
 	for k, v := range map[string]string{
-		"mgmt":   mgmtCidrStr,
-		"public": publicCidrStr,
-		"gateway":     gatewayCidrStr,
+		"mgmt":    mgmtCidrStr,
+		"public":  publicCidrStr,
+		"gateway": gatewayCidrStr,
 	} {
 		res, err := allocator.RegisterBlock(ctx, &api.RegisterBlockRequest{
 			BlockName: fmt.Sprintf("_shared::%s", k),

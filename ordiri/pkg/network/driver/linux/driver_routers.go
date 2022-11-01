@@ -14,7 +14,13 @@ import (
 )
 
 func (ld *linuxDriver) EnsureRouter(ctx context.Context, nw api.Network, sn api.Subnet) error {
+	log := log.FromContext(ctx)
+	log.Info("ensuring router")
 	if err := ld.installRouter(ctx, nw, sn); err != nil {
+		return err
+	}
+	log.Info("ensuring subnet flows")
+	if err := ld.installSubnetFlows(ctx, nw, sn); err != nil {
 		return err
 	}
 	return nil

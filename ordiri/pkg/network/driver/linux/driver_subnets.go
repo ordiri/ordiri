@@ -64,12 +64,8 @@ func (ln *linuxDriver) RegisterSubnet(ctx context.Context, nw api.Network, sn ap
 		return err
 	}
 
-	log.Info("Installing Subnet Flows")
-	if err := ln.installSubnetFlows(ctx, nw, sn); err != nil {
-		return err
-	}
 	log.Info("Installing Subnet router")
-	if err := ln.installRouter(ctx, nw, sn); err != nil {
+	if err := ln.EnsureRouter(ctx, nw, sn); err != nil {
 		return err
 	}
 

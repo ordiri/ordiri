@@ -90,7 +90,7 @@ func main() {
 	flag.StringVar(&publicCidrStr, "public-cidr", config.VmPublicCidr.String(), "The public cidr in use")
 	flag.StringVar(&gatewayCidrStr, "gateway-cidr", config.NetworkInternetGatewayCidr.String(), "The range of ip's used to egress vm traffic to the network")
 	flag.StringVar(&bgpPeerIp, "bgp-peer-ip", config.BgpPeerIp.String(), "Ip of the upstream router to send BGP announcements to")
-	flag.StringVar(&ipamAddr, "ipam", config.IpamAddr.String(), "Ip of the upstream router to send BGP announcements to")
+	flag.StringVar(&ipamAddr, "ipam", config.IpamAddr, "Ip of the upstream router to send BGP announcements to")
 	flag.UintVar(&bgpPeerAsn, "bgp-peer-asn", config.BgpPeerAsn, "The asn of the peer")
 	flag.StringVar(&nodeName, "name", hostname, "The name this node has")
 	opts := zap.Options{

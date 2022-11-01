@@ -126,6 +126,7 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 				}
 
 				if !hasGatewayIp {
+					// panic("missing gateway ip")
 					log.Info("allocating gateway IP", "blockName", "_shared::gateway")
 					allocated, err := r.Allocator.Allocate(ctx, &api.AllocateRequest{
 						BlockName: "_shared::gateway",
@@ -145,10 +146,10 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 				}
 
 			}
-			if err := r.Status().Update(ctx, nw); err != nil {
-				// todo change this we do it later as well in addNodeToNetworkStatus....
-				return ctrl.Result{}, fmt.Errorf("error hacking network status")
-			}
+		}
+		if err := r.Status().Update(ctx, nw); err != nil {
+			// todo change this we do it later as well in addNodeToNetworkStatus....
+			return ctrl.Result{}, fmt.Errorf("error hacking network status")
 		}
 
 		net, err := network.NewNetwork(nw.Namespace, nw.Name, nw.Spec.Cidr, nw.Status.Vni, int64(localVlan), networkOpts...)

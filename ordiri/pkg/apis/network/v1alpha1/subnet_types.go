@@ -55,6 +55,7 @@ type SubnetList struct {
 type SubnetSpec struct {
 	Network NetworkSelector `json:"network"`
 	Cidr    string          `json:"cidr"`
+	Cidr6   string          `json:"cidr6"`
 
 	// +optional
 	RouteTable *RouteTableSelector `json:"routeTable,omitempty"`

@@ -21,6 +21,9 @@ KUSTOMIZE = $(shell pwd)/bin/kustomize
 ENVTEST = $(shell pwd)/bin/setup-envtest
 PROJECT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 
+ETCD_URL = https://storage.googleapis.com/etcd
+ETCD_VER = v3.5.5
+
 # Setting SHELL to bash allows bash commands to be executed by recipes.
 # This is a requirement for 'setup-envtest.sh' in the test target.
 # Options are set to exit when a recipe line exits non-zero or a piped command fails.
@@ -127,8 +130,23 @@ BUILD_TIMESTAMP=$(shell date '+%Y-%m-%dT%H:%M:%S')
 
 .PHONY: linux-ordlet
 linux-ordlet: 
-	GOOS=linux GOARCH=amd64  go build -ldflags="-X 'github.com/ordiri/ordiri/version.BuildTime=${BUILD_TIMESTAMP}'" -o bin/ordlet-amd64-linux ./cmd/ordlet
+	GOOS=linux GOARCH=amd64 go build -ldflags="-X 'github.com/ordiri/ordiri/version.BuildTime=${BUILD_TIMESTAMP}'" -o bin/ordlet-amd64-linux ./cmd/ordlet
 	chmod +x bin/ordlet-amd64-linux
+
+bin/controller-manager:
+	docker run --platform linux/x86_64 \
+		--volume $PWD:/ordiri \
+		--rm \
+		--workdir /ordiri \
+		$(docker build --platform linux/x86_64 -q --file Dockerfile.controllers .) \
+			go build -tags quincy -o /ordiri/bin/controller-manager /ordiri/cmd/manager
+	
+
+.PHONY: linux-ipam
+linux-ipam:
+	go build -ldflags="-X 'github.com/ordiri/ordiri/version.BuildTime=${BUILD_TIMESTAMP}'" -o bin/ordiri-ipam-amd64-linux ./cmd/ordiri-ipam
+	chmod +x bin/ordiri-ipam-amd64-linux
+
 .PHONY: linux-md
 linux-md: 
 	GOOS=linux GOARCH=amd64 go build -o bin/metadata-amd64-linux ./cmd/vmmetaserver
@@ -138,45 +156,67 @@ bin/gobgpd-%:
 	curl -sSL -o- https://github.com/osrg/gobgp/releases/download/v$*/gobgp_$*_linux_amd64.tar.gz | tar -C bin -xzf - gobgpd
 	mv bin/gobgpd bin/gobgpd-$*
 
-.PHONY: deploy-debian-ordlet deploy-debian2-ordlet
+.PHONY: deploy-ipam
+deploy-ipam: linux-ipam
+	scp ordiri-ipam.service root@mothership:/etc/systemd/system/.
+	ssh root@mothership 'systemctl daemon-reload && systemctl enable ordiri-ipam.service'
+	scp bin/ordiri-ipam-amd64-linux root@mothership:~/ordiri-ipam
+	ssh root@mothership 'mv ~/ordiri-ipam /usr/local/bin/ordiri-ipam && systemctl daemon-reload'
+
+.PHONY: deploy-controllers
+deploy-controllers: bin/controller-manager
+	scp kubeconfig root@mothership:/etc/ordiri.conf
+	scp ordiri-controllers.service root@mothership:/etc/systemd/system/.
+	ssh root@mothership 'systemctl daemon-reload && systemctl enable ordiri-controllers.service'
+	scp bin/controller-manager root@mothership:~/ordiri-controllers
+	ssh root@mothership 'mv ~/ordiri-controllers /usr/local/bin/ordiri-controllers && systemctl daemon-reload'
+
+.PHONY: deploy-debian-ordlet
 deploy-debian-ordlet: linux-ordlet
 	scp kubeconfig root@debian:/etc/ordiri.conf
-	scp *.service root@debian:/etc/systemd/system/.
+	scp ordlet-*.service root@debian:/etc/systemd/system/.
 	ssh root@debian 'systemctl daemon-reload && systemctl enable ordlet.service'
 	scp bin/ordlet-amd64-linux root@debian:~/ordlet
 	ssh root@debian 'mv ~/ordlet /usr/local/bin/ordlet && systemctl daemon-reload'
 
+.PHONY: deploy-debian2-ordlet
 deploy-debian2-ordlet: linux-ordlet
 	scp kubeconfig root@debian2:/etc/ordiri.conf
-	scp *.service root@debian2:/etc/systemd/system/.
+	scp ordlet-*.service root@debian2:/etc/systemd/system/.
 	ssh root@debian2 'systemctl daemon-reload && systemctl enable ordlet.service'
 	scp bin/ordlet-amd64-linux root@debian2:~/ordlet
 	ssh root@debian2 'mv ~/ordlet /usr/local/bin/ordlet && systemctl daemon-reload'
 
+.PHONY: deploy-mothership-ordlet
 deploy-mothership-ordlet: linux-ordlet
 	scp kubeconfig mothership:/etc/ordiri.conf
-	scp *.service mothership:/etc/systemd/system/.
+	scp ordlet-*.service mothership:/etc/systemd/system/.
 	ssh mothership 'systemctl daemon-reload && systemctl enable ordlet.service'
 	scp bin/ordlet-amd64-linux mothership:~/ordlet
 	ssh mothership 'mv ~/ordlet /usr/local/bin/ordlet && systemctl daemon-reload'
 
+.PHONY: deploy-debian-md
 deploy-debian-md: linux-md
 	scp bin/metadata-amd64-linux root@debian:~/ordiri-metadata
 	ssh root@debian 'mv ~/ordiri-metadata /usr/local/bin/ordiri-metadata'
 
+.PHONY: deploy-debian-bgp
 deploy-debian-bgp: bin/gobgpd-3.7.0
 	scp bin/gobgpd-3.7.0 root@debian:~/gobgpd
 	ssh root@debian 'mv ~/gobgpd /usr/local/bin/gobgpd'
 
+.PHONY: deploy-debian2-md
 deploy-debian2-md: linux-md
 	scp bin/metadata-amd64-linux root@debian2:~/ordiri-metadata
 	ssh root@debian2 'mv ~/ordiri-metadata /usr/local/bin/ordiri-metadata'
 
+.PHONY: deploy-debian2-bgp
 deploy-debian2-bgp: bin/gobgpd-3.7.0
 	scp bin/gobgpd-3.7.0 root@debian2:~/gobgpd
 	ssh root@debian2 'mv ~/gobgpd /usr/local/bin/gobgpd'
 
 
+.PHONY: deploy-mothership-md
 deploy-mothership-md: linux-md
 	scp bin/metadata-amd64-linux mothership:~/ordiri-metadata
 	ssh mothership 'mv ~/ordiri-metadata /usr/local/bin/ordiri-metadata'
@@ -184,6 +224,14 @@ deploy-mothership-md: linux-md
 .PHONY: run-remote
 run-remote: run-debian-remote run-debian2-remote
 	@echo "starting"
+
+run-ipam: deploy-ipam
+# modprobe nf_nat_tftp nf_conntrack && 
+	ssh mothership 'systemctl restart ordiri-ipam'
+	
+run-controllers: deploy-controllers
+# modprobe nf_nat_tftp nf_conntrack && 
+	ssh mothership 'systemctl restart ordiri-controllers'
 
 run-mothership-remote: deploy-mothership-ordlet
 # modprobe nf_nat_tftp nf_conntrack && 
@@ -230,17 +278,45 @@ etcd:
 	killall etcd || true
 	etcd
 	
-.PHONY: run-apiserver
-run-apiserver: 
-	killall apiserver || true
+.PHONY: build-apiserver
+build-apiserver:
 	go build -o bin/apiserver ./cmd/apiserver
-	./bin/apiserver --etcd-servers=http://localhost:2379 --secure-port=9443 --feature-gates=APIPriorityAndFairness=false --standalone-debug-mode
+.PHONY: build-linux-apiserver
+build-linux-apiserver:
+	GOOS=linux GOARCH=amd64 go build -o bin/apiserver ./cmd/apiserver
+	
+.PHONY: build-linux-apiserver
+deploy-apiserver: build-linux-apiserver
+	scp ordiri-apiserver.service root@mothership:/etc/systemd/system/.
+	ssh root@mothership 'systemctl daemon-reload && systemctl enable ordiri-apiserver.service'
+	scp bin/apiserver root@mothership:~/ordiri-apiserver
+	ssh root@mothership 'mv ~/ordiri-apiserver /usr/local/bin/ordiri-apiserver && chmod +x /usr/local/bin/ordiri-apiserver && systemctl daemon-reload'
+	# ./bin/apiserver --etcd-servers=http://localhost:2379 --secure-port=9443 --feature-gates=APIPriorityAndFairness=false --standalone-debug-mode
+	
+.PHONY: deploy-ordiri-etcd
+deploy-ordiri-etcd: 
+	# the echo starting stops a weird bug in "rm operand not found"
+
+	ssh root@mothership bash -xc 'echo "starting"; rm -f /tmp/etcd-$(ETCD_VER)-linux-amd64.tar.gz; \
+	rm -rf /tmp/etcd-download-test; \
+	mkdir -p /tmp/etcd-download-test; \
+	curl -L https://github.com/etcd-io/etcd/releases/download/$(ETCD_VER)/etcd-$(ETCD_VER)-linux-amd64.tar.gz -o /tmp/etcd-$(ETCD_VER)-linux-amd64.tar.gz; \
+	tar xzvf /tmp/etcd-$(ETCD_VER)-linux-amd64.tar.gz -C /tmp/etcd-download-test --strip-components=1; \
+	rm -f /tmp/etcd-$(ETCD_VER)-linux-amd64.tar.gz; mv /tmp/etcd-download-test/etcd /usr/local/bin/etcd'
+
+.PHONY: run-ordiri-etcd
+run-ordiri-etcd:  deploy-ordiri-etcd
+	scp ordiri-etcd.service root@mothership:/etc/systemd/system/.
+	ssh root@mothership 'systemctl daemon-reload && systemctl enable ordiri-etcd.service'
+
+	
+.PHONY: run-apiserver
+run-apiserver: deploy-apiserver run-ordiri-etcd
+# modprobe nf_nat_tftp nf_conntrack && 
+	ssh root@mothership 'systemctl restart ordiri-apiserver'
 
 .PHONY: run-manager
-run-manager: 
-	killall controller-manager || true
-	go build -o ./bin/controller-manager ./cmd/manager
-	VAULT_ADDR='http://127.0.0.1:8200' ./bin/controller-manager --kubeconfig=kubeconfig
+run-manager: run-controllers
 
 run-vault: 
 	VAULT_DEV_LISTEN_ADDRESS="0.0.0.0:8200"  vault server -dev

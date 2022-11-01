@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
 
 	"github.com/ordiri/ordiri/pkg/network/api"
 	ipamgrpc "github.com/ordiri/ordiri/pkg/network/ipam/grpc"
@@ -24,8 +25,12 @@ func main() {
 	}
 	s := grpc.NewServer()
 
+	if err := os.MkdirAll("/var/lib/ordiri-ipam", os.ModeDir); err != nil {
+		log.Fatalf("failed to create ipam data dirjj: %v", err)
+	}
+
 	allocator := &ipamgrpc.Allocator{
-		StorePath: "/tmp/ipam.db",
+		StorePath: "/var/lib/ordiri-ipam/ipam.db",
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()

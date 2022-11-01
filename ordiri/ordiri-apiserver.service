@@ -1,0 +1,16 @@
+[Unit]
+Description=Ordiri API Server
+Documentation=https://github.com/ordiri
+After=ordiri-etcd.service ordiri-ipam.service
+Wants=ordiri-etcd.service ordiri-ipam.service
+
+[Service]
+Type=simple
+Environment=VAULT_ADDR=https://vault.homelab.dmann.xyz:8200
+
+ExecStart=/usr/local/bin/ordiri-apiserver --etcd-servers=http://localhost:2379 --secure-port=9443 --feature-gates=APIPriorityAndFairness=false --standalone-debug-mode
+Restart=always
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target

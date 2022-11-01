@@ -1,0 +1,14 @@
+[Unit]
+Description=Ordiri controllers
+Documentation=https://github.com/ordiri
+
+[Service]
+Type=simple
+
+Environment=KUBECONFIG=/etc/ordiri.conf
+ExecStart=/usr/local/bin/ordiri-controllers
+Restart=always
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target

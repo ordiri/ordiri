@@ -1,0 +1,13 @@
+[Unit]
+Description=Ordiri IPAM server
+Documentation=https://github.com/ordiri
+
+[Service]
+Type=simple
+
+ExecStart=/usr/local/bin/ordiri-ipam
+Restart=always
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target
