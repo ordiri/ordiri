@@ -1,0 +1,29 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: tigera-operator
+resources:
+- namespace.yaml
+- bgp.yaml
+helmCharts:
+- name: tigera-operator
+  repo: https://docs.projectcalico.org/charts
+  version: v3.24.3
+  releaseName: calico
+  namespace: tigera-operator
+  includeCRDs: true
+  valuesInline:
+    installation:
+      calicoNetwork:
+        # linuxDataplane: bpf
+        ipPools:
+          # - cidr: 2403:5806:97ec:6300::/56
+          #   natOutgoing: "Enabled"
+          - cidr: 10.240.0.0/16
+            natOutgoing: Disabled # We use BPG to announce routes so no need to NAT or encapsulate traffic
+            encapsulation: None
+        containerIPForwarding: Enabled
+        nodeAddressAutodetectionV4:
+          kubernetes: NodeInternalIP
+        nodeAddressAutodetectionV6: { }
+          # canReach: 2606:4700:4700::1111

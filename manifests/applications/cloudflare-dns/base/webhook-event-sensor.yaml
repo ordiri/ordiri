@@ -1,0 +1,65 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  name: cloudflare-dns-updater
+spec:
+  template:
+    serviceAccountName: cloudflaredns-event-sa
+  dependencies:
+  - name: dns-update-notify-dep
+    eventSourceName: cloudflare-dns-updater
+    eventName: annotation-updated
+
+  triggers:
+  - template:
+      name: log-trigger2
+      log:
+        intervalSeconds: 4
+  - template:
+      name: argo-workflow-trigger
+      argoWorkflow:
+        operation: submit
+        parameters:
+        - src:
+            dependencyName: dns-update-notify-dep
+            dataKey: body.version
+          dest: metadata.name
+          operation: append
+        - src:
+            dependencyName: dns-update-notify-dep
+            dataTemplate: -{{ lower (list .Input.body.action .Input.body.kind .Input.body.namespace .Input.body.name .Input.body.version | join "-" | sha1sum) }}
+          dest: metadata.name
+          operation: append
+        - src:
+            dependencyName: dns-update-notify-dep
+            dataKey: body.kind
+          dest: spec.arguments.parameters.0.value
+        - src:
+            dependencyName: dns-update-notify-dep
+            dataKey: body.namespace
+          dest: spec.arguments.parameters.1.value
+        - src:
+            dependencyName: dns-update-notify-dep
+            dataKey: body.name
+          dest: spec.arguments.parameters.2.value
+        - src:
+            dependencyName: dns-update-notify-dep
+            dataKey: body.action
+          dest: spec.arguments.parameters.3.value
+        source:
+          resource:
+            apiVersion: argoproj.io/v1alpha1
+            kind: Workflow
+            metadata:
+              name: cfdns-
+            spec:
+                serviceAccountName: cloudflaredns-workflow-sa
+                entrypoint: main
+                arguments:
+                  parameters:
+                    - name: kind
+                    - name: namespace
+                    - name: name
+                    - name: action
+                workflowTemplateRef:
+                  name: configure-dns-records

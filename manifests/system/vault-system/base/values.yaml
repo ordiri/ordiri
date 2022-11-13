@@ -1,0 +1,61 @@
+
+global:
+  tlsDisable: false
+ui:
+  enabled: true
+  serviceType: NodePort
+  annotations:
+    k8s.dmann.xyz/cloudflare-domain-main: vault.homelab.dmann.xyz
+  externalTrafficPolicy: Local
+  activeVaultPodOnly: true
+server:
+  updateStrategyType: "RollingUpdate"
+  auditStorage:
+    enabled: true
+  extraLabels:
+    raft.hashicorp.io/app: vault-tenant
+  ha: # TODO: Swap back to raft, need to fix the issues with Raft not working properly and causing 403
+    enabled: true
+    apiAddr: https://vault.homelab.dmann.xyz:8200
+    raft: 
+      enabled: true
+      setNodeId: true
+      config: |
+        ui = true
+
+        listener "tcp" {
+          # tls_cert_file = "/opt/vault/ssl/tls.crt"
+          # tls_key_file  = "/opt/vault/ssl/tls.key"
+          tls_disable = 1
+          address = "[::]:8200"
+          cluster_address = "[::]:8201"
+        }
+
+        storage "raft" {
+          path = "/vault/data"
+        }
+
+        service_registration "kubernetes" {}
+
+        seal "transit" {
+          address = "https://vault-0.ordiri:8200"
+          key_name    = "k8-autounseal-transit"
+          mount_path  = "transit"
+          tls_ca_cert = "/vault/raft-tls-cert/ca.crt"
+        }
+  annotations:
+    vault.hashicorp.com/service: https://vault-0.ordiri:8200
+    vault.hashicorp.com/agent-inject: "true"
+    vault.hashicorp.com/tls-secret: vault-ca
+    vault.hashicorp.com/agent-configmap: vault-root-agent-inject-cm
+  volumeMounts:
+  - name: vault-ca-tls-cert
+    mountPath: /vault/raft-tls-cert
+    readOnly: true
+  volumes:
+  - name: vault-ca-tls-cert
+    secret:
+      secretName: vault-ca
+csi:
+  enabled: true
+debug: true

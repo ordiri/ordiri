@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+helmCharts:
+- name: argo-events
+  repo: https://argoproj.github.io/argo-helm
+  version: 1.12.0
+  releaseName: argo-events
+  namespace: argo-events
+  includeCRDs: true
+  valuesInline: 
+    singleNamespace: false
+    additionalSaNamespaces: []
+    sensorController:
+    # TODO: This deals with a bug in quickly delivered messages
+      tag: v1.6.3

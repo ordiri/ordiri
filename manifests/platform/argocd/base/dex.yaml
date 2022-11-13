@@ -1,0 +1,16 @@
+connectors:
+  # OIDC
+  - type: oidc
+    id: oidc
+    name: OIDC
+    config:
+      issuer: https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/homelab
+      clientID: TIWJj5fQca2OYTRFlnCFIgI4WZkfJfzt
+      clientSecret: hvo_secret_209QYepLLNLIh4hC0KGWIoDi4gjaLKSy02pYhhUFk65QFMx4xiqJT019oqwhmmNc
+      insecureEnableGroups: true
+      scopes:
+      - profile
+      - user
+      - groups
+      userIDKey: username
+      userNameKey: username

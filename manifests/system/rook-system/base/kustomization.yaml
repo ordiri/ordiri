@@ -1,0 +1,38 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- external.yaml
+# - ingress.yaml
+helmCharts:
+- name: rook-ceph
+  repo: https://charts.rook.io/release
+  version: v1.10.4
+  releaseName: rook-ceph
+  namespace: rook-ceph
+  includeCRDs: true
+# - name: rook-ceph-cluster
+#   repo: https://charts.rook.io/release
+#   version: v1.10.4
+#   releaseName: rook-ceph-cluster
+#   namespace: rook-ceph
+#   includeCRDs: true
+#   valuesInline:
+#     cephClusterSpec:
+#       external: 
+#         enabled: true
+#       dashboard:
+#         ssl: false
+#     toolbox: 
+#       enabled: true
+
+
+# patches:
+#   - patch: |
+#       apiVersion: batch/v1
+#       kind: Job
+#       metadata:
+#         name: hook
+#       $patch: delete
+#     target:
+#       annotationSelector: "helm.sh/hook=pre-delete"

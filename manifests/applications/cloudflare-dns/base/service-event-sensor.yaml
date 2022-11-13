@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  name: service-cloudflare-dns-resources
+spec:
+  template:
+    serviceAccountName: cloudflaredns-event-sa
+  dependencies:
+  - name: service-event-dep
+    eventSourceName: cloudflare-dns-resources
+    eventName: service-resource-updated
+  triggers:
+  - template:
+      name: service-routes-updated
+      http:
+        url: http://cloudflare-dns-updater-eventsource-svc:12000/annotation-updated
+        payload:
+        - src:
+            dependencyName: service-event-dep
+            dataKey: body.metadata.resourceVersion
+          dest: version
+        - src:
+            dependencyName: service-event-dep
+            dataKey: body.kind
+          dest: kind
+        - src:
+            dependencyName: service-event-dep
+            dataKey: body.metadata.namespace
+          dest: namespace
+        - src:
+            dependencyName: service-event-dep
+            dataKey: body.metadata.name
+          dest: name
+        - src:
+            dependencyName: service-event-dep
+            contextKey: type
+          dest: action
+        method: POST

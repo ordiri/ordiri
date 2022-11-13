@@ -1,0 +1,45 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+components:
+  - ../../../common/components/ca-import
+
+secretGenerator:
+  - name: argo-workflows-sso
+    options:
+      disableNameSuffixHash: true
+    literals:
+      - client-id=mznLWc9KRCyVSRrIe06FbPjjvfb1qYQh
+      - client-secret=hvo_secret_s4ksCoTaT8ECnMaC0u8vRhxkPyMTU52WPzCErn3H25rmmL6babqGoACmVwqhOzIj
+
+patchesStrategicMerge:
+  - add-ca-to-ui.yaml
+helmCharts:
+- name: argo-workflows
+  repo: https://argoproj.github.io/argo-helm
+  version: 0.10.1
+  releaseName: argo-workflows
+  namespace: argo-workflows
+  includeCRDs: true
+  valuesInline: 
+    server:
+      extraArgs: ["--auth-mode=sso"]
+      sso:
+        issuer: https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/homelab
+        clientId:
+          name: argo-workflows-sso
+          key: client-id
+        clientSecret:
+          name: argo-workflows-sso
+          key: client-secret
+        redirectUrl: https://argo.homelab.dmann.xyz/oauth2/callback
+        scopes:
+        - groups
+        - user
+    controller:
+      workflowNamespaces: []
+      containerRuntimeExecutor: emissary
+
+
+resources:
+- ingress.yaml

@@ -1,0 +1,30 @@
+apiVersion: crd.projectcalico.org/v1
+kind: BGPConfiguration
+metadata:
+  name: default
+  namespace: calico-system
+spec:
+  nodeToNodeMeshEnabled: false
+  logSeverityScreen: Info
+  asNumber: 65003
+  serviceClusterIPs:
+  - cidr: "2403:5806:97ec:6400::/112"
+  - cidr: "10.241.0.0/16"
+---
+apiVersion: crd.projectcalico.org/v1
+kind: BGPPeer
+metadata:
+  name: "ordiri-cloud-router-masters"
+  namespace: calico-system
+spec:
+  peerIP: "10.200.1.1"
+  asNumber: 65002 # From the router
+---
+apiVersion: crd.projectcalico.org/v1
+kind: BGPPeer
+metadata:
+  name: "ordiri-cloud-router-workers"
+  namespace: calico-system
+spec:
+  peerIP: "10.200.2.1"
+  asNumber: 65002 # From the router

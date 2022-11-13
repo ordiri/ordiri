@@ -1,0 +1,20 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: argo-server
+  namespace: argo
+  annotations:
+    k8s.dmann.xyz/cloudflare-domain-main: argo.homelab.dmann.xyz
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`argo.homelab.dmann.xyz`)
+      priority: 10
+      services:
+        - name: argo-workflows-server
+          port: 2746
+          scheme: http
+  tls:
+    certResolver: homelab

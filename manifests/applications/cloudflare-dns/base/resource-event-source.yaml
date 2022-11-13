@@ -1,0 +1,47 @@
+apiVersion: argoproj.io/v1alpha1
+kind: EventSource
+metadata:
+  name: cloudflare-dns-resources
+spec:
+  template:
+    serviceAccountName: cloudflaredns-event-sa # assign a service account with `get`, `list` and `watch` permissions on the resource being watched.
+  resource:
+    ingressroute-resource-updated:
+      namespace: ""
+      # resource group
+      group: traefik.containo.us
+      # resource version
+      version: v1alpha1
+      # resource kind
+      resource: ingressroutes
+      filter: ~
+      eventTypes:
+        - ADD
+        - DELETE
+        - UPDATE
+    service-resource-updated:
+      namespace: ""
+      # resource group
+      group: ""
+      # resource version
+      version: v1
+      # resource kind
+      resource: services
+      filter: ~
+      eventTypes:
+        - ADD
+        - DELETE
+        - UPDATE
+    ingress-resource-updated:
+      namespace: ""
+      # resource group
+      group: "networking.k8s.io"
+      # resource version
+      version: v1
+      # resource kind
+      resource: ingresses
+      filter: ~
+      eventTypes:
+        - ADD
+        - DELETE
+        - UPDATE

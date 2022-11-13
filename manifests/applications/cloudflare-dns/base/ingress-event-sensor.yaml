@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  name: ingress-cloudflare-dns-resources
+spec:
+  template:
+    serviceAccountName: cloudflaredns-event-sa
+  dependencies:
+  - name: dns-update-notify-dep
+    eventSourceName: cloudflare-dns-resources
+    eventName: ingress-resource-updated
+  triggers:
+  - template:
+      name: ingress-updated
+      http:
+        url: http://cloudflare-dns-updater-eventsource-svc:12000/annotation-updated
+        payload:
+        - src:
+            dependencyName: dns-update-notify-dep
+            dataKey: body.metadata.resourceVersion
+          dest: version
+        - src:
+            dependencyName: dns-update-notify-dep
+            dataKey: body.kind
+          dest: kind
+        - src:
+            dependencyName: dns-update-notify-dep
+            dataKey: body.metadata.namespace
+          dest: namespace
+        - src:
+            dependencyName: dns-update-notify-dep
+            dataKey: body.metadata.name
+          dest: name
+        - src:
+            dependencyName: dns-update-notify-dep
+            contextKey: type
+          dest: action
+        method: POST

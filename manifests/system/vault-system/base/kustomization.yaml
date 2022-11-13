@@ -1,0 +1,44 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+components:
+  - ../../../common/components/ca-import
+
+configMapGenerator:
+  - name: vault-root-agent-inject-cm
+    options:
+      disableNameSuffixHash: true
+    files:
+    - config-init.hcl=config/root-injector-config-init.hcl
+    - config.hcl=config/root-injector-config.hcl
+  # Used to configure the Vault Server
+  - name: bank-vaults-vault-config
+    options:
+      disableNameSuffixHash: true
+    files:
+    - vault-config.yml=config/bank-vaults-vault-config.yaml
+
+helmCharts:
+- name: vault
+  repo: https://helm.releases.hashicorp.com
+  version: v0.22.1
+  releaseName: vault
+  namespace: vault
+  includeCRDs: true
+  valuesFile: values.yaml
+
+images:
+- name: vault-unsealer
+  newName: banzaicloud/bank-vaults
+  newTag: 1.15.1
+- name: vault-configurer
+  newName: banzaicloud/bank-vaults
+  newTag: 1.15.1
+
+resources:
+- vault-sa-token-review-binding.yaml
+- raft-discovery-rbac.yaml
+# - certificate.yaml
+
+
+patchesStrategicMerge:
+- patches/vault-server.yaml

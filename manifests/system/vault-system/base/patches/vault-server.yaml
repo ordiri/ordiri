@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: vault
+  namespace: vault
+spec:
+  template:
+    spec:
+      volumes:
+      - name: bank-vaults-vault-config
+        configMap:
+          name: bank-vaults-vault-config
+      - name: vault-ca
+        secret:
+          secretName: vault-ca
+      containers:
+      - name: vault
+        args:
+        - "export VAULT_TOKEN=$(cat /vault/secrets/unseal-token);cp /vault/config/extraconfig-from-values.hcl /tmp/storageconfig.hcl;\n[
+          -n \"${HOST_IP}\" ] && sed -Ei \"s|HOST_IP|${HOST_IP?}|g\" /tmp/storageconfig.hcl;\n[
+          -n \"${POD_IP}\" ] && sed -Ei \"s|POD_IP|${POD_IP?}|g\" /tmp/storageconfig.hcl;\n[
+          -n \"${HOSTNAME}\" ] && sed -Ei \"s|HOSTNAME|${HOSTNAME?}|g\" /tmp/storageconfig.hcl;\n[
+          -n \"${API_ADDR}\" ] && sed -Ei \"s|API_ADDR|${API_ADDR?}|g\" /tmp/storageconfig.hcl;\n[
+          -n \"${TRANSIT_ADDR}\" ] && sed -Ei \"s|TRANSIT_ADDR|${TRANSIT_ADDR?}|g\"
+          /tmp/storageconfig.hcl;\n[ -n \"${RAFT_ADDR}\" ] && sed -Ei \"s|RAFT_ADDR|${RAFT_ADDR?}|g\"
+          /tmp/storageconfig.hcl;\n/usr/local/bin/docker-entrypoint.sh vault server
+          -config=/tmp/storageconfig.hcl \n"
+        env:
+        - name: VAULT_ADDR
+          value: "http://vault-internal.vault.svc.internal.cluster.homelab.dmann.xyz:8200"
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+          
+        - name: VAULT_CLUSTER_ADDR
+          value: "http://$(POD_NAME).vault-internal.vault.svc.internal.cluster.homelab.dmann.xyz:8201"
+        - name: VAULT_SKIP_VERIFY
+          value: "true"
+        volumeMounts:
+        - name: vault-ca
+          mountPath: /etc/ssl/certs
+          readOnly: true
+      - name: vault-unsealer
+        image: vault-unsealer:latest
+        command: [bank-vaults, unseal]
+        args:
+        - --init
+        - --auto
+        - --raft
+        - --raft-ha-storage
+        - --raft-leader-address=http://vault-0.vault-internal.vault.svc.internal.cluster.homelab.dmann.xyz:8200
+        - --mode=vault
+        - --vault-token-path=/vault/secrets/unseal-token
+        - --vault-auth-path=transit
+        - --vault-role=k8-autounseal-transit
+        - --vault-unseal-keys-path=secret/data/k8s/vault/vault-keys
+        - --vault-addr=https://vault-0.ordiri:8200
+        env:
+        - name: VAULT_ADDR
+          value: "http://0.0.0.0:8200"
+        - name: VAULT_SKIP_VERIFY
+          value: "true"
+        volumeMounts:
+        - name: config
+          mountPath: /vault/configs
+          readOnly: true
+        - name: vault-ca
+          mountPath: /etc/ssl/certs  
+          readOnly: true
+        # - name: bank-vaults-vault-config
+        #   mountPath: /config
+        #   readOnly: true
+        workingDir: /config

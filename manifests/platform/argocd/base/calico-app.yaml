@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: calico
+spec:
+  project: default
+  source:
+    repoURL: git@gitlab.dmann.xyz:codingninja/homelab.git
+    targetRevision: HEAD
+    path: kube/system/tigera-operator/overlays/default
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tigera-operator
+  # syncPolicy:
+  #   automated:
+  #     prune: true

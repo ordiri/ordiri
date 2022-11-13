@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: cluster-applications
+spec:
+  generators:
+  - git:
+      repoURL: git@gitlab.dmann.xyz:codingninja/homelab.git
+      revision: HEAD
+      directories:
+      - path: kube/*/*
+      - path: kube/system/weave
+        exclude: true
+  template:
+    metadata:
+      name: '{{path.basename}}'
+    spec:
+      project: default
+      source:
+        repoURL: git@gitlab.dmann.xyz:codingninja/homelab.git
+        targetRevision: HEAD
+        path: '{{path}}/overlays/default'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{path.basename}}'
+      # syncPolicy:
+      #   automated:
+      #     prune: true

@@ -1,0 +1,92 @@
+
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: gitlab-minio
+  annotations:
+    k8s.dmann.xyz/cloudflare-domain-main: minio.homelab.dmann.xyz
+spec:
+  entryPoints:
+  - websecure
+  tls:
+    certResolver: homelab
+  routes:
+  - kind: Rule
+    match: Host("minio.homelab.dmann.xyz")
+    services:
+    - kind: Service
+      name: gitlab-minio-svc
+      port: 9000
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: gitlab-registry
+  annotations:
+    k8s.dmann.xyz/cloudflare-domain-main: packages.homelab.dmann.xyz
+spec:
+  entryPoints:
+  - websecure
+  tls:
+    certResolver: homelab
+  routes:
+  - kind: Rule
+    match: Host("packages.homelab.dmann.xyz")
+    services:
+    - kind: Service
+      name: gitlab-registry
+      port: 5000
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: gitlab-webservice-default
+  annotations:
+    k8s.dmann.xyz/cloudflare-domain-main: gitlab.homelab.dmann.xyz
+    k8s.dmann.xyz/cloudflare-service-main: traefik-system/traefik-gitlab
+spec:
+  entryPoints:
+  - websecure
+  tls:
+    certResolver: homelab
+  routes:
+  - kind: Rule
+    match: Host("gitlab.homelab.dmann.xyz")
+    services:
+    - kind: Service
+      name: gitlab-webservice-default
+      port: 8181
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: gitlab-pages
+  annotations:
+    k8s.dmann.xyz/cloudflare-domain-main: pages.homelab.dmann.xyz
+spec:
+  entryPoints:
+  - websecure
+  tls:
+    certResolver: homelab
+  routes:
+  - kind: Rule
+    match: Host("pages.homelab.dmann.xyz")
+    services:
+    - kind: Service
+      name: gitlab-gitlab-pages
+      port: 8090
+
+---
+
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: gitlab-webservice-default
+spec:
+  entryPoints:
+  - gitlab
+  routes:
+  - match: HostSNI("*")
+    services:
+    - name: gitlab-gitlab-shell
+      port: 22
