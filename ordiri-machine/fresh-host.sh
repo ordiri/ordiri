@@ -200,16 +200,41 @@ function with_vault_token() {
 
 
 function provision_kube() {
-    wget https://raw.githubusercontent.com/rook/rook/release-1.10/deploy/examples/create-external-cluster-resources.py
-    python3 create-external-cluster-resources.py --namespace rook-ceph --rbd-data-pool-name kube-pods --format bash
-    wget https://raw.githubusercontent.com/rook/rook/release-1.10/deploy/examples/import-external-cluster.sh
-    chmod +x import-external-cluster.sh 
+    # wget https://raw.githubusercontent.com/rook/rook/release-1.10/deploy/examples/create-external-cluster-resources.py
+    # eval $(python3.9 create-external-cluster-resources.py \
+    #     --namespace rook-ceph \
+    #     --rbd-data-pool-name kube-pods \
+    #     --cephfs-metadata-pool-name cephfs.nfs.meta \
+    #     --cephfs-data-pool-name cephfs.nfs.data \
+    #     --cephfs-filesystem-name nfs \
+    #     --format bash) 
+
+    # wget https://raw.githubusercontent.com/rook/rook/release-1.10/deploy/examples/import-external-cluster.sh
+    # chmod +x import-external-cluster.sh 
     
     cephadm shell ceph osd pool create kube-pods
     cephadm shell ceph osd pool set kube-pods size 2
     cephadm shell ceph osd pool application enable kube-pods rbd
     eval $(python3 create-external-cluster-resources.py --namespace rook-ceph --rbd-data-pool-name kube-pods --format bash)
+}
 
+function provision_ceph_nfs() {
+    cephadm shell ceph orch apply nfs default
+    cephadm shell ceph fs volume create nfs
+    cephadm shell ceph nfs export create cephfs \
+        --cluster-id default \
+        --pseudo-path /homelab/media \
+        --fsname nfs 
+        # [--readonly] \
+        # [--path=/path/in/cephfs] \
+        # [--client_addr <value>...] \
+        # [--squash <value>] \
+        # [--sectype <value>...]
+
+}
+
+function provision_ceph_rgw() {
+    cephadm shell ceph orch apply rgw default
 }
 
 function provision_log_shippers() {

@@ -8,3 +8,7 @@ resource "vault_auth_backend" "cert" {
     path = "cert"
     type = "cert"
 }
+resource "vault_auth_backend" "kubernetes" {
+    path = "kubernetes"
+    type = "kubernetes"
+}

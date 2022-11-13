@@ -116,7 +116,8 @@ zebra:
   config:
     enabled: true
     url: unix:%s
-    redistribute-route-type-list: []
+#    redistribute-route-type-list: [] # An empty list means don't write routes 
+    redistribute-route-type-list: [connect]
     version: 6
     software-name: frr7.5
 `, config.CloudRouterAsn, nw.ExternalIp().IP().String(), config.CustomerAsn, nw.Cidr().String(), nw.MgmtIp().IP().String(), config.LocalAsn, zebraSocketFile)

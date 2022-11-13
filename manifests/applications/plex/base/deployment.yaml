@@ -12,9 +12,18 @@ spec:
       labels:
         app: plex
     spec:
+      volumes:
+      - name: media-nfs
+        nfs:
+          server: ceph.homelab.dmann.xyz
+          path: /homelab/media
+          readOnly: true
       containers:
       - name: plex
         image: plexinc/pms-docker
+        volumeMounts:
+        - mountPath: /media
+          name: media-nfs
         env:
         - name: PUID
           value: "1000"
@@ -22,6 +31,7 @@ spec:
           value: "1000"
         - name: VERSION
           value: "docker"
+
         ports:
         - name:  webui
           containerPort:  32400

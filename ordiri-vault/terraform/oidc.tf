@@ -1,5 +1,5 @@
 resource "vault_identity_oidc" "server" {
-  issuer = "https://vault.homelab.dmann.xyz"
+  issuer = "https://vault.homelab.dmann.xyz:8200"
 }
 
 resource "vault_identity_oidc_scope" "groups" {

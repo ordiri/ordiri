@@ -4,7 +4,7 @@
 
 set -eou pipefail
 
-apt-get install -y dnsutils
+{% include 'common/includes/kube-init.sh' %}
 
 cd $(mktemp -d)
 local_ip=$(curl --retry 5 --retry-all-errors --retry-delay 5 --retry-max-time 120 -fsSL 169.254.169.254/latest/meta-data/local-ipv4)
