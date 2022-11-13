@@ -1,0 +1,15 @@
+---
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: JoinConfiguration
+nodeRegistration:
+  taints: ~
+discovery:
+  bootstrapToken: 
+    token: ${bootstrap_token}
+    apiServerEndpoint: cluster.homelab.dmann.xyz:6443
+    caCertHashes:
+      - ${discovery_cert_hash}
+controlPlane:
+  certificateKey: ${cert_key}
+  localAPIEndpoint:
+    advertiseAddress: "::"

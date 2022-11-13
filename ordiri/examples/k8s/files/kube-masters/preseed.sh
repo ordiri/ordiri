@@ -20,8 +20,11 @@ export local_ip local_hostname # Export these so we can use them in envsubst cal
 {{ with_local_file('kube-masters/bin/bootstrap.sh', "/sbin/bootstrap.sh", mode="+x") }}
 
 mkdir -p /etc/kubernetes/
-export cert_key=$(kubeadm certs certificate-key)
-{{ with_local_file('kube-masters/kubeadm/config.yaml', "/etc/kubernetes/kubeadm.yaml", executable=True) }}
+{{ with_local_file('kube-masters/kubeadm/config.yaml', "/etc/kubernetes/config.yaml") }}
+export cert_key=$(kubeadm certs certificate-key);
+{{ with_local_file('kube-masters/kubeadm/init.yaml', "/etc/kubernetes/init.yaml", executable=True) }}
+{{ with_local_file('kube-masters/kubeadm/join.yaml', "/etc/kubernetes/join.yaml") }}
+
 
 cluster_ip=$(dig +short kube-master-0.ordiri)
 echo "${cluster_ip} cluster.homelab.dmann.xyz" >> /etc/hosts

@@ -73,12 +73,12 @@ func (ln *networkManager) Start(ctx context.Context) error {
 			PeerAsn:       uint32(config.CloudRouterAsn),
 		},
 	})
-	if err := ln.speaker.AddDynamicNeighbor(ctx, apipb.DynamicNeighbor{
-		Prefix:    config.NetworkInternetGatewayCidr.String(),
-		PeerGroup: "tenant-subnets",
-	}); err != nil {
-		return fmt.Errorf("error adding tenant network BGP peer - %w", err)
-	}
+	// if err := ln.speaker.AddDynamicNeighbor(ctx, apipb.DynamicNeighbor{
+	// 	Prefix:    config.NetworkInternetGatewayCidr.String(),
+	// 	PeerGroup: "tenant-subnets",
+	// }); err != nil {
+	// 	return fmt.Errorf("error adding tenant network BGP peer - %w", err)
+	// }
 
 	if err != nil {
 		return fmt.Errorf("error registering cloud router BGP peer group - %w", err)

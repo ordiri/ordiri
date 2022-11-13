@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/ordiri/ordiri/pkg/network/api"
+	apipb "github.com/osrg/gobgp/v3/api"
 )
 
 func (ln *networkManager) GetInterface(nw string, sn string, name string) (api.Interface, error) {
@@ -32,12 +33,18 @@ func (ln *networkManager) AttachInterface(ctx context.Context, nw string, sn str
 	ln.l.RLock()
 	defer ln.l.RUnlock()
 	if nw, ok := ln.networks[nw]; ok {
+		nw.l.RLock()
+		defer nw.l.RUnlock()
 		if err := ln.driver.RegisterNetwork(ctx, nw); err != nil {
 			return "", fmt.Errorf("error creating network - %w", err)
 		}
 		nw.attached = true
-		nw.l.RLock()
-		defer nw.l.RUnlock()
+		if err := ln.speaker.AddPeer(ctx, apipb.PeerConf{
+			NeighborAddress: nw.ExternalIp().IP().String(),
+			PeerGroup:       "tenant-subnets",
+		}); err != nil {
+			return "", fmt.Errorf("error adding tenant network BGP peer - %w", err)
+		}
 		if sn, ok := nw.subnets[sn]; ok {
 			if err := ln.driver.RegisterSubnet(ctx, nw, sn); err != nil {
 				return "", fmt.Errorf("error creating subnet - %w", err)

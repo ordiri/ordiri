@@ -128,26 +128,8 @@ func (s *Speaker) Start(ctx context.Context) error {
 	}); err != nil {
 		s.server.Log().Error(err.Error(), nil)
 	}
-	err := s.AddPolicy(ctx, api.Policy{
-		Name: "unchanged-nexthop",
-		Statements: []*api.Statement{
-			{
-				Name: "next-hop",
-				Actions: &api.Actions{
-					Nexthop: &api.NexthopAction{
-						Self:      false,
-						Unchanged: true,
-					},
-					RouteAction: api.RouteAction_ACCEPT,
-				},
-			},
-		},
-	})
-	if err != nil {
-		return fmt.Errorf("failed to create unchanged nexthop policy - %w", err)
-	}
 
-	err = s.AddPeerGroup(ctx, api.PeerGroup{
+	err := s.AddPeerGroup(ctx, api.PeerGroup{
 		Conf: &api.PeerGroupConf{
 			PeerGroupName: "upstream-router",
 			PeerAsn:       uint32(s.NeighbourAsn),
