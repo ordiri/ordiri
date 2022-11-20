@@ -58,6 +58,9 @@ type NetworkSpec struct {
 	Cidr string `json:"cidr"`
 
 	// Cidr address to represent this network
+	Cidr6 string `json:"cidr6"`
+
+	// Cidr address to represent this network
 	// +optional
 	Router *NetworkRouterSpec `json:"router,omitempty"`
 
@@ -77,12 +80,16 @@ type NetworkRouterSpec struct {
 	Enabled bool `json:"enabled"`
 	// +optional
 	Ip string `json:"ip"`
+	// +optional
+	Ip6 string `json:"ip6"`
 }
 
 type NetworkDnsSpec struct {
 	Enabled bool `json:"enabled"`
 	// +optional
 	Ip string `json:"ip,omitempty"`
+	// +optional
+	Ip6 string `json:"ip6,omitempty"`
 }
 
 type InternetGatewaySpec struct {

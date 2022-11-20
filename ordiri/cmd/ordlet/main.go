@@ -73,8 +73,11 @@ func main() {
 	var nodeName string
 	var networkDriver string
 	var publicCidrStr string
+	var publicV6CidrStr string
 	var gatewayCidrStr string
+	var gatewayV6CidrStr string
 	var mgmtCidrStr string
+	var mgmtV6CidrStr string
 	var bgpPeerAsn uint
 	var bgpPeerIp string
 	var ipamAddr string
@@ -87,8 +90,11 @@ func main() {
 	flag.StringVar(&nodeRole, "role", "compute,network,storage", "The roles this node has")
 	flag.StringVar(&networkDriver, "network-driver", "linux", "The driver for network operations on this node")
 	flag.StringVar(&mgmtCidrStr, "mgmt-cidr", config.ManagementCidr.String(), "The upstream management network cidr")
+	flag.StringVar(&mgmtV6CidrStr, "mgmt-ipv6-cidr", config.ManagementV6Cidr.String(), "The upstream management network cidr")
 	flag.StringVar(&publicCidrStr, "public-cidr", config.VmPublicCidr.String(), "The public cidr in use")
+	flag.StringVar(&publicV6CidrStr, "public-ipv6-cidr", config.VmPublicV6Cidr.String(), "The public cidr in use")
 	flag.StringVar(&gatewayCidrStr, "gateway-cidr", config.NetworkInternetGatewayCidr.String(), "The range of ip's used to egress vm traffic to the network")
+	flag.StringVar(&gatewayV6CidrStr, "gateway-ipv6-cidr", config.NetworkInternetGatewayV6Cidr.String(), "The range of ip's used to egress vm traffic to the network")
 	flag.StringVar(&bgpPeerIp, "bgp-peer-ip", config.BgpPeerIp.String(), "Ip of the upstream router to send BGP announcements to")
 	flag.StringVar(&ipamAddr, "ipam", config.IpamAddr, "Ip of the upstream router to send BGP announcements to")
 	flag.UintVar(&bgpPeerAsn, "bgp-peer-asn", config.BgpPeerAsn, "The asn of the peer")
@@ -113,9 +119,19 @@ func main() {
 		setupLog.Error(err, "unable to decode node mgmt cidr", "cidr", mgmtCidrStr)
 		os.Exit(1)
 	}
+	_, mgmt6Network, err := net.ParseCIDR(mgmtV6CidrStr)
+	if err != nil {
+		setupLog.Error(err, "unable to decode node mgmt cidr", "cidr", mgmtV6CidrStr)
+		os.Exit(1)
+	}
 	gatewayCidr, err := netaddr.ParseIPPrefix(gatewayCidrStr)
 	if err != nil {
-		setupLog.Error(err, "unable to decode node mgmt cidr", "cidr", mgmtCidrStr)
+		setupLog.Error(err, "unable to decode gateway cidr", "cidr", gatewayCidrStr)
+		os.Exit(1)
+	}
+	gateway6Cidr, err := netaddr.ParseIPPrefix(gatewayV6CidrStr)
+	if err != nil {
+		setupLog.Error(err, "unable to decode node ipv6 mgmt cidr", "cidr", gatewayV6CidrStr)
 		os.Exit(1)
 	}
 
@@ -130,6 +146,7 @@ func main() {
 	})
 
 	publicCidr := netaddr.MustParseIPPrefix(publicCidrStr)
+	public6Cidr := netaddr.MustParseIPPrefix(publicV6CidrStr)
 
 	if err != nil {
 		setupLog.Error(err, "unable to start manager")
@@ -137,7 +154,7 @@ func main() {
 	}
 
 	nodeRoles := strings.Split(nodeRole, ",")
-	nodeRunner := ordlet.NewNodeRunnable(mgmtNetwork, nodeName, nodeRoles)
+	nodeRunner := ordlet.NewNodeRunnable(mgmtNetwork, mgmt6Network, allocator, nodeName, nodeRoles)
 	c, e := versioned.NewForConfig(mgr.GetConfig())
 	if e != nil {
 		setupLog.Error(err, "unable to start manager")
@@ -152,7 +169,7 @@ func main() {
 	node := nodeRunner.GetNode()
 
 	bgpIP := netaddr.MustParseIP(bgpPeerIp)
-	speaker := bgp.NewSpeaker(node.MgmtAddress(), uint32(bgpPeerAsn), bgpIP)
+	speaker := bgp.NewSpeaker(node.MgmtAddress(), uint32(bgpPeerAsn), bgpIP, node.MgmtIp6().IP())
 	mgr.Add(speaker)
 
 	setupLog.Info("Starting network manager")
@@ -169,7 +186,9 @@ func main() {
 		Node:           nodeRunner,
 		NetworkManager: nwManager,
 		PublicCidr:     publicCidr,
+		Public6Cidr:    public6Cidr,
 		GatewayCidr:    gatewayCidr,
+		Gateway6Cidr:   gateway6Cidr,
 		Allocator:      allocator,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Network")
@@ -219,6 +238,7 @@ func main() {
 		Node:           nodeRunner,
 		NetworkManager: nwManager,
 		PublicCidr:     publicCidr,
+		Public6Cidr:    public6Cidr,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "VirtualMachine")
 		os.Exit(1)
@@ -233,11 +253,13 @@ func main() {
 	}
 
 	if err = (&network.BGPSpeakerReconciler{
-		Client:      mgr.GetClient(),
-		Scheme:      mgr.GetScheme(),
-		Node:        nodeRunner,
-		PublicCidr:  publicCidr,
-		GatewayCidr: gatewayCidr,
+		Client:       mgr.GetClient(),
+		Scheme:       mgr.GetScheme(),
+		Node:         nodeRunner,
+		PublicCidr:   publicCidr,
+		Public6Cidr:  public6Cidr,
+		GatewayCidr:  gatewayCidr,
+		Gateway6Cidr: gateway6Cidr,
 	}).SetupWithManager(mgr, nwManager.GetSpeaker()); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "BGPSpeaker")
 		os.Exit(1)

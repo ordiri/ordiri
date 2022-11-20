@@ -26,6 +26,9 @@ func metadataServerUnitName(subnet api.Subnet) string {
 func networkBgpRouterUnitName(nw api.Network) string {
 	return fmt.Sprintf("ordiri-bgp-%s.service", nw.Name())
 }
+func networkRouterAdvertisementUnitName(nw api.Network, sn api.Subnet) string {
+	return fmt.Sprintf("ordiri-rad-%s-%s.service", nw.Name(), sn.Name())
+}
 func networkBgpZebraUnitName(nw api.Network) string {
 	return fmt.Sprintf("ordiri-zebra-%s.service", nw.Name())
 }
@@ -113,10 +116,31 @@ func createNetworkNs(name string) error {
 	if err != nil && !strings.Contains(string(out), "File exists") {
 		return fmt.Errorf("%s: unable to create network namespace - %q - %w", cmd.String(), string(out), err)
 	}
+
+	cmd = exec.Command("ip", "netns", "exec", name, "sysctl", "-w", "net.ipv6.conf.all.forwarding=1")
+	out, err = cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("%s: unable to set sysctl all forwarding prop - %q - %w", cmd.String(), string(out), err)
+	}
+
+	cmd = exec.Command("ip", "netns", "exec", name, "sysctl", "-w", "net.ipv6.conf.default.forwarding=1")
+	out, err = cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("%s: unable to set sysctl default forwarding prop - %q - %w", cmd.String(), string(out), err)
+	}
+
+	if err != nil {
+		return fmt.Errorf("%s: unable to set loopback link up - %q - %w", cmd.String(), string(out), err)
+	}
+
 	return nil
 }
 
 func setNsVethIp(namespace string, addr netaddr.IPPrefix, cableName string) error {
+	if addr.IsZero() {
+		panic("is zero?!")
+	}
+	fmt.Printf("Adding ns veth ip %q to %q\n", addr.String(), cableName)
 	nsHandle, err := netns.GetFromName(namespace)
 	if err != nil {
 		return fmt.Errorf("unable to get namespace %q - %w", namespace, err)
@@ -132,10 +156,27 @@ func setNsVethIp(namespace string, addr netaddr.IPPrefix, cableName string) erro
 		return fmt.Errorf("unable to get interface %q in namespace %q - %w", cableName, namespace, err)
 	}
 
-	if err := nl.AddrReplace(link, &netlink.Addr{
-		IPNet: addr.IPNet(),
-	}); err != nil {
-		return fmt.Errorf("unable to add address %q to interface %q in namespace %q - %w", addr.String(), cableName, namespace, err)
+	addrs, err := nl.AddrList(link, netlink.FAMILY_ALL)
+	if err != nil {
+		return fmt.Errorf("unable to get interface addresses for %q in namespace %q - %w", cableName, namespace, err)
+	}
+
+	needs := true
+	for _, _addr := range addrs {
+		if addr.IP().IPAddr().IP.Equal(_addr.IP) {
+			needs = false
+			break
+		}
+	}
+	if needs {
+		fmt.Printf("needs the ip %s\n", addr.IPNet())
+		if err := nl.AddrAdd(link, &netlink.Addr{
+			IPNet: addr.IPNet(),
+		}); err != nil {
+			return fmt.Errorf("unable to add address %q to interface %q in namespace %q - %w", addr.String(), cableName, namespace, err)
+		}
+	} else {
+		fmt.Printf("Already has ip %s\n", addr.String())
 	}
 
 	return nil

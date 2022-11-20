@@ -6,11 +6,14 @@ import (
 	"io/fs"
 	"net"
 	"os"
+	"os/exec"
 	"os/user"
 	"path/filepath"
 	"strconv"
 	"strings"
+	"text/template"
 
+	"github.com/Masterminds/sprig"
 	"github.com/coreos/go-systemd/unit"
 	"github.com/gosimple/slug"
 	"github.com/ordiri/ordiri/config"
@@ -48,14 +51,15 @@ func (ln *linuxDriver) RegisterNetwork(ctx context.Context, nw api.Network) erro
 	log := log.FromContext(ctx)
 	log.V(5).Info("Ensuring network", "nw", nw)
 	if err := ln.installNetworkNat(ctx, nw); err != nil {
-		return err
+		return fmt.Errorf("error installing nat rules - %w", err)
 	}
 
 	if err := ln.installNetworkZebra(ctx, nw); err != nil {
-		return err
+		return fmt.Errorf("error installing zebra - %w", err)
 	}
+
 	if err := ln.installNetworkBgp(ctx, nw); err != nil {
-		return err
+		return fmt.Errorf("error installing bgp - %w", err)
 	}
 
 	if len(nw.DnsRecords()) > 0 {
@@ -63,14 +67,23 @@ func (ln *linuxDriver) RegisterNetwork(ctx context.Context, nw api.Network) erro
 		if err := os.MkdirAll(hostDir, os.ModePerm); err != nil {
 			return err
 		}
+		grouped := map[string][]string{}
 		for ip, hostnames := range nw.DnsRecords() {
 			for _, hostname := range hostnames {
-				mapping := fmt.Sprintf("%s %s", ip.String(), hostname)
-				fileName := slug.Make(hostname)
-				mappingFile := filepath.Join(hostDir, fileName)
-				if err := os.WriteFile(mappingFile, []byte(mapping), fs.ModePerm); err != nil {
-					return fmt.Errorf("unable to write mapping file - %w", err)
-				}
+				grouped[hostname] = append(grouped[hostname], ip.String())
+			}
+		}
+		for hostname, ips := range grouped {
+			lines := []string{}
+			for _, ip := range ips {
+				lines = append(lines, fmt.Sprintf("%s %s", ip, hostname))
+			}
+
+			mapping := strings.Join(lines, "\n")
+			fileName := slug.Make(hostname)
+			mappingFile := filepath.Join(hostDir, fileName)
+			if err := os.WriteFile(mappingFile, []byte(mapping), fs.ModePerm); err != nil {
+				return fmt.Errorf("unable to write mapping file - %w", err)
 			}
 		}
 	}
@@ -94,39 +107,149 @@ func (ln *linuxDriver) installNetworkBgp(ctx context.Context, nw api.Network) er
 	cfgFile := filepath.Join(baseDir, "gobgpd.yaml")
 	zebraSocketFile := filepath.Join(baseDir, "zebra/zebra.socket")
 	pidFile := filepath.Join(baseDir, "gobgpd.socket")
-	cfg := fmt.Sprintf(`global:
+
+	// , config.CustomerAsn, nw.Cidr().String(), nw.Cidr6().String(), nw.MgmtIp6().IP().String(), config.LocalAsn, nw.ExternalIp6().IP().String(), zebraSocketFile, nw.Cidr6().String())
+	cfg := `global:
   config:
-    as: %d
-    router-id: %s
+    as: {{ .CloudRouterAsn }}
+    router-id: {{ .CloudRouterId }}
+    local-address-list: ["{{ .CloudRouterAddress }}"]
+  apply-policy:
+    config:
+      export-policy-list:
+      - globalexport
+      - globalexport6
+      import-policy-list:
+      - globalimport
+      - globalimport6
+      default-import-policy: reject-route
+      default-export-policy: reject-route
+
 peer-groups:
 - config:
     peer-group-name: subnet-nodes
-    peer-as: %d
+    peer-as: {{ .TenantAsn }}
 
 dynamic-neighbors:
 - config:
-    prefix: %s
+    prefix: {{ .TenantNetwork6 }}
     peer-group: subnet-nodes
+- config:
+    prefix: {{ .TenantNetwork }}
+    peer-group: subnet-nodes
+
 neighbors:
 - config:
-    neighbor-address: %s
-    peer-as: %d
+    peer-as: {{ .OrdletAsn }}
+    neighbor-address: {{ .OrdletAddress }}
+  transport:
+    config: 
+      local-address: {{ .CloudRouterAddress }}
+  apply-policy:
+    config:
+      export-policy-list:
+      - globalexport
+      - globalexport6
+  afi-safis:
+  - config:
+      afi-safi-name: ipv4-unicast
+  - config:
+      afi-safi-name: ipv6-unicast
 
 zebra:
   config:
     enabled: true
-    url: unix:%s
-#    redistribute-route-type-list: [] # An empty list means don't write routes 
+    url: unix:{{ .ZebraSocketFile }}
+#    redistribute-route-type-list: [] # An empty list means don't write routes
     redistribute-route-type-list: [connect]
     version: 6
     software-name: frr7.5
-`, config.CloudRouterAsn, nw.ExternalIp().IP().String(), config.CustomerAsn, nw.Cidr().String(), nw.MgmtIp().IP().String(), config.LocalAsn, zebraSocketFile)
 
-	os.WriteFile(cfgFile, []byte(cfg), 0644)
+defined-sets:
+  prefix-sets:
+  - prefix-set-name: networkcidr
+    prefix-list:
+    - ip-prefix: {{ .TenantNetwork }}
+      masklength-range: "21..24"
 
+  - prefix-set-name: networkcidr6
+    prefix-list:
+    - ip-prefix: {{ .TenantNetwork6 }}
+      masklength-range: "64..128"
+
+policy-definitions:
+- name: globalimport
+  statements:
+  - name: globalimport-main
+    actions:
+      route-disposition: accept-route
+
+- name: globalimport6
+  statements:
+  - name: globalimport6-main
+    actions:
+      route-disposition: accept-route
+
+- name: globalexport
+  statements:
+  - name: globalexport-main
+    conditions:
+      match-prefix-set:
+        prefix-set: networkcidr
+        match-set-options: any
+    actions:
+      route-disposition: accept-route
+
+- name: globalexport6
+  statements:
+  - name: globalexport6-main
+    conditions:
+      match-prefix-set:
+        prefix-set: networkcidr6
+        match-set-options: any
+    actions:
+      route-disposition: accept-route
+
+`
+
+	tpl := template.Must(
+		template.New("base").Funcs(sprig.TxtFuncMap()).Parse(cfg),
+	)
+
+	err := func() error {
+		tplFile, err := os.OpenFile(cfgFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
+		if err != nil {
+			return fmt.Errorf("unable to open file for bgp config - %w", err)
+		}
+		defer tplFile.Close()
+
+		vars := map[string]interface{}{
+			"CloudRouterAsn":     config.CloudRouterAsn,
+			"CloudRouterId":      nw.ExternalIp().IP().String(),
+			"CloudRouterAddress": nw.ExternalIp6().IP().String(),
+
+			"TenantAsn":      config.CustomerAsn,
+			"TenantNetwork":  nw.Cidr().String(),
+			"TenantNetwork6": nw.Cidr6().String(),
+
+			"OrdletAsn":     config.LocalAsn,
+			"OrdletAddress": nw.MgmtIp6().IP().String(),
+
+			"LocalAsn":        config.LocalAsn,
+			"CustomerAsn":     config.CustomerAsn,
+			"ExternalIp":      nw.ExternalIp().IP().String(),
+			"ExternalIp6":     nw.ExternalIp6().IP().String(),
+			"MgmtIp6":         nw.MgmtIp6().IP().String(),
+			"ZebraSocketFile": zebraSocketFile,
+		}
+		return tpl.Execute(tplFile, &vars)
+	}()
+	if err != nil {
+		return fmt.Errorf("unable to render template - %w", err)
+	}
 	// startCmd := strings.Join(append([]string{"ip", "netns", "exec", namespace, "/usr/sbin/dnsmasq"}, dnsMasqOptions.Args()...), " ")
 	cleanupCommand := strings.Join([]string{"/usr/bin/rm", "-f", pidFile}, " ")
-	startCmd := strings.Join([]string{"/usr/local/bin/gobgpd", "-t", "yaml", "-f", cfgFile, "--api-hosts", fmt.Sprintf("unix://%s", pidFile)}, " ")
+	startCmd := strings.Join([]string{"/usr/local/bin/gobgpd", "-ldebug", "-t", "yaml", "-f", cfgFile, "--api-hosts", fmt.Sprintf("unix://%s", pidFile)}, " ")
 	// create the systemd file to manage this metadata
 	unitName := networkBgpRouterUnitName(nw)
 	zebraUnitName := networkBgpZebraUnitName(nw)
@@ -145,6 +268,7 @@ zebra:
 
 	return ln.enableUnitFile(ctx, baseDir, unitName, opts)
 }
+
 func (ln *linuxDriver) installNetworkZebra(ctx context.Context, nw api.Network) error {
 	if !nw.MgmtIp().IsValid() {
 		return nil
@@ -184,6 +308,9 @@ func (ln *linuxDriver) installNetworkZebra(ctx context.Context, nw api.Network) 
 		unit.NewUnitOption("Unit", "Description", "Ordiri Zebra Service for "+unitName),
 		unit.NewUnitOption("Unit", "After", "ordlet.service"),
 		unit.NewUnitOption("Unit", "BindsTo", "ordlet.service"),
+		unit.NewUnitOption("Service", "User", "frr"),
+		unit.NewUnitOption("Service", "AmbientCapabilities", "CAP_NET_ADMIN CAP_NET_RAW CAP_SYS_ADMIN"),
+		unit.NewUnitOption("Service", "CapabilityBoundingSet", "CAP_NET_ADMIN CAP_NET_RAW CAP_SYS_ADMIN"), // CAP_SYS_CHROOT CAP_NET_BIND_SERVICE CAP_SETUID CAP_SETGID CAP_SYS_NICE CAP_SYS_PTRACE CAP_SYS_ADMIN CAP_FOWNER CAP_IPC_LOCK CAP_SYS_RAWIO"),
 		// unit.NewUnitOption("Service", "PrivateMounts", "yes"),
 		unit.NewUnitOption("Service", "NetworkNamespacePath", namespacePath(namespace)),
 		unit.NewUnitOption("Service", "ExecStart", startCmd),
@@ -259,6 +386,21 @@ func (ln *linuxDriver) installNetworkNat(ctx context.Context, nw api.Network) er
 			LinkIndex: link.Attrs().Index,
 		}); err != nil {
 			return fmt.Errorf("error creating route - %w", err)
+		}
+	}
+	// todo lol
+	if nw.ExternalIp6().IsValid() {
+		// we are a router but we are also dynamically configured so we want to enable_ra mode 2
+		// but we only do this on the single public egress interface or the cloudrouters will end up
+		// sending each other router adverts (which they will accept if we use all/default sysctl groups) and nothing will work
+		cmd := exec.Command("ip", "netns", "exec", namespace, "sysctl", "-w", fmt.Sprintf("net.ipv6.conf.%s.accept_ra=2", publicGwCableName.Namespace()))
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			return fmt.Errorf("%s: unable to set sysctl all accept_ra prop - %q - %w", cmd.String(), string(out), err)
+		}
+
+		if err := setNsVethIp(namespace, nw.ExternalIp6(), publicGwCableName.Namespace()); err != nil {
+			return fmt.Errorf("unable to set public gateway external address - %w", err)
 		}
 	}
 

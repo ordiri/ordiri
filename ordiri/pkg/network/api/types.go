@@ -43,9 +43,12 @@ type Network interface {
 	Tenant() string
 	Name() string
 	Cidr() netaddr.IPPrefix
+	Cidr6() netaddr.IPPrefix
 	Segment() int64
 	MgmtIp() netaddr.IPPrefix
+	MgmtIp6() netaddr.IPPrefix
 	ExternalIp() netaddr.IPPrefix
+	ExternalIp6() netaddr.IPPrefix
 	DnsRecords() map[netaddr.IP][]string
 
 	WithDns(netaddr.IP, []string) bool
@@ -54,6 +57,7 @@ type Network interface {
 type Subnet interface {
 	Name() string
 	Cidr() netaddr.IPPrefix
+	Cidr6() netaddr.IPPrefix
 	Segment() int
 	RouterGlobalMac() net.HardwareAddr
 	RouterMac() net.HardwareAddr
@@ -67,6 +71,7 @@ type Router interface {
 	GlobalMac() net.HardwareAddr
 	Mac() net.HardwareAddr
 	IP() netaddr.IPPrefix
+	IP6() netaddr.IPPrefix
 	KnownMacs() map[netaddr.IP]net.HardwareAddr
 	RegisterMac(netaddr.IP, net.HardwareAddr) bool
 }

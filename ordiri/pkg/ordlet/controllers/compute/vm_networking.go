@@ -18,7 +18,7 @@ import (
 // RegisterNetworkInterface configures the virtual network for a virtual machine
 func (r *VirtualMachineReconciler) RegisterNetworkInterface(ctx context.Context, vm *computev1alpha1.VirtualMachine, iface *computev1alpha1.VirtualMachineNetworkInterface) (computev1alpha1.VirtualMachineNetworkInterfaceStatus, internallibvirt.DomainOption, error) {
 	status := computev1alpha1.VirtualMachineNetworkInterfaceStatus{
-		Name: iface.Key(),
+		Name: iface.Key(vm.Name),
 		Mac:  iface.Mac,
 	}
 	if len(iface.Ips) == 0 {
@@ -56,7 +56,7 @@ func (r *VirtualMachineReconciler) RegisterNetworkInterface(ctx context.Context,
 	}
 	opts = append(opts, network.InterfaceWithHostnames(hostnames...))
 
-	netIface, err := network.NewInterface(iface.Key(), opts...)
+	netIface, err := network.NewInterface(iface.Key(vm.Name), opts...)
 	if err != nil {
 		return status, nil, fmt.Errorf("unable to create new interface obj - %w", err)
 	}

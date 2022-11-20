@@ -33,14 +33,16 @@ import (
 )
 
 const publicIpamBlockName = "_shared::public"
+const publicIpam6BlockName = "_shared::public6"
 
 // VmIpAllocator reconciles a Subnet object
 type VmIpAllocator struct {
 	client.Client
 	Scheme *runtime.Scheme
 
-	PublicCidr netaddr.IPPrefix
-	Allocator  api.AddressAllocatorClient
+	PublicCidr  netaddr.IPPrefix
+	Public6Cidr netaddr.IPPrefix
+	Allocator   api.AddressAllocatorClient
 }
 
 func (r *VmIpAllocator) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
@@ -66,10 +68,29 @@ func (r *VmIpAllocator) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 		}
 
 		subnetIpamBlockName := fmt.Sprintf("tenant::%s::%s", sn.Namespace, sn.Name)
+		subnetIpam6BlockName := fmt.Sprintf("tenant::%s::%s::v6", sn.Namespace, sn.Name)
 
 		network, err := netaddr.ParseIPPrefix(sn.Spec.Cidr)
 		if err != nil {
 			return ctrl.Result{}, fmt.Errorf("unable to parse subnet cidr - %q - %w", sn.Spec.Cidr, err)
+		}
+		var network6 netaddr.IPPrefix
+		if sn.Spec.Cidr6 != "" {
+			network6, err = netaddr.ParseIPPrefix(sn.Spec.Cidr6)
+			if err != nil {
+				return ctrl.Result{}, fmt.Errorf("unable to parse subnet cidr6 - %q - %w", sn.Spec.Cidr6, err)
+			}
+			network6 = network6.Masked()
+			if _, err := r.Allocator.RegisterBlock(ctx, &api.RegisterBlockRequest{
+				BlockName: subnetIpam6BlockName,
+				Ranges: []*api.AllocatableRange{
+					{
+						CIDR: network6.String(),
+					},
+				},
+			}); err != nil {
+				return ctrl.Result{}, fmt.Errorf("error registering subnet block - %q - %w", sn.Spec.Cidr6, err)
+			}
 		}
 
 		network = network.Masked()
@@ -85,8 +106,9 @@ func (r *VmIpAllocator) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 		}
 
 		foundPrivate := false
+		foundPrivate6 := sn.Spec.Cidr6 == ""
 		foundPublic := false
-		wantsPublic := iface.Public
+		foundPublic6 := sn.Spec.Cidr6 == ""
 		for _, ip := range iface.Ips {
 			parsedIpNw, err := netaddr.ParseIPPrefix(ip)
 			if err != nil { // todo should we auto strip invalid ips?
@@ -97,43 +119,78 @@ func (r *VmIpAllocator) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 			if network.Contains(parsedIp) {
 				foundPrivate = true
 			}
+			if network6.Contains(parsedIp) {
+				foundPrivate6 = true
+			}
 
-			if wantsPublic && r.PublicCidr.Contains(parsedIp) {
+			if r.PublicCidr.Contains(parsedIp) {
 				foundPublic = true
 				announcements[parsedIp] = iface.Mac
 			}
+			if r.Public6Cidr.Contains(parsedIp) {
+				foundPublic6 = true
+				announcements[parsedIp] = iface.Mac
+			}
+		}
+		changed := false
+
+		if !foundPrivate {
+			log.Info("allocating IP", "blockName", subnetIpamBlockName)
+			allocated, err := r.Allocator.Allocate(ctx, &api.AllocateRequest{
+				BlockName: subnetIpamBlockName,
+			})
+			if err != nil {
+				return ctrl.Result{}, fmt.Errorf("unable to allocate private ip - %w", err)
+			}
+
+			iface.Ips = append(iface.Ips, allocated.Address)
+			changed = true
+		}
+		if !foundPrivate6 {
+			log.Info("allocating IP6", "blockName", subnetIpam6BlockName)
+			allocated, err := r.Allocator.Allocate(ctx, &api.AllocateRequest{
+				BlockName: subnetIpam6BlockName,
+			})
+			if err != nil {
+				return ctrl.Result{}, fmt.Errorf("unable to allocate private ip6 - %w", err)
+			}
+
+			iface.Ips = append(iface.Ips, allocated.Address)
+			changed = true
 		}
 
-		wantsPublic = wantsPublic && !foundPublic
-
-		if !foundPrivate || wantsPublic {
-			if !foundPrivate {
-				log.Info("allocating IP", "blockName", subnetIpamBlockName)
-				allocated, err := r.Allocator.Allocate(ctx, &api.AllocateRequest{
-					BlockName: subnetIpamBlockName,
-				})
-				if err != nil {
-					return ctrl.Result{}, fmt.Errorf("unable to allocate private ip - %w", err)
-				}
-
+		if iface.Public && !foundPublic {
+			// We don't bother skipping any ip range here as it's a public network routed directly at us
+			// we'll swap this with bird bgp routing eventually and clean all this fip stuff up
+			log.Info("allocating IP", "blockName", publicIpamBlockName)
+			allocated, err := r.Allocator.Allocate(ctx, &api.AllocateRequest{
+				BlockName: publicIpamBlockName,
+			})
+			if err != nil {
+				// return ctrl.Result{}, fmt.Errorf("error with no public ip - %w", err)
+				log.Info("no public ip available", "range", r.PublicCidr)
+			} else {
 				iface.Ips = append(iface.Ips, allocated.Address)
 			}
-
-			if wantsPublic {
-				// We don't bother skipping any ip range here as it's a public network routed directly at us
-				// we'll swap this with bird bgp routing eventually and clean all this fip stuff up
-				log.Info("allocating IP", "blockName", publicIpamBlockName)
-				allocated, err := r.Allocator.Allocate(ctx, &api.AllocateRequest{
-					BlockName: publicIpamBlockName,
-				})
-				if err != nil {
-					// return ctrl.Result{}, fmt.Errorf("error with no public ip - %w", err)
-					log.Info("no public ip available", "range", r.PublicCidr)
-				} else {
-					iface.Ips = append(iface.Ips, allocated.Address)
-				}
+			changed = true
+		}
+		if iface.Public && !foundPublic6 {
+			// We don't bother skipping any ip range here as it's a public network routed directly at us
+			// we'll swap this with bird bgp routing eventually and clean all this fip stuff up
+			log.Info("allocating IP6", "blockName", publicIpam6BlockName)
+			allocated, err := r.Allocator.Allocate(ctx, &api.AllocateRequest{
+				BlockName: publicIpam6BlockName,
+			})
+			if err != nil {
+				// return ctrl.Result{}, fmt.Errorf("error with no public ip - %w", err)
+				log.Info("no public ip6 available", "range", r.Public6Cidr)
+			} else {
+				iface.Ips = append(iface.Ips, allocated.Address)
 			}
+			changed = true
+		}
 
+		if changed {
 			if err := r.Client.Update(ctx, vm); err != nil {
 				return ctrl.Result{}, fmt.Errorf("unable to update vm with allocated IP - %w", err)
 			}

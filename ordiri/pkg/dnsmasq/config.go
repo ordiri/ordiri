@@ -8,6 +8,7 @@ import (
 var MultiOptions = map[string]bool{
 	"server":      true,
 	"dhcp-option": true,
+	"dhcp-range":  true,
 }
 
 type option func(Config) Config

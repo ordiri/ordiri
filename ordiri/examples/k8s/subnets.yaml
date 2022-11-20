@@ -4,6 +4,7 @@ metadata:
   name: kubevms-etcd
 spec:
   cidr: 10.200.0.0/24
+  cidr6: 2403:5806:97ec:0200::/64
   dhcp:
     enabled: true
   network:
@@ -15,6 +16,7 @@ metadata:
   name: kubevms-masters
 spec:
   cidr: 10.200.1.0/24
+  cidr6: 2403:5806:97ec:0201::/64
   dhcp:
     enabled: true
   network:
@@ -26,6 +28,7 @@ metadata:
   name: kubevms-workers
 spec:
   cidr: 10.200.2.0/24
+  cidr6: 2403:5806:97ec:0202::/64
   dhcp:
     enabled: true
   network:
@@ -38,6 +41,7 @@ metadata:
   name: kubevms-vault
 spec:
   cidr: 10.200.3.0/24
+  cidr6: 2403:5806:97ec:0203::/64
   dhcp:
     enabled: true
   network:

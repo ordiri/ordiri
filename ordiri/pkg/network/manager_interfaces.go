@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/ordiri/ordiri/pkg/network/api"
-	apipb "github.com/osrg/gobgp/v3/api"
 )
 
 func (ln *networkManager) GetInterface(nw string, sn string, name string) (api.Interface, error) {
@@ -39,12 +38,21 @@ func (ln *networkManager) AttachInterface(ctx context.Context, nw string, sn str
 			return "", fmt.Errorf("error creating network - %w", err)
 		}
 		nw.attached = true
-		if err := ln.speaker.AddPeer(ctx, apipb.PeerConf{
-			NeighborAddress: nw.ExternalIp().IP().String(),
-			PeerGroup:       "tenant-subnets",
-		}); err != nil {
-			return "", fmt.Errorf("error adding tenant network BGP peer - %w", err)
-		}
+		// We create a peer for both the ipv6 and ipv4 because that will allow them to create connections to us
+		// given these are passive it's just an "allow this if they talk to us" sort of thing
+		// if err := ln.speaker.AddPeer(ctx, apipb.PeerConf{
+		// 	NeighborAddress: nw.ExternalIp().IP().String(),
+		// 	PeerGroup:       "cloud-routers",
+		// }); err != nil {
+		// 	return "", fmt.Errorf("error adding tenant network BGP peer - %w", err)
+		// }
+		// spew.Dump("Allowing ip", nw.ExternalIp().IP().String(), nw.ExternalIp6().IP().String())
+		// if err := ln.speaker.AddPeer(ctx, apipb.PeerConf{
+		// 	NeighborAddress: nw.ExternalIp6().IP().String(),
+		// 	PeerGroup:       "cloud-routers",
+		// }); err != nil {
+		// 	return "", fmt.Errorf("error adding tenant network BGP peer - %w", err)
+		// }
 		if sn, ok := nw.subnets[sn]; ok {
 			if err := ln.driver.RegisterSubnet(ctx, nw, sn); err != nil {
 				return "", fmt.Errorf("error creating subnet - %w", err)

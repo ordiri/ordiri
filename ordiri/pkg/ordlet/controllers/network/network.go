@@ -31,6 +31,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 
+	"github.com/davecgh/go-spew/spew"
 	computev1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
@@ -48,7 +49,9 @@ type NetworkReconciler struct {
 	Node           ordlet.NodeProvider
 	NetworkManager api.NetworkManager
 	GatewayCidr    netaddr.IPPrefix
+	Gateway6Cidr   netaddr.IPPrefix
 	PublicCidr     netaddr.IPPrefix
+	Public6Cidr    netaddr.IPPrefix
 
 	Allocator api.AddressAllocatorClient
 }
@@ -108,24 +111,34 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 
 		networkOpts := []network.NetworkOption{
 			network.WithMgmtIp(r.Node.GetNode().MgmtIp()),
+			network.WithMgmtIp(r.Node.GetNode().MgmtIp6()),
 		}
 		for _, host := range nw.Status.Hosts {
 			if host.Node == r.Node.GetNode().Name {
-				hasGatewayIp := false
+				hasGateway4Ip := false
+				hasGateway6Ip := false
 				for _, ip := range host.NetworkInterface.Ips {
+					ip := ip
 					addr, err := netaddr.ParseIPPrefix(ip)
 					if err != nil {
 						return ctrl.Result{}, fmt.Errorf("invalid ip on host - %w", err)
 					}
+					spew.Dump("checking if", r.Gateway6Cidr.String(), "contains", addr.String())
 
 					if r.GatewayCidr.Contains(addr.IP()) {
 						networkOpts = append(networkOpts, network.WithExternalGatewayIp(addr))
-						hasGatewayIp = true
-						break
+						hasGateway4Ip = true
+						continue
+					}
+
+					if r.Gateway6Cidr.Contains(addr.IP()) {
+						networkOpts = append(networkOpts, network.WithExternalGatewayIp(addr))
+						hasGateway6Ip = true
+						continue
 					}
 				}
 
-				if !hasGatewayIp {
+				if !hasGateway4Ip {
 					// panic("missing gateway ip")
 					log.Info("allocating gateway IP", "blockName", "_shared::gateway")
 					allocated, err := r.Allocator.Allocate(ctx, &api.AllocateRequest{
@@ -135,13 +148,28 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 						return ctrl.Result{}, fmt.Errorf("unable to allocate gateway ip - %w", err)
 					}
 
-					hasGatewayIp = true
+					hasGateway4Ip = true
+					addr := netaddr.MustParseIPPrefix(allocated.Address)
+					networkOpts = append(networkOpts, network.WithExternalGatewayIp(addr))
+					host.NetworkInterface.Ips = append(host.NetworkInterface.Ips, addr.String())
+				}
+				if !hasGateway6Ip {
+					// panic("missing gateway ip")
+					log.Info("allocating gateway IP", "blockName", "_shared::gateway6")
+					allocated, err := r.Allocator.Allocate(ctx, &api.AllocateRequest{
+						BlockName: "_shared::gateway6",
+					})
+					if err != nil {
+						return ctrl.Result{}, fmt.Errorf("unable to allocate gateway ip - %w", err)
+					}
+
+					hasGateway6Ip = true
 					addr := netaddr.MustParseIPPrefix(allocated.Address)
 					networkOpts = append(networkOpts, network.WithExternalGatewayIp(addr))
 					host.NetworkInterface.Ips = append(host.NetworkInterface.Ips, addr.String())
 				}
 
-				if !hasGatewayIp {
+				if !hasGateway4Ip || !hasGateway6Ip {
 					return ctrl.Result{}, fmt.Errorf("network is pending gateway ip")
 				}
 			}
@@ -151,7 +179,7 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 			return ctrl.Result{}, fmt.Errorf("error hacking network status")
 		}
 
-		net, err := network.NewNetwork(nw.Namespace, nw.Name, nw.Spec.Cidr, nw.Status.Vni, int64(localVlan), networkOpts...)
+		net, err := network.NewNetwork(nw.Namespace, nw.Name, nw.Spec.Cidr, nw.Spec.Cidr6, nw.Status.Vni, int64(localVlan), networkOpts...)
 		if err != nil {
 			return ctrl.Result{}, err
 		}
@@ -162,7 +190,7 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 					if err != nil {
 						return ctrl.Result{}, err
 					}
-					if !r.PublicCidr.Contains(parsedIp.IP()) {
+					if !r.PublicCidr.Contains(parsedIp.IP()) && !r.Public6Cidr.Contains(parsedIp.IP()) {
 						net.WithDns(parsedIp.IP(), []string{vm.Name})
 					}
 				}

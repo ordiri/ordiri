@@ -16,7 +16,10 @@ import (
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
 	ilibvirt "github.com/ordiri/ordiri/pkg/compute/driver/libvirt"
 	"github.com/ordiri/ordiri/pkg/generated/clientset/versioned"
+	"github.com/ordiri/ordiri/pkg/network/api"
 	"github.com/ordiri/ordiri/pkg/network/sdn"
+	"github.com/vishvananda/netlink"
+	"inet.af/netaddr"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"libvirt.org/go/libvirtxml"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
@@ -33,7 +36,7 @@ type RunnableNodeProvider interface {
 	manager.Runnable
 }
 
-func NewNodeRunnable(mgmtNet *net.IPNet, nodeName string, roles []string) *createLocalNodeRunnable {
+func NewNodeRunnable(mgmtNet *net.IPNet, mgmt6Net *net.IPNet, allocator api.AddressAllocatorClient, nodeName string, roles []string) *createLocalNodeRunnable {
 	node := &corev1alpha1.Node{}
 	node.Name = nodeName
 	nodeRoles := []corev1alpha1.NodeRole{}
@@ -43,10 +46,10 @@ func NewNodeRunnable(mgmtNet *net.IPNet, nodeName string, roles []string) *creat
 
 	node.Spec.NodeRoles = nodeRoles
 
-	return NewNodeRunnableWithNode(mgmtNet, node)
+	return NewNodeRunnableWithNode(mgmtNet, mgmt6Net, allocator, node)
 }
 
-func NewNodeRunnableWithNode(mgmtNet *net.IPNet, node *corev1alpha1.Node) *createLocalNodeRunnable {
+func NewNodeRunnableWithNode(mgmtNet *net.IPNet, mgmt6Net *net.IPNet, allocator api.AddressAllocatorClient, node *corev1alpha1.Node) *createLocalNodeRunnable {
 	config := vault.DefaultConfig()
 	config.ConfigureTLS(&vault.TLSConfig{
 		CACert:     "/etc/ssl/certs/ca-certificates.crt",
@@ -59,27 +62,26 @@ func NewNodeRunnableWithNode(mgmtNet *net.IPNet, node *corev1alpha1.Node) *creat
 		panic(fmt.Sprintf("unable to initialize Vault client: %v", err))
 	}
 
-	if _, err = vaultLogin(vc); err != nil {
-		panic(fmt.Sprintf("unable to login to vault: %v", err.Error()))
-	}
-	go renewToken(vc)
-
 	return &createLocalNodeRunnable{
-		mgmtNet: mgmtNet,
-		roles:   node.Spec.NodeRoles,
-		vc:      vc,
-		Node:    node,
+		mgmtNet:   mgmtNet,
+		mgmt6Net:  mgmt6Net,
+		roles:     node.Spec.NodeRoles,
+		vc:        vc,
+		allocator: allocator,
+		Node:      node,
 	}
 }
 
 type createLocalNodeRunnable struct {
-	client versioned.Interface
-	log    logr.Logger
-	vc     *vault.Client
+	client    versioned.Interface
+	log       logr.Logger
+	allocator api.AddressAllocatorClient
+	vc        *vault.Client
 
-	Node    *corev1alpha1.Node
-	mgmtNet *net.IPNet
-	roles   []corev1alpha1.NodeRole
+	Node     *corev1alpha1.Node
+	mgmtNet  *net.IPNet
+	mgmt6Net *net.IPNet
+	roles    []corev1alpha1.NodeRole
 }
 
 func (clnr *createLocalNodeRunnable) GetNode() *corev1alpha1.Node {
@@ -106,6 +108,16 @@ func (clnr *createLocalNodeRunnable) Refresh(ctx context.Context) error {
 func (clnr *createLocalNodeRunnable) Start(ctx context.Context) error {
 	if clnr.client == nil {
 		return fmt.Errorf("missing client on local node creator")
+	}
+
+	for _, role := range clnr.roles {
+		if role == "storage" {
+			if _, err := vaultLogin(clnr.vc); err != nil {
+				panic(fmt.Sprintf("unable to login to vault: %v", err.Error()))
+			} else {
+				go renewToken(clnr.vc)
+			}
+		}
 	}
 
 	log := clnr.log.WithValues("hostname", clnr.Node.Name)
@@ -167,18 +179,46 @@ func (clnr *createLocalNodeRunnable) Start(ctx context.Context) error {
 	}
 
 	var updateAddrs = func(node *corev1alpha1.Node) (bool, error) {
-		ifs, err := net.InterfaceAddrs()
+		iface, err := net.InterfaceByName("ordiri-external")
+		if err != nil {
+			return false, err
+		}
+		addrs, err := iface.Addrs()
 		if err != nil {
 			return false, err
 		}
 
 		newAddrs := []string{}
-		for _, iface := range ifs {
+		hasIp6 := false
+		for _, iface := range addrs {
+			fmt.Printf("checking iface %+v addr\n", iface)
 			// check the address type and if it is not a loopback the display it
-			if ipnet, ok := iface.(*net.IPNet); ok && !ipnet.IP.IsLoopback() && !ipnet.IP.IsUnspecified() && clnr.mgmtNet.Contains(ipnet.IP) {
+			if ipnet, ok := iface.(*net.IPNet); ok && !ipnet.IP.IsLoopback() && !ipnet.IP.IsUnspecified() && (clnr.mgmtNet.Contains(ipnet.IP) || clnr.mgmt6Net.Contains(ipnet.IP)) {
 				newAddrs = append(newAddrs, ipnet.String())
+				hasIp6 = hasIp6 || ipnet.IP.To4() == nil
 			}
 		}
+
+		if !hasIp6 {
+			allocated, err := clnr.allocator.Allocate(context.Background(), &api.AllocateRequest{
+				BlockName: "_shared::mgmt6",
+			})
+			if err != nil {
+				return false, fmt.Errorf("unable to allocate mgmt ipv6 addr - %w", err)
+			}
+
+			fmt.Printf("Allocated %+v for interface \n", allocated)
+
+			link, _ := netlink.LinkByName("ordiri-external")
+			if err := netlink.AddrAdd(link, &netlink.Addr{
+				IPNet: netaddr.MustParseIPPrefix(allocated.Address).IPNet(),
+				// Label: "ordirimgmt",
+			}); err != nil {
+				return false, fmt.Errorf("unable to set mgmt ipv6 addr - %w", err)
+			}
+			newAddrs = append(newAddrs, allocated.Address)
+		}
+
 		changed := reflect.DeepEqual(node.Spec.ManagementAddresses, newAddrs)
 		node.Spec.ManagementAddresses = newAddrs
 

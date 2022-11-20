@@ -13,9 +13,10 @@ import (
 	"inet.af/netaddr"
 )
 
-func NewSpeaker(routerId string, neighbourAsn uint32, neighbourAddr netaddr.IP) *Speaker {
+func NewSpeaker(routerId string, neighbourAsn uint32, neighbourAddr netaddr.IP, listenAddr netaddr.IP) *Speaker {
 	return &Speaker{
 		routerId:        routerId,
+		listenAddr:      listenAddr,
 		server:          server.NewBgpServer(),
 		NeighbourAsn:    neighbourAsn,
 		NeighborAddress: neighbourAddr,
@@ -23,8 +24,9 @@ func NewSpeaker(routerId string, neighbourAsn uint32, neighbourAddr netaddr.IP) 
 }
 
 type Speaker struct {
-	routerId string
-	server   *server.BgpServer
+	routerId   string
+	server     *server.BgpServer
+	listenAddr netaddr.IP
 
 	NeighborAddress netaddr.IP
 	NeighbourAsn    uint32
@@ -32,32 +34,55 @@ type Speaker struct {
 
 func (s *Speaker) Announce(ctx context.Context, ip netaddr.IP, router netaddr.IP) error {
 	// add routes
+	len := uint32(32)
+	if ip.Is6() {
+		len = 128
+	}
+
 	nlri, _ := apb.New(&api.IPAddressPrefix{
 		Prefix:    ip.String(),
-		PrefixLen: 32,
+		PrefixLen: len,
 	})
 
 	a1, _ := apb.New(&api.OriginAttribute{
 		Origin: 0,
 	})
-	a2, _ := apb.New(&api.NextHopAttribute{
-		NextHop: router.String(),
-	})
 
-	// a3, _ := apb.New(&api.AsPathAttribute{
-	// 	Segments: []*api.AsSegment{
-	// 		{
-	// 			Type:    2,
-	// 			Numbers: []uint32{6762, 39919, 65000, 35753, 65000},
-	// 		},
-	// 	},
-	// })
-	// attrs := []*apb.Any{a1, a2, a3}
-	attrs := []*apb.Any{a1, a2}
+	attrs := []*apb.Any{a1}
+	if router.Is6() {
+		v6Attrs, err := apb.New(&api.MpReachNLRIAttribute{
+			Family: &api.Family{
+				Afi:  api.Family_AFI_IP6,
+				Safi: api.Family_SAFI_UNICAST,
+			},
+			NextHops: []string{router.String()},
+			Nlris:    []*apb.Any{nlri},
+		})
+		if err != nil {
+			return err
+		}
+		attrs = append(attrs, v6Attrs)
+	} else {
+
+		a2, err := apb.New(&api.NextHopAttribute{
+			NextHop: router.String(),
+		})
+		if err != nil {
+			return err
+		}
+		attrs = append(attrs, a2)
+	}
+
+	family := &api.Family{Safi: api.Family_SAFI_UNICAST}
+	if ip.Is6() {
+		family.Afi = api.Family_AFI_IP6
+	} else {
+		family.Afi = api.Family_AFI_IP
+	}
 
 	_, err := s.server.AddPath(context.Background(), &api.AddPathRequest{
 		Path: &api.Path{
-			Family: &api.Family{Afi: api.Family_AFI_IP, Safi: api.Family_SAFI_UNICAST},
+			Family: family,
 			Nlri:   nlri,
 			Pattrs: attrs,
 		},
@@ -122,8 +147,9 @@ func (s *Speaker) Start(ctx context.Context) error {
 	// global configuration
 	if err := s.server.StartBgp(context.Background(), &api.StartBgpRequest{
 		Global: &api.Global{
-			Asn:      uint32(config.LocalAsn),
-			RouterId: s.routerId,
+			Asn:             uint32(config.LocalAsn),
+			RouterId:        s.routerId,
+			ListenAddresses: []string{s.listenAddr.String()},
 		},
 	}); err != nil {
 		s.server.Log().Error(err.Error(), nil)
@@ -134,9 +160,31 @@ func (s *Speaker) Start(ctx context.Context) error {
 			PeerGroupName: "upstream-router",
 			PeerAsn:       uint32(s.NeighbourAsn),
 		},
+
 		RouteReflector: &api.RouteReflector{
 			RouteReflectorClient:    true,
 			RouteReflectorClusterId: s.routerId,
+		},
+		Transport: &api.Transport{
+			LocalAddress: s.listenAddr.String(),
+		},
+		AfiSafis: []*api.AfiSafi{
+			{
+				Config: &api.AfiSafiConfig{
+					Family: &api.Family{
+						Afi:  api.Family_AFI_IP,
+						Safi: api.Family_SAFI_UNICAST,
+					},
+				},
+			},
+			{
+				Config: &api.AfiSafiConfig{
+					Family: &api.Family{
+						Afi:  api.Family_AFI_IP6,
+						Safi: api.Family_SAFI_UNICAST,
+					},
+				},
+			},
 		},
 	})
 

@@ -5,7 +5,6 @@ package libvirt
 import (
 	"fmt"
 
-	"github.com/davecgh/go-spew/spew"
 	"libvirt.org/go/libvirtxml"
 )
 
@@ -203,7 +202,6 @@ func WithGraphics(graphics ...libvirtxml.DomainGraphic) DomainOption {
 			if g.Spice != nil {
 				return "spice"
 			}
-			spew.Dump(g)
 			panic("unable to decode graphic type")
 		}
 

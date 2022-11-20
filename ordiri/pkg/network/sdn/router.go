@@ -82,6 +82,22 @@ func (wi *Router) installCrossTunnelBlockTrafficRule(client *ovs.Client) error {
 		Priority: 10,
 	})
 }
+func (wi *Router) installDadBlockRule(client *ovs.Client) error {
+	egressMatches := []ovs.Match{
+		ovs.ICMP6Type(135),
+	}
+	egressActions := []ovs.Action{
+		ovs.Drop(),
+	}
+
+	return client.OpenFlow.AddFlow(TunnelSwitchName, &ovs.Flow{
+		Protocol: ovs.ProtocolICMPv6,
+		Table:    OpenFlowTableTunnelEntrypoint,
+		Matches:  egressMatches,
+		Actions:  egressActions,
+		Priority: 100,
+	})
+}
 func (wi *Router) installOutgoingRule(client *ovs.Client) error {
 	egressMatches := []ovs.Match{
 		ovs.DataLinkVLAN(wi.Segment),
@@ -152,6 +168,9 @@ func (wi *Router) Install(client *ovs.Client) error {
 	}
 
 	if err := wi.installCrossTunnelBlockTrafficRule(client); err != nil {
+		return fmt.Errorf("installCrossTunnelBlockTrafficRule: - %w", err)
+	}
+	if err := wi.installDadBlockRule(client); err != nil {
 		return fmt.Errorf("installCrossTunnelBlockTrafficRule: - %w", err)
 	}
 

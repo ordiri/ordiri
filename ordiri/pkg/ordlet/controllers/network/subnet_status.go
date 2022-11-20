@@ -24,7 +24,6 @@ import (
 	"k8s.io/client-go/util/retry"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	"github.com/davecgh/go-spew/spew"
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
 )
 
@@ -43,8 +42,6 @@ func (r *SubnetReconciler) addNodeToSubnetStatus(ctx context.Context, subnet *ne
 				}
 			}
 		}
-
-		spew.Dump("Got the subnet status here", subnet, "subnetLinksToNode", subnetLinksToNode, "needsUpdate", needsUpdate)
 
 		if !subnetLinksToNode {
 			subnet.Status.Hosts = append(subnet.Status.Hosts, &networkv1alpha1.HostSubnetStatus{

@@ -9,14 +9,19 @@ import (
 
 type SubnetOption func(api.Subnet) error
 
-func NewSubnet(name string, cidr string, segment int, routerMac, hostLocalMac net.HardwareAddr, opt ...SubnetOption) (api.Subnet, error) {
+func NewSubnet(name string, cidr string, cidr6 string, segment int, routerMac, hostLocalMac net.HardwareAddr, opt ...SubnetOption) (api.Subnet, error) {
 	ipnet, err := netaddr.ParseIPPrefix(cidr)
+	if err != nil {
+		return nil, err
+	}
+	ipnet6, err := netaddr.ParseIPPrefix(cidr6)
 	if err != nil {
 		return nil, err
 	}
 	s := &subnet{
 		name:            name,
 		cidr:            ipnet,
+		cidr6:           ipnet6,
 		vlanId:          segment,
 		routerGlobalMac: hostLocalMac,
 		routerMac:       routerMac,
@@ -36,6 +41,7 @@ type subnet struct {
 	vlanId          int
 	hosts           []string
 	cidr            netaddr.IPPrefix
+	cidr6           netaddr.IPPrefix
 	routerGlobalMac net.HardwareAddr
 	routerMac       net.HardwareAddr
 	knownMacs       map[netaddr.IP]net.HardwareAddr
@@ -73,6 +79,9 @@ func (sn *subnet) KnownMacs() map[netaddr.IP]net.HardwareAddr {
 }
 func (s *subnet) Cidr() netaddr.IPPrefix {
 	return s.cidr.Masked()
+}
+func (s *subnet) Cidr6() netaddr.IPPrefix {
+	return s.cidr6.Masked()
 }
 
 var _ api.Subnet = &subnet{}

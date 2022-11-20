@@ -7,6 +7,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/digitalocean/go-openvswitch/ovs"
 	"github.com/gosimple/slug"
@@ -108,7 +109,7 @@ func (ln *linuxDriver) createInterfaceBridge(ctx context.Context, nw api.Network
 		la := netlink.NewLinkAttrs()
 		la.Name = bridgeName
 		la.MTU = sdn.OverlayMTU
-		la.AltNames = append(la.AltNames, fmt.Sprintf("%s-%s-%s-bridge", nw.Name(), subnet.Name(), iface.Name()))
+		la.AltNames = append(la.AltNames, fmt.Sprintf("%s:%s:%s:bridge", nw.Name(), subnet.Name(), iface.Name()))
 		forwardDelay := uint32(0)
 		bridge = &netlink.Bridge{
 			LinkAttrs:    la,
@@ -165,11 +166,33 @@ func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network
 	// the wrong ip for a multi ip interface
 	// post this comment the dns stuff was moved to the network to enable us
 	// to create dns records for the entire network
+	addrs := []string{}
 	if len(iface.PrivateIp()) > 0 {
-		addr := iface.PrivateIp()[0].IP()
+		allocated4 := false
+		for _, addr := range iface.PrivateIp() {
+			if allocated4 && addr.IP().Is4() {
+				continue
+			} else if addr.IP().Is4() {
+				allocated4 = true
+				addrs = append(addrs, addr.IP().String())
+			} else {
+				addrs = append(addrs, fmt.Sprintf("[%s]", addr.IP().String()))
+			}
+		}
+
+	}
+	if len(iface.PublicIp()) > 0 {
+		for _, addr := range iface.PublicIp() { // we don't nat the ipv6 public address so we want to actually pass it through to the customers interface
+			if addr.IP().Is6() {
+				addrs = append(addrs, fmt.Sprintf("[%s]", addr.IP().String()))
+			}
+		}
+	}
+
+	if len(addrs) > 0 {
 		dhcpHostDir := dhcpHostMappingDir(nw, sn)
-		mapping := fmt.Sprintf("%s,%s,%s", iface.Mac(), addr.String(), iface.Hostnames()[0])
-		fileName := slug.Make(addr.String())
+		mapping := fmt.Sprintf("%s,%s,%s", iface.Mac(), strings.Join(addrs, ","), iface.Hostnames()[0])
+		fileName := slug.Make(iface.Mac().String())
 		hostFile := filepath.Join(dhcpHostDir, fileName)
 		if err := os.WriteFile(hostFile, []byte(mapping), fs.ModePerm); err != nil {
 			return nil, fmt.Errorf("unable to write host mapping file - %w", err)
@@ -191,7 +214,6 @@ func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network
 	if tuntap == nil {
 		la := netlink.NewLinkAttrs()
 		la.Name = tuntapName
-		la.AltNames = append(la.AltNames, fmt.Sprintf("%s-%s-%s-vm", nw.Name(), sn.Name(), iface.Name()))
 
 		la.MTU = sdn.OverlayMTU
 		tuntap = &netlink.Tuntap{
@@ -222,6 +244,11 @@ func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network
 
 	if err := netlink.LinkSetUp(tuntap); err != nil {
 		return nil, fmt.Errorf("unable to set tuntap device up - %w", err)
+	}
+
+	tuntap.LinkAttrs.AltNames = []string{fmt.Sprintf("%s:%s:%s:vm", nw.Name(), sn.Name(), iface.Name())}
+	if err := netlink.EnsureLinkProps(tuntap); err != nil {
+		return nil, fmt.Errorf("error setting tuntap link props %q - %w", tuntap.Attrs().Name, err)
 	}
 
 	return tuntap, nil

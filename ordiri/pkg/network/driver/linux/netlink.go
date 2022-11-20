@@ -24,9 +24,10 @@ func (ni *NetworkInterface) Name() string {
 func (ln *linuxDriver) getOrCreateVeth(ctx context.Context, namespace, name string, cableName VethCable, enforceMac bool, macAddr net.HardwareAddr) error {
 	log := log.FromContext(ctx)
 	log.V(5).Info("Searching for existing veth cable", "namespace", namespace, "cableName", cableName)
-	existingIface := ln.interfaces.get(namespace, cableName.Namespace())
+	_, err := netlink.LinkByName(cableName.Root())
+	altnames := []string{namespace + ":" + name}
 
-	if existingIface == nil {
+	if err != nil {
 		handle, err := netns.GetFromName(namespace)
 		if err != nil {
 			return fmt.Errorf("unable to get ns for public gateway cable - %w", err)
@@ -39,22 +40,14 @@ func (ln *linuxDriver) getOrCreateVeth(ctx context.Context, namespace, name stri
 				Flags:        net.FlagUp,
 				HardwareAddr: macAddr,
 				MTU:          sdn.OverlayMTU,
-				AltNames:     []string{namespace + ":" + name},
+				AltNames:     altnames,
 			},
 			PeerName: cableName.Root(),
 		}
 
-		if _, existing := ln.interfaces.search(cableName.Root()); existing != nil {
-			log.Info("veth cable in wrong namespace, attempting to move", "namespace", namespace, "cableName", cableName, "actualNamespace", existing.namespace)
-
-			if err := netlink.LinkDel(existing.Link); err != nil {
-				return fmt.Errorf("unable to delete link in wrong namespace - %w", err)
-			}
-		}
-
 		log.V(5).Info("veth not found, creating", "namespace", namespace, "cableName", cableName)
 		if err := netlink.LinkAdd(link); err != nil {
-			return fmt.Errorf("unable to create veth '%s' - %w", cableName+"-in", err)
+			return fmt.Errorf("unable to create veth '%s' - %w", cableName.Namespace(), err)
 		}
 		log.V(5).Info("veth cable was created", "namespace", namespace, "cableName", cableName)
 	} else {
@@ -70,6 +63,7 @@ func (ln *linuxDriver) getOrCreateVeth(ctx context.Context, namespace, name stri
 	if err != nil {
 		return fmt.Errorf("unable to get namespace - %w", err)
 	}
+	defer nlhandle.Close()
 
 	namespaceLink, err := nlhandle.LinkByName(cableName.Namespace())
 	if err != nil {
@@ -86,6 +80,10 @@ func (ln *linuxDriver) getOrCreateVeth(ctx context.Context, namespace, name stri
 			return fmt.Errorf("unable to set the mac address - %w", err)
 		}
 	}
+	namespaceLink.Attrs().AltNames = altnames
+	if err := nlhandle.EnsureLinkProps(namespaceLink); err != nil {
+		return fmt.Errorf("error setting link props during create - %w", err)
+	}
 	link, err := netlink.LinkByName(cableName.Root())
 	if err != nil {
 		return fmt.Errorf("error fetching link - %w", err)
@@ -98,6 +96,11 @@ func (ln *linuxDriver) getOrCreateVeth(ctx context.Context, namespace, name stri
 	log.V(5).Info("ensuring link up", "namespace", namespace, "cableName", cableName)
 	if err := netlink.LinkSetUp(link); err != nil {
 		return fmt.Errorf("unable to set link up - %w", err)
+	}
+
+	link.Attrs().AltNames = altnames
+	if err := netlink.EnsureLinkProps(link); err != nil {
+		return fmt.Errorf("error setting link props - %w", err)
 	}
 
 	return nil

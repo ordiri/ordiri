@@ -10,7 +10,6 @@ import (
 	"inet.af/netaddr"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	"github.com/davecgh/go-spew/spew"
 	computev1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
 	"github.com/ordiri/ordiri/pkg/metadata/resolvers"
 	// "github.com/ordiri/ordiri/log"
@@ -39,7 +38,6 @@ func KeyForVmInterface(network, subnet string, ip netaddr.IP) string {
 
 func (s *Server) HandleMissing(w http.ResponseWriter, r *http.Request) {
 	potential := map[string]bool{}
-	spew.Dump(s.allHandlers)
 	for _, handlerPath := range s.allHandlers {
 		fmt.Printf("checking if %q has %q prefix\n\n\n\n", r.URL.EscapedPath(), handlerPath)
 		if strings.HasPrefix(handlerPath, r.URL.EscapedPath()) {

@@ -20,6 +20,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/ordiri/ordiri/config"
 	"inet.af/netaddr"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -130,16 +131,33 @@ func (in *Node) MgmtAddress() string {
 	return ""
 }
 func (in *Node) MgmtIp() netaddr.IPPrefix {
-	if len(in.Spec.ManagementAddresses) == 0 {
-		return netaddr.IPPrefix{}
+
+	for _, addr := range in.Spec.ManagementAddresses {
+		ip, err := netaddr.ParseIPPrefix(addr)
+		if err != nil {
+			return netaddr.IPPrefix{}
+		}
+		if ip.IP().Is4() {
+			return ip
+		}
 	}
 
-	ip, err := netaddr.ParseIPPrefix(in.Spec.ManagementAddresses[0])
-	if err != nil {
-		return netaddr.IPPrefix{}
+	return netaddr.IPPrefix{}
+}
+func (in *Node) MgmtIp6() netaddr.IPPrefix {
+
+	for _, addr := range in.Spec.ManagementAddresses {
+		ip, err := netaddr.ParseIPPrefix(addr)
+		if err != nil {
+			return netaddr.IPPrefix{}
+		}
+		// todo: very bad hack considering it's the default for user supplied input
+		if ip.IP().Is6() && !config.NetworkInternetGatewayV6Cidr.Contains(ip.IP()) {
+			return ip
+		}
 	}
 
-	return ip
+	return netaddr.IPPrefix{}
 }
 
 func (in *Node) GetObjectMeta() *metav1.ObjectMeta {

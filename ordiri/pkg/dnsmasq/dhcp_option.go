@@ -70,6 +70,9 @@ type NetmaskOptionName string
 func (optName NetmaskOptionName) Option(val string) string {
 	return fmt.Sprintf("option:%s,%s", optName, val)
 }
+func (optName NetmaskOptionName) Option6(val string) string {
+	return fmt.Sprintf("option6:%s,[%s]", optName, val)
+}
 
 func (optName NetmaskOptionName) Number() int {
 	for opt, name := range OptionNames {
@@ -84,6 +87,13 @@ func (optName NetmaskOptionName) Number() int {
 func (optNum NetmaskOptionNumber) Option(val string) string {
 	if name := optNum.Name(); name != "" {
 		return fmt.Sprintf("option:%s,%s", name, val)
+	}
+
+	return fmt.Sprintf("%d,%s", optNum, val)
+}
+func (optNum NetmaskOptionNumber) Option6(val string) string {
+	if name := optNum.Name(); name != "" {
+		return fmt.Sprintf("option6:%s,[%s]", name, val)
 	}
 
 	return fmt.Sprintf("%d,%s", optNum, val)

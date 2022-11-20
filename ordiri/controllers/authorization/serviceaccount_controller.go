@@ -21,7 +21,6 @@ import (
 	"fmt"
 	"path"
 
-	"github.com/davecgh/go-spew/spew"
 	vault "github.com/hashicorp/vault/api"
 	"github.com/mitchellh/mapstructure"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -150,7 +149,6 @@ func (r *ServiceAccountReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		return ctrl.Result{}, fmt.Errorf("unable to decode identity - %w", err)
 	}
 
-	spew.Dump(vaultSaInput)
 	_, err = r.vc.Logical().Write(saPath, vaultSaInput)
 	if err != nil {
 		return ctrl.Result{}, fmt.Errorf("unable to create identity %q - %w", name, err)

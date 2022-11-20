@@ -69,16 +69,35 @@ func (ln *networkManager) Start(ctx context.Context) error {
 
 	err := ln.speaker.AddPeerGroup(ctx, apipb.PeerGroup{
 		Conf: &apipb.PeerGroupConf{
-			PeerGroupName: "tenant-subnets",
+			PeerGroupName: "cloud-routers",
 			PeerAsn:       uint32(config.CloudRouterAsn),
 		},
+		AfiSafis: []*apipb.AfiSafi{
+			{
+				Config: &apipb.AfiSafiConfig{
+					Family: &apipb.Family{
+						Afi:  apipb.Family_AFI_IP,
+						Safi: apipb.Family_SAFI_UNICAST,
+					},
+				},
+			},
+			{
+				Config: &apipb.AfiSafiConfig{
+					Family: &apipb.Family{
+						Afi:  apipb.Family_AFI_IP6,
+						Safi: apipb.Family_SAFI_UNICAST,
+					},
+				},
+			},
+		},
 	})
-	// if err := ln.speaker.AddDynamicNeighbor(ctx, apipb.DynamicNeighbor{
-	// 	Prefix:    config.NetworkInternetGatewayCidr.String(),
-	// 	PeerGroup: "tenant-subnets",
-	// }); err != nil {
-	// 	return fmt.Errorf("error adding tenant network BGP peer - %w", err)
-	// }
+
+	if err := ln.speaker.AddDynamicNeighbor(ctx, apipb.DynamicNeighbor{
+		Prefix:    config.NetworkInternetGatewayV6Cidr.String(),
+		PeerGroup: "cloud-routers",
+	}); err != nil {
+		return fmt.Errorf("error adding tenant network BGP peer - %w", err)
+	}
 
 	if err != nil {
 		return fmt.Errorf("error registering cloud router BGP peer group - %w", err)

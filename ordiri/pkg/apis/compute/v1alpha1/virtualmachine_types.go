@@ -114,8 +114,8 @@ type VirtualMachineNetworkInterface struct {
 	Ips []string `json:"ip"`
 }
 
-func (in *VirtualMachineNetworkInterface) Key() string {
-	return fmt.Sprintf("%s:%s", in.Network, in.Subnet)
+func (in *VirtualMachineNetworkInterface) Key(vmName string) string {
+	return fmt.Sprintf("%s:%s:%s", in.Network, in.Subnet, vmName)
 }
 
 type VirtualMachineVolume struct {

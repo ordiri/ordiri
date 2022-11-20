@@ -143,7 +143,7 @@ func (r *SubnetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 		if err != nil {
 			return ctrl.Result{}, fmt.Errorf("error parsing router mac - %w", err)
 		}
-		newSubnet, err := network.NewSubnet(subnet.Name, subnet.Spec.Cidr, vlan, hostLocalMac, routerMac)
+		newSubnet, err := network.NewSubnet(subnet.Name, subnet.Spec.Cidr, subnet.Spec.Cidr6, vlan, hostLocalMac, routerMac)
 		if err != nil {
 			return ctrl.Result{}, err
 		}

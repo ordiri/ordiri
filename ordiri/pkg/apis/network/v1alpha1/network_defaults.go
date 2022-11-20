@@ -17,15 +17,25 @@ func SetDefaults_NetworkSpec(obj *NetworkSpec) {
 		obj.InternetGateway = &InternetGatewaySpec{Enabled: true}
 	}
 
-	if obj.Router.Ip == "" {
+	if obj.Cidr != "" && obj.Router.Ip == "" {
 		if cidr, err := netaddr.ParseIPPrefix(obj.Cidr); err == nil {
 			obj.Router.Ip = cidr.Masked().IP().Next().String()
 		}
 	}
+	if obj.Cidr6 != "" && obj.Router.Ip6 == "" {
+		if cidr, err := netaddr.ParseIPPrefix(obj.Cidr6); err == nil {
+			obj.Router.Ip6 = cidr.Masked().IP().Next().String()
+		}
+	}
 
-	if obj.DNS.Ip == "" {
+	if obj.Cidr != "" && obj.DNS.Ip == "" {
 		if cidr, err := netaddr.ParseIPPrefix(obj.Cidr); err == nil {
 			obj.DNS.Ip = cidr.Masked().IP().Next().Next().String()
+		}
+	}
+	if obj.Cidr6 != "" && obj.DNS.Ip6 == "" {
+		if cidr, err := netaddr.ParseIPPrefix(obj.Cidr6); err == nil {
+			obj.DNS.Ip6 = cidr.Masked().IP().Next().Next().String()
 		}
 	}
 

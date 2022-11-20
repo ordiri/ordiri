@@ -18,7 +18,6 @@ package compute
 
 import (
 	"context"
-	"fmt"
 	"net"
 	"net/http"
 	"os"
@@ -45,7 +44,7 @@ type MachineMetadataController struct {
 func (r *MachineMetadataController) SetupWithManager(mgr ctrl.Manager) error {
 	mgr.GetFieldIndexer().IndexField(context.Background(), &computev1alpha1.VirtualMachine{}, metadata.VirtualMachineByInterfaceIpKey, func(o client.Object) []string {
 		obj, ok := o.(*computev1alpha1.VirtualMachine)
-		fmt.Printf("indexing %+v\n", obj)
+		// fmt.Printf("indexing %+v\n", obj)
 		if !ok {
 			return nil
 		}
@@ -61,7 +60,7 @@ func (r *MachineMetadataController) SetupWithManager(mgr ctrl.Manager) error {
 				keys = append(keys, metadata.KeyForVmInterface(iface.Network, iface.Subnet, addr.IP()))
 			}
 		}
-		fmt.Printf("indexing with keys %+v\n", keys)
+		// fmt.Printf("indexing with keys %+v\n", keys)
 
 		return keys
 	})

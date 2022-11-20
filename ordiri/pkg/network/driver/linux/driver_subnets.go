@@ -245,6 +245,7 @@ func (ln *linuxDriver) createSubnetServicesNs(ctx context.Context, nw api.Networ
 
 	return nil
 }
+
 func (ln *linuxDriver) installDhcp(ctx context.Context, nw api.Network, subnet api.Subnet) error {
 	log := log.FromContext(ctx)
 	namespace := namespaceForDhcp(nw, subnet)
@@ -266,12 +267,20 @@ func (ln *linuxDriver) installDhcp(ctx context.Context, nw api.Network, subnet a
 	}
 
 	dhcpCidr := subnet.Cidr()
+	dhcp6Cidr := subnet.Cidr6()
 
 	routerAddr := dhcpCidr.IP().Next()
+	router6Addr := dhcp6Cidr.IP().Next()
 	dhcpAddr := routerAddr.Next()
-	dhcpIpCidr := netaddr.IPPrefixFrom(routerAddr.Next(), dhcpCidr.Bits())
+	dhcp6Addr := router6Addr.Next()
+	dhcpIpCidr := netaddr.IPPrefixFrom(dhcpAddr, dhcpCidr.Bits())
+	dhcpIp6Cidr := netaddr.IPPrefixFrom(dhcp6Addr, dhcp6Cidr.Bits())
 
 	if err := setNsVethIp(namespace, dhcpIpCidr, cableName.Namespace()); err != nil {
+		return fmt.Errorf("unable to set dhcp ip on internal cable %s - %W", cableName, err)
+	}
+
+	if err := setNsVethIp(namespace, dhcpIp6Cidr, cableName.Namespace()); err != nil {
 		return fmt.Errorf("unable to set dhcp ip on internal cable %s - %W", cableName, err)
 	}
 
@@ -313,7 +322,7 @@ func (ln *linuxDriver) installDhcp(ctx context.Context, nw api.Network, subnet a
 	dhcpHostDir := dhcpHostMappingDir(nw, subnet)
 	etcHostsDir := etcHostMappingDir(nw)
 
-	dnsMasqOptions := dhcp.DnsMasqConfig(baseDir, subnet.Name(), cableName.Namespace(), subnet.Cidr(), etcHostsDir, dhcpHostDir)
+	dnsMasqOptions := dhcp.DnsMasqConfig(baseDir, subnet.Name(), cableName.Namespace(), subnet.Cidr(), subnet.Cidr6(), etcHostsDir, dhcpHostDir)
 	// easier to just make the host dir as it's deeper in the tree than the root conf dir
 	if err := os.MkdirAll(etcHostsDir, os.ModePerm); err != nil {
 		return fmt.Errorf("unable to create hosts directory %s - %w", baseDir, err)

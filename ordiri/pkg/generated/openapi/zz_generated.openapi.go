@@ -3104,6 +3104,12 @@ func schema_pkg_apis_network_v1alpha1_NetworkDnsSpec(ref common.ReferenceCallbac
 							Format: "",
 						},
 					},
+					"ip6": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
 				},
 				Required: []string{"enabled"},
 			},
@@ -3234,6 +3240,13 @@ func schema_pkg_apis_network_v1alpha1_NetworkRouterSpec(ref common.ReferenceCall
 							Format:  "",
 						},
 					},
+					"ip6": {
+						SchemaProps: spec.SchemaProps{
+							Default: "",
+							Type:    []string{"string"},
+							Format:  "",
+						},
+					},
 				},
 				Required: []string{"enabled"},
 			},
@@ -3276,6 +3289,14 @@ func schema_pkg_apis_network_v1alpha1_NetworkSpec(ref common.ReferenceCallback) 
 							Format:      "",
 						},
 					},
+					"cidr6": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Cidr address to represent this network",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 					"router": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Cidr address to represent this network",
@@ -3300,7 +3321,7 @@ func schema_pkg_apis_network_v1alpha1_NetworkSpec(ref common.ReferenceCallback) 
 						},
 					},
 				},
-				Required: []string{"cidr"},
+				Required: []string{"cidr", "cidr6"},
 			},
 		},
 		Dependencies: []string{
@@ -4066,6 +4087,13 @@ func schema_pkg_apis_network_v1alpha1_SubnetSpec(ref common.ReferenceCallback) c
 							Format:  "",
 						},
 					},
+					"cidr6": {
+						SchemaProps: spec.SchemaProps{
+							Default: "",
+							Type:    []string{"string"},
+							Format:  "",
+						},
+					},
 					"routeTable": {
 						SchemaProps: spec.SchemaProps{
 							Ref: ref("github.com/ordiri/ordiri/pkg/apis/network/v1alpha1.RouteTableSelector"),
@@ -4088,7 +4116,7 @@ func schema_pkg_apis_network_v1alpha1_SubnetSpec(ref common.ReferenceCallback) c
 						},
 					},
 				},
-				Required: []string{"network", "cidr"},
+				Required: []string{"network", "cidr", "cidr6"},
 			},
 		},
 		Dependencies: []string{

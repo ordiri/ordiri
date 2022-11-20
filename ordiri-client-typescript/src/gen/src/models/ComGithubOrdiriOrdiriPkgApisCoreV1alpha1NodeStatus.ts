@@ -40,6 +40,12 @@ import {
 export interface ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeStatus {
     /**
      * 
+     * @type {string}
+     * @memberof ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeStatus
+     */
+    cephSecretUuid: string;
+    /**
+     * 
      * @type {Array<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeNetworkStatus>}
      * @memberof ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeStatus
      */
@@ -63,6 +69,7 @@ export interface ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeStatus {
  */
 export function instanceOfComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeStatus(value: object): boolean {
     let isInstance = true;
+    isInstance = isInstance && "cephSecretUuid" in value;
     isInstance = isInstance && "networks" in value;
     isInstance = isInstance && "subnets" in value;
     isInstance = isInstance && "virtualMachines" in value;
@@ -80,6 +87,7 @@ export function ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeStatusFromJSONTyped(
     }
     return {
         
+        'cephSecretUuid': json['cephSecretUuid'],
         'networks': ((json['networks'] as Array<any>).map(ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeNetworkStatusFromJSON)),
         'subnets': ((json['subnets'] as Array<any>).map(ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeSubnetStatusFromJSON)),
         'virtualMachines': ((json['virtualMachines'] as Array<any>).map(ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeVirtualMachineStatusFromJSON)),
@@ -95,6 +103,7 @@ export function ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeStatusToJSON(value?:
     }
     return {
         
+        'cephSecretUuid': value.cephSecretUuid,
         'networks': ((value.networks as Array<any>).map(ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeNetworkStatusToJSON)),
         'subnets': ((value.subnets as Array<any>).map(ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeSubnetStatusToJSON)),
         'virtualMachines': ((value.virtualMachines as Array<any>).map(ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeVirtualMachineStatusToJSON)),

@@ -134,11 +134,14 @@ linux-ordlet:
 	chmod +x bin/ordlet-amd64-linux
 
 bin/controller-manager:
+	docker volume create ordiribuildcache
+	hash=$$(docker build --platform linux/x86_64 -q --file Dockerfile.controllers .); \
 	docker run --platform linux/x86_64 \
-		--volume $PWD:/ordiri \
+		--volume $$PWD:/ordiri \
+		--volume ordiribuildcache:/go/pkg/ \
 		--rm \
 		--workdir /ordiri \
-		$(docker build --platform linux/x86_64 -q --file Dockerfile.controllers .) \
+		$$hash \
 			go build -tags quincy -o /ordiri/bin/controller-manager /ordiri/cmd/manager
 	
 
@@ -155,6 +158,9 @@ linux-md:
 bin/gobgpd-%: 
 	curl -sSL -o- https://github.com/osrg/gobgp/releases/download/v$*/gobgp_$*_linux_amd64.tar.gz | tar -C bin -xzf - gobgpd
 	mv bin/gobgpd bin/gobgpd-$*
+bin/corerad: 
+	GOOS=linux GOARCH=amd64 go install github.com/mdlayher/corerad/cmd/corerad@latest
+	cp ~/go/bin/linux_amd64/corerad bin/corerad
 
 .PHONY: deploy-ipam
 deploy-ipam: linux-ipam
@@ -165,6 +171,7 @@ deploy-ipam: linux-ipam
 
 .PHONY: deploy-controllers
 deploy-controllers: bin/controller-manager
+	@echo  "WARNING, DEPLOYING CONTROLLER DOES NOT RECOMPILE"
 	scp kubeconfig root@mothership:/etc/ordiri.conf
 	scp ordiri-controllers.service root@mothership:/etc/systemd/system/.
 	ssh root@mothership 'systemctl daemon-reload && systemctl enable ordiri-controllers.service'
@@ -174,7 +181,7 @@ deploy-controllers: bin/controller-manager
 .PHONY: deploy-debian-ordlet
 deploy-debian-ordlet: linux-ordlet
 	scp kubeconfig root@debian:/etc/ordiri.conf
-	scp ordlet-*.service root@debian:/etc/systemd/system/.
+	scp ordlet.service root@debian:/etc/systemd/system/.
 	ssh root@debian 'systemctl daemon-reload && systemctl enable ordlet.service'
 	scp bin/ordlet-amd64-linux root@debian:~/ordlet
 	ssh root@debian 'mv ~/ordlet /usr/local/bin/ordlet && systemctl daemon-reload'
@@ -182,7 +189,7 @@ deploy-debian-ordlet: linux-ordlet
 .PHONY: deploy-debian2-ordlet
 deploy-debian2-ordlet: linux-ordlet
 	scp kubeconfig root@debian2:/etc/ordiri.conf
-	scp ordlet-*.service root@debian2:/etc/systemd/system/.
+	scp ordlet.service root@debian2:/etc/systemd/system/.
 	ssh root@debian2 'systemctl daemon-reload && systemctl enable ordlet.service'
 	scp bin/ordlet-amd64-linux root@debian2:~/ordlet
 	ssh root@debian2 'mv ~/ordlet /usr/local/bin/ordlet && systemctl daemon-reload'
@@ -190,7 +197,7 @@ deploy-debian2-ordlet: linux-ordlet
 .PHONY: deploy-mothership-ordlet
 deploy-mothership-ordlet: linux-ordlet
 	scp kubeconfig mothership:/etc/ordiri.conf
-	scp ordlet-*.service mothership:/etc/systemd/system/.
+	scp ordlet-mothership.service mothership:/etc/systemd/system/ordlet.service
 	ssh mothership 'systemctl daemon-reload && systemctl enable ordlet.service'
 	scp bin/ordlet-amd64-linux mothership:~/ordlet
 	ssh mothership 'mv ~/ordlet /usr/local/bin/ordlet && systemctl daemon-reload'
@@ -205,6 +212,11 @@ deploy-debian-bgp: bin/gobgpd-3.7.0
 	scp bin/gobgpd-3.7.0 root@debian:~/gobgpd
 	ssh root@debian 'mv ~/gobgpd /usr/local/bin/gobgpd'
 
+.PHONY: deploy-debian-corerad
+deploy-debian-corerad: bin/corerad
+	scp bin/corerad root@debian:~/corerad
+	ssh root@debian 'mv ~/corerad /usr/local/bin/corerad'
+
 .PHONY: deploy-debian2-md
 deploy-debian2-md: linux-md
 	scp bin/metadata-amd64-linux root@debian2:~/ordiri-metadata
@@ -214,6 +226,11 @@ deploy-debian2-md: linux-md
 deploy-debian2-bgp: bin/gobgpd-3.7.0
 	scp bin/gobgpd-3.7.0 root@debian2:~/gobgpd
 	ssh root@debian2 'mv ~/gobgpd /usr/local/bin/gobgpd'
+
+.PHONY: deploy-debian2-corerad
+deploy-debian2-corerad: bin/corerad
+	scp bin/corerad root@debian2:~/corerad
+	ssh root@debian2 'mv ~/corerad /usr/local/bin/corerad'
 
 
 .PHONY: deploy-mothership-md
@@ -236,6 +253,7 @@ run-controllers: deploy-controllers
 run-mothership-remote: deploy-mothership-ordlet
 # modprobe nf_nat_tftp nf_conntrack && 
 	ssh mothership 'systemctl restart ordlet'
+
 log-mothership-remote: deploy-mothership-ordlet
 # modprobe nf_nat_tftp nf_conntrack && 
 	ssh mothership 'journalctl -xefu ordlet'

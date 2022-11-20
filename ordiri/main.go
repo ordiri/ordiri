@@ -64,14 +64,20 @@ func main() {
 	var enableLeaderElection bool
 	var probeAddr string
 	var publicCidrStr string
+	var publicV6CidrStr string
 	var gatewayCidrStr string
+	var gatewayV6CidrStr string
 	var mgmtCidrStr string
+	var mgmtV6CidrStr string
 	var ipamAddr string
 	flag.StringVar(&metricsAddr, "metrics-bind-address", ":8080", "The address the metric endpoint binds to.")
 	flag.StringVar(&probeAddr, "health-probe-bind-address", ":8081", "The address the probe endpoint binds to.")
 	flag.StringVar(&mgmtCidrStr, "mgmt-cidr", config.ManagementCidr.String(), "The upstream management network cidr")
+	flag.StringVar(&mgmtV6CidrStr, "mgmt-ipv6-cidr", config.ManagementV6Cidr.String(), "The upstream management network cidr")
 	flag.StringVar(&publicCidrStr, "public-cidr", config.VmPublicCidr.String(), "The public cidr in use")
+	flag.StringVar(&publicV6CidrStr, "public-ipv6-cidr", config.VmPublicV6Cidr.String(), "The public cidr in use")
 	flag.StringVar(&gatewayCidrStr, "gateway-cidr", config.NetworkInternetGatewayCidr.String(), "The range of ip's used to egress vm traffic to the network")
+	flag.StringVar(&gatewayV6CidrStr, "gateway-ipv6-cidr", config.NetworkInternetGatewayV6Cidr.String(), "The range of ip's used to egress vm traffic to the network")
 	flag.StringVar(&ipamAddr, "ipam", config.IpamAddr, "Ip of the upstream router to send BGP announcements to")
 	flag.BoolVar(&enableLeaderElection, "leader-elect", false,
 		"Enable leader election for controller manager. "+
@@ -113,11 +119,16 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
-	for k, v := range map[string]string{
-		"mgmt":    mgmtCidrStr,
-		"public":  publicCidrStr,
-		"gateway": gatewayCidrStr,
-	} {
+	cidrs := map[string]string{
+		"mgmt":     mgmtCidrStr,
+		"mgmt6":    mgmtV6CidrStr,
+		"public":   publicCidrStr,
+		"public6":  publicV6CidrStr,
+		"gateway":  gatewayCidrStr,
+		"gateway6": gatewayV6CidrStr,
+	}
+
+	for k, v := range cidrs {
 		res, err := allocator.RegisterBlock(ctx, &api.RegisterBlockRequest{
 			BlockName: fmt.Sprintf("_shared::%s", k),
 			Ranges: []*api.AllocatableRange{
@@ -169,10 +180,11 @@ func main() {
 		os.Exit(1)
 	}
 	if err = (&networkcontrollers.VmIpAllocator{
-		Client:     mgr.GetClient(),
-		Scheme:     mgr.GetScheme(),
-		PublicCidr: config.VmPublicCidr,
-		Allocator:  allocator,
+		Client:      mgr.GetClient(),
+		Scheme:      mgr.GetScheme(),
+		PublicCidr:  config.VmPublicCidr,
+		Public6Cidr: config.VmPublicV6Cidr,
+		Allocator:   allocator,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "VmIpAllocator")
 		os.Exit(1)

@@ -32,6 +32,7 @@ var (
 	networkTableDefinitions = []metav1.TableColumnDefinition{
 		{Name: "Name", Type: "string", Format: "name", Description: "the name of the network"},
 		{Name: "CIDR", Type: "string", Format: "string", Description: "The CIDR assigned to this network"},
+		{Name: "CIDR6", Type: "string", Format: "string", Description: "The IPv6 CIDR assigned to this network"},
 		{Name: "VNI", Type: "string", Format: "string", Description: "The VXLan Tunnel ID in use for this network"},
 		{Name: "Hosts", Type: "string", Format: "string", Description: "The hosts this network is running on"},
 	}
@@ -63,6 +64,6 @@ func getNetworkTableRow(c *Network) metav1.TableRow {
 	for _, host := range c.Status.Hosts {
 		hosts = append(hosts, host.Node)
 	}
-	row.Cells = append(row.Cells, name, c.Spec.Cidr, c.Status.Vni, strings.Join(hosts, ", "))
+	row.Cells = append(row.Cells, name, c.Spec.Cidr, c.Spec.Cidr6, c.Status.Vni, strings.Join(hosts, ", "))
 	return row
 }

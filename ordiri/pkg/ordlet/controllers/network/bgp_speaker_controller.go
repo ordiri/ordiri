@@ -47,9 +47,11 @@ type BGPSpeakerReconciler struct {
 
 	speaker *bgp.Speaker
 
-	PublicCidr  netaddr.IPPrefix
-	GatewayCidr netaddr.IPPrefix
-	Node        ordlet.NodeProvider
+	PublicCidr   netaddr.IPPrefix
+	Public6Cidr  netaddr.IPPrefix
+	GatewayCidr  netaddr.IPPrefix
+	Gateway6Cidr netaddr.IPPrefix
+	Node         ordlet.NodeProvider
 }
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
@@ -94,7 +96,7 @@ func (r *BGPSpeakerReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 			if err != nil {
 				return ctrl.Result{}, fmt.Errorf("unable to parse ip addr %q - %w", ip, err)
 			}
-			if r.PublicCidr.Contains(ipAddr.IP()) {
+			if r.PublicCidr.Contains(ipAddr.IP()) || r.Public6Cidr.Contains(ipAddr.IP()) {
 				continue
 			}
 			vmInternalIp = ipAddr.IP().String()
@@ -108,8 +110,8 @@ func (r *BGPSpeakerReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 			if err != nil {
 				return ctrl.Result{}, fmt.Errorf("unable to parse ip addr %q - %w", ip, err)
 			}
-			if !r.PublicCidr.Contains(vmPublicIp.IP()) {
-				log.Info("Skipping IP as it's not a part of the public range")
+			if !r.PublicCidr.Contains(vmPublicIp.IP()) && !r.Public6Cidr.Contains(vmPublicIp.IP()) {
+				log.Info("Skipping IP as it's not a part of the public range", "ip", vmPublicIp.String())
 				continue
 			}
 
@@ -133,20 +135,25 @@ func (r *BGPSpeakerReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 			}
 
 			routerInterface := ""
+			routerInterface6 := ""
 			routerIp := netaddr.IP{}
+			routerIp6 := netaddr.IP{}
 			//todo: we have this in the status now on the network as it's external gateway ip
+			// so remove this hack
 			for _, iface := range res {
 				if !strings.HasPrefix(iface.Name, "prtr") {
 					continue
 				}
 				for _, addr := range iface.Addrs {
-					if addr.Scope != "global" {
-						continue
-					}
-					if addr.Ip.Is4() {
+					log.Info("got the addr", "addr", addr)
+
+					if addr.Ip.Is6() && r.Gateway6Cidr.Contains(addr.Ip) {
+						routerInterface6 = iface.Name
+						routerIp6 = addr.Ip
+						break // we prefer ipv6 here
+					} else if addr.Ip.Is4() {
 						routerInterface = iface.Name
 						routerIp = addr.Ip
-						break
 					}
 				}
 			}
@@ -160,8 +167,10 @@ func (r *BGPSpeakerReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 				return ctrl.Result{}, err
 			}
 
-			if err := ipt.AppendUnique("nat", "PREROUTING", "-i", routerInterface, "-d", vmPublicIp.IP().String(), "-j", "DNAT", "--to-destination", vmInternalIp); err != nil {
-				return ctrl.Result{}, err
+			if vmPublicIp.IP().Is4() {
+				if err := ipt.AppendUnique("nat", "PREROUTING", "-i", routerInterface, "-d", vmPublicIp.IP().String(), "-j", "DNAT", "--to-destination", vmInternalIp); err != nil {
+					return ctrl.Result{}, err
+				}
 			}
 
 			if r.speaker == nil {
@@ -169,10 +178,18 @@ func (r *BGPSpeakerReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 				return ctrl.Result{}, nil
 			}
 
-			log.V(5).Info("Announcing ip", "vmPublicIp", vmPublicIp, "routerIp", routerIp)
-			if err := r.speaker.Announce(ctx, vmPublicIp.IP(), routerIp); err != nil {
-				log.Error(err, "error announcing ip")
-				return ctrl.Result{}, err
+			if !routerIp6.IsZero() {
+				log.V(5).Info("Announcing ip6 route", "vmPublicIp", vmPublicIp, "routerIp6", routerIp6, "routerInterface6", routerInterface6)
+				if err := r.speaker.Announce(ctx, vmPublicIp.IP(), routerIp6); err != nil {
+					log.Error(err, "error announcing ip")
+					return ctrl.Result{}, err
+				}
+			} else {
+				log.V(5).Info("Announcing ip4 route", "vmPublicIp", vmPublicIp, "routerIp", routerIp, "routerInterface", routerInterface)
+				if err := r.speaker.Announce(ctx, vmPublicIp.IP(), routerIp); err != nil {
+					log.Error(err, "error announcing ip")
+					return ctrl.Result{}, err
+				}
 			}
 		}
 	}

@@ -56,7 +56,8 @@ type VirtualMachineReconciler struct {
 	Node           ordlet.NodeProvider
 	NetworkManager api.Manager
 
-	PublicCidr netaddr.IPPrefix
+	PublicCidr  netaddr.IPPrefix
+	Public6Cidr netaddr.IPPrefix
 }
 
 //+kubebuilder:rbac:groups=compute,resources=virtualmachines,verbs=get;list;watch;create;update;patch;delete
@@ -280,7 +281,7 @@ func (r *VirtualMachineReconciler) ReconcileDeletion(ctx context.Context, vm *co
 			continue
 		}
 
-		netIface, err := r.NetworkManager.GetInterface(net.Name(), subnet.Name(), iface.Key())
+		netIface, err := r.NetworkManager.GetInterface(net.Name(), subnet.Name(), iface.Key(vm.Name))
 		if err != nil {
 			log.V(5).Info("interface already removed", "iface", iface)
 			continue
