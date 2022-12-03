@@ -1,8 +1,12 @@
 #!/usr/bin/env  bash
 
 
-ssh root@10.0.1.110 plotnetcfg | sed -E 's/digraph {/digraph {\
-graph [pad="0.5", nodesep="2", ranksep="3"];/g'| dot -Tpdf > compute.net.pdf &
+rm -f debian.net.pdf debian2.net.pdf mothership.net.pdf
+ssh root@debian plotnetcfg | sed -E 's/digraph {/digraph {\
+graph [pad="0.5", nodesep="2", ranksep="3"];/g'| dot -Tpdf > debian.net.pdf &
+
+ssh root@debian2 plotnetcfg | sed -E 's/digraph {/digraph {\
+graph [pad="0.5", nodesep="2", ranksep="3"];/g'| dot -Tpdf > debian2.net.pdf &
 
 ssh mothership plotnetcfg | sed -E 's/digraph {/digraph {\
 graph [pad="0.5", nodesep="2", ranksep="3"];/g'| dot -Tpdf > mothership.net.pdf &

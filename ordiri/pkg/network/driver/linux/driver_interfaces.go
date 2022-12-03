@@ -166,7 +166,7 @@ func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network
 	// the wrong ip for a multi ip interface
 	// post this comment the dns stuff was moved to the network to enable us
 	// to create dns records for the entire network
-	addrs := []string{}
+	addrs := map[string]struct{}{}
 	if len(iface.PrivateIp()) > 0 {
 		allocated4 := false
 		for _, addr := range iface.PrivateIp() {
@@ -174,9 +174,9 @@ func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network
 				continue
 			} else if addr.IP().Is4() {
 				allocated4 = true
-				addrs = append(addrs, addr.IP().String())
+				addrs[addr.IP().String()] = struct{}{}
 			} else {
-				addrs = append(addrs, fmt.Sprintf("[%s]", addr.IP().String()))
+				addrs[fmt.Sprintf("[%s]", addr.IP().String())] = struct{}{}
 			}
 		}
 
@@ -184,14 +184,19 @@ func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network
 	if len(iface.PublicIp()) > 0 {
 		for _, addr := range iface.PublicIp() { // we don't nat the ipv6 public address so we want to actually pass it through to the customers interface
 			if addr.IP().Is6() {
-				addrs = append(addrs, fmt.Sprintf("[%s]", addr.IP().String()))
+				addrs[fmt.Sprintf("[%s]", addr.IP().String())] = struct{}{}
 			}
 		}
 	}
 
 	if len(addrs) > 0 {
+		addrList := []string{}
+		for addr := range addrs {
+			addrList = append(addrList, addr)
+		}
+
 		dhcpHostDir := dhcpHostMappingDir(nw, sn)
-		mapping := fmt.Sprintf("%s,%s,%s", iface.Mac(), strings.Join(addrs, ","), iface.Hostnames()[0])
+		mapping := fmt.Sprintf("%s,%s,%s", iface.Mac(), strings.Join(addrList, ","), iface.Hostnames()[0])
 		fileName := slug.Make(iface.Mac().String())
 		hostFile := filepath.Join(dhcpHostDir, fileName)
 		if err := os.WriteFile(hostFile, []byte(mapping), fs.ModePerm); err != nil {

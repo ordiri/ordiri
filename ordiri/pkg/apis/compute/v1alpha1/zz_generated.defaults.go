@@ -48,6 +48,7 @@ func SetObjectDefaults_VirtualMachine(in *VirtualMachine) {
 }
 
 func SetObjectDefaults_VirtualMachineDeployment(in *VirtualMachineDeployment) {
+	SetDefaults_VirtualMachineDeployment(in)
 	SetDefaults_VirtualMachineSpec(&in.Spec.Template.Spec)
 	SetDefaults_VirtualMachineResources(&in.Spec.Template.Spec.Resources)
 }

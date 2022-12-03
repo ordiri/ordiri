@@ -107,6 +107,8 @@ type VirtualMachineNetworkInterface struct {
 	Network string `json:"network"`
 	Subnet  string `json:"subnet"`
 	// +optional
+	DnsNames []string `json:"dnsNames"`
+	// +optional
 	Public bool `json:"public"`
 	// +optional
 	Mac string `json:"mac"`

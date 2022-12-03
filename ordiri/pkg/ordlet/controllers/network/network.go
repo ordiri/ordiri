@@ -190,8 +190,25 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 					if err != nil {
 						return ctrl.Result{}, err
 					}
+
+					// ipv6 isn't working yet
+					if !parsedIp.IP().Is4() {
+						continue
+					}
+					dns := iface.DnsNames
+					found := false
+					for _, r := range dns {
+						if r == vm.Name {
+							found = true
+							break
+						}
+					}
+					if !found {
+						dns = append(dns, vm.Name)
+					}
+
 					if !r.PublicCidr.Contains(parsedIp.IP()) && !r.Public6Cidr.Contains(parsedIp.IP()) {
-						net.WithDns(parsedIp.IP(), []string{vm.Name})
+						net.WithDns(parsedIp.IP(), dns)
 					}
 				}
 			}

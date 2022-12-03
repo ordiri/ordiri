@@ -20,6 +20,8 @@ spec:
         network: kubevms
         public: true
         subnet: kubevms-masters
+        dnsNames:
+        - cluster.homelab.dmann.xyz
       role: default
       state: Running
       volumes:

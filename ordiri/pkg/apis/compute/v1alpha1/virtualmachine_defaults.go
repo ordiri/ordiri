@@ -65,6 +65,16 @@ func SetDefaults_VirtualMachine(obj *VirtualMachine) {
 		if nw.Mac == "" {
 			nw.Mac = mac.Unicast().String()
 		}
+		found := false
+		for _, dnsName := range nw.DnsNames {
+			if dnsName == obj.Name {
+				found = true
+				break
+			}
+		}
+		if !found {
+			nw.DnsNames = append(nw.DnsNames, obj.Name)
+		}
 	}
 }
 

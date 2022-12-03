@@ -393,7 +393,7 @@ func (ln *linuxDriver) installNetworkNat(ctx context.Context, nw api.Network) er
 		// we are a router but we are also dynamically configured so we want to enable_ra mode 2
 		// but we only do this on the single public egress interface or the cloudrouters will end up
 		// sending each other router adverts (which they will accept if we use all/default sysctl groups) and nothing will work
-		cmd := exec.Command("ip", "netns", "exec", namespace, "sysctl", "-w", fmt.Sprintf("net.ipv6.conf.%s.accept_ra=2", publicGwCableName.Namespace()))
+		cmd := exec.Command("ip", "netns", "exec", namespace, "sysctl", "-w", fmt.Sprintf("net.ipv6.conf.%s.accept_ra=1", publicGwCableName.Namespace()))
 		out, err := cmd.CombinedOutput()
 		if err != nil {
 			return fmt.Errorf("%s: unable to set sysctl all accept_ra prop - %q - %w", cmd.String(), string(out), err)

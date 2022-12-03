@@ -1113,6 +1113,20 @@ func schema_pkg_apis_compute_v1alpha1_VirtualMachineNetworkInterface(ref common.
 							Format:  "",
 						},
 					},
+					"dnsNames": {
+						SchemaProps: spec.SchemaProps{
+							Type: []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: "",
+										Type:    []string{"string"},
+										Format:  "",
+									},
+								},
+							},
+						},
+					},
 					"public": {
 						SchemaProps: spec.SchemaProps{
 							Default: false,

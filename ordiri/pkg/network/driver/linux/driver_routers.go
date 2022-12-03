@@ -193,6 +193,7 @@ func (ld *linuxDriver) installRouter(ctx context.Context, nw api.Network, subnet
 }
 
 func (ln *linuxDriver) installNetworkRouterAdvertisement(ctx context.Context, nw api.Network, sn api.Subnet) error {
+	return nil
 	if !nw.MgmtIp().IsValid() {
 		return nil
 	}

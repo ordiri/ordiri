@@ -144,6 +144,7 @@ func (r *BGPSpeakerReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 				if !strings.HasPrefix(iface.Name, "prtr") {
 					continue
 				}
+
 				for _, addr := range iface.Addrs {
 					log.Info("got the addr", "addr", addr)
 

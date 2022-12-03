@@ -55,6 +55,10 @@ const NetworkResourcesPage = (props: NetworkResourceProps) => {
                     label: "Network",
                     selector: "spec.network.name",
                 },
+                mac: {
+                    label: "Mac",
+                    selector: "spec.router.mac",
+                },
                 hosts: {
                     label: "Hosts",
                     selector: "status.hosts",
@@ -62,17 +66,10 @@ const NetworkResourcesPage = (props: NetworkResourceProps) => {
                         if (!hosts) {
                             return "N/A"
                         }
-                        const grouped = hosts.reduce((all, it) => {
-                            const key = it.node
-                            if(!all[key]) {
-                                all[key] = { node: it.node , items: []}
-                            }
-                            all[key].items.push(it.node)
-                            
-                            return all
-                        }, {} as Record<string, {node: string, items: string[]}>)
                         
-                        return Object.entries(hosts).map(([_, { node }]) => <Chip  key={node} label={node} size="small" />)
+                        return Object.entries(hosts).map(([_, { node, router }]) => <>
+                            <Chip  key={node} label={`${node} - ${router.mac}`} size="small" />
+                        </>)
                     }
                 }
             }
