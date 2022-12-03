@@ -51,8 +51,27 @@ func (wi *VirtualMachine) rules() []FlowRule {
 
 	return rules
 }
+func (wi *VirtualMachine) blockOutgoingSolicitationsRule(client *ovs.Client) error {
+	egressMatches := []ovs.Match{
+		ovs.ICMP6Type(133),
+	}
+	egressActions := []ovs.Action{
+		ovs.Drop(),
+	}
+
+	return client.OpenFlow.AddFlow(WorkloadSwitchName, &ovs.Flow{
+		Protocol: ovs.ProtocolICMPv6,
+		Table:    OpenFlowTableWorkloadEntrypoint,
+		Matches:  egressMatches,
+		Actions:  egressActions,
+		Priority: 100,
+	})
+}
 
 func (wi *VirtualMachine) Install(client *ovs.Client) error {
+	if err := wi.blockOutgoingSolicitationsRule(client); err != nil {
+		return fmt.Errorf("unable to block ip6 - %w", err)
+	}
 	for _, flow := range wi.rules() {
 		if err := flow.Install(client); err != nil {
 			return fmt.Errorf("error installing flow %v - %w", flow, err)
