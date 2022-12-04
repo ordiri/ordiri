@@ -262,6 +262,7 @@ func (ln *linuxDriver) interfaceFlowRules(ctx context.Context, nw api.Network, s
 	return []sdn.FlowRule{
 		&sdn.VirtualMachine{
 			WorkloadSwitch:   sdn.WorkloadSwitchName,
+			RouterPort:       internalRouterCable(nw, sn).Root(),
 			WorkloadPort:     interfaceBridgeName(nw, sn, iface),
 			MetadataPort:     metadataCableName(nw, sn).Root(),
 			MetadataMac:      metaMac(),

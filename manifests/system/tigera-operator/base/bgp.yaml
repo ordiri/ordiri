@@ -17,7 +17,7 @@ metadata:
   name: "ordiri-cloud-router-masters"
   namespace: calico-system
 spec:
-  peerIP: "10.200.1.1"
+  peerIP: "fd49:32ac:7d20:fffe::6d74"
   asNumber: 65002 # From the router
 ---
 apiVersion: crd.projectcalico.org/v1
@@ -26,5 +26,5 @@ metadata:
   name: "ordiri-cloud-router-workers"
   namespace: calico-system
 spec:
-  peerIP: "10.200.2.1"
+  peerIP: "fd49:32ac:7d20:fffe::a0f9"
   asNumber: 65002 # From the router

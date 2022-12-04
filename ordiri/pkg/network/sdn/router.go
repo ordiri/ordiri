@@ -98,6 +98,7 @@ func (wi *Router) installDadBlockRule(client *ovs.Client) error {
 		Priority: 100,
 	})
 }
+
 func (wi *Router) installOutgoingRule(client *ovs.Client) error {
 	egressMatches := []ovs.Match{
 		ovs.DataLinkVLAN(wi.Segment),

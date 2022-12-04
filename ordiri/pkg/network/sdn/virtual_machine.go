@@ -11,6 +11,7 @@ import (
 type VirtualMachine struct {
 	WorkloadSwitch   string
 	WorkloadPort     string
+	RouterPort       string
 	MetadataPort     string
 	MetadataMac      net.HardwareAddr
 	Mac              net.HardwareAddr
@@ -52,16 +53,25 @@ func (wi *VirtualMachine) rules() []FlowRule {
 	return rules
 }
 func (wi *VirtualMachine) blockOutgoingSolicitationsRule(client *ovs.Client) error {
+	routerPort, err := client.OpenFlow.DumpPort(wi.WorkloadSwitch, wi.RouterPort)
+	if err != nil {
+		return fmt.Errorf("unable to get metadata port information - %w", err)
+	}
+	workloadPort, err := client.OpenFlow.DumpPort(wi.WorkloadSwitch, wi.WorkloadPort)
+	if err != nil {
+		return fmt.Errorf("unable to get metadata port information - %w", err)
+	}
 	egressMatches := []ovs.Match{
 		ovs.ICMP6Type(133),
 	}
 	egressActions := []ovs.Action{
-		ovs.Drop(),
+		ovs.Output(routerPort.PortID),
 	}
 
 	return client.OpenFlow.AddFlow(WorkloadSwitchName, &ovs.Flow{
 		Protocol: ovs.ProtocolICMPv6,
-		Table:    OpenFlowTableWorkloadEntrypoint,
+		InPort:   workloadPort.PortID,
+		Table:    OpenFlowTableWorkloadVmEgressEntrypoint,
 		Matches:  egressMatches,
 		Actions:  egressActions,
 		Priority: 100,

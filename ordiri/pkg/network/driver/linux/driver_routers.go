@@ -193,7 +193,6 @@ func (ld *linuxDriver) installRouter(ctx context.Context, nw api.Network, subnet
 }
 
 func (ln *linuxDriver) installNetworkRouterAdvertisement(ctx context.Context, nw api.Network, sn api.Subnet) error {
-	return nil
 	if !nw.MgmtIp().IsValid() {
 		return nil
 	}
@@ -212,7 +211,7 @@ func (ln *linuxDriver) installNetworkRouterAdvertisement(ctx context.Context, nw
 [[interfaces]]
 name = "{{ .RouterInterface }}"
 advertise = true
-unicast_only=true
+unicast_only = true
 verbose = true
 managed = true
 other_config = true
@@ -253,7 +252,7 @@ preference = "high"
 	}
 
 	// startCmd := strings.Join(append([]string{"ip", "netns", "exec", namespace, "/usr/sbin/dnsmasq"}, dnsMasqOptions.Args()...), " ")
-	startCmd := strings.Join([]string{"/usr/local/bin/corerad2", "-c", cfgFile}, " ")
+	startCmd := strings.Join([]string{"/usr/local/bin/corerad", "-c", cfgFile}, " ")
 	// create the systemd file to manage this metadata
 	unitName := networkRouterAdvertisementUnitName(nw, sn)
 	opts := []*unit.UnitOption{
