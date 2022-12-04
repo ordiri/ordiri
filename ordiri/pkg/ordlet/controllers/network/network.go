@@ -191,6 +191,10 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 						return ctrl.Result{}, err
 					}
 
+					// ipv6 isn't working yet
+					if !parsedIp.IP().Is4() {
+						continue
+					}
 					dns := iface.DnsNames
 					found := false
 					for _, r := range dns {
