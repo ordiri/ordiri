@@ -158,6 +158,7 @@ require (
 	github.com/hashicorp/vault/api v1.8.1
 	github.com/insomniacslk/dhcp v0.0.0-20220812085412-509691fd59ec
 	github.com/mdlayher/netlink v1.6.0
+	github.com/mdlayher/netx v0.0.0-20220422152302-c711c2f8512f
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/osrg/gobgp/v3 v3.6.0
 	github.com/vishvananda/netlink v1.1.1-0.20210330154013-f5de75959ad5
@@ -211,6 +212,7 @@ require (
 	github.com/magiconair/properties v1.8.6 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.16 // indirect
+	github.com/mdlayher/eui64 v0.0.0-20200512210927-bde6f62c819d // indirect
 	github.com/mdlayher/socket v0.1.1 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect

@@ -213,10 +213,13 @@ name = "{{ .RouterInterface }}"
 advertise = true
 unicast_only = true
 verbose = true
-managed = true
-other_config = true
+managed = false
+other_config = false
 
 preference = "high"
+
+[[interfaces.route]]
+prefix = "::/0"
   [[interfaces.prefix]]
     prefix = "{{ .NetworkPrefix }}"
     autonomous = true

@@ -52,7 +52,7 @@ func (wi *MetadataServer) Install(client *ovs.Client) error {
 			ovs.ModDataLinkDestination(wi.Mac),
 			ovs.Output(MetadataPort.PortID), // shoulhd go to all switch ports for subnet
 		},
-		Priority: 10,
+		Priority: 100,
 	}); err != nil {
 		return err
 	}

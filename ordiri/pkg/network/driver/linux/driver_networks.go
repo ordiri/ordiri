@@ -113,22 +113,32 @@ func (ln *linuxDriver) installNetworkBgp(ctx context.Context, nw api.Network) er
   config:
     as: {{ .CloudRouterAsn }}
     router-id: {{ .CloudRouterId }}
-    local-address-list: ["{{ .CloudRouterAddress }}"]
+    local-address-list: ["{{ .CloudRouterAddress4 }}", "{{ .CloudRouterAddress6 }}"]
   apply-policy:
     config:
       export-policy-list:
       - globalexport
-      - globalexport6
       import-policy-list:
       - globalimport
-      - globalimport6
-      default-import-policy: reject-route
-      default-export-policy: reject-route
+      default-import-policy: accept-route
+      default-export-policy: accept-route
 
 peer-groups:
 - config:
     peer-group-name: subnet-nodes
     peer-as: {{ .TenantAsn }}
+  afi-safis:
+  - config:
+      afi-safi-name: ipv4-unicast
+  - config:
+      afi-safi-name: ipv6-unicast
+  transport:
+    config: 
+      local-address: {{ .CloudRouterAddress6 }}
+  apply-policy:
+    config:
+      export-policy-list:
+      - globalexport
 
 dynamic-neighbors:
 - config:
@@ -137,6 +147,12 @@ dynamic-neighbors:
 - config:
     prefix: {{ .TenantNetwork }}
     peer-group: subnet-nodes
+- config:
+    prefix: 10.240.0.0/16
+    peer-group: subnet-nodes
+- config:
+    prefix: 2403:5806:97ec:6300::/56
+    peer-group: subnet-nodes
 
 neighbors:
 - config:
@@ -144,12 +160,13 @@ neighbors:
     neighbor-address: {{ .OrdletAddress }}
   transport:
     config: 
-      local-address: {{ .CloudRouterAddress }}
+      local-address: {{ .CloudRouterAddress6 }}
   apply-policy:
     config:
       export-policy-list:
       - globalexport
-      - globalexport6
+      import-policy-list:
+      - globalimport
   afi-safis:
   - config:
       afi-safi-name: ipv4-unicast
@@ -167,46 +184,38 @@ zebra:
 
 defined-sets:
   prefix-sets:
-  - prefix-set-name: networkcidr
+  - prefix-set-name: private-addrs
     prefix-list:
-    - ip-prefix: {{ .TenantNetwork }}
-      masklength-range: "21..24"
-
-  - prefix-set-name: networkcidr6
-    prefix-list:
-    - ip-prefix: {{ .TenantNetwork6 }}
+    - ip-prefix: fc00::/7
+      masklength-range: "7..128"
+    - ip-prefix: 2403:5806:97ec:1::/64
       masklength-range: "64..128"
 
 policy-definitions:
+
 - name: globalimport
   statements:
-  - name: globalimport-main
+  - name: globalimport6-drop-ula
+    conditions:
+      match-prefix-set:
+        prefix-set: private-addrs
+        match-set-options: any
     actions:
-      route-disposition: accept-route
-
-- name: globalimport6
-  statements:
+      route-disposition: reject-route
   - name: globalimport6-main
     actions:
       route-disposition: accept-route
 
 - name: globalexport
   statements:
-  - name: globalexport-main
+  - name: globalexport6-drop-ula
     conditions:
       match-prefix-set:
-        prefix-set: networkcidr
+        prefix-set: private-addrs
         match-set-options: any
     actions:
-      route-disposition: accept-route
-
-- name: globalexport6
-  statements:
+      route-disposition: reject-route
   - name: globalexport6-main
-    conditions:
-      match-prefix-set:
-        prefix-set: networkcidr6
-        match-set-options: any
     actions:
       route-disposition: accept-route
 
@@ -224,9 +233,10 @@ policy-definitions:
 		defer tplFile.Close()
 
 		vars := map[string]interface{}{
-			"CloudRouterAsn":     config.CloudRouterAsn,
-			"CloudRouterId":      nw.ExternalIp().IP().String(),
-			"CloudRouterAddress": nw.ExternalIp6().IP().String(),
+			"CloudRouterAsn":      config.CloudRouterAsn,
+			"CloudRouterId":       nw.ExternalIp().IP().String(),
+			"CloudRouterAddress4": nw.ExternalIp().IP().String(),
+			"CloudRouterAddress6": nw.ExternalIp6().IP().String(),
 
 			"TenantAsn":      config.CustomerAsn,
 			"TenantNetwork":  nw.Cidr().String(),

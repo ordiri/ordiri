@@ -32,6 +32,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/source"
 
 	"github.com/davecgh/go-spew/spew"
+	"github.com/mdlayher/netx/eui64"
 	computev1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
 	networkv1alpha1 "github.com/ordiri/ordiri/pkg/apis/network/v1alpha1"
@@ -190,26 +191,18 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 					if err != nil {
 						return ctrl.Result{}, err
 					}
+					if r.PublicCidr.Contains(parsedIp.IP()) || r.Public6Cidr.Contains(parsedIp.IP()) {
+						continue
+					}
 
 					// ipv6 isn't working yet
 					if !parsedIp.IP().Is4() {
-						continue
-					}
-					dns := iface.DnsNames
-					found := false
-					for _, r := range dns {
-						if r == vm.Name {
-							found = true
-							break
+						if _, mac, err := eui64.ParseIP(parsedIp.IPNet().IP); err != nil || mac.String() == iface.Mac {
+							continue
 						}
 					}
-					if !found {
-						dns = append(dns, vm.Name)
-					}
 
-					if !r.PublicCidr.Contains(parsedIp.IP()) && !r.Public6Cidr.Contains(parsedIp.IP()) {
-						net.WithDns(parsedIp.IP(), dns)
-					}
+					net.WithDns(parsedIp.IP(), iface.DnsNames)
 				}
 			}
 		}

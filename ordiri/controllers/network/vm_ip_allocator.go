@@ -19,7 +19,9 @@ package network
 import (
 	"context"
 	"fmt"
+	"net"
 
+	"github.com/mdlayher/netx/eui64"
 	"inet.af/netaddr"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -119,7 +121,7 @@ func (r *VmIpAllocator) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 			if network.Contains(parsedIp) {
 				foundPrivate = true
 			}
-			if network6.Contains(parsedIp) {
+			if _, mac, err := eui64.ParseIP(parsedIpNw.IPNet().IP); err == nil && mac.String() == iface.Mac {
 				foundPrivate6 = true
 			}
 
@@ -148,14 +150,23 @@ func (r *VmIpAllocator) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 		}
 		if !foundPrivate6 {
 			log.Info("allocating IP6", "blockName", subnetIpam6BlockName)
-			allocated, err := r.Allocator.Allocate(ctx, &api.AllocateRequest{
-				BlockName: subnetIpam6BlockName,
-			})
+			mac, err := net.ParseMAC(iface.Mac)
 			if err != nil {
-				return ctrl.Result{}, fmt.Errorf("unable to allocate private ip6 - %w", err)
+				return ctrl.Result{}, fmt.Errorf("unable to parse mac for private ipv6 - %w", err)
+			}
+			eui64Addr, err := eui64.ParseMAC(network6.IPNet().IP, mac)
+			if err != nil {
+				return ctrl.Result{}, fmt.Errorf("unable to create eui64 address from %s and %s - %w", network6.IPNet().IP.String(), mac.String(), err)
 			}
 
-			iface.Ips = append(iface.Ips, allocated.Address)
+			eui64NetAddr, ok := netaddr.FromStdIP(eui64Addr)
+			if !ok {
+				return ctrl.Result{}, fmt.Errorf("unknown error converting to netaddr - %+v", eui64Addr)
+			}
+
+			euAddr := netaddr.IPPrefixFrom(eui64NetAddr, network.Bits())
+
+			iface.Ips = append(iface.Ips, euAddr.String())
 			changed = true
 		}
 

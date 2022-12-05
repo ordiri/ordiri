@@ -138,7 +138,8 @@ bin/controller-manager:
 	hash=$$(docker build --platform linux/x86_64 -q --file Dockerfile.controllers .); \
 	docker run --platform linux/x86_64 \
 		--volume $$PWD:/ordiri \
-		--volume ordiribuildcache:/go/pkg/ \
+		--volume ordiribuildcache:/go/ \
+		--env=GOCACHE=/go/.gocache \
 		--rm \
 		--workdir /ordiri \
 		$$hash \
