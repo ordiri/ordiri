@@ -12,6 +12,7 @@ type VirtualMachine struct {
 	WorkloadSwitch   string
 	WorkloadPort     string
 	RouterPort       string
+	RouterMac        string
 	MetadataPort     string
 	MetadataMac      net.HardwareAddr
 	Mac              net.HardwareAddr
@@ -77,9 +78,30 @@ func (wi *VirtualMachine) blockOutgoingSolicitationsRule(client *ovs.Client) err
 		Priority: 100,
 	})
 }
+func (wi *VirtualMachine) routeOutgoingToTable(client *ovs.Client) error {
+	workloadPort, err := client.OpenFlow.DumpPort(wi.WorkloadSwitch, wi.WorkloadPort)
+	if err != nil {
+		return fmt.Errorf("unable to get metadata port information - %w", err)
+	}
+	egressMatches := []ovs.Match{}
+	egressActions := []ovs.Action{
+		ovs.Resubmit(0, OpenFlowTableWorkloadVmEgressEntrypoint),
+	}
+
+	return client.OpenFlow.AddFlow(WorkloadSwitchName, &ovs.Flow{
+		InPort:   workloadPort.PortID,
+		Table:    OpenFlowTableWorkloadEntrypoint,
+		Matches:  egressMatches,
+		Actions:  egressActions,
+		Priority: 20,
+	})
+}
 
 func (wi *VirtualMachine) Install(client *ovs.Client) error {
 	if err := wi.blockOutgoingSolicitationsRule(client); err != nil {
+		return fmt.Errorf("unable to block ip6 - %w", err)
+	}
+	if err := wi.routeOutgoingToTable(client); err != nil {
 		return fmt.Errorf("unable to block ip6 - %w", err)
 	}
 	for _, flow := range wi.rules() {

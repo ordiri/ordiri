@@ -181,13 +181,13 @@ func (r *BGPSpeakerReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 
 			if !routerIp6.IsZero() {
 				log.V(5).Info("Announcing ip6 route", "vmPublicIp", vmPublicIp, "routerIp6", routerIp6, "routerInterface6", routerInterface6)
-				if err := r.speaker.Announce(ctx, vmPublicIp.IP(), routerIp6); err != nil {
+				if err := r.speaker.Announce(ctx, vmPublicIp, routerIp6); err != nil {
 					log.Error(err, "error announcing ip")
 					return ctrl.Result{}, err
 				}
 			} else {
 				log.V(5).Info("Announcing ip4 route", "vmPublicIp", vmPublicIp, "routerIp", routerIp, "routerInterface", routerInterface)
-				if err := r.speaker.Announce(ctx, vmPublicIp.IP(), routerIp); err != nil {
+				if err := r.speaker.Announce(ctx, vmPublicIp, routerIp); err != nil {
 					log.Error(err, "error announcing ip")
 					return ctrl.Result{}, err
 				}

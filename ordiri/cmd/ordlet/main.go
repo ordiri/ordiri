@@ -288,7 +288,7 @@ func main() {
 func getNetworkManager(speaker *bgp.Speaker, driverName string) (api.RunnableManager, error) {
 	if driverName == "linux" {
 
-		driver, err := linux.New()
+		driver, err := linux.New(speaker)
 		if err != nil {
 			return nil, err
 		}

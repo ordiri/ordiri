@@ -15,8 +15,8 @@ spec:
     disable: true
   mgr:
     modules:
-      - name: rook
-        enabled: true
+    - name: rook
+      enabled: true
   healthCheck:
     daemonHealth:
       mon:

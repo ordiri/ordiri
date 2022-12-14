@@ -52,7 +52,8 @@ func (wi *MetadataServer) Install(client *ovs.Client) error {
 			ovs.ModDataLinkDestination(wi.Mac),
 			ovs.Output(MetadataPort.PortID), // shoulhd go to all switch ports for subnet
 		},
-		Priority: 100,
+		Table:    OpenFlowTableWorkloadVmEgressUnicast,
+		Priority: 10,
 	}); err != nil {
 		return err
 	}

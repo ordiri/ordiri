@@ -17,17 +17,17 @@ helmCharts:
       calicoNetwork:
         # linuxDataplane: bpf
         ipPools:
-          - cidr: 2403:5806:97ec:6300::/56
-            natOutgoing: "Disabled"
-          - cidr: 10.240.0.0/16
-            natOutgoing: Disabled # We use BPG to announce routes so no need to NAT or encapsulate traffic
-            encapsulation: None
+        - cidr: 2403:5806:97ec:6300::/56
+          natOutgoing: "Disabled"
+        - cidr: 10.240.0.0/16
+          natOutgoing: Enabled # We use BPG to announce routes so no need to NAT or encapsulate traffic
+          encapsulation: None
         containerIPForwarding: Enabled
         nodeAddressAutodetectionV4:
           kubernetes: NodeInternalIP
         nodeAddressAutodetectionV6: 
           cidrs:
-            - "2403:5806:97ec::/48"
+          - "2403:5806:97ec::/48"
 
 
 # kubectl debug -it calicoctl --image=alpine

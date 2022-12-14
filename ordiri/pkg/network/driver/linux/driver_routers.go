@@ -94,10 +94,16 @@ func (ld *linuxDriver) installRouter(ctx context.Context, nw api.Network, subnet
 	if err := setNsVethIp(routerNetworkNamespace, rtrIp, internalRouterCableName.Namespace()); err != nil {
 		return fmt.Errorf("unable to set router address - %w", err)
 	}
+	if err := ld.speaker.Announce(ctx, subnet.Cidr(), nw.ExternalIp().IP()); err != nil {
+		return fmt.Errorf("unable to announce subnet cidr - %w", err)
+	}
 	// Get the first ip
 	rtr6Ip := netaddr.IPPrefixFrom(subnet.Cidr6().IP().Next(), subnet.Cidr6().Bits())
 	if err := setNsVethIp(routerNetworkNamespace, rtr6Ip, internalRouterCableName.Namespace()); err != nil {
 		return fmt.Errorf("unable to set router address - %w", err)
+	}
+	if err := ld.speaker.Announce(ctx, subnet.Cidr6(), nw.ExternalIp6().IP()); err != nil {
+		return fmt.Errorf("unable to announce subnet cidr6 - %w", err)
 	}
 	ovsClient := sdn.Ovs()
 

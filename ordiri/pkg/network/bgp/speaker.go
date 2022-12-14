@@ -32,15 +32,12 @@ type Speaker struct {
 	NeighbourAsn    uint32
 }
 
-func (s *Speaker) Announce(ctx context.Context, ip netaddr.IP, router netaddr.IP) error {
+func (s *Speaker) Announce(ctx context.Context, ip netaddr.IPPrefix, router netaddr.IP) error {
 	// add routes
-	len := uint32(32)
-	if ip.Is6() {
-		len = 128
-	}
+	len := uint32(ip.Bits())
 
 	nlri, _ := apb.New(&api.IPAddressPrefix{
-		Prefix:    ip.String(),
+		Prefix:    ip.IP().String(),
 		PrefixLen: len,
 	})
 
@@ -74,7 +71,7 @@ func (s *Speaker) Announce(ctx context.Context, ip netaddr.IP, router netaddr.IP
 	}
 
 	family := &api.Family{Safi: api.Family_SAFI_UNICAST}
-	if ip.Is6() {
+	if ip.IP().Is6() {
 		family.Afi = api.Family_AFI_IP6
 	} else {
 		family.Afi = api.Family_AFI_IP

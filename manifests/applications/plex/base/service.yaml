@@ -4,7 +4,7 @@ metadata:
   name: plex
 spec:
   selector:
-    app: plex
+    app: plex-server
   ports:
   - port: 32400
     targetPort: webui

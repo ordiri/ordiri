@@ -1,0 +1,14 @@
+[Unit]
+Description=Router solicitation
+After=network-online.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=oneshot
+User=root
+Restart=on-failure
+RestartSec=5
+ExecStart=/usr/bin/rdisc6 -1 ens3
+
+[Install]
+WantedBy=multi-user.target

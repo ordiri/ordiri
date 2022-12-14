@@ -161,6 +161,10 @@ neighbors:
   transport:
     config: 
       local-address: {{ .CloudRouterAddress6 }}
+  ebgp-multihop:
+    config:
+      enabled: true
+      multihop-ttl: 10
   apply-policy:
     config:
       export-policy-list:
@@ -177,8 +181,8 @@ zebra:
   config:
     enabled: true
     url: unix:{{ .ZebraSocketFile }}
-#    redistribute-route-type-list: [] # An empty list means don't write routes
-    redistribute-route-type-list: [connect]
+    redistribute-route-type-list: [] # An empty list means don't write routes
+#     redistribute-route-type-list: [connect]
     version: 6
     software-name: frr7.5
 

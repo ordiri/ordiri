@@ -3,7 +3,7 @@ kind: Kustomization
 
 resources:
 - external.yaml
-- nfs-rbac.yaml
+# - nfs-rbac.yaml
 # - ingress.yaml
 helmCharts:
 - name: rook-ceph

@@ -7,6 +7,7 @@ import (
 
 	"github.com/coreos/go-systemd/v22/dbus"
 	"github.com/mdlayher/netlink"
+	"github.com/ordiri/ordiri/pkg/network/bgp"
 	"github.com/ordiri/ordiri/pkg/network/driver"
 	"github.com/vishvananda/netns"
 	"golang.org/x/sys/unix"
@@ -92,7 +93,7 @@ func (il *ifaceList) search(name string) (string, *NetworkInterface) {
 	return "", nil
 }
 
-func New() (driver.RunnableDriver, error) {
+func New(speaker *bgp.Speaker) (driver.RunnableDriver, error) {
 	ctx := context.Background()
 	dbusConn, err := dbus.NewWithContext(ctx)
 	if err != nil {
@@ -105,6 +106,7 @@ func New() (driver.RunnableDriver, error) {
 			// unix.rtmgrp_i
 		},
 		dbus:       dbusConn,
+		speaker:    speaker,
 		interfaces: &ifaceList{l: sync.RWMutex{}},
 	}, nil
 }
@@ -114,7 +116,8 @@ type linuxDriver struct {
 	groups []uint32
 
 	// objs
-	dbus *dbus.Conn
+	dbus    *dbus.Conn
+	speaker *bgp.Speaker
 
 	stopCh chan struct{}
 

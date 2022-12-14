@@ -261,11 +261,13 @@ func (ln *linuxDriver) createInterfaceTunTap(ctx context.Context, nw api.Network
 func (ln *linuxDriver) interfaceFlowRules(ctx context.Context, nw api.Network, sn api.Subnet, iface api.Interface) ([]sdn.FlowRule, error) {
 	return []sdn.FlowRule{
 		&sdn.VirtualMachine{
-			WorkloadSwitch:   sdn.WorkloadSwitchName,
-			RouterPort:       internalRouterCable(nw, sn).Root(),
-			WorkloadPort:     interfaceBridgeName(nw, sn, iface),
-			MetadataPort:     metadataCableName(nw, sn).Root(),
-			MetadataMac:      metaMac(),
+			WorkloadSwitch: sdn.WorkloadSwitchName,
+			RouterPort:     internalRouterCable(nw, sn).Root(),
+			RouterMac:      sn.RouterMac().String(),
+			WorkloadPort:   interfaceBridgeName(nw, sn, iface),
+			MetadataPort:   metadataCableName(nw, sn).Root(),
+			MetadataMac:    metaMac(),
+			// SubnetMac:        sn.RouterGlobalMac(),
 			Mac:              iface.Mac(),
 			Segment:          sn.Segment(),
 			PrivateIps:       iface.PrivateIp(),

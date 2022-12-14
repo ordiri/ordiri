@@ -1,29 +1,42 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: plex
+  name: plex-server
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: plex
+      app: plex-server
   template:
     metadata:
       labels:
-        app: plex
+        app: plex-server
     spec:
+      dnsConfig:
+        options:
+        - name: ndots
+          value: "1"
       volumes:
       - name: media-nfs
         nfs:
           server: ceph.homelab.dmann.xyz
           path: /homelab/media
           readOnly: true
+      - name: plex-config-data
+        persistentVolumeClaim:
+          claimName: plex-config-data
+      - name: transcode-storage # Idea being we would mount a dedicated ssd storage class pvc here
+        emptyDir: {}
       containers:
-      - name: plex
+      - name: plex-server
         image: plexinc/pms-docker
         volumeMounts:
-        - mountPath: /media
-          name: media-nfs
+        - name: media-nfs
+          mountPath: /media
+        - name: plex-config-data
+          mountPath: /config
+        - name: transcode-storage
+          mountPath: /transcode
         env:
         - name: PUID
           value: "1000"
@@ -31,6 +44,8 @@ spec:
           value: "1000"
         - name: VERSION
           value: "docker"
+        - name: ALLOWED_NETWORKS
+          value: "10.0.0.0/8,192.168.0.0/16,172.16.0.0/12,2403:5806:97ec::/48"
 
         ports:
         - name:  webui
@@ -51,7 +66,7 @@ spec:
           protocol: UDP
         - containerPort:  32414
           protocol: UDP
-        # resources:
+        resources:
         #   limits:
         #     memory: "4Gi"
-        #     cpu: "2"
+        #     cpu: "4"

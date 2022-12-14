@@ -218,7 +218,7 @@ kind: StorageClass
 metadata:
   name: $RBD_STORAGE_CLASS_NAME
   annotations:
-    storageclass.kubernetes.io/is-default-class: true
+    storageclass.kubernetes.io/is-default-class: 'true'
 provisioner: $RBD_PROVISIONER
 parameters:
   clusterID: $CLUSTER_ID_RBD

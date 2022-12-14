@@ -72,6 +72,15 @@ func (ln *networkManager) Start(ctx context.Context) error {
 			PeerGroupName: "cloud-routers",
 			PeerAsn:       uint32(config.CloudRouterAsn),
 		},
+		Timers: &apipb.Timers{
+			Config: &apipb.TimersConfig{
+				KeepaliveInterval: 10,
+			},
+		},
+		EbgpMultihop: &apipb.EbgpMultihop{
+			Enabled:     true,
+			MultihopTtl: 20,
+		},
 		AfiSafis: []*apipb.AfiSafi{
 			{
 				Config: &apipb.AfiSafiConfig{
@@ -91,16 +100,15 @@ func (ln *networkManager) Start(ctx context.Context) error {
 			},
 		},
 	})
+	if err != nil {
+		return fmt.Errorf("error registering cloud router BGP peer group - %w", err)
+	}
 
 	if err := ln.speaker.AddDynamicNeighbor(ctx, apipb.DynamicNeighbor{
 		Prefix:    config.NetworkInternetGatewayV6Cidr.String(),
 		PeerGroup: "cloud-routers",
 	}); err != nil {
 		return fmt.Errorf("error adding tenant network BGP peer - %w", err)
-	}
-
-	if err != nil {
-		return fmt.Errorf("error registering cloud router BGP peer group - %w", err)
 	}
 
 	if starter, isStarter := ln.driver.(driver.RunnableDriver); isStarter {

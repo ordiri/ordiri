@@ -132,19 +132,18 @@ func (wi *Node) workfloadFlows(inboundPort int) []FlowRule {
 		// }),
 
 		FlowRuleFunc(WorkloadSwitchName, ovs.Flow{
-			Priority: 10,
+			Priority: 5,
 			Table:    OpenFlowTableWorkloadEntrypoint,
 			Actions: []ovs.Action{
-				ovs.Resubmit(0, OpenFlowTableWorkloadVmEgressEntrypoint),
+				ovs.Resubmit(0, OpenFlowTableWorkloadVmIngressEntrypoint),
 			},
 		}),
 
-		// // If it's conming from the tunnel, normal actions apply, otherwise drop any non unicast traffic
 		FlowRuleFunc(WorkloadSwitchName, ovs.Flow{
 			Priority: 1,
 			Table:    OpenFlowTableWorkloadEntrypoint,
 			Actions: []ovs.Action{
-				ovs.Normal(),
+				ovs.Drop(),
 			},
 		}),
 
@@ -155,9 +154,23 @@ func (wi *Node) workfloadFlows(inboundPort int) []FlowRule {
 			UnicastTable:   OpenFlowTableWorkloadVmEgressUnicast,
 			MulticastTable: OpenFlowTableWorkloadVmEgressMulticast,
 		},
+		&Classifier{
+			Switch:         WorkloadSwitchName,
+			Table:          OpenFlowTableWorkloadVmIngressEntrypoint,
+			ArpTable:       OpenFlowTableWorkloadVmIngressArp,
+			UnicastTable:   OpenFlowTableWorkloadVmIngressUnicast,
+			MulticastTable: OpenFlowTableWorkloadVmIngressMulticast,
+		},
 		FlowRuleFunc(WorkloadSwitchName, ovs.Flow{
 			Priority: 1,
 			Table:    OpenFlowTableWorkloadVmEgressArp,
+			Actions: []ovs.Action{
+				ovs.Normal(), // Should go to an arp responder table so no need for neigh
+			},
+		}),
+		FlowRuleFunc(WorkloadSwitchName, ovs.Flow{
+			Priority: 1,
+			Table:    OpenFlowTableWorkloadVmIngressArp,
 			Actions: []ovs.Action{
 				ovs.Normal(), // Should go to an arp responder table so no need for neigh
 			},
@@ -172,9 +185,23 @@ func (wi *Node) workfloadFlows(inboundPort int) []FlowRule {
 		}),
 		FlowRuleFunc(WorkloadSwitchName, ovs.Flow{
 			Priority: 1,
+			Table:    OpenFlowTableWorkloadVmIngressUnicast,
+			Actions: []ovs.Action{
+				ovs.Normal(),
+			},
+		}),
+		FlowRuleFunc(WorkloadSwitchName, ovs.Flow{
+			Priority: 1,
 			Table:    OpenFlowTableWorkloadVmEgressMulticast,
 			Actions: []ovs.Action{
 				ovs.Normal(), // Maybe we default drop and allow dhcp reqs and other things like that
+			},
+		}),
+		FlowRuleFunc(WorkloadSwitchName, ovs.Flow{
+			Priority: 1,
+			Table:    OpenFlowTableWorkloadVmIngressMulticast,
+			Actions: []ovs.Action{
+				ovs.Drop(), // Maybe we default drop and allow dhcp reqs and other things like that
 			},
 		}),
 	}
