@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sabnzbd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sabnzbd
+  template:
+    metadata:
+      labels:
+        app: sabnzbd
+    spec:
+      dnsConfig:
+        options:
+        - name: ndots
+          value: "1"
+      volumes:
+      - name: sabnzbd-tls
+        secret:
+          secretName: sabnzbd-tls
+          defaultMode: 0777
+      - name: media-nfs
+        nfs:
+          server: ceph.homelab.dmann.xyz
+          path: /homelab/media
+      - name: sabnzbd-config-data
+        persistentVolumeClaim:
+          claimName: sabnzbd-config-data
+      containers:
+      - name: sabnzbd
+        image: lscr.io/linuxserver/sabnzbd:latest
+        volumeMounts:
+        - name: media-nfs
+          mountPath: /media
+        - name: sabnzbd-config-data
+          mountPath: /config
+        - name: sabnzbd-tls
+          mountPath: /opt/sabnzbd-tls
+        env:
+        - name: PUID
+          value: "1000"
+        - name: PGID
+          value: "1000"
+        - name: TZ
+          value: "Australia/Sydney"
+
+        ports:
+        - name:  webui
+          containerPort:  8080
+          protocol: TCP
+        resources:
+        #   limits:
+        #     memory: "4Gi"
+        #     cpu: "4"

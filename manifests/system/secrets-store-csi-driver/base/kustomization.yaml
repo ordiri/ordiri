@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources: []
+# - letsencrypt-staging-clusterissuer.yaml
+# - letsencrypt-clusterissuer.yaml
+# - test-certificate.yaml
+helmCharts:
+- name: secrets-store-csi-driver
+  repo: https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts
+  version: 1.3.0
+  releaseName: secrets-store-csi-driver
+  namespace: secrets-store-csi-driver
+  includeCRDs: true
+  valuesInline:
+    syncSecret:
+      enabled: true
+    enableSecretRotation: true

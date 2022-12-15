@@ -1,0 +1,11 @@
+
+
+:443 {
+  tls /opt/radarr-tls/tls.crt /opt/radarr-tls/tls.key
+  reverse_proxy http://radarr:7878 
+}
+
+:80 {
+  respond /live 200
+  respond /ready 200
+}

@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reverse-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reverse-proxy
+  template:
+    metadata:
+      labels:
+        app: reverse-proxy
+    spec:
+      volumes:
+      - name: caddyfile
+        configMap:
+            name: caddyfile
+      - name: sabnzbd-tls
+        secret:
+          secretName: sabnzbd-tls
+      containers:
+      - name: proxy
+        image: caddy
+        volumeMounts:
+        - name: caddyfile
+          mountPath: /opt/caddyfile
+        - name: sabnzbd-tls
+          mountPath: /opt/sabnzbd-tls
+        readinessProbe:
+          httpGet:
+            path: /live
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /live
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        command:
+        - caddy
+        args:
+        - run
+        - --config
+        - /opt/caddyfile/Caddyfile
+        ports:
+        - name:  http
+          containerPort: 80
+          protocol: TCP
+        - name:  https
+          containerPort: 443
+          protocol: TCP
+        resources:

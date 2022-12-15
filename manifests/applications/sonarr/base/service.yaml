@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sonarr
+spec:
+  clusterIP: None
+  ipFamilyPolicy: SingleStack
+  ipFamilies:
+  - IPv4
+  selector:
+    app: sonarr
+  ports:
+  - port: 8989
+    targetPort: webui

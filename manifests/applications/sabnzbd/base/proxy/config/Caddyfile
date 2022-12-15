@@ -1,0 +1,11 @@
+
+
+:443 {
+  tls /opt/sabnzbd-tls/tls.crt /opt/sabnzbd-tls/tls.key
+  reverse_proxy http://sabnzbd:8080 
+}
+
+:80 {
+  respond /live 200
+  respond /ready 200
+}

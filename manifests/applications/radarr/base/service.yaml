@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: radarr
+spec:
+  clusterIP: None
+  ipFamilyPolicy: SingleStack
+  ipFamilies:
+  - IPv4
+  selector:
+    app: radarr
+  ports:
+  - port: 7878
+    targetPort: webui

@@ -1,0 +1,16 @@
+
+
+:443 {
+  tls /opt/argo-tls/tls.crt /opt/argo-tls/tls.key
+  reverse_proxy https://argo-workflows-server:2746 {
+    transport http {
+      tls
+      tls_insecure_skip_verify
+    }
+  }
+}
+
+:80 {
+  respond /live 200
+  respond /ready 200
+}

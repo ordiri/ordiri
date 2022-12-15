@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: overseer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: overseer
+  template:
+    metadata:
+      labels:
+        app: overseer
+    spec:
+      dnsConfig:
+        options:
+        - name: ndots
+          value: "1"
+      volumes:
+      - name: overseer-tls
+        secret:
+          secretName: overseer-tls
+          defaultMode: 0777
+      - name: media-nfs
+        nfs:
+          server: ceph.homelab.dmann.xyz
+          path: /homelab/media
+      - name: overseer-config-data
+        persistentVolumeClaim:
+          claimName: overseer-config-data
+      containers:
+      - name: overseer
+        image: lscr.io/linuxserver/overseerr:latest
+        volumeMounts:
+        - name: media-nfs
+          mountPath: /media
+        - name: overseer-config-data
+          mountPath: /config
+        - name: overseer-tls
+          mountPath: /opt/overseer-tls
+        env:
+        - name: PUID
+          value: "1000"
+        - name: PGID
+          value: "1000"
+        - name: TZ
+          value: "Australia/Sydney"
+
+        ports:
+        - name:  webui
+          containerPort:  5055
+          protocol: TCP
+        resources:
+        #   limits:
+        #     memory: "4Gi"
+        #     cpu: "4"

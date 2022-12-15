@@ -7,10 +7,10 @@ resources:
 - event-bus.yaml
 - webhook-event-source.yaml
 - resource-event-source.yaml
-- ingressroute-event-sensor.yaml
-- ingress-event-sensor.yaml
 - service-event-sensor.yaml
 - webhook-event-sensor.yaml
 - workflow-template.yaml
 - event-rbac.yaml
 - wf-rbac.yaml
+- vault-rbac.yaml
+- oidc-secretclass.yaml

@@ -3,13 +3,22 @@ kind: Service
 metadata:
   name: gitea-ingress
   namespace: gitea
+  annotations:
+    k8s.dmann.xyz/cloudflare-domain-dmann-xyz: git
+    k8s.dmann.xyz/cloudflare-zone-dmann-xyz: dmann.xyz
+    k8s.dmann.xyz/cloudflare-domain-dmann-dev: git
+    k8s.dmann.xyz/cloudflare-zone-dmann-dev: dmann.dev
 spec:
   ipFamilyPolicy: PreferDualStack
   ports:
-  - name: http
-    port: 80
+  - name: https
+    port: 443
     protocol: TCP
     targetPort: 3000
+  - name: ssh
+    port: 22
+    protocol: TCP
+    targetPort: 22
   selector:
     app.kubernetes.io/instance: gitea
     app.kubernetes.io/name: gitea

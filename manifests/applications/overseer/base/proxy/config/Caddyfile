@@ -1,0 +1,11 @@
+
+
+:443 {
+  tls /opt/overseer-tls/tls.crt /opt/overseer-tls/tls.key
+  reverse_proxy http://overseer:5055 
+}
+
+:80 {
+  respond /live 200
+  respond /ready 200
+}

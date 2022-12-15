@@ -10,13 +10,19 @@ spec:
   arguments:
     parameters:
       - name: kind
-        default: ingressroute
+        default: Service
       - name: namespace
         default: argocd
       - name: name
         default: argocd-server
       - name: action
         default: update
+      - name: defaultZone
+        default: dmann.xyz
+  dnsConfig:
+    options:
+    - name: ndots
+      value: "1"
   templates:
     - name: main
       dag:
@@ -31,16 +37,19 @@ spec:
               value: "{{workflow.parameters.namespace}}"
             - name: name
               value: "{{workflow.parameters.name}}"
-        # TODO: Add a `update-dns-record` wrapper that choses cloudflare or local depending on the domain
-        - name: manage-internal-dns-record
+        - name: manage-cloudflare-dns-record
           dependencies: [extract-dns-annotations]
-          template: manage-internal-dns-record
+          template: manage-cloudflare-dns-record
           arguments:
             parameters: 
             - name: url
-              value: "{{=jsonpath(item.value, '$.url')}}"
+              value: "{{=jsonpath(item.value, '$.prefix')}}.{{=jsonpath(item.value, '$.zone')}}"
             - name: service_ip
               value: "{{=jsonpath(item.value, '$.service_ip')}}"
+            - name: type
+              value: "{{=jsonpath(item.value, '$.type')}}"
+            - name: zone
+              value: "{{=jsonpath(item.value, '$.zone')}}"
             - name: action
               value: '{{workflow.parameters.action}}'
           withParam: "{{tasks.extract-dns-annotations.outputs.result}}"
@@ -55,42 +64,28 @@ spec:
         command: [bash]
         source: |
           #!/usr/bin/env bash
-
           set -eou pipefail
-          defaultService="traefik-system/traefik"
-          if [[ "{{inputs.parameters.kind}}" == "Service" ]]; then
-            defaultService="{{inputs.parameters.namespace}}/{{inputs.parameters.name}}"
-          fi
+          defaultZone="{{workflow.parameters.defaultZone}}"
+          defaultService="{{inputs.parameters.namespace}}/{{inputs.parameters.name}}"
 
           records=""
-          if [[ "{{inputs.parameters.kind}}" == "Ingress" ]]; then
-            records=$(kubectl get {{inputs.parameters.kind}} --namespace {{inputs.parameters.namespace}} --output json {{inputs.parameters.name}} | \
-              jq --arg defaultService $defaultService '[
-                .spec.rules | to_entries[] | {
-                  key: ("ingress-" + (.key | tostring)), 
-                  value: { url: .value.host, service: $defaultService }
-                }
-              ] | from_entries')
-          else
-            # Extract all the annotations
-            records=$(kubectl get {{inputs.parameters.kind}} --namespace {{inputs.parameters.namespace}} --output json {{inputs.parameters.name}} \
-            | jq  --arg defaultService "$defaultService" '. | .metadata.annotations as $annotations | $annotations
-              | to_entries
-                | [
-                    .[] | 
-                        select(
-                          (.key | contains("k8s.dmann.xyz/cloudflare-domain"))
-                        ) | {
-                          key: (.key | sub("k8s.dmann.xyz/cloudflare-domain-";"")), 
-                          value: { 
-                            url: .value,
-                            service: ($annotations[(.key | sub("k8s.dmann.xyz/cloudflare-domain-";"k8s.dmann.xyz/cloudflare-service-"))] // $defaultService)
-                          }
+          # Extract all the annotations
+          records=$(kubectl get {{inputs.parameters.kind}} --namespace {{inputs.parameters.namespace}} --output json {{inputs.parameters.name}} \
+          | jq  --arg defaultService "$defaultService" --arg defaultZone "$defaultZone" '. | .metadata.annotations as $annotations | $annotations
+            | to_entries
+              | [
+                  .[] | 
+                      select(
+                        (.key | contains("k8s.dmann.xyz/cloudflare-domain"))
+                      ) | {
+                        key: (.key | sub("k8s.dmann.xyz/cloudflare-domain-";"")), 
+                        value: { 
+                          prefix: .value,
+                          zone: ($annotations[(.key | sub("k8s.dmann.xyz/cloudflare-domain-";"k8s.dmann.xyz/cloudflare-zone-"))] // $defaultZone),
+                          service: ($annotations[(.key | sub("k8s.dmann.xyz/cloudflare-domain-";"k8s.dmann.xyz/cloudflare-service-"))] // $defaultService)
                         }
-                  ] | from_entries')
-          fi
-
-          
+                      }
+                ] | from_entries')
 
           # Iterate all the keys of our map above in a subshell so we can easily slurp everything in jq
           # to dump the original map back to stdout but with an added `service_ip` field
@@ -100,54 +95,57 @@ spec:
               service=$(echo $records | jq -r --arg key "$key" '.[$key].service')
               service_namespace=$(echo $service | cut -d/ -f1)
               service_name=$(echo $service | cut -d/ -f2)
-              service_ip=$(kubectl get service --namespace "$service_namespace" "$service_name" --output=jsonpath={.spec.clusterIP})
-              echo $records | jq --arg service_ip "$service_ip" --arg key "$key" '{ key: $key, value: (.[$key] + { service_ip: $service_ip }) }'
+              service_ip4=$(kubectl get service --namespace "$service_namespace" "$service_name" --output json | jq -r '[.spec.clusterIPs[] | select(test(":") | not)] | first')
+              service_ip6=$(kubectl get service --namespace "$service_namespace" "$service_name" --output json | jq -r '[.spec.clusterIPs[] | select(test(":"))] | first')
+              if [[ -n "${service_ip6}" ]]; then
+                echo $records | jq --arg service_ip "$service_ip6" --arg key "$key" '{ key: $key, value: (.[$key] + { 
+                  service_ip: $service_ip,
+                  type: "AAAA"
+                }) }'
+              fi
+              # We don't have a publicly exposed ipv4 cidr so...
+              # if [[ -n "${service_ip4}" ]]; then
+              #   echo $records | jq --arg service_ip "$service_ip4" --arg key "$key" '{ key: $key, value: (.[$key] + { 
+              #     service_ip: $service_ip,
+              #     type: "A"
+              #   }) }'
+              # fi
             done
           ) | jq -s
-    - name: manage-internal-dns-record
-      inputs:
-        parameters:
-          - name: url
-          - name: service_ip
-          - name: action
-      script:
-        image: debian:buster-slim
-        command: [bash]
-        source: |
-          #!/bin/bash
-
-          set -eou pipefail 
-
-          apt update;
-          apt install -y dnsutils
-
-          echo "server homelab.ns.dmann.xyz
-          update add {{inputs.parameters.url}} 60 IN AAAA {{inputs.parameters.service_ip}}
-          send
-          quit
-          " | nsupdate
 
     - name: manage-cloudflare-dns-record
       inputs:
         parameters:
           - name: url
           - name: service_ip
+          - name: type
+          - name: zone
           - name: action
+      volumes:
+      - name: cloudflare-api
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: "vault-dns-cloudflare-token"
       script:
         image: docker.io/alpine/k8s:1.21.5
         command: [bash]
+        volumeMounts:
+        - name:  cloudflare-api
+          mountPath: /run/secrets/cloudflare-api
+
         source: |
           #!/bin/bash
           # Credit to https://gist.github.com/Tras2/cba88201b17d765ec065ccbedfb16d9a
 
           set -eou pipefail 
 
-          zone=dmann.xyz
+          zone="{{inputs.parameters.zone}}"
           url="{{inputs.parameters.url}}"
           action="{{inputs.parameters.action}}"
           service_ip="{{inputs.parameters.service_ip}}"
-          cloudflare_auth_email=ninja@codingninja.com.au
-          cloudflare_auth_token=""
+          cloudflare_auth_token=$(cat /run/secrets/cloudflare-api/token)
 
           # get the zone id for the requested zone
           zoneid=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones?name=$zone&status=active" \
@@ -158,7 +156,7 @@ spec:
           # if here, the dns record needs updating
           # get the dns record id 
           # this should really dump out the content and check the host ip to compare i guess
-          cf_record_id=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/$zoneid/dns_records?type=AAAA&name=$url" \
+          cf_record_id=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/$zoneid/dns_records?type={{inputs.parameters.type}}&name=$url" \
               -H "Authorization: Bearer $cloudflare_auth_token" \
               -H "Content-Type: application/json" | jq -r '{"result"}[] | .[0] | .id // ""')
 
@@ -169,50 +167,32 @@ spec:
               cf_api_method="POST"
           fi
 
-          # Anything but delete should update the record
-          if [[ "${action}" != "delete" ]]; then
-          # update the record
-          curl -s -X "$cf_api_method" "$cf_api_url" \
-              -H "Authorization: Bearer $cloudflare_auth_token" \
-              -H "Content-Type: application/json" \
-              --data-binary @- <<EOF
+          recordfile=$(mktemp)
+          
+          tee $recordfile <<EOF
           {
-              "type": "AAAA",
+              "type": "{{inputs.parameters.type}}",
               "name": "$url",
               "content": "$service_ip",
               "ttl": 1,
               "proxied": false
           }
           EOF
+
+          # Anything but delete should update the record
+          if [[ "${action}" != "delete" ]]; then
+            # update the record
+            result=$(curl -s -X "$cf_api_method" "$cf_api_url" \
+              -H "Authorization: Bearer $cloudflare_auth_token" \
+              -H "Content-Type: application/json" \
+              --data-binary "@${recordfile}")
+            echo $result
+            if [[ "$(echo "$result" | jq -r '.success')" != "true" ]]; then
+              exit 2
+            fi
           elif [[ ! -z "${cf_record_id}" ]]; then
               # Delete the record if one exists and the action is delete
               curl -s -X "DELETE" "$cf_api_url" \
                   -H "Authorization: Bearer $cloudflare_auth_token" \
                   -H "Content-Type: application/json" 
           fi
-
-
-    - name: echo
-      inputs:
-        parameters:
-          - name: msg
-      container:
-        image: 'argoproj/argosay:v2'
-        command:
-          - /argosay
-        args:
-          - echo
-          - "{{inputs.parameters.msg}}"
-#    - name: cloudflare-api
-#      inputs:
-#        parameters:
-#          - name: url
-#      http:
-#        timeoutSeconds: 20 # Default 30
-#        url: "{{inputs.parameters.url}}"
-#        method: "GET" # Default GET
-#        headers:
-#          - name: "x-header-name"
-#            value: "test-value"
-#        successCondition: "response.body contains \"google\"" # available since v3.3
-#        body: "test body" # Change request body

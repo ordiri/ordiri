@@ -1,0 +1,18 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: radarr-tls
+spec:
+  secretName: radarr-tls
+  dnsNames:
+    - radarr.dmann.xyz
+    - radarr.dmann.dev
+  issuerRef:
+    name: letsencrypt
+    kind: ClusterIssuer
+  keystores:
+    pkcs12:
+      create: true
+      passwordSecretRef: 
+        key: password
+        name: tls-pkcs12-password

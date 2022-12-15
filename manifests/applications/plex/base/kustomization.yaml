@@ -1,8 +1,14 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
+secretGenerator:
+  - name: plex-tls-pkcs12-password
+    options:
+      disableNameSuffixHash: true
+    literals:
+      - password=password
 resources:
 - deployment.yaml
 - pvc.yaml
 - service.yaml
-- ingress.yaml
+- certificate.yaml

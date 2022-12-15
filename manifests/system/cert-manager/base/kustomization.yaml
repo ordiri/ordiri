@@ -1,6 +1,11 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-
+resources:
+- oidc-secretclass.yaml
+- vault-rbac.yaml
+- letsencrypt-staging-clusterissuer.yaml
+- letsencrypt-clusterissuer.yaml
+- test-certificate.yaml
 helmCharts:
 - name: cert-manager
   repo: https://charts.jetstack.io
@@ -13,3 +18,26 @@ helmCharts:
       leaderElection: 
         namespace: cert-manager
     installCRDs: true
+
+patches:
+- |
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: cert-manager
+    namespace: cert-manager
+  spec:
+    template:
+      spec:
+        volumes:
+        - name: cloudflare-api
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "vault-cert-manager-cloudflare-token"
+        containers:
+        - name: cert-manager
+          volumeMounts:
+          - name:  cloudflare-api
+            mountPath:  /run/secrets/cloudflare-api

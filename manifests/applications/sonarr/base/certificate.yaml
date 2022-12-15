@@ -1,0 +1,18 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: sonarr-tls
+spec:
+  secretName: sonarr-tls
+  dnsNames:
+    - sonarr.dmann.xyz
+    - sonarr.dmann.dev
+  issuerRef:
+    name: letsencrypt
+    kind: ClusterIssuer
+  keystores:
+    pkcs12:
+      create: true
+      passwordSecretRef: 
+        key: password
+        name: tls-pkcs12-password

@@ -2,5 +2,11 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
+- blog/overlays/default
 - cloudflare-dns/overlays/default
+- overseer/overlays/default
 - plex/overlays/default
+- prowlarr/overlays/default
+- radarr/overlays/default
+- sabnzbd/overlays/default
+- sonarr/overlays/default

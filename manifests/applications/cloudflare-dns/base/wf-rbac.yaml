@@ -9,13 +9,13 @@ kind: Role
 metadata:
   name: workflow-executor
 rules:
-  - apiGroups:
-      - ""
-    resources:
-      - pods
-    verbs:
-      - get
-      - patch
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - patch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding

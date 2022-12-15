@@ -17,11 +17,18 @@ spec:
         - name: ndots
           value: "1"
       volumes:
+      - name: plex-tls
+        secret:
+          secretName: plex-tls
+          defaultMode: 0777
+      - name: plex-tls-pkcs12-password
+        secret:
+          secretName: plex-tls-pkcs12-password
+          defaultMode: 0777
       - name: media-nfs
         nfs:
           server: ceph.homelab.dmann.xyz
           path: /homelab/media
-          readOnly: true
       - name: plex-config-data
         persistentVolumeClaim:
           claimName: plex-config-data
@@ -37,6 +44,10 @@ spec:
           mountPath: /config
         - name: transcode-storage
           mountPath: /transcode
+        - name: plex-tls
+          mountPath: /opt/plex-tls
+        - name: plex-tls-pkcs12-password
+          mountPath: /opt/plex-tls-pkcs12-password
         env:
         - name: PUID
           value: "1000"

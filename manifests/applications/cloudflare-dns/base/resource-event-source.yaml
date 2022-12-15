@@ -5,20 +5,11 @@ metadata:
 spec:
   template:
     serviceAccountName: cloudflaredns-event-sa # assign a service account with `get`, `list` and `watch` permissions on the resource being watched.
+    dnsConfig:
+      options:
+      - name: ndots
+        value: "1"
   resource:
-    ingressroute-resource-updated:
-      namespace: ""
-      # resource group
-      group: traefik.containo.us
-      # resource version
-      version: v1alpha1
-      # resource kind
-      resource: ingressroutes
-      filter: ~
-      eventTypes:
-        - ADD
-        - DELETE
-        - UPDATE
     service-resource-updated:
       namespace: ""
       # resource group
@@ -27,19 +18,6 @@ spec:
       version: v1
       # resource kind
       resource: services
-      filter: ~
-      eventTypes:
-        - ADD
-        - DELETE
-        - UPDATE
-    ingress-resource-updated:
-      namespace: ""
-      # resource group
-      group: "networking.k8s.io"
-      # resource version
-      version: v1
-      # resource kind
-      resource: ingresses
       filter: ~
       eventTypes:
         - ADD

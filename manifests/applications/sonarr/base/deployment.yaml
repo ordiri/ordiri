@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sonarr
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sonarr
+  template:
+    metadata:
+      labels:
+        app: sonarr
+    spec:
+      dnsConfig:
+        options:
+        - name: ndots
+          value: "1"
+      volumes:
+      - name: sonarr-tls
+        secret:
+          secretName: sonarr-tls
+          defaultMode: 0777
+      - name: media-nfs
+        nfs:
+          server: ceph.homelab.dmann.xyz
+          path: /homelab/media
+      - name: sonarr-config-data
+        persistentVolumeClaim:
+          claimName: sonarr-config-data
+      containers:
+      - name: sonarr
+        image: lscr.io/linuxserver/sonarr:latest
+        volumeMounts:
+        - name: media-nfs
+          mountPath: /media
+        - name: sonarr-config-data
+          mountPath: /config
+        - name: sonarr-tls
+          mountPath: /opt/sonarr-tls
+        env:
+        - name: PUID
+          value: "1000"
+        - name: PGID
+          value: "1000"
+        - name: TZ
+          value: "Australia/Sydney"
+        ports:
+        - name:  webui
+          containerPort:  8989
+          protocol: TCP
+        resources:
+        #   limits:
+        #     memory: "4Gi"
+        #     cpu: "4"

@@ -1,45 +1,55 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-components:
-  - ../../../common/components/ca-import
-
-secretGenerator:
-  - name: argo-workflows-sso
-    options:
-      disableNameSuffixHash: true
-    literals:
-      - client-id=mznLWc9KRCyVSRrIe06FbPjjvfb1qYQh
-      - client-secret=hvo_secret_s4ksCoTaT8ECnMaC0u8vRhxkPyMTU52WPzCErn3H25rmmL6babqGoACmVwqhOzIj
-
-patchesStrategicMerge:
-  - add-ca-to-ui.yaml
 helmCharts:
 - name: argo-workflows
   repo: https://argoproj.github.io/argo-helm
-  version: 0.10.1
+  version: 0.22.1
   releaseName: argo-workflows
   namespace: argo-workflows
   includeCRDs: true
   valuesInline: 
     server:
+      secure: true
       extraArgs: ["--auth-mode=sso"]
       sso:
-        issuer: https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/homelab
+        rbac: 
+          enabled: true
+        issuer: https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/default
         clientId:
-          name: argo-workflows-sso
+          name: vault-argo-oidc-client-secret
           key: client-id
         clientSecret:
-          name: argo-workflows-sso
+          name: vault-argo-oidc-client-secret
           key: client-secret
-        redirectUrl: https://argo.homelab.dmann.xyz/oauth2/callback
+        redirectUrl: https://argo.dmann.xyz/oauth2/callback
         scopes:
+        - openid
+        - profile
+        - email
         - groups
-        - user
+      volumes:
+      - name: argo-oidc-creds
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: "vault-argo-oidc-client"
+      volumeMounts:
+      - name:  argo-oidc-creds
+        mountPath:  /run/secrets/oidc
     controller:
+      rbac:
+        secretWhitelist: 
+        - vault-argo-oidc-client-secret
       workflowNamespaces: []
       containerRuntimeExecutor: emissary
 
 
 resources:
-- ingress.yaml
+- proxy
+- certificate.yaml
+- oidc-secretclass.yaml
+- vault-rbac.yaml
+- admin-sa.yaml
+- readonly-sa.yaml

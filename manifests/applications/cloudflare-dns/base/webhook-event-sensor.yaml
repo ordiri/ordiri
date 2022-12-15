@@ -5,6 +5,10 @@ metadata:
 spec:
   template:
     serviceAccountName: cloudflaredns-event-sa
+    dnsConfig:
+      options:
+      - name: ndots
+        value: "1"
   dependencies:
   - name: dns-update-notify-dep
     eventSourceName: cloudflare-dns-updater
@@ -61,5 +65,7 @@ spec:
                     - name: namespace
                     - name: name
                     - name: action
+                    - name: defaultZone
+                      value: dmann.xyz
                 workflowTemplateRef:
                   name: configure-dns-records

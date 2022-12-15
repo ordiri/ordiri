@@ -3,6 +3,11 @@ kind: EventSource
 metadata:
   name: cloudflare-dns-updater
 spec:
+  template:
+    dnsConfig:
+      options:
+      - name: ndots
+        value: "1"
   service:
     ports:
       - port: 12000

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: overseer
+spec:
+  clusterIP: None
+  ipFamilyPolicy: SingleStack
+  ipFamilies:
+  - IPv4
+  selector:
+    app: overseer
+  ports:
+  - port: 5055
+    targetPort: webui

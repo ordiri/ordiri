@@ -1,34 +1,97 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-components:
-  - ../../../common/components/ca-import
   
+helmCharts:
+- name: argo-cd
+  repo: https://argoproj.github.io/argo-helm
+  version: 5.16.6
+  releaseName: argocd
+  namespace: argocd
+  includeCRDs: true
+  valuesInline: 
+    singleNamespace: true
+    apiVersionOverrides:
+      certmanager: cert-manager.io/v1
+      ingress: networking.k8s.io/v1beta1
+    configs:
+      cm:
+        # Argo CD's externally facing base URL (optional). Required when configuring SSO
+        url: https://argocd.dmann.dev
+        users.anonymous.enabled: false
+        admin.enabled: false
+        oidc.config: |
+          name: Vault
+          issuer: https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/default
+          clientID:  $vault-argocd-oidc-client-secret:client-id
+          clientSecret:  $vault-argocd-oidc-client-secret:client-secret
+          requestedScopes:
+          - openid
+          - profile
+          - email
+          - groups
+          requestedIDTokenClaims: 
+            groups:
+              essential: true
+
+        kustomize.buildOptions: --enable-helm
+    server:
+      extensions:
+        enabled: true
+        contents: 
+        - name: argo-rollouts
+          url: https://github.com/argoproj-labs/rollout-extension/releases/download/v0.1.0/extension.tar
+      certificate:
+        enabled: true
+        domain: argocd.dmann.xyz
+        issuer:
+          kind: ClusterIssuer
+          name: letsencrypt
+        additionalHosts:
+        - argocd.dmann.dev
+      rbacConfig:
+        policy.csv: |
+          # Grant all members of the group 'my-org:team-alpha; the ability to sync apps in 'my-project'
+          p, my-org:team-alpha, applications, sync, my-project/*, allow
+          # Grant all members of 'my-org:team-beta' admins
+          g, root, role:admin
+        policy.default: role:readonly
+        scopes: '[groups, email]'
+
 resources:
-- upstream
-- application-set.yaml
-- ingress.yaml
-- calico-app.yaml
+- vault-rbac.yaml
+- oidc-secretclass.yaml
 
-images:
-  - name: quay.io/argoproj/argocd
-    newTag: 2.3.0-rc1
-
-configMapGenerator:
-- name: argocd-rbac-cm
-  behavior: merge
-  literals:
-    - policy.default=role:admin
-
-- name: argocd-cm
-  behavior: merge
-  files:
-    - dex.config=dex.yaml
-  literals:
-    - url=https://argocd.homelab.dmann.xyz
-    - users.anonymous.enabled=true
-    - kustomize.buildOptions=--enable-helm
-
-patchesStrategicMerge:
-  - argocd-server-certificate-patch.yaml
-  - dex-certificate-patch.yaml
+patches:
+  - |
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: argocd-server
+      annotations:
+        k8s.dmann.xyz/cloudflare-domain-dmann-xyz: argocd
+        k8s.dmann.xyz/cloudflare-zone-dmann-xyz: dmann.xyz
+        k8s.dmann.xyz/cloudflare-domain-dmann-dev: argocd
+        k8s.dmann.xyz/cloudflare-zone-dmann-dev: dmann.dev
+    spec:
+      ipFamilyPolicy: PreferDualStack
+  - |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: argocd-server
+    spec:
+      template:
+        spec:
+          volumes:
+          - name: argocd-oidc-creds
+            csi:
+              driver: secrets-store.csi.k8s.io
+              readOnly: true
+              volumeAttributes:
+                secretProviderClass: "vault-argocd-oidc-client"
+          containers:
+          - name: server
+            volumeMounts:
+            - name:  argocd-oidc-creds
+              mountPath:  /run/secrets/oidc
