@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mosquitto-mqtt-ingress
+  namespace: mosquitto
+  annotations:
+    k8s.dmann.xyz/cloudflare-domain-dmann-xyz: mqtt
+    k8s.dmann.xyz/cloudflare-zone-dmann-xyz: dmann.xyz
+    k8s.dmann.xyz/cloudflare-domain-dmann-dev: mqtt
+    k8s.dmann.xyz/cloudflare-zone-dmann-dev: dmann.dev
+spec:
+  ipFamilyPolicy: PreferDualStack
+  ports:
+  - name: mqtt
+    port: 443
+    protocol: TCP
+    targetPort: mqtt
+  selector:
+    app: mosquitto
+  sessionAffinity: None
+  type: ClusterIP

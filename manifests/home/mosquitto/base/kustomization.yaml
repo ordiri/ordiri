@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+configMapGenerator:
+  - name: mosquitto-config
+    files:
+    - mosquitto.conf=config/mosquitto.conf
+resources:
+- deployment.yaml
+- mqtt-service.yaml
+- ws-service.yaml
+- certificate.yaml

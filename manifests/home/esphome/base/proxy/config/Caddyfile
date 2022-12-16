@@ -1,0 +1,11 @@
+
+
+:443 {
+  tls /opt/esphome-tls/tls.crt /opt/esphome-tls/tls.key
+  reverse_proxy http://esphome:6052 
+}
+
+:80 {
+  respond /live 200
+  respond /ready 200
+}

@@ -1,15 +1,14 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: cluster-applications
+  name: homelab-applicationsets
 spec:
   generators:
   - git:
-      repoURL: git@gitlab.dmann.xyz:codingninja/homelab.git
+      repoURL: git@github.com:ordiri/ordiri.git
       revision: HEAD
       directories:
-      - path: kube/*/*
-      - path: kube/system/weave
+      - path: manifests/*/*
         exclude: true
   template:
     metadata:

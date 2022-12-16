@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: esphome
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: esphome
+  template:
+    metadata:
+      labels:
+        app: esphome
+    spec:
+      dnsConfig:
+        options:
+        - name: ndots
+          value: "1"
+      volumes:
+      - name: esphome-tls
+        secret:
+          secretName: esphome-tls
+          defaultMode: 0777
+      - name: esphome-config
+        configMap:
+          name: esphome-config
+      - name: nfs-volume
+        nfs:
+          server: ceph.homelab.dmann.xyz
+          path: /homelab/media
+
+      containers:
+      - name: esphome
+        image: esphome/esphome:2023.1.0-dev20221216
+        volumeMounts:
+        - name: nfs-volume
+          mountPath: /config
+          subPath: esphome
+        - name: esphome-tls
+          mountPath: /opt/esphome-tls
+        ports:
+        - name:  webui
+          containerPort:  6052
+          protocol: TCP
+        resources:
+        #   limits:
+        #     memory: "4Gi"
+        #     cpu: "4"

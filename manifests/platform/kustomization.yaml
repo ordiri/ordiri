@@ -4,5 +4,4 @@ kind: Kustomization
 resources:
 - argo-events/overlays/default
 - argo-workflows/overlays/default
-- argocd/overlays/default
 - gitea/overlays/default

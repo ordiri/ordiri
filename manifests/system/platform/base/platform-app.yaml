@@ -1,16 +1,16 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: calico
+  name: platform
 spec:
   project: default
   source:
-    repoURL: git@gitlab.dmann.xyz:codingninja/homelab.git
+    repoURL: git@github.com:ordiri/ordiri.git
     targetRevision: HEAD
-    path: kube/system/tigera-operator/overlays/default
+    path: manifests/system/platform/overlays/default
   destination:
     server: https://kubernetes.default.svc
-    namespace: tigera-operator
+    namespace: argocd
   # syncPolicy:
   #   automated:
   #     prune: true

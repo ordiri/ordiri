@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: home-assistant
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: home-assistant
+  template:
+    metadata:
+      labels:
+        app: home-assistant
+    spec:
+      dnsConfig:
+        options:
+        - name: ndots
+          value: "1"
+      volumes:
+      - name: home-assistant-tls
+        secret:
+          secretName: home-assistant-tls
+          defaultMode: 0777
+      - name: home-assistant-config
+        configMap:
+          name: home-assistant-config
+      - name: nfs-volume
+        nfs:
+          server: ceph.homelab.dmann.xyz
+          path: /homelab/media
+
+      containers:
+      - name: home-assistant
+        image: ghcr.io/home-assistant/home-assistant:stable
+        volumeMounts:
+        - name: nfs-volume
+          mountPath: /config
+          subPath: home-assistant
+        - name: home-assistant-config
+          mountPath: /config/configuration.yaml
+          subPath: configuration.yaml
+        - name: home-assistant-tls
+          mountPath: /opt/home-assistant-tls
+        ports:
+        - name:  webui
+          containerPort:  8123
+          protocol: TCP
+        resources:
+        #   limits:
+        #     memory: "4Gi"
+        #     cpu: "4"

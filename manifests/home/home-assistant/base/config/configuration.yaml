@@ -1,0 +1,30 @@
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# This is no longer a thing, you *have* to use the UI 🙃
+# mqtt:
+#   broker: mqtt.dmann.xyz
+#   port: 443
+#   client_id: home-assistant-01
+#   discovery: true
+#   tls_insecure: false
+#   certificate: /opt/home-assistant-tls/tls.crt
+#   client_key: /opt/home-assistant-tls/tls.key
+#   birth_message:
+#     topic: 'homeassistant/status'
+#     payload: 'online'
+#   will_message:
+#     topic: 'homeassistant/status'
+#     payload: 'offline'
+#  certificate: auto
+# # Load frontend themes from the themes folder
+# frontend:
+#   themes: !include_dir_merge_named themes
+
+# # Text to speech
+# tts:
+#   - platform: google_translate
+
+# automation: !include automations.yaml
+# script: !include scripts.yaml
+# scene: !include scenes.yaml

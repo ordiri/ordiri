@@ -4,5 +4,4 @@ kind: Kustomization
 namespace: argocd
 
 resources:
-- namespace.yaml
 - ../../base

@@ -7,3 +7,4 @@ resources:
 - secrets-store-csi-driver/overlays/default
 - tigera-operator/overlays/default
 - vault-system/overlays/default
+- argocd/overlays/default
