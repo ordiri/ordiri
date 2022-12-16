@@ -5,12 +5,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: git@github.com:ordiri/ordiri.git
+    repoURL: https://github.com/ordiri/ordiri.git
     targetRevision: HEAD
     path: manifests/system/platform/overlays/default
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
-  # syncPolicy:
-  #   automated:
-  #     prune: true

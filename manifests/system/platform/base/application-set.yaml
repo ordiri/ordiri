@@ -5,7 +5,7 @@ metadata:
 spec:
   generators:
   - git:
-      repoURL: git@github.com:ordiri/ordiri.git
+      repoURL: https://github.com/ordiri/ordiri.git
       revision: HEAD
       directories:
       - path: manifests/*/*
@@ -16,7 +16,7 @@ spec:
     spec:
       project: default
       source:
-        repoURL: git@gitlab.dmann.xyz:codingninja/homelab.git
+        repoURL: https://github.com/ordiri/ordiri.git
         targetRevision: HEAD
         path: '{{path}}/overlays/default'
       destination:
