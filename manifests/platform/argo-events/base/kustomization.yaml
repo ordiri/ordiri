@@ -1,13 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-helmCharts:
-- name: argo-events
-  repo: https://argoproj.github.io/argo-helm
-  version: 2.0.7
-  releaseName: argo-events
-  namespace: argo-events
-  includeCRDs: true
-  valuesInline: 
-    singleNamespace: false
-    additionalSaNamespaces: []
+resources:
+- github.com:argoproj/argo-events.git/manifests/cluster-install?ref=v1.7.4
+- github.com:argoproj/argo-events.git/manifests/extensions/validating-webhook?ref=v1.7.4
