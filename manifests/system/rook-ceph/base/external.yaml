@@ -1,0 +1,24 @@
+apiVersion: ceph.rook.io/v1
+kind: CephCluster
+metadata:
+  name: external
+spec:
+  external:
+    enable: true
+  dashboard:
+    enabled: true
+  dataDirHostPath: /var/lib/rook
+  # providing an image is required, if you want to create other CRs (rgw, mds, nfs)
+  cephVersion:
+    image: quay.io/ceph/ceph:v17.2.5 # Should match external cluster version
+  crashCollector:
+    disable: true
+  mgr:
+    modules:
+    - name: rook
+      enabled: true
+  healthCheck:
+    daemonHealth:
+      mon:
+        disabled: false
+        interval: 45s

@@ -1,0 +1,18 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: rook
+  annotations:
+    k8s.dmann.xyz/cloudflare-domain-main: rook.homelab.dmann.xyz
+spec:
+  entryPoints:
+    - websecure
+  tls:
+    certResolver: homelab
+  routes:
+  - kind: Rule
+    match: Host(`rook.homelab.dmann.xyz`)
+    services:
+    - kind: Service
+      name: rook-ceph-mgr-dashboard
+      port: 7000
