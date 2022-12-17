@@ -9,6 +9,8 @@ spec:
       revision: HEAD
       directories:
       - path: manifests/*/*
+      - path: manifests/system/platform
+        exclude: true
   template:
     metadata:
       name: '{{path.basename}}'
