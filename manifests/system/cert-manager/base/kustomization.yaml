@@ -37,7 +37,7 @@ patches:
             volumeAttributes:
               secretProviderClass: "vault-cert-manager-cloudflare-token"
         containers:
-        - name: cert-manager
+        - name: cert-manager-controller
           volumeMounts:
           - name:  cloudflare-api
             mountPath:  /run/secrets/cloudflare-api
