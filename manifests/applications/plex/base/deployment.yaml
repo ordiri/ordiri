@@ -36,7 +36,7 @@ spec:
         emptyDir: {}
       containers:
       - name: plex-server
-        image: plexinc/pms-docker
+        image: harbor.dmann.dev/docker.io/plexinc/pms-docker
         volumeMounts:
         - name: media-nfs
           mountPath: /media
