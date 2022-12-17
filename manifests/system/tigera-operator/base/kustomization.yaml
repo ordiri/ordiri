@@ -18,10 +18,16 @@ helmCharts:
         # linuxDataplane: bpf
         ipPools:
         - cidr: 2403:5806:97ec:6300::/56
+          blockSize: 122
           natOutgoing: "Disabled"
+          disableBGPExport: false
+          nodeSelector: all()
         - cidr: 10.240.0.0/16
-          natOutgoing: Enabled # We use BPG to announce routes so no need to NAT or encapsulate traffic
+          blockSize: 26
+          disableBGPExport: false
+          natOutgoing: Enabled
           encapsulation: None
+          nodeSelector: all()
         containerIPForwarding: Enabled
         nodeAddressAutodetectionV4:
           kubernetes: NodeInternalIP
