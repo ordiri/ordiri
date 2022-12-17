@@ -21,7 +21,7 @@ spec:
           secretName: sonarr-tls
       containers:
       - name: proxy
-        image: caddy
+        image: harbor.dmann.dev/docker.io/caddy
         volumeMounts:
         - name: caddyfile
           mountPath: /opt/caddyfile

@@ -21,7 +21,7 @@ spec:
             name: blogposts
       containers:
       - name: blog
-        image: caddy
+        image: harbor.dmann.dev/docker.io/caddy
         volumeMounts:
         - name: caddyfile
           mountPath: /opt/caddyfile
