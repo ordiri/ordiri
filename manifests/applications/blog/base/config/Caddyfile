@@ -7,7 +7,7 @@
   respond /ready 200
 }
 
-blog.dmann.dev, blog.dmann.xyz {
+blog.dmann.dev, blog.dmann.xyz, dmann.dev, dmann.xyz {
     root * /opt/blogposts
 
     # Templates give static sites some dynamic features
