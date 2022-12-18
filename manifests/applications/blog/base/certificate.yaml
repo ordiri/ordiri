@@ -7,6 +7,9 @@ spec:
   dnsNames:
     - blog.dmann.xyz
     - blog.dmann.dev
+    - blog.homelab.dmann.dev
+    - dmann.dev
+    - dmann.xyz
   issuerRef:
     name: letsencrypt
     kind: ClusterIssuer
