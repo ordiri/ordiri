@@ -19,6 +19,9 @@ spec:
       - name: overseer-tls
         secret:
           secretName: overseer-tls
+      - name: caddystore
+        persistentVolumeClaim:
+          claimName: caddystore
       containers:
       - name: proxy
         image: harbor.dmann.dev/docker.io/caddy
