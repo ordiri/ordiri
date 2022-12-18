@@ -1,0 +1,26 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: zerossl
+spec:
+  acme:
+    # You must replace this email address with your own.
+    # Let's Encrypt will use this to contact you about expiring
+    # certificates, and issues related to your account.
+    email: ninja@codingninja.com.au
+    server: https://acme.zerossl.com/v2/DV90
+    privateKeySecretRef:
+      # Secret resource that will be used to store the account's private key.
+      name: zerossl-secret
+    externalAccountBinding:
+      keyID: C7xjogxWEX2icoB61-ou4g
+      keySecretRef:
+        name: vault-cert-manager-zerossl-token
+        key: secret
+      keyAlgorithm: HS256
+    solvers:
+    - dns01:
+        cloudflare:
+          apiTokenSecretRef:
+            name: vault-cert-manager-cloudflare-token
+            key: token

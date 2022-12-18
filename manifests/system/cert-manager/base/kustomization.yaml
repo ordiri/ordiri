@@ -1,10 +1,12 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- oidc-secretclass.yaml
+- cloudflare-secretclass.yaml
+- zerossl-secretclass.yaml
 - vault-rbac.yaml
 - letsencrypt-staging-clusterissuer.yaml
 - letsencrypt-clusterissuer.yaml
+- zerossl-clusterissuer.yaml
 - test-certificate.yaml
 helmCharts:
 - name: cert-manager
@@ -36,8 +38,16 @@ patches:
             readOnly: true
             volumeAttributes:
               secretProviderClass: "vault-cert-manager-cloudflare-token"
+        - name: zerossl-api
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "vault-cert-manager-zerossl-token"
         containers:
         - name: cert-manager-controller
           volumeMounts:
           - name:  cloudflare-api
             mountPath:  /run/secrets/cloudflare-api
+          - name:  zerossl-api
+            mountPath:  /run/secrets/zerossl-api
