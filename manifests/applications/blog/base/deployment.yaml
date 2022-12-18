@@ -19,9 +19,6 @@ spec:
       - name: blogposts
         configMap:
             name: blogposts
-      - name: caddystore
-        persistentVolumeClaim:
-          claimName: caddystore
       containers:
       - name: blog
         image: harbor.dmann.dev/docker.io/caddy
@@ -30,12 +27,6 @@ spec:
           mountPath: /opt/caddyfile
         - name: blogposts
           mountPath: /opt/blogposts
-        - name: caddystore
-          mountPath: /data
-          subPath: "data"
-        - name: caddystore
-          mountPath: /config
-          subPath: "config"
         readinessProbe:
           httpGet:
             path: /live

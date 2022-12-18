@@ -9,4 +9,3 @@ configMapGenerator:
 resources:
 - deployment.yaml
 - service.yaml
-- pvc.yaml

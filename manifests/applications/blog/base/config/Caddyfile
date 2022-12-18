@@ -7,8 +7,9 @@
   respond /ready 200
 }
 
-blog.dmann.dev, blog.dmann.xyz, dmann.xyz, dmann.xyz {
+:443 {
     root * /opt/blogposts
+    tls /opt/blog-tls/tls.crt /opt/blog-tls/tls.key
 
     # Templates give static sites some dynamic features
     templates

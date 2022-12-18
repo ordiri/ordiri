@@ -19,9 +19,6 @@ spec:
       - name: sabnzbd-tls
         secret:
           secretName: sabnzbd-tls
-      - name: caddystore
-        persistentVolumeClaim:
-          claimName: caddystore
       containers:
       - name: proxy
         image: harbor.dmann.dev/docker.io/caddy
@@ -30,12 +27,6 @@ spec:
           mountPath: /opt/caddyfile
         - name: sabnzbd-tls
           mountPath: /opt/sabnzbd-tls
-        - name: caddystore
-          mountPath: /data
-          subPath: "data"
-        - name: caddystore
-          mountPath: /config
-          subPath: "config"
         readinessProbe:
           httpGet:
             path: /live

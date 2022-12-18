@@ -19,9 +19,6 @@ spec:
       - name: prowlarr-tls
         secret:
           secretName: prowlarr-tls
-      - name: caddystore
-        persistentVolumeClaim:
-          claimName: caddystore
       containers:
       - name: proxy
         image: harbor.dmann.dev/docker.io/caddy
@@ -30,12 +27,6 @@ spec:
           mountPath: /opt/caddyfile
         - name: prowlarr-tls
           mountPath: /opt/prowlarr-tls
-        - name: caddystore
-          mountPath: /data
-          subPath: "data"
-        - name: caddystore
-          mountPath: /config
-          subPath: "config"
         readinessProbe:
           httpGet:
             path: /live

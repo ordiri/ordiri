@@ -1,0 +1,18 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: blog-tls
+spec:
+  secretName: blog-tls
+  dnsNames:
+    - blog.dmann.xyz
+    - blog.dmann.dev
+  issuerRef:
+    name: letsencrypt
+    kind: ClusterIssuer
+  keystores:
+    pkcs12:
+      create: true
+      passwordSecretRef: 
+        key: password
+        name: tls-pkcs12-password
