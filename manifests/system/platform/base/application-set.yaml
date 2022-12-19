@@ -24,7 +24,7 @@ spec:
             
   template:
     metadata:
-      name: 'beta-{{path.basename}}'
+      name: '{{path.basename}}'
       annotations:
         argocd-image-updater.argoproj.io/image-list: '{{argocd.image_updater.images}}'
 
