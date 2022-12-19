@@ -33,7 +33,7 @@ spec:
       source:
         repoURL: https://github.com/ordiri/ordiri.git
         targetRevision: HEAD
-        path: '{{path.path}}/overlays/default'
+        path: '{{path}}/overlays/default'
       destination:
         server: https://kubernetes.default.svc
         namespace: '{{path.basename}}'
