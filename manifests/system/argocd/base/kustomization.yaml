@@ -11,7 +11,7 @@ configMapGenerator:
     literals:
     - log.level=debug
     files:
-    - config/registries.yaml=registries.conf
+    - registries.conf=config/registries.yaml
 
 helmCharts:
 - name: argo-cd
