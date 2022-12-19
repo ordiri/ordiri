@@ -118,7 +118,8 @@ patches:
       name: argocd-image-updater
     spec:
       template:
-        dnsConfig:
-          options:
-          - name: ndots
-            value: "1"
+        spec:
+          dnsConfig:
+            options:
+            - name: ndots
+              value: "1"
