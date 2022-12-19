@@ -10,7 +10,7 @@ secretGenerator:
 
 resources:
 - proxy
-- deployment.yaml
+- sts.yaml
 - pvc.yaml
 - service.yaml
 - certificate.yaml
