@@ -21,12 +21,16 @@ spec:
           elements:
           - path.basename: k8-workshop
             argocd.image_updater.images: harbor.dmann.dev/library/k8-workshop
+            argocd.image_updater.method: git
+            argocd.image_updater.target: kustomize
 
   template:
     metadata:
       name: '{{path.basename}}'
       annotations:
         argocd-image-updater.argoproj.io/image-list: '{{argocd.image_updater.images}}'
+        argocd-image-updater.argoproj.io/write-back-method: '{{argocd.image_updater.method}}'
+        argocd-image-updater.argoproj.io/write-back-target: '{{argocd.image_updater.target}}'
 
     spec:
       project: default
