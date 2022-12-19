@@ -4,3 +4,4 @@ kind: Kustomization
 resources:
   - platform-app.yaml
   - application-set.yaml
+  - application-set-beta.yaml

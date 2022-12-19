@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: homelab-applicationsets
+spec:
+  generators:
+  - merge:
+      mergeKeys:
+      - path.basename
+      generators:
+      - git:
+          repoURL: https://github.com/ordiri/ordiri.git
+          revision: HEAD
+          directories:
+          - path: manifests/*/*
+          - path: manifests/system/platform
+            exclude: true
+          # For a specific cluster, enable Redis.
+      - list:
+          elements: 
+          - server: https://2.4.6.8
+            values.redis: 'true'
+  template:
+    metadata:
+      name: 'beta-{{path.basename}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/ordiri/ordiri.git
+        targetRevision: HEAD
+        path: '{{path}}/overlays/default'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{path.basename}}'
+      # syncPolicy:
+      #   automated:
+      #     prune: true
