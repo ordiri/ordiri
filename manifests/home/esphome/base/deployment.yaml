@@ -28,6 +28,9 @@ spec:
         nfs:
           server: ceph.homelab.dmann.xyz
           path: /homelab/media
+      - name: esphome-cache
+        persistentVolumeClaim:
+          claimName: esphome-cache
 
       containers:
       - name: esphome
@@ -36,8 +39,8 @@ spec:
         - name: nfs-volume
           mountPath: /config
           subPath: esphome
-        - name: esphome-tls
-          mountPath: /opt/esphome-tls
+        - name: esphome-cache
+          mountPath: /config/.esphome
         ports:
         - name:  webui
           containerPort:  6052
