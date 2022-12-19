@@ -1,0 +1,3 @@
+kustomize:
+  images:
+  - harbor.dmann.dev/k8-workshop:v0.0.1
