@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowEventBinding
+metadata:
+  name: image-pipeline
+spec:
+  event:
+    selector: payload.appellation != ""
+  submit:
+    workflowTemplateRef:
+      name: image-pipeline
+    arguments:
+      parameters:
+        - name: appellation
+          valueFrom:
+            event: payload.appellation
