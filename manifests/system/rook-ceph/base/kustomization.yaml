@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
 - external.yaml
+- storage-class.yaml
 # - nfs-rbac.yaml
 # - ingress.yaml
 helmCharts:
