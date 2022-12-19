@@ -15,10 +15,10 @@ spec:
       volumes:
       - name: caddyfile
         configMap:
-            name: caddyfile
+          name: caddyfile
       - name: workshop-tls
-        configMap:
-            name: workshop-tls
+        secret:
+          secretName: workshop-tls
       containers:
       - name: workshop
         image: harbor.dmann.dev/library/k8-workshop:v0.0.1-RC1
