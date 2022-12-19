@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
 - service.yaml
 - certificate.yaml
+- oidc-secretclass.yaml
 helmCharts:
 - name: gitea
   repo: https://dl.gitea.io/charts/
@@ -26,11 +27,19 @@ helmCharts:
     - name: gitea-tls
       secret:
         secretName: gitea-tls
+    - name: vault-oidc
+      csi:
+        driver: secrets-store.csi.k8s.io
+        readOnly: true
+        volumeAttributes:
+          secretProviderClass: vault-gitea-oidc-client-secret
 
     ## @param extraContainerVolumeMounts Mounts that are only mapped into the Gitea runtime/main container, to e.g. override custom templates.
     extraContainerVolumeMounts:
     - name: gitea-tls
       mountPath: /opt/gitea-tls
+    - name: vault-oidc
+      mountPath: /run/secrets/oidc
     service:
       http:
         ipFamilyPolicy: PreferDualStack
@@ -39,6 +48,11 @@ helmCharts:
         ipFamilyPolicy: PreferDualStack
         clusterIP: ""
     gitea:
+      oauth:
+      - name: 'OAuth 1'
+        provider: openidConnect
+        existingSecret: vault-oidc
+        autoDiscoverUrl: https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/default
       config:
         server:
           PROTOCOL: https
