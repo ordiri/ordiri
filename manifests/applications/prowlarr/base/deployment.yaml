@@ -26,9 +26,6 @@ spec:
         nfs:
           server: ceph.homelab.dmann.xyz
           path: /homelab/media
-      - name: prowlarr-config-data
-        persistentVolumeClaim:
-          claimName: prowlarr-config-data
       containers:
       - name: prowlarr
         image: lscr.io/linuxserver/prowlarr:develop

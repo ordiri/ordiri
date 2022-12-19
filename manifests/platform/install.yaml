@@ -1,0 +1,3359 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: argo-events
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: argo-workflows
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gitea
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    helm.sh/resource-policy: keep
+  name: clusterworkflowtemplates.argoproj.io
+spec:
+  group: argoproj.io
+  names:
+    kind: ClusterWorkflowTemplate
+    listKind: ClusterWorkflowTemplateList
+    plural: clusterworkflowtemplates
+    shortNames:
+    - clusterwftmpl
+    - cwft
+    singular: clusterworkflowtemplate
+  scope: Cluster
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            type: object
+            x-kubernetes-map-type: atomic
+            x-kubernetes-preserve-unknown-fields: true
+        required:
+        - metadata
+        - spec
+        type: object
+    served: true
+    storage: true
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    helm.sh/resource-policy: keep
+  name: cronworkflows.argoproj.io
+spec:
+  group: argoproj.io
+  names:
+    kind: CronWorkflow
+    listKind: CronWorkflowList
+    plural: cronworkflows
+    shortNames:
+    - cwf
+    - cronwf
+    singular: cronworkflow
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            type: object
+            x-kubernetes-map-type: atomic
+            x-kubernetes-preserve-unknown-fields: true
+          status:
+            type: object
+            x-kubernetes-map-type: atomic
+            x-kubernetes-preserve-unknown-fields: true
+        required:
+        - metadata
+        - spec
+        type: object
+    served: true
+    storage: true
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: eventbus.argoproj.io
+spec:
+  group: argoproj.io
+  names:
+    kind: EventBus
+    listKind: EventBusList
+    plural: eventbus
+    shortNames:
+    - eb
+    singular: eventbus
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            type: object
+            x-kubernetes-preserve-unknown-fields: true
+          status:
+            type: object
+            x-kubernetes-preserve-unknown-fields: true
+        required:
+        - metadata
+        - spec
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: eventsources.argoproj.io
+spec:
+  group: argoproj.io
+  names:
+    kind: EventSource
+    listKind: EventSourceList
+    plural: eventsources
+    shortNames:
+    - es
+    singular: eventsource
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            type: object
+            x-kubernetes-preserve-unknown-fields: true
+          status:
+            type: object
+            x-kubernetes-preserve-unknown-fields: true
+        required:
+        - metadata
+        - spec
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: sensors.argoproj.io
+spec:
+  group: argoproj.io
+  names:
+    kind: Sensor
+    listKind: SensorList
+    plural: sensors
+    shortNames:
+    - sn
+    singular: sensor
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            type: object
+            x-kubernetes-preserve-unknown-fields: true
+          status:
+            type: object
+            x-kubernetes-preserve-unknown-fields: true
+        required:
+        - metadata
+        - spec
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    helm.sh/resource-policy: keep
+  name: workflowartifactgctasks.argoproj.io
+spec:
+  group: argoproj.io
+  names:
+    kind: WorkflowArtifactGCTask
+    listKind: WorkflowArtifactGCTaskList
+    plural: workflowartifactgctasks
+    shortNames:
+    - wfat
+    singular: workflowartifactgctask
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            type: object
+            x-kubernetes-map-type: atomic
+            x-kubernetes-preserve-unknown-fields: true
+          status:
+            type: object
+            x-kubernetes-map-type: atomic
+            x-kubernetes-preserve-unknown-fields: true
+        required:
+        - metadata
+        - spec
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    helm.sh/resource-policy: keep
+  name: workfloweventbindings.argoproj.io
+spec:
+  group: argoproj.io
+  names:
+    kind: WorkflowEventBinding
+    listKind: WorkflowEventBindingList
+    plural: workfloweventbindings
+    shortNames:
+    - wfeb
+    singular: workfloweventbinding
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            type: object
+            x-kubernetes-map-type: atomic
+            x-kubernetes-preserve-unknown-fields: true
+        required:
+        - metadata
+        - spec
+        type: object
+    served: true
+    storage: true
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    helm.sh/resource-policy: keep
+  name: workflows.argoproj.io
+spec:
+  group: argoproj.io
+  names:
+    kind: Workflow
+    listKind: WorkflowList
+    plural: workflows
+    shortNames:
+    - wf
+    singular: workflow
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - description: Status of the workflow
+      jsonPath: .status.phase
+      name: Status
+      type: string
+    - description: When the workflow was started
+      format: date-time
+      jsonPath: .status.startedAt
+      name: Age
+      type: date
+    - description: Human readable message indicating details about why the workflow
+        is in this condition.
+      jsonPath: .status.message
+      name: Message
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            type: object
+            x-kubernetes-map-type: atomic
+            x-kubernetes-preserve-unknown-fields: true
+          status:
+            type: object
+            x-kubernetes-map-type: atomic
+            x-kubernetes-preserve-unknown-fields: true
+        required:
+        - metadata
+        - spec
+        type: object
+    served: true
+    storage: true
+    subresources: {}
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    helm.sh/resource-policy: keep
+  name: workflowtaskresults.argoproj.io
+spec:
+  group: argoproj.io
+  names:
+    kind: WorkflowTaskResult
+    listKind: WorkflowTaskResultList
+    plural: workflowtaskresults
+    singular: workflowtaskresult
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          message:
+            type: string
+          metadata:
+            type: object
+          outputs:
+            properties:
+              artifacts:
+                items:
+                  properties:
+                    archive:
+                      properties:
+                        none:
+                          type: object
+                        tar:
+                          properties:
+                            compressionLevel:
+                              format: int32
+                              type: integer
+                          type: object
+                        zip:
+                          type: object
+                      type: object
+                    archiveLogs:
+                      type: boolean
+                    artifactGC:
+                      properties:
+                        podMetadata:
+                          properties:
+                            annotations:
+                              additionalProperties:
+                                type: string
+                              type: object
+                            labels:
+                              additionalProperties:
+                                type: string
+                              type: object
+                          type: object
+                        serviceAccountName:
+                          type: string
+                        strategy:
+                          enum:
+                          - ""
+                          - OnWorkflowCompletion
+                          - OnWorkflowDeletion
+                          - Never
+                          type: string
+                      type: object
+                    artifactory:
+                      properties:
+                        passwordSecret:
+                          properties:
+                            key:
+                              type: string
+                            name:
+                              type: string
+                            optional:
+                              type: boolean
+                          required:
+                          - key
+                          type: object
+                        url:
+                          type: string
+                        usernameSecret:
+                          properties:
+                            key:
+                              type: string
+                            name:
+                              type: string
+                            optional:
+                              type: boolean
+                          required:
+                          - key
+                          type: object
+                      required:
+                      - url
+                      type: object
+                    azure:
+                      properties:
+                        accountKeySecret:
+                          properties:
+                            key:
+                              type: string
+                            name:
+                              type: string
+                            optional:
+                              type: boolean
+                          required:
+                          - key
+                          type: object
+                        blob:
+                          type: string
+                        container:
+                          type: string
+                        endpoint:
+                          type: string
+                        useSDKCreds:
+                          type: boolean
+                      required:
+                      - blob
+                      - container
+                      - endpoint
+                      type: object
+                    deleted:
+                      type: boolean
+                    from:
+                      type: string
+                    fromExpression:
+                      type: string
+                    gcs:
+                      properties:
+                        bucket:
+                          type: string
+                        key:
+                          type: string
+                        serviceAccountKeySecret:
+                          properties:
+                            key:
+                              type: string
+                            name:
+                              type: string
+                            optional:
+                              type: boolean
+                          required:
+                          - key
+                          type: object
+                      required:
+                      - key
+                      type: object
+                    git:
+                      properties:
+                        branch:
+                          type: string
+                        depth:
+                          format: int64
+                          type: integer
+                        disableSubmodules:
+                          type: boolean
+                        fetch:
+                          items:
+                            type: string
+                          type: array
+                        insecureIgnoreHostKey:
+                          type: boolean
+                        passwordSecret:
+                          properties:
+                            key:
+                              type: string
+                            name:
+                              type: string
+                            optional:
+                              type: boolean
+                          required:
+                          - key
+                          type: object
+                        repo:
+                          type: string
+                        revision:
+                          type: string
+                        singleBranch:
+                          type: boolean
+                        sshPrivateKeySecret:
+                          properties:
+                            key:
+                              type: string
+                            name:
+                              type: string
+                            optional:
+                              type: boolean
+                          required:
+                          - key
+                          type: object
+                        usernameSecret:
+                          properties:
+                            key:
+                              type: string
+                            name:
+                              type: string
+                            optional:
+                              type: boolean
+                          required:
+                          - key
+                          type: object
+                      required:
+                      - repo
+                      type: object
+                    globalName:
+                      type: string
+                    hdfs:
+                      properties:
+                        addresses:
+                          items:
+                            type: string
+                          type: array
+                        force:
+                          type: boolean
+                        hdfsUser:
+                          type: string
+                        krbCCacheSecret:
+                          properties:
+                            key:
+                              type: string
+                            name:
+                              type: string
+                            optional:
+                              type: boolean
+                          required:
+                          - key
+                          type: object
+                        krbConfigConfigMap:
+                          properties:
+                            key:
+                              type: string
+                            name:
+                              type: string
+                            optional:
+                              type: boolean
+                          required:
+                          - key
+                          type: object
+                        krbKeytabSecret:
+                          properties:
+                            key:
+                              type: string
+                            name:
+                              type: string
+                            optional:
+                              type: boolean
+                          required:
+                          - key
+                          type: object
+                        krbRealm:
+                          type: string
+                        krbServicePrincipalName:
+                          type: string
+                        krbUsername:
+                          type: string
+                        path:
+                          type: string
+                      required:
+                      - path
+                      type: object
+                    http:
+                      properties:
+                        auth:
+                          properties:
+                            basicAuth:
+                              properties:
+                                passwordSecret:
+                                  properties:
+                                    key:
+                                      type: string
+                                    name:
+                                      type: string
+                                    optional:
+                                      type: boolean
+                                  required:
+                                  - key
+                                  type: object
+                                usernameSecret:
+                                  properties:
+                                    key:
+                                      type: string
+                                    name:
+                                      type: string
+                                    optional:
+                                      type: boolean
+                                  required:
+                                  - key
+                                  type: object
+                              type: object
+                            clientCert:
+                              properties:
+                                clientCertSecret:
+                                  properties:
+                                    key:
+                                      type: string
+                                    name:
+                                      type: string
+                                    optional:
+                                      type: boolean
+                                  required:
+                                  - key
+                                  type: object
+                                clientKeySecret:
+                                  properties:
+                                    key:
+                                      type: string
+                                    name:
+                                      type: string
+                                    optional:
+                                      type: boolean
+                                  required:
+                                  - key
+                                  type: object
+                              type: object
+                            oauth2:
+                              properties:
+                                clientIDSecret:
+                                  properties:
+                                    key:
+                                      type: string
+                                    name:
+                                      type: string
+                                    optional:
+                                      type: boolean
+                                  required:
+                                  - key
+                                  type: object
+                                clientSecretSecret:
+                                  properties:
+                                    key:
+                                      type: string
+                                    name:
+                                      type: string
+                                    optional:
+                                      type: boolean
+                                  required:
+                                  - key
+                                  type: object
+                                endpointParams:
+                                  items:
+                                    properties:
+                                      key:
+                                        type: string
+                                      value:
+                                        type: string
+                                    required:
+                                    - key
+                                    type: object
+                                  type: array
+                                scopes:
+                                  items:
+                                    type: string
+                                  type: array
+                                tokenURLSecret:
+                                  properties:
+                                    key:
+                                      type: string
+                                    name:
+                                      type: string
+                                    optional:
+                                      type: boolean
+                                  required:
+                                  - key
+                                  type: object
+                              type: object
+                          type: object
+                        headers:
+                          items:
+                            properties:
+                              name:
+                                type: string
+                              value:
+                                type: string
+                            required:
+                            - name
+                            - value
+                            type: object
+                          type: array
+                        url:
+                          type: string
+                      required:
+                      - url
+                      type: object
+                    mode:
+                      format: int32
+                      type: integer
+                    name:
+                      type: string
+                    optional:
+                      type: boolean
+                    oss:
+                      properties:
+                        accessKeySecret:
+                          properties:
+                            key:
+                              type: string
+                            name:
+                              type: string
+                            optional:
+                              type: boolean
+                          required:
+                          - key
+                          type: object
+                        bucket:
+                          type: string
+                        createBucketIfNotPresent:
+                          type: boolean
+                        endpoint:
+                          type: string
+                        key:
+                          type: string
+                        lifecycleRule:
+                          properties:
+                            markDeletionAfterDays:
+                              format: int32
+                              type: integer
+                            markInfrequentAccessAfterDays:
+                              format: int32
+                              type: integer
+                          type: object
+                        secretKeySecret:
+                          properties:
+                            key:
+                              type: string
+                            name:
+                              type: string
+                            optional:
+                              type: boolean
+                          required:
+                          - key
+                          type: object
+                        securityToken:
+                          type: string
+                      required:
+                      - key
+                      type: object
+                    path:
+                      type: string
+                    raw:
+                      properties:
+                        data:
+                          type: string
+                      required:
+                      - data
+                      type: object
+                    recurseMode:
+                      type: boolean
+                    s3:
+                      properties:
+                        accessKeySecret:
+                          properties:
+                            key:
+                              type: string
+                            name:
+                              type: string
+                            optional:
+                              type: boolean
+                          required:
+                          - key
+                          type: object
+                        bucket:
+                          type: string
+                        createBucketIfNotPresent:
+                          properties:
+                            objectLocking:
+                              type: boolean
+                          type: object
+                        encryptionOptions:
+                          properties:
+                            enableEncryption:
+                              type: boolean
+                            kmsEncryptionContext:
+                              type: string
+                            kmsKeyId:
+                              type: string
+                            serverSideCustomerKeySecret:
+                              properties:
+                                key:
+                                  type: string
+                                name:
+                                  type: string
+                                optional:
+                                  type: boolean
+                              required:
+                              - key
+                              type: object
+                          type: object
+                        endpoint:
+                          type: string
+                        insecure:
+                          type: boolean
+                        key:
+                          type: string
+                        region:
+                          type: string
+                        roleARN:
+                          type: string
+                        secretKeySecret:
+                          properties:
+                            key:
+                              type: string
+                            name:
+                              type: string
+                            optional:
+                              type: boolean
+                          required:
+                          - key
+                          type: object
+                        useSDKCreds:
+                          type: boolean
+                      type: object
+                    subPath:
+                      type: string
+                  required:
+                  - name
+                  type: object
+                type: array
+              exitCode:
+                type: string
+              parameters:
+                items:
+                  properties:
+                    default:
+                      type: string
+                    description:
+                      type: string
+                    enum:
+                      items:
+                        type: string
+                      type: array
+                    globalName:
+                      type: string
+                    name:
+                      type: string
+                    value:
+                      type: string
+                    valueFrom:
+                      properties:
+                        configMapKeyRef:
+                          properties:
+                            key:
+                              type: string
+                            name:
+                              type: string
+                            optional:
+                              type: boolean
+                          required:
+                          - key
+                          type: object
+                        default:
+                          type: string
+                        event:
+                          type: string
+                        expression:
+                          type: string
+                        jqFilter:
+                          type: string
+                        jsonPath:
+                          type: string
+                        parameter:
+                          type: string
+                        path:
+                          type: string
+                        supplied:
+                          type: object
+                      type: object
+                  required:
+                  - name
+                  type: object
+                type: array
+              result:
+                type: string
+            type: object
+          phase:
+            type: string
+          progress:
+            type: string
+        required:
+        - metadata
+        type: object
+    served: true
+    storage: true
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    helm.sh/resource-policy: keep
+  name: workflowtasksets.argoproj.io
+spec:
+  group: argoproj.io
+  names:
+    kind: WorkflowTaskSet
+    listKind: WorkflowTaskSetList
+    plural: workflowtasksets
+    shortNames:
+    - wfts
+    singular: workflowtaskset
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            type: object
+            x-kubernetes-map-type: atomic
+            x-kubernetes-preserve-unknown-fields: true
+          status:
+            type: object
+            x-kubernetes-map-type: atomic
+            x-kubernetes-preserve-unknown-fields: true
+        required:
+        - metadata
+        - spec
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    helm.sh/resource-policy: keep
+  name: workflowtemplates.argoproj.io
+spec:
+  group: argoproj.io
+  names:
+    kind: WorkflowTemplate
+    listKind: WorkflowTemplateList
+    plural: workflowtemplates
+    shortNames:
+    - wftmpl
+    singular: workflowtemplate
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            type: string
+          kind:
+            type: string
+          metadata:
+            type: object
+          spec:
+            type: object
+            x-kubernetes-map-type: atomic
+            x-kubernetes-preserve-unknown-fields: true
+        required:
+        - metadata
+        - spec
+        type: object
+    served: true
+    storage: true
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: argo-events-sa
+  namespace: argo-events
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: argo-events-webhook-sa
+  namespace: argo-events
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/component: server
+    app.kubernetes.io/instance: argo-workflows
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argo-workflows-server
+    app.kubernetes.io/part-of: argo-workflows
+    helm.sh/chart: argo-workflows-0.22.1
+  name: argo-workflows-server
+  namespace: argo-workflows
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/component: workflow-controller
+    app.kubernetes.io/instance: argo-workflows
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argo-workflows-workflow-controller
+    app.kubernetes.io/part-of: argo-workflows
+    helm.sh/chart: argo-workflows-0.22.1
+  name: argo-workflows-workflow-controller
+  namespace: argo-workflows
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    workflows.argoproj.io/rbac-rule: "true"
+    workflows.argoproj.io/rbac-rule-precedence: "0"
+  name: readonly-workflow-user
+  namespace: argo-workflows
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    workflows.argoproj.io/rbac-rule: '''root'' in groups'
+    workflows.argoproj.io/rbac-rule-precedence: "1"
+  name: root-workflow-user
+  namespace: argo-workflows
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: gitea
+  namespace: gitea
+---
+apiVersion: v1
+automountServiceAccountToken: true
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/instance: gitea
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: memcached
+    helm.sh/chart: memcached-5.9.0
+  name: gitea-memcached
+  namespace: gitea
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    app.kubernetes.io/component: workflow-controller
+    app.kubernetes.io/instance: argo-workflows
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argo-workflows-workflow-controller
+    app.kubernetes.io/part-of: argo-workflows
+    helm.sh/chart: argo-workflows-0.22.1
+  name: argo-workflows-workflow
+  namespace: argo-workflows
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - watch
+  - patch
+- apiGroups:
+  - ""
+  resources:
+  - pods/log
+  verbs:
+  - get
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods/exec
+  verbs:
+  - create
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflowtaskresults
+  verbs:
+  - create
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflowtasksets
+  - workflowartifactgctasks
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflowtasksets/status
+  - workflowartifactgctasks/status
+  verbs:
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+  name: argo-events-aggregate-to-admin
+rules:
+- apiGroups:
+  - argoproj.io
+  resources:
+  - sensors
+  - sensors/finalizers
+  - sensors/status
+  - eventsources
+  - eventsources/finalizers
+  - eventsources/status
+  - eventbus
+  - eventbus/finalizers
+  - eventbus/status
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    rbac.authorization.k8s.io/aggregate-to-edit: "true"
+  name: argo-events-aggregate-to-edit
+rules:
+- apiGroups:
+  - argoproj.io
+  resources:
+  - sensors
+  - sensors/finalizers
+  - sensors/status
+  - eventsources
+  - eventsources/finalizers
+  - eventsources/status
+  - eventbus
+  - eventbus/finalizers
+  - eventbus/status
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    rbac.authorization.k8s.io/aggregate-to-view: "true"
+  name: argo-events-aggregate-to-view
+rules:
+- apiGroups:
+  - argoproj.io
+  resources:
+  - sensors
+  - sensors/finalizers
+  - sensors/status
+  - eventsources
+  - eventsources/finalizers
+  - eventsources/status
+  - eventbus
+  - eventbus/finalizers
+  - eventbus/status
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: argo-events-role
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - argoproj.io
+  resources:
+  - sensors
+  - sensors/finalizers
+  - sensors/status
+  - eventsources
+  - eventsources/finalizers
+  - eventsources/status
+  - eventbus
+  - eventbus/finalizers
+  - eventbus/status
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - pods/exec
+  - configmaps
+  - secrets
+  - services
+  - persistentvolumeclaims
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  - statefulsets
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - update
+  - patch
+  - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: argo-events-webhook
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+  - patch
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - admissionregistration.k8s.io
+  resources:
+  - validatingwebhookconfigurations
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+  - patch
+  - watch
+- apiGroups:
+  - argoproj.io
+  resources:
+  - eventbus
+  - eventsources
+  - sensors
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - clusterroles
+  verbs:
+  - get
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/component: server
+    app.kubernetes.io/instance: argo-workflows
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argo-workflows-server
+    app.kubernetes.io/part-of: argo-workflows
+    helm.sh/chart: argo-workflows-0.22.1
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+  name: argo-workflows-admin
+rules:
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflows
+  - workflows/finalizers
+  - workfloweventbindings
+  - workfloweventbindings/finalizers
+  - workflowtasksets
+  - workflowtasksets/finalizers
+  - workflowtemplates
+  - workflowtemplates/finalizers
+  - cronworkflows
+  - cronworkflows/finalizers
+  - clusterworkflowtemplates
+  - clusterworkflowtemplates/finalizers
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/component: server
+    app.kubernetes.io/instance: argo-workflows
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argo-workflows-server
+    app.kubernetes.io/part-of: argo-workflows
+    helm.sh/chart: argo-workflows-0.22.1
+    rbac.authorization.k8s.io/aggregate-to-edit: "true"
+  name: argo-workflows-edit
+rules:
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflows
+  - workflows/finalizers
+  - workfloweventbindings
+  - workfloweventbindings/finalizers
+  - workflowtemplates
+  - workflowtemplates/finalizers
+  - cronworkflows
+  - cronworkflows/finalizers
+  - clusterworkflowtemplates
+  - clusterworkflowtemplates/finalizers
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/component: server
+    app.kubernetes.io/instance: argo-workflows
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argo-workflows-server
+    app.kubernetes.io/part-of: argo-workflows
+    helm.sh/chart: argo-workflows-0.22.1
+  name: argo-workflows-server
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  - events
+  verbs:
+  - get
+  - watch
+  - list
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - pods/exec
+  - pods/log
+  verbs:
+  - get
+  - list
+  - watch
+  - delete
+- apiGroups:
+  - ""
+  resourceNames:
+  - sso
+  resources:
+  - secrets
+  verbs:
+  - get
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - create
+- apiGroups:
+  - ""
+  resources:
+  - serviceaccounts
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - watch
+  - create
+  - patch
+- apiGroups:
+  - argoproj.io
+  resources:
+  - eventsources
+  - sensors
+  - workflows
+  - workfloweventbindings
+  - workflowtemplates
+  - cronworkflows
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - update
+  - patch
+  - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/component: server
+    app.kubernetes.io/instance: argo-workflows
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argo-workflows-server
+    app.kubernetes.io/part-of: argo-workflows
+    helm.sh/chart: argo-workflows-0.22.1
+  name: argo-workflows-server-cluster-template
+rules:
+- apiGroups:
+  - argoproj.io
+  resources:
+  - clusterworkflowtemplates
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/component: workflow-controller
+    app.kubernetes.io/instance: argo-workflows
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argo-workflows-workflow-controller
+    app.kubernetes.io/part-of: argo-workflows
+    helm.sh/chart: argo-workflows-0.22.1
+    rbac.authorization.k8s.io/aggregate-to-view: "true"
+  name: argo-workflows-view
+rules:
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflows
+  - workflows/finalizers
+  - workfloweventbindings
+  - workfloweventbindings/finalizers
+  - workflowtemplates
+  - workflowtemplates/finalizers
+  - cronworkflows
+  - cronworkflows/finalizers
+  - clusterworkflowtemplates
+  - clusterworkflowtemplates/finalizers
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/component: workflow-controller
+    app.kubernetes.io/instance: argo-workflows
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argo-workflows-workflow-controller
+    app.kubernetes.io/part-of: argo-workflows
+    helm.sh/chart: argo-workflows-0.22.1
+  name: argo-workflows-workflow-controller
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - pods/exec
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - watch
+  - list
+- apiGroups:
+  - ""
+  resources:
+  - persistentvolumeclaims
+  - persistentvolumeclaims/finalizers
+  verbs:
+  - create
+  - update
+  - delete
+  - get
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflows
+  - workflows/finalizers
+  - workflowtasksets
+  - workflowtasksets/finalizers
+  - workflowartifactgctasks
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+  - patch
+  - delete
+  - create
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflowtemplates
+  - workflowtemplates/finalizers
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflowtaskresults
+  - workflowtaskresults/finalizers
+  verbs:
+  - list
+  - watch
+  - deletecollection
+- apiGroups:
+  - argoproj.io
+  resources:
+  - cronworkflows
+  - cronworkflows/finalizers
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+- apiGroups:
+  - ""
+  resources:
+  - serviceaccounts
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - policy
+  resources:
+  - poddisruptionbudgets
+  verbs:
+  - create
+  - get
+  - delete
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - create
+- apiGroups:
+  - coordination.k8s.io
+  resourceNames:
+  - workflow-controller
+  - workflow-controller-lease
+  resources:
+  - leases
+  verbs:
+  - get
+  - watch
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - ""
+  resourceNames:
+  - argo-workflows-agent-ca-certificates
+  resources:
+  - secrets
+  verbs:
+  - get
+- apiGroups:
+  - ""
+  resourceNames:
+  - vault-argo-oidc-client-secret
+  resources:
+  - secrets
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/component: workflow-controller
+    app.kubernetes.io/instance: argo-workflows
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argo-workflows-workflow-controller
+    app.kubernetes.io/part-of: argo-workflows
+    helm.sh/chart: argo-workflows-0.22.1
+  name: argo-workflows-workflow-controller-cluster-template
+rules:
+- apiGroups:
+  - argoproj.io
+  resources:
+  - clusterworkflowtemplates
+  - clusterworkflowtemplates/finalizers
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: readonly-workflow-user-admin
+rules:
+- apiGroups:
+  - argoproj.io
+  resources:
+  - eventbus
+  - eventsources
+  - sensors
+  verbs:
+  - list
+  - get
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: root-workflow-user-admin
+rules:
+- apiGroups:
+  - argoproj.io
+  resources:
+  - eventbus
+  - eventsources
+  - sensors
+  verbs:
+  - '*'
+- apiGroups:
+  - ""
+  resources:
+  - pod/logs
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: workflow-controller
+    app.kubernetes.io/instance: argo-workflows
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argo-workflows-workflow-controller
+    app.kubernetes.io/part-of: argo-workflows
+    helm.sh/chart: argo-workflows-0.22.1
+  name: argo-workflows-workflow
+  namespace: argo-workflows
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: argo-workflows-workflow
+subjects:
+- kind: ServiceAccount
+  name: argo-workflow
+  namespace: argo-workflows
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: argo-workflow-tokenreview-binding
+  namespace: argo-workflows
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:auth-delegator
+subjects:
+- kind: ServiceAccount
+  name: argo-workflows-server
+  namespace: argo-workflows
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: argo-events-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: argo-events-role
+subjects:
+- kind: ServiceAccount
+  name: argo-events-sa
+  namespace: argo-events
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: argo-events-webhook-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: argo-events-webhook
+subjects:
+- kind: ServiceAccount
+  name: argo-events-webhook-sa
+  namespace: argo-events
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: server
+    app.kubernetes.io/instance: argo-workflows
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argo-workflows-server
+    app.kubernetes.io/part-of: argo-workflows
+    helm.sh/chart: argo-workflows-0.22.1
+  name: argo-workflows-server
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: argo-workflows-server
+subjects:
+- kind: ServiceAccount
+  name: argo-workflows-server
+  namespace: argo-workflows
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: server
+    app.kubernetes.io/instance: argo-workflows
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argo-workflows-server
+    app.kubernetes.io/part-of: argo-workflows
+    helm.sh/chart: argo-workflows-0.22.1
+  name: argo-workflows-server-cluster-template
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: argo-workflows-server-cluster-template
+subjects:
+- kind: ServiceAccount
+  name: argo-workflows-server
+  namespace: argo-workflows
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: workflow-controller
+    app.kubernetes.io/instance: argo-workflows
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argo-workflows-workflow-controller
+    app.kubernetes.io/part-of: argo-workflows
+    helm.sh/chart: argo-workflows-0.22.1
+  name: argo-workflows-workflow-controller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: argo-workflows-workflow-controller
+subjects:
+- kind: ServiceAccount
+  name: argo-workflows-workflow-controller
+  namespace: argo-workflows
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: workflow-controller
+    app.kubernetes.io/instance: argo-workflows
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argo-workflows-workflow-controller
+    app.kubernetes.io/part-of: argo-workflows
+    helm.sh/chart: argo-workflows-0.22.1
+  name: argo-workflows-workflow-controller-cluster-template
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: argo-workflows-workflow-controller-cluster-template
+subjects:
+- kind: ServiceAccount
+  name: argo-workflows-workflow-controller
+  namespace: argo-workflows
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: gitea-tokenreview-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:auth-delegator
+subjects:
+- kind: ServiceAccount
+  name: gitea
+  namespace: gitea
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: readonly-workflow-user-admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: readonly-workflow-user-admin
+subjects:
+- kind: ServiceAccount
+  name: readonly-workflow-user
+  namespace: argo-workflows
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: root-workflow-user-admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: root-workflow-user-admin
+subjects:
+- kind: ServiceAccount
+  name: root-workflow-user
+  namespace: argo-workflows
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: root-workflow-user-workflow
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: argo-workflows-admin
+subjects:
+- kind: ServiceAccount
+  name: root-workflow-user
+  namespace: argo-workflows
+---
+apiVersion: v1
+data:
+  controller-config.yaml: |
+    eventBus:
+      nats:
+        versions:
+        - version: 0.22.1
+          natsStreamingImage: nats-streaming:0.22.1
+          metricsExporterImage: natsio/prometheus-nats-exporter:0.8.0
+      jetstream:
+        # Default JetStream settings, could be overridden by EventBus JetStream specs
+        settings: |
+          # https://docs.nats.io/running-a-nats-service/configuration#jetstream
+          # Only configure "max_memory_store" or "max_file_store", do not set "store_dir" as it has been hardcoded.
+          # e.g. 1G. -1 means no limit, up to 75% of available memory
+          max_memory_store: -1
+          # e.g. 20G. -1 means no limit, Up to 1TB if available
+          max_file_store: 1TB
+        streamConfig: |
+          # The default properties of the streams to be created in this JetStream service
+          maxMsgs: 50000
+          maxAge: 168h
+          maxBytes: -1
+          replicas: 3
+          duplicates: 300s
+        versions:
+        - version: latest
+          natsImage: nats:2.9.1
+          metricsExporterImage: natsio/prometheus-nats-exporter:0.9.1
+          configReloaderImage: natsio/nats-server-config-reloader:0.7.0
+          startCommand: /nats-server
+        - version: 2.8.1
+          natsImage: nats:2.8.1
+          metricsExporterImage: natsio/prometheus-nats-exporter:0.9.1
+          configReloaderImage: natsio/nats-server-config-reloader:0.7.0
+          startCommand: /nats-server
+        - version: 2.8.1-alpine
+          natsImage: nats:2.8.1-alpine
+          metricsExporterImage: natsio/prometheus-nats-exporter:0.9.1
+          configReloaderImage: natsio/nats-server-config-reloader:0.7.0
+          startCommand: nats-server
+        - version: 2.8.2
+          natsImage: nats:2.8.2
+          metricsExporterImage: natsio/prometheus-nats-exporter:0.9.1
+          configReloaderImage: natsio/nats-server-config-reloader:0.7.0
+          startCommand: /nats-server
+        - version: 2.8.2-alpine
+          natsImage: nats:2.8.2-alpine
+          metricsExporterImage: natsio/prometheus-nats-exporter:0.9.1
+          configReloaderImage: natsio/nats-server-config-reloader:0.7.0
+          startCommand: nats-server
+        - version: 2.9.1
+          natsImage: nats:2.9.1
+          metricsExporterImage: natsio/prometheus-nats-exporter:0.9.1
+          configReloaderImage: natsio/nats-server-config-reloader:0.7.0
+          startCommand: /nats-server
+kind: ConfigMap
+metadata:
+  name: argo-events-controller-config
+  namespace: argo-events
+---
+apiVersion: v1
+data:
+  config: "sso:\n  issuer: https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/default\n
+    \ clientId:\n    name: vault-argo-oidc-client-secret\n    key: client-id\n  clientSecret:\n
+    \   name: vault-argo-oidc-client-secret\n    key: client-secret\n  redirectUrl:
+    https://argo.dmann.xyz/oauth2/callback\n  rbac:\n    enabled: true\n  scopes:
+    \n    - openid\n    - profile\n    - email\n    - groups\n"
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/component: workflow-controller
+    app.kubernetes.io/instance: argo-workflows
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argo-workflows-cm
+    app.kubernetes.io/part-of: argo-workflows
+    helm.sh/chart: argo-workflows-0.22.1
+  name: argo-workflows-workflow-controller-configmap
+  namespace: argo-workflows
+---
+apiVersion: v1
+data:
+  Caddyfile: |2-
+
+
+    :443 {
+      tls /opt/argo-tls/tls.crt /opt/argo-tls/tls.key
+      reverse_proxy https://argo-workflows-server:2746 {
+        transport http {
+          tls
+          tls_insecure_skip_verify
+        }
+      }
+    }
+
+    :80 {
+      respond /live 200
+      respond /ready 200
+    }
+kind: ConfigMap
+metadata:
+  name: caddyfile-92htd69bm6
+  namespace: argo-workflows
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  annotations:
+    kubernetes.io/service-account.name: readonly-workflow-user
+  name: readonly-workflow-user.service-account-token
+  namespace: argo-workflows
+type: kubernetes.io/service-account-token
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  annotations:
+    kubernetes.io/service-account.name: root-workflow-user
+  name: root-workflow-user.service-account-token
+  namespace: argo-workflows
+type: kubernetes.io/service-account-token
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  labels:
+    app: gitea
+    app.kubernetes.io/instance: gitea
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: gitea
+    app.kubernetes.io/version: 1.17.3
+    helm.sh/chart: gitea-6.0.3
+    version: 1.17.3
+  name: gitea
+  namespace: gitea
+stringData:
+  config_environment.sh: "#!/usr/bin/env bash\nset -euo pipefail\n\nfunction env2ini::log()
+    {\n  printf \"${1}\\n\"\n}\n\nfunction env2ini::read_config_to_env() {\n  local
+    section=\"${1}\"\n  local line=\"${2}\"\n\n  if [[ -z \"${line}\" ]]; then\n    #
+    skip empty line\n    return\n  fi\n  \n  # 'xargs echo -n' trims all leading/trailing
+    whitespaces and a trailing new line\n  local setting=\"$(awk -F '=' '{print $1}'
+    <<< \"${line}\" | xargs echo -n)\"\n\n  if [[ -z \"${setting}\" ]]; then\n    env2ini::log
+    '  ! invalid setting'\n    exit 1\n  fi\n\n  local value=''\n  local regex=\"^${setting}(\\s*)=(\\s*)(.*)\"\n
+    \ if [[ $line =~ $regex ]]; then\n    value=\"${BASH_REMATCH[3]}\"\n  else\n    env2ini::log
+    '  ! invalid setting'\n    exit 1\n  fi\n\n  env2ini::log \"    + '${setting}'\"\n\n
+    \ if [[ -z \"${section}\" ]]; then\n    export \"ENV_TO_INI____${setting^^}=${value}\"
+    \                          # '^^' makes the variable content uppercase\n    return\n
+    \ fi\n\n  local masked_section=\"${section//./_0X2E_}\"                            #
+    '//' instructs to replace all matches\n  masked_section=\"${masked_section//-/_0X2D_}\"\n\n
+    \ export \"ENV_TO_INI__${masked_section^^}__${setting^^}=${value}\"        # '^^'
+    makes the variable content uppercase\n}\n\nfunction env2ini::reload_preset_envs()
+    {\n  env2ini::log \"Reloading preset envs...\"\n\n  while read -r line; do\n    if
+    [[ -z \"${line}\" ]]; then\n      # skip empty line\n      return\n    fi\n\n
+    \   # 'xargs echo -n' trims all leading/trailing whitespaces and a trailing new
+    line\n    local setting=\"$(awk -F '=' '{print $1}' <<< \"${line}\" | xargs echo
+    -n)\"\n\n    if [[ -z \"${setting}\" ]]; then\n      env2ini::log '  ! invalid
+    setting'\n      exit 1\n    fi\n\n    local value=''\n    local regex=\"^${setting}(\\s*)=(\\s*)(.*)\"\n
+    \   if [[ $line =~ $regex ]]; then\n      value=\"${BASH_REMATCH[3]}\"\n    else\n
+    \     env2ini::log '  ! invalid setting'\n      exit 1\n    fi\n\n    env2ini::log
+    \"  + '${setting}'\"\n\n    export \"${setting^^}=${value}\"                           #
+    '^^' makes the variable content uppercase\n  done < \"/tmp/existing-envs\"\n\n
+    \ rm /tmp/existing-envs\n}\n\n\nfunction env2ini::process_config_file() {\n  local
+    config_file=\"${1}\"\n  local section=\"$(basename \"${config_file}\")\"\n\n  if
+    [[ $section == '_generals_' ]]; then\n    env2ini::log \"  [ini root]\"\n    section=''\n
+    \ else\n    env2ini::log \"  ${section}\"\n  fi\n\n  while read -r line; do\n
+    \   env2ini::read_config_to_env \"${section}\" \"${line}\"\n  done < <(awk 1 \"${config_file}\")
+    \                            # Helm .toYaml trims the trailing new line which
+    breaks line processing; awk 1 ... adds it back while reading\n}\n\nfunction env2ini::load_config_sources()
+    {\n  local path=\"${1}\"\n\n  if [[ -d \"${path}\" ]]; then\n    env2ini::log
+    \"Processing $(basename \"${path}\")...\"\n\n    while read -d '' configFile;
+    do\n      env2ini::process_config_file \"${configFile}\"\n    done < <(find \"${path}\"
+    -type l -not -name '..data' -print0)\n\n    env2ini::log \"\\n\"\n  fi\n}\n\nfunction
+    env2ini::generate_initial_secrets() {\n  # These environment variables will either
+    be\n  #   - overwritten with user defined values,\n  #   - initially used to set
+    up Gitea\n  # Anyway, they won't harm existing app.ini files\n\n  export ENV_TO_INI__SECURITY__INTERNAL_TOKEN=$(gitea
+    generate secret INTERNAL_TOKEN)\n  export ENV_TO_INI__SECURITY__SECRET_KEY=$(gitea
+    generate secret SECRET_KEY)\n  export ENV_TO_INI__OAUTH2__JWT_SECRET=$(gitea generate
+    secret JWT_SECRET)\n  export ENV_TO_INI__SERVER__LFS_JWT_SECRET=$(gitea generate
+    secret LFS_JWT_SECRET)\n\n  env2ini::log \"...Initial secrets generated\\n\"\n}\n\nenv
+    | (grep ENV_TO_INI || [[ $? == 1 ]]) > /tmp/existing-envs\n\n# MUST BE CALLED
+    BEFORE OTHER CONFIGURATION\nenv2ini::generate_initial_secrets\n\nenv2ini::load_config_sources
+    '/env-to-ini-mounts/inlines/'\nenv2ini::load_config_sources '/env-to-ini-mounts/additionals/'\n\n#
+    load existing envs to override auto generated envs\nenv2ini::reload_preset_envs\n\nenv2ini::log
+    \"=== All configuration sources loaded ===\\n\"\n\n# safety to prevent rewrite
+    of secret keys if an app.ini already exists\nif [ -f ${GITEA_APP_INI} ]; then\n
+    \ env2ini::log 'An app.ini file already exists. To prevent overwriting secret
+    keys, these settings are dropped and remain unchanged:'\n  env2ini::log '  - security.INTERNAL_TOKEN'\n
+    \ env2ini::log '  - security.SECRET_KEY'\n  env2ini::log '  - oauth2.JWT_SECRET'\n
+    \ env2ini::log '  - server.LFS_JWT_SECRET'\n\n  unset ENV_TO_INI__SECURITY__INTERNAL_TOKEN\n
+    \ unset ENV_TO_INI__SECURITY__SECRET_KEY\n  unset ENV_TO_INI__OAUTH2__JWT_SECRET\n
+    \ unset ENV_TO_INI__SERVER__LFS_JWT_SECRET\nfi\n\nenvironment-to-ini -o $GITEA_APP_INI
+    -p ENV_TO_INI"
+type: Opaque
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  labels:
+    app: gitea
+    app.kubernetes.io/instance: gitea
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: gitea
+    app.kubernetes.io/version: 1.17.3
+    helm.sh/chart: gitea-6.0.3
+    version: 1.17.3
+  name: gitea-init
+  namespace: gitea
+stringData:
+  configure_gitea.sh: "#!/usr/bin/env bash\n\nset -euo pipefail\n\necho '==== BEGIN
+    GITEA CONFIGURATION ===='\n\n{ # try\n  gitea migrate\n} || { # catch\n  echo
+    \"Gitea migrate might fail due to database connection...This init-container will
+    try again in a few seconds\"\n  exit 1\n}\nfunction configure_admin_user() {\n
+    \ local ACCOUNT_ID=$(gitea admin user list --admin | grep -e \"\\s\\+${GITEA_ADMIN_USERNAME}\\s\\+\"
+    | awk -F \" \" \"{printf \\$1}\")\n  if [[ -z \"${ACCOUNT_ID}\" ]]; then\n    echo
+    \"No admin user '${GITEA_ADMIN_USERNAME}' found. Creating now...\"\n    gitea
+    admin user create --admin --username \"${GITEA_ADMIN_USERNAME}\" --password \"${GITEA_ADMIN_PASSWORD}\"
+    --email \"gitea@local.domain\" --must-change-password=false\n    echo '...created.'\n
+    \ else\n    echo \"Admin account '${GITEA_ADMIN_USERNAME}' already exist. Running
+    update to sync password...\"\n    gitea admin user change-password --username
+    \"${GITEA_ADMIN_USERNAME}\" --password \"${GITEA_ADMIN_PASSWORD}\"\n    echo '...password
+    sync done.'\n  fi\n}\n\nconfigure_admin_user\n\nfunction configure_ldap() {\n
+    \   echo 'no ldap configuration... skipping.'\n}\n\nconfigure_ldap\n\nfunction
+    configure_oauth() {\n  local OAUTH_NAME='vault'\n  local AUTH_ID=$(gitea admin
+    auth list --vertical-bars | grep -E \"\\|${OAUTH_NAME}\\s+\\|\" | grep -iE '\\|OAuth2\\s+\\|'
+    | awk -F \" \"  \"{print \\$1}\")\n\n  if [[ -z \"${AUTH_ID}\" ]]; then\n    echo
+    \"No oauth configuration found with name '${OAUTH_NAME}'. Installing it now...\"\n
+    \   gitea admin auth add-oauth --auto-discover-url \"https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/default/.well-known/openid-configuration\"
+    --key \"${GITEA_OAUTH_KEY_0}\" --name \"vault\" --provider \"openidConnect\" --secret
+    \"${GITEA_OAUTH_SECRET_0}\" \n    echo '...installed.'\n  else\n    echo \"Existing
+    oauth configuration with name '${OAUTH_NAME}': '${AUTH_ID}'. Running update to
+    sync settings...\"\n    gitea admin auth update-oauth --id \"${AUTH_ID}\" --auto-discover-url
+    \"https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/default/.well-known/openid-configuration\"
+    --key \"${GITEA_OAUTH_KEY_0}\" --name \"vault\" --provider \"openidConnect\" --secret
+    \"${GITEA_OAUTH_SECRET_0}\" \n    echo '...sync settings done.'\n  fi\n}\n\nconfigure_oauth\n\necho
+    '==== END GITEA CONFIGURATION ===='"
+  init_directory_structure.sh: |-
+    #!/usr/bin/env bash
+
+    set -euo pipefail
+
+    set -x
+    chown 1000:1000 /data
+    mkdir -p /data/git/.ssh
+    chmod -R 700 /data/git/.ssh
+    [ ! -d /data/gitea/conf ] && mkdir -p /data/gitea/conf
+
+    # prepare temp directory structure
+    mkdir -p "${GITEA_TEMP}"
+    chown 1000:1000 "${GITEA_TEMP}"
+    chmod ug+rwx "${GITEA_TEMP}"
+type: Opaque
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  labels:
+    app: gitea
+    app.kubernetes.io/instance: gitea
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: gitea
+    app.kubernetes.io/version: 1.17.3
+    helm.sh/chart: gitea-6.0.3
+    version: 1.17.3
+  name: gitea-inline-config
+  namespace: gitea
+stringData:
+  _generals_: ""
+  cache: |-
+    ADAPTER=memcache
+    ENABLED=true
+    HOST=gitea-memcached.gitea.svc.cluster.local:11211
+  database: |-
+    DB_TYPE=postgres
+    HOST=gitea-postgresql.gitea.svc.cluster.local:5432
+    NAME=gitea
+    PASSWD=gitea
+    USER=gitea
+  metrics: ENABLED=false
+  repository: ROOT=/data/git/gitea-repositories
+  security: INSTALL_LOCK=true
+  server: |-
+    APP_DATA_PATH=/data
+    CERT_FILE=/opt/gitea-tls/tls.crt
+    DOMAIN=git.dmann.xyz
+    ENABLE_PPROF=false
+    HTTP_PORT=3000
+    KEY_FILE=/opt/gitea-tls/tls.key
+    PROTOCOL=https
+    ROOT_URL=https://git.dmann.xyz
+    SSH_DOMAIN=git.dmann.xyz
+    SSH_LISTEN_PORT=22
+    SSH_PORT=22
+type: Opaque
+---
+apiVersion: v1
+data:
+  postgresql-password: Z2l0ZWE=
+  postgresql-postgres-password: ZzFlU2FSUm95Tg==
+kind: Secret
+metadata:
+  labels:
+    app.kubernetes.io/instance: gitea
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: postgresql
+    helm.sh/chart: postgresql-10.3.17
+  name: gitea-postgresql
+  namespace: gitea
+type: Opaque
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: events-webhook
+  namespace: argo-events
+spec:
+  ports:
+  - port: 443
+    targetPort: 443
+  selector:
+    app: events-webhook
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    k8s.dmann.xyz/cloudflare-domain-dmann-dev: argo
+    k8s.dmann.xyz/cloudflare-domain-dmann-xyz: argo
+    k8s.dmann.xyz/cloudflare-zone-dmann-dev: dmann.dev
+    k8s.dmann.xyz/cloudflare-zone-dmann-xyz: dmann.xyz
+  name: argo-workflow-ingress
+  namespace: argo-workflows
+spec:
+  ipFamilyPolicy: PreferDualStack
+  ports:
+  - name: https
+    port: 443
+    protocol: TCP
+    targetPort: 443
+  selector:
+    app: reverse-proxy
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: server
+    app.kubernetes.io/instance: argo-workflows
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argo-workflows-server
+    app.kubernetes.io/part-of: argo-workflows
+    app.kubernetes.io/version: v3.4.4
+    helm.sh/chart: argo-workflows-0.22.1
+  name: argo-workflows-server
+  namespace: argo-workflows
+spec:
+  ports:
+  - port: 2746
+    targetPort: 2746
+  selector:
+    app.kubernetes.io/instance: argo-workflows
+    app.kubernetes.io/name: argo-workflows-server
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: gitea
+    app.kubernetes.io/instance: gitea
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: gitea
+    app.kubernetes.io/version: 1.17.3
+    helm.sh/chart: gitea-6.0.3
+    version: 1.17.3
+  name: gitea-http
+  namespace: gitea
+spec:
+  ipFamilyPolicy: PreferDualStack
+  ports:
+  - name: http
+    port: 3000
+    targetPort: 3000
+  selector:
+    app.kubernetes.io/instance: gitea
+    app.kubernetes.io/name: gitea
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    k8s.dmann.xyz/cloudflare-domain-dmann-dev: git
+    k8s.dmann.xyz/cloudflare-domain-dmann-xyz: git
+    k8s.dmann.xyz/cloudflare-zone-dmann-dev: dmann.dev
+    k8s.dmann.xyz/cloudflare-zone-dmann-xyz: dmann.xyz
+  name: gitea-ingress
+  namespace: gitea
+spec:
+  ipFamilyPolicy: PreferDualStack
+  ports:
+  - name: https
+    port: 443
+    protocol: TCP
+    targetPort: 3000
+  - name: ssh
+    port: 22
+    protocol: TCP
+    targetPort: 22
+  selector:
+    app.kubernetes.io/instance: gitea
+    app.kubernetes.io/name: gitea
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/instance: gitea
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: memcached
+    helm.sh/chart: memcached-5.9.0
+  name: gitea-memcached
+  namespace: gitea
+spec:
+  ports:
+  - name: memcache
+    nodePort: null
+    port: 11211
+    targetPort: memcache
+  selector:
+    app.kubernetes.io/instance: gitea
+    app.kubernetes.io/name: memcached
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/instance: gitea
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: postgresql
+    helm.sh/chart: postgresql-10.3.17
+  name: gitea-postgresql
+  namespace: gitea
+spec:
+  ports:
+  - name: tcp-postgresql
+    port: 5432
+    targetPort: tcp-postgresql
+  selector:
+    app.kubernetes.io/instance: gitea
+    app.kubernetes.io/name: postgresql
+    role: primary
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/instance: gitea
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: postgresql
+    helm.sh/chart: postgresql-10.3.17
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+  name: gitea-postgresql-headless
+  namespace: gitea
+spec:
+  clusterIP: None
+  ports:
+  - name: tcp-postgresql
+    port: 5432
+    targetPort: tcp-postgresql
+  publishNotReadyAddresses: true
+  selector:
+    app.kubernetes.io/instance: gitea
+    app.kubernetes.io/name: postgresql
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: gitea
+    app.kubernetes.io/instance: gitea
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: gitea
+    app.kubernetes.io/version: 1.17.3
+    helm.sh/chart: gitea-6.0.3
+    version: 1.17.3
+  name: gitea-ssh
+  namespace: gitea
+spec:
+  ipFamilyPolicy: PreferDualStack
+  ports:
+  - name: ssh
+    port: 22
+    protocol: TCP
+    targetPort: 22
+  selector:
+    app.kubernetes.io/instance: gitea
+    app.kubernetes.io/name: gitea
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: controller-manager
+  namespace: argo-events
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: controller-manager
+  template:
+    metadata:
+      labels:
+        app: controller-manager
+    spec:
+      containers:
+      - args:
+        - controller
+        env:
+        - name: ARGO_EVENTS_IMAGE
+          value: quay.io/argoproj/argo-events:v1.7.4
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        image: quay.io/argoproj/argo-events:v1.7.4
+        imagePullPolicy: Always
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8081
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        name: controller-manager
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8081
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        volumeMounts:
+        - mountPath: /etc/argo-events
+          name: controller-config-volume
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 9731
+      serviceAccountName: argo-events-sa
+      volumes:
+      - configMap:
+          name: argo-events-controller-config
+        name: controller-config-volume
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: events-webhook
+  namespace: argo-events
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: events-webhook
+  template:
+    metadata:
+      labels:
+        app: events-webhook
+    spec:
+      containers:
+      - args:
+        - webhook-service
+        env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: PORT
+          value: "443"
+        image: quay.io/argoproj/argo-events:v1.7.4
+        imagePullPolicy: Always
+        name: webhook
+      serviceAccountName: argo-events-webhook-sa
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: server
+    app.kubernetes.io/instance: argo-workflows
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argo-workflows-server
+    app.kubernetes.io/part-of: argo-workflows
+    app.kubernetes.io/version: v3.4.4
+    helm.sh/chart: argo-workflows-0.22.1
+  name: argo-workflows-server
+  namespace: argo-workflows
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: argo-workflows
+      app.kubernetes.io/name: argo-workflows-server
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: server
+        app.kubernetes.io/instance: argo-workflows
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: argo-workflows-server
+        app.kubernetes.io/part-of: argo-workflows
+        app.kubernetes.io/version: v3.4.4
+        helm.sh/chart: argo-workflows-0.22.1
+    spec:
+      containers:
+      - args:
+        - server
+        - --configmap=argo-workflows-workflow-controller-configmap
+        - --auth-mode=sso
+        - --secure=true
+        env:
+        - name: IN_CLUSTER
+          value: "true"
+        - name: ARGO_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: BASE_HREF
+          value: /
+        image: quay.io/argoproj/argocli:v3.4.4
+        imagePullPolicy: Always
+        name: argo-server
+        ports:
+        - containerPort: 2746
+          name: web
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 2746
+            scheme: HTTPS
+          initialDelaySeconds: 10
+          periodSeconds: 20
+        resources: {}
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: false
+          runAsNonRoot: true
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp
+        - mountPath: /run/secrets/oidc
+          name: argo-oidc-creds
+      nodeSelector:
+        kubernetes.io/os: linux
+      serviceAccountName: argo-workflows-server
+      volumes:
+      - emptyDir: {}
+        name: tmp
+      - csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: vault-argo-oidc-client
+        name: argo-oidc-creds
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: workflow-controller
+    app.kubernetes.io/instance: argo-workflows
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argo-workflows-workflow-controller
+    app.kubernetes.io/part-of: argo-workflows
+    app.kubernetes.io/version: v3.4.4
+    helm.sh/chart: argo-workflows-0.22.1
+  name: argo-workflows-workflow-controller
+  namespace: argo-workflows
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: argo-workflows
+      app.kubernetes.io/name: argo-workflows-workflow-controller
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: workflow-controller
+        app.kubernetes.io/instance: argo-workflows
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: argo-workflows-workflow-controller
+        app.kubernetes.io/part-of: argo-workflows
+        app.kubernetes.io/version: v3.4.4
+        helm.sh/chart: argo-workflows-0.22.1
+    spec:
+      containers:
+      - args:
+        - --configmap
+        - argo-workflows-workflow-controller-configmap
+        - --executor-image
+        - quay.io/argoproj/argoexec:v3.4.4
+        - --loglevel
+        - info
+        - --gloglevel
+        - "0"
+        command:
+        - workflow-controller
+        env:
+        - name: ARGO_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: LEADER_ELECTION_IDENTITY
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+        image: quay.io/argoproj/workflow-controller:v3.4.4
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /healthz
+            port: 6060
+          initialDelaySeconds: 90
+          periodSeconds: 60
+          timeoutSeconds: 30
+        name: controller
+        ports:
+        - containerPort: 9090
+          name: metrics
+        - containerPort: 6060
+        resources: {}
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+      nodeSelector:
+        kubernetes.io/os: linux
+      serviceAccountName: argo-workflows-workflow-controller
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reverse-proxy
+  namespace: argo-workflows
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reverse-proxy
+  template:
+    metadata:
+      labels:
+        app: reverse-proxy
+    spec:
+      containers:
+      - args:
+        - run
+        - --config
+        - /opt/caddyfile/Caddyfile
+        command:
+        - caddy
+        image: harbor.dmann.dev/docker.io/caddy
+        livenessProbe:
+          httpGet:
+            path: /live
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        name: proxy
+        ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP
+        - containerPort: 443
+          name: https
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /live
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources: null
+        volumeMounts:
+        - mountPath: /opt/caddyfile
+          name: caddyfile
+        - mountPath: /opt/argo-tls
+          name: argo-tls
+      volumes:
+      - configMap:
+          name: caddyfile-92htd69bm6
+        name: caddyfile
+      - name: argo-tls
+        secret:
+          secretName: argo-tls
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/instance: gitea
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: memcached
+    helm.sh/chart: memcached-5.9.0
+  name: gitea-memcached
+  namespace: gitea
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: gitea
+      app.kubernetes.io/name: memcached
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: gitea
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: memcached
+        helm.sh/chart: memcached-5.9.0
+    spec:
+      affinity:
+        nodeAffinity: null
+        podAffinity: null
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/instance: gitea
+                  app.kubernetes.io/name: memcached
+              namespaces:
+              - gitea
+              topologyKey: kubernetes.io/hostname
+            weight: 1
+      containers:
+      - args:
+        - /run.sh
+        env:
+        - name: BITNAMI_DEBUG
+          value: "false"
+        image: docker.io/bitnami/memcached:1.6.9-debian-10-r114
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 6
+          initialDelaySeconds: 30
+          tcpSocket:
+            port: memcache
+          timeoutSeconds: 5
+        name: memcached
+        ports:
+        - containerPort: 11211
+          name: memcache
+        readinessProbe:
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          tcpSocket:
+            port: memcache
+          timeoutSeconds: 3
+        resources:
+          limits: {}
+          requests:
+            cpu: 250m
+            memory: 256Mi
+        securityContext:
+          readOnlyRootFilesystem: false
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp
+      securityContext:
+        fsGroup: 1001
+        runAsUser: 1001
+      serviceAccountName: gitea-memcached
+      volumes:
+      - emptyDir: {}
+        name: tmp
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: gitea
+    app.kubernetes.io/instance: gitea
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: gitea
+    app.kubernetes.io/version: 1.17.3
+    helm.sh/chart: gitea-6.0.3
+    version: 1.17.3
+  name: gitea
+  namespace: gitea
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: gitea
+      app.kubernetes.io/name: gitea
+  serviceName: gitea
+  template:
+    metadata:
+      annotations:
+        checksum/config: 882d5f9c38a2c6a6a08217c8e3a524044af88cfcaf41f0149a29425b38d72b71
+        checksum/oauth_0: eb9576677df53b507b5247bfb1c5f7393c3f555d36d3f6d931d136da8e04c853
+      labels:
+        app: gitea
+        app.kubernetes.io/instance: gitea
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: gitea
+        app.kubernetes.io/version: 1.17.3
+        helm.sh/chart: gitea-6.0.3
+        version: 1.17.3
+    spec:
+      containers:
+      - env:
+        - name: SSH_LISTEN_PORT
+          value: "22"
+        - name: SSH_PORT
+          value: "22"
+        - name: GITEA_APP_INI
+          value: /data/gitea/conf/app.ini
+        - name: GITEA_CUSTOM
+          value: /data/gitea
+        - name: GITEA_WORK_DIR
+          value: /data
+        - name: GITEA_TEMP
+          value: /tmp/gitea
+        - name: TMPDIR
+          value: /tmp/gitea
+        image: gitea/gitea:1.17.3
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 10
+          initialDelaySeconds: 200
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: http
+          timeoutSeconds: 1
+        name: gitea
+        ports:
+        - containerPort: 22
+          name: ssh
+        - containerPort: 3000
+          name: http
+        readinessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: http
+          timeoutSeconds: 1
+        resources: {}
+        securityContext:
+          capabilities:
+            add:
+            - SYS_CHROOT
+        volumeMounts:
+        - mountPath: /tmp
+          name: temp
+        - mountPath: /data
+          name: data
+        - mountPath: /opt/gitea-tls
+          name: gitea-tls
+        - mountPath: /run/secrets/oidc
+          name: vault-oidc
+      dnsConfig:
+        options:
+        - name: ndots
+          value: "1"
+      initContainers:
+      - command:
+        - /usr/sbin/init_directory_structure.sh
+        env:
+        - name: GITEA_APP_INI
+          value: /data/gitea/conf/app.ini
+        - name: GITEA_CUSTOM
+          value: /data/gitea
+        - name: GITEA_WORK_DIR
+          value: /data
+        - name: GITEA_TEMP
+          value: /tmp/gitea
+        image: gitea/gitea:1.17.3
+        imagePullPolicy: Always
+        name: init-directories
+        securityContext:
+          capabilities:
+            add:
+            - SYS_CHROOT
+        volumeMounts:
+        - mountPath: /usr/sbin
+          name: init
+        - mountPath: /tmp
+          name: temp
+        - mountPath: /data
+          name: data
+      - command:
+        - /usr/sbin/config_environment.sh
+        env:
+        - name: GITEA_APP_INI
+          value: /data/gitea/conf/app.ini
+        - name: GITEA_CUSTOM
+          value: /data/gitea
+        - name: GITEA_WORK_DIR
+          value: /data
+        - name: GITEA_TEMP
+          value: /tmp/gitea
+        image: gitea/gitea:1.17.3
+        imagePullPolicy: Always
+        name: init-app-ini
+        securityContext:
+          capabilities:
+            add:
+            - SYS_CHROOT
+        volumeMounts:
+        - mountPath: /usr/sbin
+          name: config
+        - mountPath: /tmp
+          name: temp
+        - mountPath: /data
+          name: data
+        - mountPath: /env-to-ini-mounts/inlines/
+          name: inline-config-sources
+      - command:
+        - /usr/sbin/configure_gitea.sh
+        env:
+        - name: GITEA_APP_INI
+          value: /data/gitea/conf/app.ini
+        - name: GITEA_CUSTOM
+          value: /data/gitea
+        - name: GITEA_WORK_DIR
+          value: /data
+        - name: GITEA_TEMP
+          value: /tmp/gitea
+        - name: GITEA_OAUTH_KEY_0
+          valueFrom:
+            secretKeyRef:
+              key: key
+              name: vault-gitea-oidc-client-secret
+        - name: GITEA_OAUTH_SECRET_0
+          valueFrom:
+            secretKeyRef:
+              key: secret
+              name: vault-gitea-oidc-client-secret
+        - name: GITEA_ADMIN_USERNAME
+          value: gitea_admin
+        - name: GITEA_ADMIN_PASSWORD
+          value: r8sA8CPHD9!bt6d
+        image: gitea/gitea:1.17.3
+        imagePullPolicy: Always
+        name: configure-gitea
+        securityContext:
+          capabilities:
+            add:
+            - SYS_CHROOT
+          runAsUser: 1000
+        volumeMounts:
+        - mountPath: /usr/sbin
+          name: init
+        - mountPath: /tmp
+          name: temp
+        - mountPath: /data
+          name: data
+      securityContext:
+        fsGroup: 1000
+      serviceAccountName: gitea
+      terminationGracePeriodSeconds: 60
+      volumes:
+      - name: init
+        secret:
+          defaultMode: 110
+          secretName: gitea-init
+      - name: config
+        secret:
+          defaultMode: 110
+          secretName: gitea
+      - name: gitea-tls
+        secret:
+          secretName: gitea-tls
+      - csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: vault-gitea-oidc-client
+        name: vault-oidc
+      - name: inline-config-sources
+        secret:
+          secretName: gitea-inline-config
+      - emptyDir: {}
+        name: temp
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 10Gi
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app.kubernetes.io/component: primary
+    app.kubernetes.io/instance: gitea
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: postgresql
+    helm.sh/chart: postgresql-10.3.17
+  name: gitea-postgresql
+  namespace: gitea
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: gitea
+      app.kubernetes.io/name: postgresql
+      role: primary
+  serviceName: gitea-postgresql-headless
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: primary
+        app.kubernetes.io/instance: gitea
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: postgresql
+        helm.sh/chart: postgresql-10.3.17
+        role: primary
+      name: gitea-postgresql
+    spec:
+      affinity:
+        nodeAffinity: null
+        podAffinity: null
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: primary
+                  app.kubernetes.io/instance: gitea
+                  app.kubernetes.io/name: postgresql
+              namespaces:
+              - gitea
+              topologyKey: kubernetes.io/hostname
+            weight: 1
+      containers:
+      - env:
+        - name: BITNAMI_DEBUG
+          value: "false"
+        - name: POSTGRESQL_PORT_NUMBER
+          value: "5432"
+        - name: POSTGRESQL_VOLUME_DIR
+          value: /bitnami/postgresql
+        - name: PGDATA
+          value: /bitnami/postgresql/data
+        - name: POSTGRES_POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: postgresql-postgres-password
+              name: gitea-postgresql
+        - name: POSTGRES_USER
+          value: gitea
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: postgresql-password
+              name: gitea-postgresql
+        - name: POSTGRES_DB
+          value: gitea
+        - name: POSTGRESQL_ENABLE_LDAP
+          value: "no"
+        - name: POSTGRESQL_ENABLE_TLS
+          value: "no"
+        - name: POSTGRESQL_LOG_HOSTNAME
+          value: "false"
+        - name: POSTGRESQL_LOG_CONNECTIONS
+          value: "false"
+        - name: POSTGRESQL_LOG_DISCONNECTIONS
+          value: "false"
+        - name: POSTGRESQL_PGAUDIT_LOG_CATALOG
+          value: "off"
+        - name: POSTGRESQL_CLIENT_MIN_MESSAGES
+          value: error
+        - name: POSTGRESQL_SHARED_PRELOAD_LIBRARIES
+          value: pgaudit
+        image: docker.io/bitnami/postgresql:11.11.0-debian-10-r62
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - exec pg_isready -U "gitea" -d "dbname=gitea" -h 127.0.0.1 -p 5432
+          failureThreshold: 6
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        name: gitea-postgresql
+        ports:
+        - containerPort: 5432
+          name: tcp-postgresql
+        readinessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - -e
+            - |
+              exec pg_isready -U "gitea" -d "dbname=gitea" -h 127.0.0.1 -p 5432
+              [ -f /opt/bitnami/postgresql/tmp/.initialized ] || [ -f /bitnami/postgresql/.initialized ]
+          failureThreshold: 6
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        resources:
+          requests:
+            cpu: 250m
+            memory: 256Mi
+        securityContext:
+          runAsUser: 1001
+        volumeMounts:
+        - mountPath: /dev/shm
+          name: dshm
+        - mountPath: /bitnami/postgresql
+          name: data
+          subPath: null
+      securityContext:
+        fsGroup: 1001
+      volumes:
+      - emptyDir:
+          medium: Memory
+          sizeLimit: 1Gi
+        name: dshm
+  updateStrategy:
+    type: RollingUpdate
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 10Gi
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: argo-tls
+  namespace: argo-workflows
+spec:
+  dnsNames:
+  - argo.dmann.xyz
+  - argo.dmann.dev
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt
+  secretName: argo-tls
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: gitea-tls
+  namespace: gitea
+spec:
+  dnsNames:
+  - git.dmann.xyz
+  - git.dmann.dev
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt
+  secretName: gitea-tls
+---
+apiVersion: secrets-store.csi.x-k8s.io/v1
+kind: SecretProviderClass
+metadata:
+  name: vault-argo-oidc-client
+  namespace: argo-workflows
+spec:
+  parameters:
+    objects: |-
+      - objectName: "client-id"
+        secretPath: "identity/oidc/client/argo-workflows"
+        secretKey: "client_id"
+      - objectName: "client-secret"
+        secretPath: "identity/oidc/client/argo-workflows"
+        secretKey: "client_secret"
+    roleName: argo-workflow-client
+  provider: vault
+  secretObjects:
+  - data:
+    - key: client-id
+      objectName: client-id
+    - key: client-secret
+      objectName: client-secret
+    secretName: vault-argo-oidc-client-secret
+    type: Opaque
+---
+apiVersion: secrets-store.csi.x-k8s.io/v1
+kind: SecretProviderClass
+metadata:
+  name: vault-gitea-oidc-client
+  namespace: gitea
+spec:
+  parameters:
+    objects: |-
+      - objectName: "client-id"
+        secretPath: "identity/oidc/client/gitea"
+        secretKey: "client_id"
+      - objectName: "client-secret"
+        secretPath: "identity/oidc/client/gitea"
+        secretKey: "client_secret"
+    roleName: gitea-client
+  provider: vault
+  secretObjects:
+  - data:
+    - key: key
+      objectName: client-id
+    - key: secret
+      objectName: client-secret
+    secretName: vault-gitea-oidc-client-secret
+    type: Opaque
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    helm.sh/hook: test-success
+  labels:
+    app: gitea
+    app.kubernetes.io/instance: gitea
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: gitea
+    app.kubernetes.io/version: 1.17.3
+    helm.sh/chart: gitea-6.0.3
+    version: 1.17.3
+  name: gitea-test-connection
+  namespace: gitea
+spec:
+  containers:
+  - args:
+    - gitea-http:3000
+    command:
+    - wget
+    image: busybox
+    name: wget
+  restartPolicy: Never

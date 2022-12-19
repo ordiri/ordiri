@@ -63841,7 +63841,7 @@ spec:
         - --enable-leader-election=false
         - --metrics-addr=:8080
         - --probe-addr=:8081
-        - --policy=sync
+        - --policy=create-update
         - --dry-run=false
         - --logformat
         - text
