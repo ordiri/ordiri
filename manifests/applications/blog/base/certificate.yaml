@@ -10,9 +10,3 @@ spec:
   issuerRef:
     name: zerossl
     kind: ClusterIssuer
-  keystores:
-    pkcs12:
-      create: true
-      passwordSecretRef: 
-        key: password
-        name: tls-pkcs12-password
