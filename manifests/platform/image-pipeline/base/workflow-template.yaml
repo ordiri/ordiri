@@ -30,4 +30,4 @@ spec:
       - name: appellation
     container:
       image: argoproj/argosay:v2
-      args: [ echo, "{{inputs.parameters.salutation}} {{inputs.parameters.appellation}}" ]
+      args: [ echo, "{{workflow.parameters}} {{inputs.parameters}}" ]
