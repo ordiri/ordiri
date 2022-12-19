@@ -4,3 +4,8 @@ kind: Kustomization
 resources:
   - platform-app.yaml
   - application-set.yaml
+  - system-project.yaml
+  - platform-project.yaml
+  - applications-project.yaml
+  - media-project.yaml
+  - home-project.yaml

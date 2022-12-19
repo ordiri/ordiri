@@ -33,7 +33,7 @@ spec:
         argocd-image-updater.argoproj.io/write-back-target: '{{argocd.image_updater.target}}'
 
     spec:
-      project: default
+      project: '{{path[1]}}'
       source:
         repoURL: git@github.com:ordiri/ordiri.git
         targetRevision: HEAD
