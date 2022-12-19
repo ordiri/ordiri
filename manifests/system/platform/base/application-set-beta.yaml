@@ -1,12 +1,13 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: homelab-applicationsets
+  name: homelab-applicationsetsbeta
 spec:
+  goTemplate: true
   generators:
   - merge:
       mergeKeys:
-      - .path.path
+      - .path.basename
       generators:
       - git:
           repoURL: https://github.com/ordiri/ordiri.git
@@ -18,20 +19,25 @@ spec:
           # For a specific cluster, enable Redis.
       - list:
           elements: 
-          - server: https://2.4.6.8
-            values.redis: 'true'
+          - path:
+              basename: k8-workshop
+            argocd.image_updater.images: harbor.dmann.dev/library/k8-workshop
+            
   template:
     metadata:
-      name: '{{path.basename}}'
+      name: 'beta-{{.path.basename}}'
+      annotations:
+        argocd-image-updater.argoproj.io/image-list: '{{.argocd.image_updater.images}}{{default "" "na" }}'
+
     spec:
       project: default
       source:
         repoURL: https://github.com/ordiri/ordiri.git
         targetRevision: HEAD
-        path: '{{path}}/overlays/default'
+        path: '{{.path.path}}/overlays/default'
       destination:
         server: https://kubernetes.default.svc
-        namespace: '{{path.basename}}'
+        namespace: '{{.path.basename}}'
       # syncPolicy:
       #   automated:
       #     prune: true
