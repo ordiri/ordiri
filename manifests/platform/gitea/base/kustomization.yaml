@@ -26,10 +26,14 @@ helmCharts:
   namespace: gitea
   includeCRDs: true
   valuesInline:
+    image:
+      registry: harbor.dmann.dev
+      repository: docker.io/gitea/gitea
+      tag: 1.18-dev
     dnsConfig: 
       options:
       - name: ndots
-        value: "1"
+        value: "1" 
     containerSecurityContext:
       capabilities:
         add:
