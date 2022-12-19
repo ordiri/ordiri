@@ -3,17 +3,31 @@ kind: ApplicationSet
 metadata:
   name: homelab-applicationsets
 spec:
+  # goTemplate: true
   generators:
-  - git:
-      repoURL: https://github.com/ordiri/ordiri.git
-      revision: HEAD
-      directories:
-      - path: manifests/*/*
-      - path: manifests/system/platform
-        exclude: true
+  - merge:
+      mergeKeys:
+      - path.basename
+      generators:
+      - git:
+          repoURL: https://github.com/ordiri/ordiri.git
+          revision: HEAD
+          directories:
+          - path: manifests/*/*
+          - path: manifests/system/platform
+            exclude: true
+          # For a specific cluster, enable Redis.
+      - list:
+          elements: 
+          - path.basename: k8-workshop
+            argocd.image_updater.images: harbor.dmann.dev/library/k8-workshop
+            
   template:
     metadata:
-      name: '{{path.basename}}'
+      name: 'beta-{{path.basename}}'
+      annotations:
+        argocd-image-updater.argoproj.io/image-list: '{{argocd.image_updater.images}}'
+
     spec:
       project: default
       source:
