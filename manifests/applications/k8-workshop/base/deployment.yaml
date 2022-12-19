@@ -21,7 +21,7 @@ spec:
           secretName: workshop-tls
       containers:
       - name: workshop
-        image: harbor.dmann.dev/library/k8-workshop:pending
+        image: harbor.dmann.dev/default/k8-workshop:pending
         volumeMounts:
         - name: caddyfile
           mountPath: /opt/caddyfile

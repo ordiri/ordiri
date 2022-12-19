@@ -20,7 +20,7 @@ spec:
       - list:
           elements:
           - path.basename: k8-workshop
-            argocd.image_updater.images: 'harbor.dmann.dev/library/k8-workshop'
+            argocd.image_updater.images: 'harbor.dmann.dev/default/k8-workshop'
             argocd.image_updater.method: git
             argocd.image_updater.target: kustomize
 
