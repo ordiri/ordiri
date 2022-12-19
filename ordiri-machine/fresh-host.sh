@@ -89,12 +89,29 @@ fi
 generated_cert=$(VAULT_TOKEN="${node_token}" vault write -format=json "dmann-xyz/v1/ica2/v1/issue/${issuer_role}" \
     common_name="$(hostname --fqdn)")
 
-echo "${generated_cert}" | tee \
-    >(jq -r '.data.private_key' > /etc/ssl/private/node.key) \
-    >(jq -r '.data.certificate' > /etc/ssl/certs/node.crt) \
-    >(jq -r '.data.ca_chain | join("\n")' | awk 'BEGIN {c=0;} /BEGIN CERT/{c++} { print > "/usr/local/share/ca-certificates/node-root-ca." c ".crt"}')
+private_key=$(echo "${generated_cert}" |jq -r '.data.private_key')
+certificate=$(echo "${generated_cert}" |jq -r '.data.certificate')
+chain=$(echo "${generated_cert}" | jq -r '.data.ca_chain | join("\n")')
+
+if [[ -z "${private_key}" ]] || [[ -z "${certificate}" ]] || [[ -z "${chain}" ]]; then
+    echo "Missing private key, certificate or chain:
+Generated cert: ${generated_cert}
+
+private_key: ${private_key}
+
+certificate: ${certificate}
+
+chain: ${chain}"
+    exit 2
+fi
+
+echo "${private_key}" > /etc/ssl/private/node.key
+echo "${certificate}" > /etc/ssl/private/node.crt
+echo "${chain}" | awk 'BEGIN {c=0;} /BEGIN CERT/{c++} { print > "/usr/local/share/ca-certificates/node-root-ca." c ".crt"}'
+
 update-ca-certificates
 EOF
+
 cat << 'EOF' > /etc/systemd/system/node-cert.service
 [Unit]
 Description=Node certificate
