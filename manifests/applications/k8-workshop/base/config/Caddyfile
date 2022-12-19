@@ -11,7 +11,7 @@
   encode gzip zstd
   
   # Make HTML file extension optional
-  try_files {path}.html /opt/blogposts/{path}
+  try_files {path}.html /opt/workshop/{path}
   
   # Serve everything else from the file system
   file_server

@@ -21,7 +21,7 @@ spec:
             name: workshop-tls
       containers:
       - name: workshop
-        image: harbor.dmann.dev/docker.io/caddy
+        image: harbor.dmann.dev/library/k8-workshop:v0.0.1-RC1
         volumeMounts:
         - name: caddyfile
           mountPath: /opt/caddyfile
