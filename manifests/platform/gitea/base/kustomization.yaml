@@ -4,6 +4,20 @@ resources:
 - service.yaml
 - certificate.yaml
 - oidc-secretclass.yaml
+- vault-rbac.yaml
+- gitea.yaml
+
+patches:
+- |
+  apiVersion: apps/v1
+  kind: StatefulSet
+  metadata:
+    name: gitea
+  spec:
+    template:
+      spec:
+        serviceAccountName: gitea
+
 helmCharts:
 - name: gitea
   repo: https://dl.gitea.io/charts/
