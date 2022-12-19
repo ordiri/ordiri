@@ -3,4 +3,5 @@ registries:
   api_url: https://harbor.dmann.dev
   ping: no
   prefix: harbor.dmann.dev
+  defaultns: library
   #credentials: secret:argocd/sundayy#creds
