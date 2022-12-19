@@ -3,11 +3,11 @@ kind: ApplicationSet
 metadata:
   name: homelab-applicationsetsbeta
 spec:
-  goTemplate: true
+  # goTemplate: true
   generators:
   - merge:
       mergeKeys:
-      - .path.basename
+      - path.basename
       generators:
       - git:
           repoURL: https://github.com/ordiri/ordiri.git
@@ -25,19 +25,19 @@ spec:
             
   template:
     metadata:
-      name: 'beta-{{.path.basename}}'
+      name: 'beta-{{path.basename}}'
       annotations:
-        argocd-image-updater.argoproj.io/image-list: '{{.argocd.image_updater.images}}{{default "" "na" }}'
+        argocd-image-updater.argoproj.io/image-list: '{{argocd.image_updater.images}}'
 
     spec:
       project: default
       source:
         repoURL: https://github.com/ordiri/ordiri.git
         targetRevision: HEAD
-        path: '{{.path.path}}/overlays/default'
+        path: '{{path.path}}/overlays/default'
       destination:
         server: https://kubernetes.default.svc
-        namespace: '{{.path.basename}}'
+        namespace: '{{path.basename}}'
       # syncPolicy:
       #   automated:
       #     prune: true
