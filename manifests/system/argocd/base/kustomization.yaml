@@ -3,6 +3,7 @@ kind: Kustomization
 
 configMapGenerator:
   - name: argocd-image-updater-config
+    behavior: merge
     options:
       labels:
         app.kubernetes.io/name: argocd-image-updater-config
