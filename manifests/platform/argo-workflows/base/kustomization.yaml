@@ -12,8 +12,10 @@ helmCharts:
     server:
       secure: true
       extraArgs:
-      - --auth-mode=sso
-      - --auth-mode=client
+      - --auth-mode
+      - sso
+      - --auth-mode
+      - client
       sso:
         rbac: 
           enabled: true
