@@ -3,8 +3,9 @@ kind: Kustomization
 
 resources:
 - cert-manager/overlays/default
-- rook-system/overlays/default
+- rook-ceph/overlays/default
 - secrets-store-csi-driver/overlays/default
 - tigera-operator/overlays/default
-- vault-system/overlays/default
+- vault/overlays/default
 - argocd/overlays/default
+- platform/overlays/default
