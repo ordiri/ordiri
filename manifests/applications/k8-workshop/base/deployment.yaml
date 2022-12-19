@@ -16,12 +16,17 @@ spec:
       - name: caddyfile
         configMap:
             name: caddyfile
+      - name: workshop-tls
+        configMap:
+            name: workshop-tls
       containers:
       - name: workshop
         image: harbor.dmann.dev/docker.io/caddy
         volumeMounts:
         - name: caddyfile
           mountPath: /opt/caddyfile
+        - name: workshop-tls
+          mountPath: /opt/workshop-tls
         readinessProbe:
           httpGet:
             path: /live
