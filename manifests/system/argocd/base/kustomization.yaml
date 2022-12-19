@@ -35,6 +35,7 @@ helmCharts:
         url: https://argocd.dmann.dev
         users.anonymous.enabled: false
         admin.enabled: false
+        statusbadge.enabled: true
         oidc.config: |
           name: Vault
           issuer: https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/default
