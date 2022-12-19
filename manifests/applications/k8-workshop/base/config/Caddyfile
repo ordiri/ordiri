@@ -1,7 +1,7 @@
 
 
 :443 {
-  root * /opt/blogposts
+  root * /opt/workshop
   tls /opt/workshop-tls/tls.crt /opt/workshop-tls/tls.key
 
   # Templates give static sites some dynamic features
