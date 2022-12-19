@@ -66,7 +66,7 @@ helmCharts:
       - name: 'vault'
         provider: openidConnect
         existingSecret: vault-gitea-oidc-client-secret
-        autoDiscoverUrl: https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/default
+        autoDiscoverUrl: https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/default/.well-known/openid-configuration
       config:
         server:
           PROTOCOL: https
