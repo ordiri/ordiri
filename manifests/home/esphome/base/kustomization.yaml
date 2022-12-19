@@ -6,4 +6,5 @@ resources:
 - deployment.yaml
 - service.yaml
 - certificate.yaml
+- pvc.yaml
 

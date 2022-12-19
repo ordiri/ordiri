@@ -29,7 +29,8 @@ spec:
           server: ceph.homelab.dmann.xyz
           path: /homelab/media
       - name: esphome-cache
-        emptyDir: {}
+        persistentVolumeClaim:
+          claimName: esphome-cache
 
       containers:
       - name: esphome
