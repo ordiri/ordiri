@@ -9,6 +9,8 @@ spec:
     parameters:
     - name: salutation
       value: "hello"
+    - name: appellation
+      value: "sir"
   templates:
   - name: main
     steps:
