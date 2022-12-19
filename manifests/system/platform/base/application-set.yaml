@@ -18,11 +18,10 @@ spec:
             exclude: true
           # For a specific cluster, enable Redis.
       - list:
-          elements: 
+          elements:
           - path.basename: k8-workshop
             argocd.image_updater.images: harbor.dmann.dev/library/k8-workshop
-  syncPolicy:
-    preserveResourcesOnDeletion: true
+
   template:
     metadata:
       name: '{{path.basename}}'
