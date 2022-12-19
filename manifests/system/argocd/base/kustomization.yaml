@@ -59,6 +59,7 @@ helmCharts:
         scopes: '[groups, email]'
 
 resources:
+- https://raw.githubusercontent.com/argoproj-labs/argocd-image-updater/stable/manifests/install.yaml
 - vault-rbac.yaml
 - oidc-secretclass.yaml
 
