@@ -25,17 +25,15 @@ spec:
         nfs:
           server: ceph.homelab.dmann.xyz
           path: /homelab/media
-      - name: overseer-config-data
-        persistentVolumeClaim:
-          claimName: overseer-config-data
       containers:
       - name: overseer
         image: lscr.io/linuxserver/overseerr:latest
         volumeMounts:
         - name: media-nfs
           mountPath: /media
-        - name: overseer-config-data
+        - name: media-nfs
           mountPath: /config
+          subPath: "overseer"
         - name: overseer-tls
           mountPath: /opt/overseer-tls
         env:

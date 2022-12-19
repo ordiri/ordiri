@@ -35,8 +35,9 @@ spec:
         volumeMounts:
         - name: media-nfs
           mountPath: /media
-        - name: prowlarr-config-data
+        - name: media-nfs
           mountPath: /config
+          subPath: "prowlarr"
         - name: prowlarr-tls
           mountPath: /opt/prowlarr-tls
         env:

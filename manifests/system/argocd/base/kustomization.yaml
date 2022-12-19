@@ -65,6 +65,7 @@ resources:
 - https://raw.githubusercontent.com/argoproj-labs/argocd-image-updater/stable/manifests/install.yaml
 - vault-rbac.yaml
 - oidc-secretclass.yaml
+- argocd-server-certificate-patch.yaml
 
 patches:
   - |

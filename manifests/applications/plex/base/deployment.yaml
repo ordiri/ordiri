@@ -29,9 +29,6 @@ spec:
         nfs:
           server: ceph.homelab.dmann.xyz
           path: /homelab/media
-      - name: plex-config-data
-        persistentVolumeClaim:
-          claimName: plex-config-data
       - name: transcode-storage # Idea being we would mount a dedicated ssd storage class pvc here
         emptyDir: {}
       containers:
@@ -40,8 +37,9 @@ spec:
         volumeMounts:
         - name: media-nfs
           mountPath: /media
-        - name: plex-config-data
+        - name: media-nfs
           mountPath: /config
+          subPath: "plex"
         - name: transcode-storage
           mountPath: /transcode
         - name: plex-tls

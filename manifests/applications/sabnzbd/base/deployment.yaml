@@ -25,17 +25,15 @@ spec:
         nfs:
           server: ceph.homelab.dmann.xyz
           path: /homelab/media
-      - name: sabnzbd-config-data
-        persistentVolumeClaim:
-          claimName: sabnzbd-config-data
       containers:
       - name: sabnzbd
         image: lscr.io/linuxserver/sabnzbd:latest
         volumeMounts:
         - name: media-nfs
           mountPath: /media
-        - name: sabnzbd-config-data
+        - name: media-nfs
           mountPath: /config
+          subPath: "sabnzbd"
         - name: sabnzbd-tls
           mountPath: /opt/sabnzbd-tls
         env:
