@@ -111,3 +111,14 @@ patches:
             volumeMounts:
             - name:  argocd-oidc-creds
               mountPath:  /run/secrets/oidc
+  - |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: argocd-image-updater
+    spec:
+      template:
+        dnsConfig:
+          options:
+          - name: ndots
+            value: "1"
