@@ -7,7 +7,7 @@ spec:
   generators:
   - merge:
       mergeKeys:
-      - path
+      - path.basename
       generators:
       - git:
           repoURL: https://github.com/ordiri/ordiri.git
@@ -19,7 +19,8 @@ spec:
           # For a specific cluster, enable Redis.
       - list:
           elements: 
-          - path: k8-workshop
+          - path:
+              basename: k8-workshop
             argocd.image_updater.images: harbor.dmann.dev/library/k8-workshop
             
   template:
@@ -33,7 +34,7 @@ spec:
       source:
         repoURL: https://github.com/ordiri/ordiri.git
         targetRevision: HEAD
-        path: '{{.path}}/overlays/default'
+        path: '{{.path.path}}/overlays/default'
       destination:
         server: https://kubernetes.default.svc
         namespace: '{{.path.basename}}'
