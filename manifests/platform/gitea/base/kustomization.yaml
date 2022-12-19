@@ -32,7 +32,7 @@ helmCharts:
         driver: secrets-store.csi.k8s.io
         readOnly: true
         volumeAttributes:
-          secretProviderClass: vault-gitea-oidc-client-secret
+          secretProviderClass: vault-gitea-oidc-client
 
     ## @param extraContainerVolumeMounts Mounts that are only mapped into the Gitea runtime/main container, to e.g. override custom templates.
     extraContainerVolumeMounts:
@@ -49,9 +49,9 @@ helmCharts:
         clusterIP: ""
     gitea:
       oauth:
-      - name: 'OAuth 1'
+      - name: 'Vault'
         provider: openidConnect
-        existingSecret: vault-oidc
+        existingSecret: vault-gitea-oidc-client
         autoDiscoverUrl: https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/default
       config:
         server:
