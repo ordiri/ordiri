@@ -16,7 +16,7 @@ spec:
       keyID: C7xjogxWEX2icoB61-ou4g
       keySecretRef:
         name: vault-cert-manager-zerossl-token
-        key: secret
+        key: hmac
       keyAlgorithm: HS256
     solvers:
     - dns01:
