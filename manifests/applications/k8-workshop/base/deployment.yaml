@@ -22,8 +22,6 @@ spec:
         volumeMounts:
         - name: caddyfile
           mountPath: /opt/caddyfile
-        - name: workshopposts
-          mountPath: /opt/workshopposts
         readinessProbe:
           httpGet:
             path: /live
