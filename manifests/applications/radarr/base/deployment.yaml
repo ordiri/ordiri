@@ -25,15 +25,17 @@ spec:
         nfs:
           server: ceph.homelab.dmann.xyz
           path: /homelab/media
+      - name: radarr-config-data
+        persistentVolumeClaim:
+          claimName: radarr-config-data
       containers:
       - name: radarr
         image: lscr.io/linuxserver/radarr:latest
         volumeMounts:
         - name: media-nfs
           mountPath: /media
-        - name: media-nfs
+        - name: radarr-config-data
           mountPath: /config
-          subPath: radarr
         - name: radarr-tls
           mountPath: /opt/radarr-tls
         env:

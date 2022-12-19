@@ -25,15 +25,17 @@ spec:
         nfs:
           server: ceph.homelab.dmann.xyz
           path: /homelab/media
+      - name: sonarr-config-data
+        persistentVolumeClaim:
+          claimName: sonarr-config-data
       containers:
       - name: sonarr
         image: lscr.io/linuxserver/sonarr:latest
         volumeMounts:
         - name: media-nfs
           mountPath: /media
-        - name: media-nfs
+        - name: sonarr-config-data
           mountPath: /config
-          subPath: "sonarr"
         - name: sonarr-tls
           mountPath: /opt/sonarr-tls
         env:

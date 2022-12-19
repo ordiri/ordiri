@@ -9,3 +9,4 @@ spec:
   volumeMode: Filesystem
   accessModes:
     - ReadWriteOnce
+  storageClassName: ceph-retain

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: sonarr-config-data
+  name: prowlarr-config-data
 spec:
   resources:
     requests:
@@ -10,3 +10,4 @@ spec:
   accessModes:
     - ReadWriteOnce
   storageClassName: ceph-retain
+  
