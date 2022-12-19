@@ -8,5 +8,5 @@ spec:
     - kubernetes.workshops.dmann.xyz
     - kubernetes.workshops.dmann.dev
   issuerRef:
-    name: zerossl
+    name: letsencrypt
     kind: ClusterIssuer
