@@ -1,32 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: blog
+  name: workshop
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: blog
+      app: workshop
   template:
     metadata:
       labels:
-        app: blog
+        app: workshop
     spec:
       volumes:
       - name: caddyfile
         configMap:
             name: caddyfile
-      - name: blogposts
-        configMap:
-            name: blogposts
       containers:
-      - name: blog
+      - name: workshop
         image: harbor.dmann.dev/docker.io/caddy
         volumeMounts:
         - name: caddyfile
           mountPath: /opt/caddyfile
-        - name: blogposts
-          mountPath: /opt/blogposts
+        - name: workshopposts
+          mountPath: /opt/workshopposts
         readinessProbe:
           httpGet:
             path: /live

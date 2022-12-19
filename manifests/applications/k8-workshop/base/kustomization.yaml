@@ -5,9 +5,6 @@ configMapGenerator:
   - name: caddyfile
     files:
     - "Caddyfile=./config/Caddyfile"
-  - name: blogposts
-    files:
-    - "index.html=./pages/index.html"
 resources:
   - deployment.yaml
   - service.yaml

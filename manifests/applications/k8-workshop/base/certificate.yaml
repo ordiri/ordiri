@@ -1,12 +1,12 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: blog-tls
+  name: workshop-tls
 spec:
-  secretName: blog-tls
+  secretName: workshop-tls
   dnsNames:
-    - blog.dmann.xyz
-    - blog.dmann.dev
+    - kubernetes.workshops.dmann.xyz
+    - kubernetes.workshops.dmann.dev
   issuerRef:
     name: zerossl
     kind: ClusterIssuer
