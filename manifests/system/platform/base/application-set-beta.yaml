@@ -19,9 +19,7 @@ spec:
           # For a specific cluster, enable Redis.
       - list:
           elements: 
-          - path:
-              basename: k8-workshop
-            path.basename: k8-workshop
+          - path.basename: k8-workshop
             argocd.image_updater.images: harbor.dmann.dev/library/k8-workshop
             
   template:
