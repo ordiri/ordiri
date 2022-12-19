@@ -73,3 +73,5 @@ helmCharts:
           DOMAIN: git.dmann.xyz
           CERT_FILE: /opt/gitea-tls/tls.crt
           KEY_FILE: /opt/gitea-tls/tls.key
+        service:
+          DISABLE_REGISTRATION: true

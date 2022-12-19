@@ -1,7 +1,18 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-  
+configMapGenerator:
+  - name: argocd-image-updater-config
+    options:
+      labels:
+        app.kubernetes.io/name: argocd-image-updater-config
+        app.kubernetes.io/part-of: argocd-image-updater
+
+    literals:
+    - log.level=debug
+    files:
+    - config/registries.yaml=registries.conf
+
 helmCharts:
 - name: argo-cd
   repo: https://argoproj.github.io/argo-helm
