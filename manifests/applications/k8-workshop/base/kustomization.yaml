@@ -9,8 +9,3 @@ resources:
   - deployment.yaml
   - service.yaml
   - certificate.yaml
-
-images:
-  - name: k8-workshop
-    newName: harbor.dmann.dev/library/k8-workshop
-    newTag: v0.0.1-RC4
