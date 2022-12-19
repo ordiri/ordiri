@@ -5,7 +5,7 @@ resources:
 - certificate.yaml
 - oidc-secretclass.yaml
 - vault-rbac.yaml
-- gitea.yaml
+- sa.yaml
 
 patches:
 - |
