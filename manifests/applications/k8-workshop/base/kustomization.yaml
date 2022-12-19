@@ -13,4 +13,4 @@ resources:
 images:
   - name: k8-workshop
     newName: harbor.dmann.dev/library/k8-workshop
-    newTag: f62f7fe
+    newTag: 85d2015
