@@ -1,7 +1,1 @@
-registries:
-- name: Harbor
-  api_url: https://harbor.dmann.dev
-  ping: no
-  prefix: harbor.dmann.dev
-  default: true
-  #credentials: secret:argocd/sundayy#creds
+registries: []
