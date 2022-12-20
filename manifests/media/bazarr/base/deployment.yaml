@@ -33,11 +33,7 @@ spec:
         image: lscr.io/linuxserver/bazarr:latest
         volumeMounts:
         - name: media-nfs
-          mountPath: /tv
-          subPath: tv
-        - name: media-nfs
-          mountPath: /movies
-          subPath: movies
+          mountPath: /media
         - name: bazarr-config-data
           mountPath: /config
         - name: bazarr-tls
@@ -51,7 +47,7 @@ spec:
           value: "Australia/Sydney"
         ports:
         - name:  webui
-          containerPort:  6767
+          containerPort: 6767
           protocol: TCP
         resources:
         #   limits:
