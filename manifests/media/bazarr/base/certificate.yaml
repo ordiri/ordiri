@@ -1,12 +1,12 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: sonarr-tls
+  name: bazarr-tls
 spec:
-  secretName: sonarr-tls
+  secretName: bazarr-tls
   dnsNames:
-    - sonarr.dmann.xyz
-    - sonarr.dmann.dev
+    - bazarr.dmann.xyz
+    - bazarr.dmann.dev
   issuerRef:
     name: letsencrypt
     kind: ClusterIssuer
