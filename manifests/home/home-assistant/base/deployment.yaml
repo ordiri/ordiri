@@ -1,8 +1,9 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: home-assistant
 spec:
+  serviceName: home-assistant-statufulset
   replicas: 1
   selector:
     matchLabels:
@@ -33,12 +34,14 @@ spec:
       - name: home-assistant
         image: ghcr.io/home-assistant/home-assistant:stable
         volumeMounts:
-        - name: nfs-volume
+        - name: data
           mountPath: /config
-          subPath: home-assistant
+        - name: nfs-volume
+          mountPath: /media
         - name: home-assistant-config
           mountPath: /config/configuration.yaml
           subPath: configuration.yaml
+          readOnly: true
         - name: home-assistant-tls
           mountPath: /opt/home-assistant-tls
         ports:
@@ -46,6 +49,16 @@ spec:
           containerPort:  8123
           protocol: TCP
         resources:
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      storageClassName: ceph-retain
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 100Gi
         #   limits:
         #     memory: "4Gi"
         #     cpu: "4"
