@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bazarr
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bazarr
+  template:
+    metadata:
+      labels:
+        app: bazarr
+    spec:
+      dnsConfig:
+        options:
+        - name: ndots
+          value: "1"
+      volumes:
+      - name: bazarr-tls
+        secret:
+          secretName: bazarr-tls
+          defaultMode: 0777
+      - name: media-nfs
+        nfs:
+          server: ceph.homelab.dmann.xyz
+          path: /homelab/media
+      - name: bazarr-config-data
+        persistentVolumeClaim:
+          claimName: bazarr-config-data
+      containers:
+      - name: bazarr
+        image: lscr.io/linuxserver/bazarr:latest
+        volumeMounts:
+        - name: media-nfs
+          mountPath: /tv
+          subPath: tv
+        - name: media-nfs
+          mountPath: /movies
+          subPath: movies
+        - name: bazarr-config-data
+          mountPath: /config
+        - name: bazarr-tls
+          mountPath: /opt/bazarr-tls
+        env:
+        - name: PUID
+          value: "1000"
+        - name: PGID
+          value: "1000"
+        - name: TZ
+          value: "Australia/Sydney"
+        ports:
+        - name:  webui
+          containerPort:  6767
+          protocol: TCP
+        resources:
+        #   limits:
+        #     memory: "4Gi"
+        #     cpu: "4"
