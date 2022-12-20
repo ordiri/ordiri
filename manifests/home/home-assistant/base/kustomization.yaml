@@ -7,5 +7,6 @@ configMapGenerator:
       - configuration.yaml=config/configuration.yaml
 resources:
 - deployment.yaml
+- home-assistant-statefulset.yaml
 - service.yaml
 - certificate.yaml
