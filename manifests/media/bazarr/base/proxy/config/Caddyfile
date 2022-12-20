@@ -2,7 +2,7 @@
 
 :443 {
   tls /opt/bazarr-tls/tls.crt /opt/bazarr-tls/tls.key
-  reverse_proxy http://bazarr:8989 
+  reverse_proxy http://bazarr:6767 
 }
 
 :80 {
