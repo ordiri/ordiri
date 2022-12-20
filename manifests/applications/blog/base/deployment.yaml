@@ -15,16 +15,21 @@ spec:
       volumes:
       - name: caddyfile
         configMap:
-            name: caddyfile
+          name: caddyfile
       - name: blogposts
         configMap:
-            name: blogposts
+          name: blogposts
+      - name: blog-tls
+        secret:
+          secretName: blog-tls
       containers:
       - name: blog
         image: harbor.dmann.dev/docker.io/caddy
         volumeMounts:
         - name: caddyfile
           mountPath: /opt/caddyfile
+        - name: blog-tls
+          mountPath: /opt/blog-tls
         - name: blogposts
           mountPath: /opt/blogposts
         readinessProbe:
