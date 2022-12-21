@@ -1,26 +1,10 @@
+data "tls_certificate" "kube-cluster" {
+  url = "https://cluster.homelab.dmann.xyz:6443"
+  verify_chain = false
+}
 
-    # if ! vault auth list -format json | jq -e '.["kubernetes/"]'; then
-    #     vault auth enable kubernetes
-    # fi
-    # vault write auth/kubernetes/role/k8-autounseal-transit token_policies="k8-autounseal-transit" \
-    #     token_ttl=5m token_max_ttl=10m \
-    #     bound_service_account_names=vault \
-    #     bound_service_account_namespaces=vault \
-    #     alias_name_source=serviceaccount_name
-
-    # # TODO Replace once CloudDNS is implemented
-    # # echo "10.200.1.214 cluster.homelab.dmann.xyz" >> /etc/hosts
-    # # if ! vault auth list -format json | jq -e '.["oidc/"]'; then
-    # #     vault auth enable oidc
-    # # fi
-
-    # # vault write auth/oidc/config \
-    # #      oidc_discovery_url="https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/default/.well-known/openid-configuration" \
-    # #      oidc_client_id="$AUTH0_CLIENT_ID" \
-    # #      oidc_client_secret="$AUTH0_CLIENT_SECRET" \
-    # #      default_role="reader"
-# https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/default/.well-known/openid-configuration
-
-
-# http://localhost:8250/oidc/callback,
-# http://localhost:8200/ui/vault/auth/oidc/oidc/callback
+resource "vault_kubernetes_auth_backend_config" "kube-cluster" {
+  backend                = vault_auth_backend.kubernetes.path
+  kubernetes_host        = "http://cluster.homelab.dmann.xyz:443"
+  kubernetes_ca_cert     = join("\n", data.tls_certificate.kube-cluster.certificates[*].cert_pem)
+}
