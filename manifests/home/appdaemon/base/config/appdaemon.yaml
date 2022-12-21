@@ -10,7 +10,8 @@ appdaemon:
       type: hass
       ha_url: https://home-assistant.dmann.xyz
       token: !secret home_assistant_token
-
+http:
+    url: http://0.0.0.0:80
 admin:
 api:
 hadashboard:

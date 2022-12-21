@@ -58,6 +58,6 @@ spec:
         livenessProbe:
           tcpSocket:
             port: webui
-        readinessProbe:
-          tcpSocket:
-            port: webui
+        # readinessProbe:
+        #   tcpSocket:
+        #     port: webui
