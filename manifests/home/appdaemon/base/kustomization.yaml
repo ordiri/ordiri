@@ -7,3 +7,7 @@ resources:
 - deployment.yaml
 - service.yaml
 - certificate.yaml
+- sa.yaml
+- vault-rbac.yaml
+
+

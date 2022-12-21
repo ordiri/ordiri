@@ -11,6 +11,7 @@ spec:
       labels:
         app: appdaemon
     spec:
+      serviceAccount: appdaemon
       dnsConfig:
         options:
         - name: ndots
@@ -24,7 +25,10 @@ spec:
         - name: HA_URL
           value: https://home-assistant.dmann.xyz
         - name: TOKEN
-          value: https://appdaemon.dmann.xyz
+          valueFrom:
+            secretKeyRef:
+              name: vault-hass-api-secret
+              key: token
         resources:
           requests:
             cpu: "50m"
@@ -41,3 +45,13 @@ spec:
         readinessProbe:
           tcpSocket:
             port: webui
+      volumeMounts:
+      - mountPath: /run/secrets/hass-api
+        name: hass-api-token
+    volumes:
+    - csi:
+        driver: secrets-store.csi.k8s.io
+        readOnly: true
+        volumeAttributes:
+          secretProviderClass: vault-hass-api
+      name: hass-api-token
