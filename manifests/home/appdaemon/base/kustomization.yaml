@@ -6,7 +6,6 @@ configMapGenerator:
     files:
     - appdaemon.yaml=config/appdaemon.yaml
 resources:
-- proxy
 - deployment.yaml
 - service.yaml
 - certificate.yaml
