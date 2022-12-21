@@ -1,24 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: zigbee2mqtt
+  name: appdaemon
 spec:
   selector:
     matchLabels:
-      app: zigbee2mqtt
+      app: appdaemon
   template:
     metadata:
       labels:
-        app: zigbee2mqtt
+        app: appdaemon
     spec:
       dnsConfig:
         options:
         - name: ndots
           value: "1"
       containers:
-      - name: zigbee2mqtt
-        image: harbor.dmann.dev/docker.io/koenkk/zigbee2mqtt
-        env: []
+      - name: appdaemon
+        image: harbor.dmann.dev/docker.io/acockburn/appdaemon:latest
+        env:
+        - name: DASH_URL
+          value: https://appdaemon.dmann.xyz
+        - name: HA_URL
+          value: https://home-assistant.dmann.xyz
+        - name: TOKEN
+          value: https://appdaemon.dmann.xyz
         resources:
           requests:
             cpu: "50m"
@@ -35,11 +41,3 @@ spec:
         readinessProbe:
           tcpSocket:
             port: webui
-        volumeMounts:
-        - name: zigbee2mqtt-config
-          mountPath: /app/data/configuration.yaml
-          subPath: configuration.yaml
-      volumes:
-      - name: zigbee2mqtt-config
-        configMap:
-          name: zigbee2mqtt-config

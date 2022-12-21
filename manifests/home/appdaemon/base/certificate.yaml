@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: appdaemon-tls
+spec:
+  secretName: appdaemon-tls
+  dnsNames:
+    - appdaemon.dmann.xyz
+    - appdaemon.dmann.dev
+  issuerRef:
+    name: letsencrypt
+    kind: ClusterIssuer
