@@ -7,6 +7,7 @@ http:
 
 homekit:
 - name: HASS Bridge
+  advertise_ip: !env_var POD_IP
   filter:
     include_domains:
     - climate
@@ -15,6 +16,7 @@ homekit:
     - binary_sensor.zone_*
 - name: HASS Bridge - Security
   port: 21065
+  advertise_ip: !env_var POD_IP
   mode: accessory
   filter:
     include_entities:

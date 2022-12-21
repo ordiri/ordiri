@@ -48,6 +48,11 @@ spec:
         - name:  webui
           containerPort:  8123
           protocol: TCP
+        env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
         resources:
   volumeClaimTemplates:
   - metadata:
