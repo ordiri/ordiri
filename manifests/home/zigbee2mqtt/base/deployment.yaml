@@ -33,10 +33,10 @@ spec:
           protocol: TCP
         livenessProbe:
           tcpSocket:
-            port: mqtt
+            port: webui
         readinessProbe:
           tcpSocket:
-            port: mqtt
+            port: webui
         volumeMounts:
         - name: zigbee2mqtt-config
           mountPath: /app/data/configuration.yaml
