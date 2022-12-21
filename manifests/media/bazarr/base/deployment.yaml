@@ -11,6 +11,15 @@ spec:
     metadata:
       labels:
         app: bazarr
+      annotations:
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/role: bazarr
+        vault.hashicorp.com/agent-inject-secret-oidc: identity/oidc/client/bazarr
+        vault.hashicorp.com/agent-inject-template-oidc: |
+          {{- with secret "identity/oidc/client/bazarr" -}}
+          export oidc_client_id="{{ .Data.client_id }}"
+          export oidc_client_secret="{{ .Data.client_secret }}"
+          {{- end }}
     spec:
       dnsConfig:
         options:
@@ -29,6 +38,38 @@ spec:
         persistentVolumeClaim:
           claimName: bazarr-config-data
       containers:
+      - name: oauth2-proxy
+        command:
+        - sh
+        - -c
+        args:
+        - |
+          source /vault/secrets/oidc;
+          /bin/oauth2-proxy \
+          --provider=oidc \
+          --email-domain=* \
+          --oidc-email-claim=sub \
+          --upstream=http://127.0.0.1:6767 \
+          --https-address=[::]:4180 \
+          --tls-cert-file=/opt/bazarr-tls/tls.crt \
+          --tls-key-file=/opt/bazarr-tls/tls.key \
+          --provider-display-name="Vault" \
+          --client-id="${oidc_client_id}" \
+          --client-secret="${oidc_client_secret}" \
+          --redirect-url="https://bazarr.dmann.xyz" \
+          --oidc-issuer-url="https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/default" \
+          --cookie-secure=false \
+          --cookie-secret=secret12secret12
+        env: []
+        image: harbor.dmann.dev/quay.io/oauth2-proxy/oauth2-proxy:latest
+        ports:
+        - containerPort: 4180
+          protocol: TCP
+          name: oauth2-proxy
+        resources: 
+        volumeMounts:
+        - name: bazarr-tls
+          mountPath: /opt/bazarr-tls
       - name: bazarr
         image: lscr.io/linuxserver/bazarr:latest
         volumeMounts:
