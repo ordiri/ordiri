@@ -18,6 +18,12 @@ spec:
           {{- with secret "secret/data/appdaemon/home-assistant-api" -}}
           home_assistant_token: "{{ .Data.data.token }}"
           {{- end }}
+        vault.hashicorp.com/agent-inject-secret-oidc: identity/oidc/client/appdaemon
+        vault.hashicorp.com/agent-inject-template-oidc: |
+          {{- with secret "identity/oidc/client/appdaemon" -}}
+          export oidc_client_id="{{ .Data.data.client_id }}"
+          export oidc_client_secret="{{ .Data.data.client_secret }}"
+          {{- end }}
         vault.hashicorp.com/role: appdaemon
     spec:
       serviceAccount: appdaemon
@@ -32,6 +38,31 @@ spec:
       - name: appdaemon-data
         emptyDir: { } # todo make a PVC
       containers:
+      - name: oauth2-proxy
+        command:
+        - sh
+        - -c
+        args:
+        - |
+          source /vault/secrets/oidc;
+          /bin/oauth2-proxy \
+          -provider oidc \
+          -email-domain=codingninja.com.au \
+          -upstream=tcp:///localhost:80 \
+          -http-address=0.0.0.0:4180 \
+          -provider-display-name "Vault" \
+          -client-id ${oidc_client_id} \
+          -client-secret ${oidc_client_secret} \
+          -redirect-url https://appdaemon.dmann.xyz \
+          -oidc-issuer-url https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/default \
+          -cookie-secure=false \
+          -cookie-secret=secret
+        env: []
+        image: quay.io/oauth2-proxy/oauth2-proxy:latest
+        ports:
+        - containerPort: 4180
+          protocol: TCP
+        resources: 
       - name: appdaemon
         image: harbor.dmann.dev/docker.io/acockburn/appdaemon:latest
         env:
