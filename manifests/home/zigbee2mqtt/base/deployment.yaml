@@ -11,6 +11,10 @@ spec:
       labels:
         app: zigbee2mqtt
     spec:
+      dnsConfig:
+        options:
+        - name: ndots
+          value: "1"
       containers:
       - name: zigbee2mqtt
         image: harbor.dmann.dev/docker.io/koenkk/zigbee2mqtt
