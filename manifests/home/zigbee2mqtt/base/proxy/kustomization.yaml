@@ -2,11 +2,10 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 configMapGenerator:
-  - name: zigbee2mqtt-config
+  - name: caddyfile
     files:
-    - configuration.yaml=config/configuration.yaml
+    - "Caddyfile=./config/Caddyfile"
+
 resources:
-- proxy
 - deployment.yaml
 - service.yaml
-- certificate.yaml
