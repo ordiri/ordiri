@@ -1,6 +1,27 @@
 apiVersion: v1
 kind: Service
 metadata:
+  name: sabnzbd-ingress
+  annotations:
+    k8s.dmann.xyz/cloudflare-domain-dmann-xyz: sabnzbd
+    k8s.dmann.xyz/cloudflare-zone-dmann-xyz: dmann.xyz
+    k8s.dmann.xyz/cloudflare-domain-dmann-dev: sabnzbd
+    k8s.dmann.xyz/cloudflare-zone-dmann-dev: dmann.dev
+spec:
+  ipFamilyPolicy: PreferDualStack
+  ports:
+  - name: https
+    port: 443
+    protocol: TCP
+    targetPort: oauth2-proxy
+  selector:
+    app: reverse-proxy
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
   name: sabnzbd
 spec:
   ipFamilyPolicy: SingleStack

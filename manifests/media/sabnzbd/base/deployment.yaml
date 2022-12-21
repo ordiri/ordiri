@@ -11,7 +11,17 @@ spec:
     metadata:
       labels:
         app: sabnzbd
+      annotations:
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/role: sabnzbd
+        vault.hashicorp.com/agent-inject-secret-oidc: identity/oidc/client/sabnzbd
+        vault.hashicorp.com/agent-inject-template-oidc: |
+          {{- with secret "identity/oidc/client/sabnzbd" -}}
+          export oidc_client_id="{{ .Data.client_id }}"
+          export oidc_client_secret="{{ .Data.client_secret }}"
+          {{- end }}
     spec:
+      serviceAccount: sabnzbd
       dnsConfig:
         options:
         - name: ndots
@@ -29,6 +39,38 @@ spec:
         persistentVolumeClaim:
           claimName: sabnzbd-config-data
       containers:
+      - name: oauth2-proxy
+        command:
+        - sh
+        - -c
+        args:
+        - |
+          source /vault/secrets/oidc;
+          /bin/oauth2-proxy \
+          --provider=oidc \
+          --email-domain=* \
+          --oidc-email-claim=sub \
+          --upstream=http://127.0.0.1:8080 \
+          --https-address=[::]:4180 \
+          --tls-cert-file=/opt/sabnzbd-tls/tls.crt \
+          --tls-key-file=/opt/sabnzbd-tls/tls.key \
+          --provider-display-name="Vault" \
+          --client-id="${oidc_client_id}" \
+          --client-secret="${oidc_client_secret}" \
+          --redirect-url="https://sabnzbd.dmann.xyz" \
+          --oidc-issuer-url="https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/default" \
+          --cookie-secure=false \
+          --cookie-secret=secret12secret12
+        env: []
+        image: harbor.dmann.dev/quay.io/oauth2-proxy/oauth2-proxy:latest
+        ports:
+        - containerPort: 4180
+          protocol: TCP
+          name: oauth2-proxy
+        resources: 
+        volumeMounts:
+        - name: sabnzbd-tls
+          mountPath: /opt/sabnzbd-tls
       - name: sabnzbd
         image: lscr.io/linuxserver/sabnzbd:latest
         volumeMounts:
