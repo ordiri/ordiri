@@ -68,7 +68,7 @@ spec:
         - containerPort: 4180
           protocol: TCP
         resources: 
-        volumes:
+        volumeMounts:
         - name: appdaemon-tls
           mountPath: /opt/appdaemon-tls
       - name: appdaemon
