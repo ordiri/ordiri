@@ -11,6 +11,7 @@ spec:
       labels:
         app: zigbee2mqtt
     spec:
+      serviceAccount: zigbee2mqtt
       dnsConfig:
         options:
         - name: ndots
