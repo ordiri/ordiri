@@ -1,8 +1,10 @@
 # Loads default set of integrations. Do not remove.
 default_config:
+
 http:
   ssl_certificate: /opt/home-assistant-tls/tls.crt
   ssl_key: /opt/home-assistant-tls/tls.key
+  
 # This is no longer a thing, you *have* to use the UI 🙃
 # mqtt:
 #   broker: mqtt.dmann.xyz

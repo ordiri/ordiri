@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zigbee2mqtt
+spec:
+  selector:
+    matchLabels:
+      app: zigbee2mqtt
+  template:
+    metadata:
+      labels:
+        app: zigbee2mqtt
+    spec:
+      containers:
+      - name: zigbee2mqtt
+        image: koenkk/zigbee2mqtt
+        resources:
+          requests:
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - name: webui
+          containerPort: 8080
+          protocol: TCP
+        livenessProbe:
+          tcpSocket:
+            port: mqtt
+        readinessProbe:
+          tcpSocket:
+            port: mqtt
+        volumeMounts:
+        - name: zigbee2mqtt-config
+          mountPath: /app/data/configuration.yaml
+          subPath: configuration.yaml
+        - name: zigbee2mqtt-tls
+          mountPath: /opt/zigbee2mqtt-tls
+      volumes:
+      - name: zigbee2mqtt-config
+        configMap:
+          name: zigbee2mqtt-config
+      - name: zigbee2mqtt-tls
+        secret:
+          secretName: zigbee2mqtt-tls
