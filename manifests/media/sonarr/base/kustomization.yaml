@@ -9,8 +9,9 @@ secretGenerator:
       - password=password
 
 resources:
-- proxy
 - deployment.yaml
 - pvc.yaml
 - service.yaml
 - certificate.yaml
+- sa.yaml
+- vault-rbac.yaml
