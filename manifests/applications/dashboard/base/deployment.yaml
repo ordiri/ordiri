@@ -11,6 +11,15 @@ spec:
     metadata:
       labels:
         app: dashboard
+      annotations:
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/role: dashboard
+        vault.hashicorp.com/agent-inject-secret-oidc: identity/oidc/client/dashboard
+        vault.hashicorp.com/agent-inject-template-oidc: |
+          {{- with secret "identity/oidc/client/dashboard" -}}
+          export oidc_client_id="{{ .Data.client_id }}"
+          export oidc_client_secret="{{ .Data.client_secret }}"
+          {{- end }}
     spec:
       serviceAccount: dashboard
       volumes:
