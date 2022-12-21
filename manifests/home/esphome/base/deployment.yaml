@@ -21,6 +21,7 @@ spec:
           export oidc_client_secret="{{ .Data.client_secret }}"
           {{- end }}
     spec:
+      serviceAccount: esphome
       dnsConfig:
         options:
         - name: ndots
