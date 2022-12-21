@@ -1,6 +1,10 @@
 # Loads default set of integrations. Do not remove.
 default_config:
 
+homeassistant:
+  external_url: "https://home-assistant.dmann.xyz"
+  internal_url: "https://home-assistant.dmann.xyz"
+
 http:
   ssl_certificate: /opt/home-assistant-tls/tls.crt
   ssl_key: /opt/home-assistant-tls/tls.key
