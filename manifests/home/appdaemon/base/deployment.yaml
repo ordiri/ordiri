@@ -50,7 +50,7 @@ spec:
           source /vault/secrets/oidc;
           /bin/oauth2-proxy \
           --provider=oidc \
-          --email-domain=codingninja.com.au \
+          --email-domain=* \
           --upstream=http://127.0.0.1:80 \
           --https-address=[::]:4180 \
           --tls-cert-file=/opt/appdaemon-tls/tls.crt \
@@ -58,7 +58,7 @@ spec:
           --provider-display-name="Vault" \
           --client-id="${oidc_client_id}" \
           --client-secret="${oidc_client_secret}" \
-          --redirect-url="https://appdaemon.dmann.xyz" \
+          --redirect-url="https://appdaemon.dmann.xyz/" \
           --oidc-issuer-url="https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/default" \
           --cookie-secure=false \
           --cookie-secret=secret12secret12
