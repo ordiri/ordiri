@@ -2,7 +2,7 @@
 
 :443 {
   tls /opt/appdaemon-tls/tls.crt /opt/appdaemon-tls/tls.key
-  reverse_proxy http://appdaemon:8080 
+  reverse_proxy http://appdaemon:80 
 }
 
 :80 {
