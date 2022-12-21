@@ -16,6 +16,38 @@ spec:
         - name: ndots
           value: "1"
       containers:
+      - name: oauth2-proxy
+        command:
+        - sh
+        - -c
+        args:
+        - |
+          source /vault/secrets/oidc;
+          /bin/oauth2-proxy \
+          --provider=oidc \
+          --email-domain=* \
+          --oidc-email-claim=sub \
+          --upstream=http://127.0.0.1:8080 \
+          --https-address=[::]:4180 \
+          --tls-cert-file=/opt/zigbee2mqtt-tls/tls.crt \
+          --tls-key-file=/opt/zigbee2mqtt-tls/tls.key \
+          --provider-display-name="Vault" \
+          --client-id="${oidc_client_id}" \
+          --client-secret="${oidc_client_secret}" \
+          --redirect-url="https://zigbee2mqtt.dmann.xyz" \
+          --oidc-issuer-url="https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/default" \
+          --cookie-secure=false \
+          --cookie-secret=secret12secret12
+        env: []
+        image: harbor.dmann.dev/quay.io/oauth2-proxy/oauth2-proxy:latest
+        ports:
+        - containerPort: 4180
+          protocol: TCP
+          name: oauth2-proxy
+        resources: 
+        volumeMounts:
+        - name: zigbee2mqtt-tls
+          mountPath: /opt/zigbee2mqtt-tls
       - name: zigbee2mqtt
         image: harbor.dmann.dev/docker.io/koenkk/zigbee2mqtt
         env: []
@@ -43,3 +75,6 @@ spec:
       - name: zigbee2mqtt-config
         configMap:
           name: zigbee2mqtt-config
+      - name: zigbee2mqtt-tls
+        secret:
+          secretName: zigbee2mqtt-tls
