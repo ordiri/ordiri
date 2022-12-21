@@ -15,6 +15,14 @@ spec:
     port: 443
     protocol: TCP
     targetPort: webui
+  - name: homekit-bridge
+    port: 20163
+    protocol: TCP
+    targetPort: homekit-bridge
+  - name: homekit-alarm
+    port: 20165
+    protocol: TCP
+    targetPort: homekit-alarm
   selector:
     app: home-assistant
   sessionAffinity: None

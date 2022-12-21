@@ -17,7 +17,8 @@ logger:
 
 homekit:
 - name: HASS Bridge
-  advertise_ip: !env_var POD_IP
+  advertise_ip: !env_var HOME_ASSISTANT_INGRESS_PORT_21063_TCP_ADDR
+  port: 21063
   filter:
     include_domains:
     - climate
@@ -26,7 +27,7 @@ homekit:
     - binary_sensor.zone_*
 - name: HASS Bridge - Security
   port: 21065
-  advertise_ip: !env_var POD_IP
+  advertise_ip: !env_var HOME_ASSISTANT_INGRESS_PORT_21065_TCP_ADDR
   mode: accessory
   filter:
     include_entities:
