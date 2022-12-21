@@ -5,6 +5,12 @@ http:
   ssl_certificate: /opt/home-assistant-tls/tls.crt
   ssl_key: /opt/home-assistant-tls/tls.key
 
+logger:
+  default: warning
+  logs:
+    homeassistant.components.homekit: debug
+    pyhap: debug
+
 homekit:
 - name: HASS Bridge
   advertise_ip: !env_var POD_IP
