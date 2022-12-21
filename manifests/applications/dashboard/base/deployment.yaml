@@ -72,16 +72,17 @@ spec:
           mountPath: /app/config
         readinessProbe:
           httpGet:
-            path: /live
+            path: /
             port: webui
           initialDelaySeconds: 5
           periodSeconds: 10
         livenessProbe:
           httpGet:
-            path: /live
+            path: /
             port: webui
           initialDelaySeconds: 5
           periodSeconds: 10
+          
         ports:
         - name:  webui
           containerPort: 3000
