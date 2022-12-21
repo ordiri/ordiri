@@ -51,7 +51,7 @@ spec:
           --provider=oidc \
           --email-domain=* \
           --oidc-email-claim=sub \
-          --upstream=http://127.0.0.1:80 \
+          --upstream=http://127.0.0.1:9696 \
           --https-address=[::]:4180 \
           --tls-cert-file=/opt/prowlarr-tls/tls.crt \
           --tls-key-file=/opt/prowlarr-tls/tls.key \

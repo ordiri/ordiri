@@ -33,7 +33,7 @@ spec:
           --provider=oidc \
           --email-domain=* \
           --oidc-email-claim=sub \
-          --upstream=http://127.0.0.1:80 \
+          --upstream=http://127.0.0.1:3000 \
           --https-address=[::]:4180 \
           --tls-cert-file=/opt/dashboard-tls/tls.crt \
           --tls-key-file=/opt/dashboard-tls/tls.key \
