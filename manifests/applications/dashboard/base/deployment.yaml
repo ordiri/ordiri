@@ -30,6 +30,9 @@ spec:
       - name: dashboard-tls
         secret:
           secretName: dashboard-tls
+      - name: dashboard-config
+        configMap:
+          name: dashboard-config
       containers:
       - name: oauth2-proxy
         command:
@@ -68,7 +71,7 @@ spec:
         volumeMounts:
         - name: dashboard-tls
           mountPath: /opt/dashboard-tls
-        - name: media-nfs
+        - name: dashboard-config
           mountPath: /app/config
         readinessProbe:
           httpGet:
