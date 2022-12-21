@@ -13,6 +13,7 @@ spec:
         app: esphome
       annotations:
         vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/role: esphome
         vault.hashicorp.com/agent-inject-secret-oidc: identity/oidc/client/esphome
         vault.hashicorp.com/agent-inject-template-oidc: |
           {{- with secret "identity/oidc/client/esphome" -}}
