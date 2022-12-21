@@ -10,6 +10,15 @@ spec:
     metadata:
       labels:
         app: zigbee2mqtt
+      annotations:
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/role: zigbee2mqtt
+        vault.hashicorp.com/agent-inject-secret-oidc: identity/oidc/client/zigbee2mqtt
+        vault.hashicorp.com/agent-inject-template-oidc: |
+          {{- with secret "identity/oidc/client/zigbee2mqtt" -}}
+          export oidc_client_id="{{ .Data.client_id }}"
+          export oidc_client_secret="{{ .Data.client_secret }}"
+          {{- end }}
     spec:
       serviceAccount: zigbee2mqtt
       dnsConfig:
