@@ -19,7 +19,7 @@ spec:
     port: 21063
     protocol: TCP
   - name: homekit-alarm
-    port: 21063
+    port: 21065
     protocol: TCP
   selector:
     app: home-assistant
