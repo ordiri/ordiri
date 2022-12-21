@@ -17,4 +17,4 @@ mqtt:
 # Serial settings
 serial:
   # Location of CC2531 USB sniffer
-  port: tcp://zigbee-sensor.lan.homelab.dmann.xyz
+  port: tcp://WLAN_raspberrypi.lan.house.dmann.xyz:20108
