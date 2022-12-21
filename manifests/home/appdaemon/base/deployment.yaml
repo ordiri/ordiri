@@ -10,6 +10,15 @@ spec:
     metadata:
       labels:
         app: appdaemon
+
+      annotations:
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/agent-inject-secret-config: secret/data/appdaemon/home-assistant-api
+        vault.hashicorp.com/agent-inject-template-config: |
+          {{- with secret "secret/data/appdaemon/home-assistant-api" -}}
+          home_assistant_token: {{ .Data.data.token }}
+          {{- end }}
+        vault.hashicorp.com/role: appdaemon
     spec:
       serviceAccount: appdaemon
       dnsConfig:
@@ -24,11 +33,6 @@ spec:
           value: https://appdaemon.dmann.xyz
         - name: HA_URL
           value: https://home-assistant.dmann.xyz
-        - name: TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: vault-hass-api-secret
-              key: token
         resources:
           requests:
             cpu: "50m"
@@ -45,13 +49,3 @@ spec:
         readinessProbe:
           tcpSocket:
             port: webui
-      volumeMounts:
-      - mountPath: /run/secrets/hass-api
-        name: hass-api-token
-    volumes:
-    - csi:
-        driver: secrets-store.csi.k8s.io
-        readOnly: true
-        volumeAttributes:
-          secretProviderClass: vault-hass-api
-      name: hass-api-token
