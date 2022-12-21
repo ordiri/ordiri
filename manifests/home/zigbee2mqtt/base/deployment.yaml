@@ -14,6 +14,9 @@ spec:
       containers:
       - name: zigbee2mqtt
         image: harbor.dmann.dev/docker.io/koenkk/zigbee2mqtt
+        env:
+        - name: DEBUG
+        value: 'zigbee-herdsman*'
         resources:
           requests:
             cpu: "50m"
