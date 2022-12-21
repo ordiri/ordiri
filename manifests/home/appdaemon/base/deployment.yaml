@@ -52,7 +52,7 @@ spec:
           --provider=oidc \
           --email-domain=codingninja.com.au \
           --upstream=http://127.0.0.1:80 \
-          --https-address=0.0.0.0:4180 \
+          --https-address=[::]:4180 \
           --tls-cert-file=/opt/appdaemon-tls/tls.crt \
           --tls-key-file=/opt/appdaemon-tls/tls.key \
           --provider-display-name="Vault" \
@@ -67,6 +67,7 @@ spec:
         ports:
         - containerPort: 4180
           protocol: TCP
+          name: oauth2-proxy
         resources: 
         volumeMounts:
         - name: appdaemon-tls
