@@ -7,4 +7,6 @@ resources:
 - service.yaml
 - certificate.yaml
 - pvc.yaml
+- sa.yaml
+- vault-rbac.yaml
 
