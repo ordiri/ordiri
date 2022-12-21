@@ -61,7 +61,7 @@ spec:
           --redirect-url https://appdaemon.dmann.xyz \
           --oidc-issuer-url https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/default \
           --cookie-secure=false \
-          --cookie-secret=secret
+          --cookie-secret=secret12secret12
         env: []
         image: quay.io/oauth2-proxy/oauth2-proxy:latest
         ports:
