@@ -2,7 +2,7 @@ frontend:
   # Optional, default 8080
   port: 8080
   # Optional, default 0.0.0.0
-  host: '::'
+  host: '0.0.0.0'
   # Optional, url on which the frontend can be reached, currently only used for the Home Assistant device configuration page
   url: 'https://zigbee2mqtt.dmann.xyz'
 
