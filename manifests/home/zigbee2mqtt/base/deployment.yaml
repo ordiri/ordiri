@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: zigbee2mqtt
-        image: koenkk/zigbee2mqtt
+        image: harbor.dmann.dev/docker.io/koenkk/zigbee2mqtt
         resources:
           requests:
             cpu: "50m"
@@ -34,12 +34,7 @@ spec:
         - name: zigbee2mqtt-config
           mountPath: /app/data/configuration.yaml
           subPath: configuration.yaml
-        - name: zigbee2mqtt-tls
-          mountPath: /opt/zigbee2mqtt-tls
       volumes:
       - name: zigbee2mqtt-config
         configMap:
           name: zigbee2mqtt-config
-      - name: zigbee2mqtt-tls
-        secret:
-          secretName: zigbee2mqtt-tls
