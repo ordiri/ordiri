@@ -20,7 +20,8 @@ mqtt:
   # MQTT base topic for zigbee2mqtt MQTT messages
   base_topic: zigbee2mqtt
   # MQTT server URL
-  server: 'mqtts://mqtt.dmann.xyz'
+  server: 'mqtts://mqtt.dmann.xyz:443'
+  ca: /etc/ssl/certs/ca-certificates.crt
   # MQTT server authentication, uncomment if required:
   # user: my_user
   # password: my_password
