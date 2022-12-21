@@ -50,6 +50,8 @@ spec:
           source /vault/secrets/oidc;
           /bin/oauth2-proxy \
           --provider=oidc \
+          --email-domain=* \
+          --oidc-email-claim=sub \
           --upstream=http://127.0.0.1:80 \
           --https-address=[::]:4180 \
           --tls-cert-file=/opt/appdaemon-tls/tls.crt \
