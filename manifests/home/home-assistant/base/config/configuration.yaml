@@ -4,6 +4,17 @@ default_config:
 http:
   ssl_certificate: /opt/home-assistant-tls/tls.crt
   ssl_key: /opt/home-assistant-tls/tls.key
+
+homekit:
+- filter:
+    include_domains:
+    - lock
+    - climate
+    - light
+    include_entity_globs:
+    - binary_sensor.zone_*
+    include_entities:
+    - binary_sensor.living_room_motion
   
 # This is no longer a thing, you *have* to use the UI 🙃
 # mqtt:
