@@ -9,5 +9,4 @@ resources:
 - certificate.yaml
 - sa.yaml
 - vault-rbac.yaml
-
-
+- hass-api-secretclass.yaml
