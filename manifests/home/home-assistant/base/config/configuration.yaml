@@ -15,9 +15,10 @@ homekit:
     - binary_sensor.zone_*
 - name: HASS Bridge - Security
   port: 21065
+  mode: accessory
   filter:
-    include_domains:
-    - lock
+    include_entities:
+    - lock.front_door_lock
   
 # This is no longer a thing, you *have* to use the UI 🙃
 # mqtt:
