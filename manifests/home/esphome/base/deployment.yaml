@@ -11,6 +11,14 @@ spec:
     metadata:
       labels:
         app: esphome
+      annotations:
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/agent-inject-secret-oidc: identity/oidc/client/esphome
+        vault.hashicorp.com/agent-inject-template-oidc: |
+          {{- with secret "identity/oidc/client/esphome" -}}
+          export oidc_client_id="{{ .Data.client_id }}"
+          export oidc_client_secret="{{ .Data.client_secret }}"
+          {{- end }}
     spec:
       dnsConfig:
         options:
