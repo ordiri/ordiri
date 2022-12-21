@@ -15,7 +15,7 @@ spec:
     protocol: TCP
     targetPort: oauth2-proxy
   selector:
-    app: reverse-proxy
+    app: sabnzbd
   sessionAffinity: None
   type: ClusterIP
 ---
