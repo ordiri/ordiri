@@ -16,13 +16,11 @@ spec:
     protocol: TCP
     targetPort: webui
   - name: homekit-bridge
-    port: 20163
+    port: 21063
     protocol: TCP
-    targetPort: homekit-bridge
   - name: homekit-alarm
-    port: 20165
+    port: 21063
     protocol: TCP
-    targetPort: homekit-alarm
   selector:
     app: home-assistant
   sessionAffinity: None
