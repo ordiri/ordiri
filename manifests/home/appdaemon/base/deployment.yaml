@@ -21,8 +21,8 @@ spec:
         vault.hashicorp.com/agent-inject-secret-oidc: identity/oidc/client/appdaemon
         vault.hashicorp.com/agent-inject-template-oidc: |
           {{- with secret "identity/oidc/client/appdaemon" -}}
-          export oidc_client_id="{{ .Data.data.client_id }}"
-          export oidc_client_secret="{{ .Data.data.client_secret }}"
+          export oidc_client_id="{{ .Data.client_id }}"
+          export oidc_client_secret="{{ .Data.client_secret }}"
           {{- end }}
         vault.hashicorp.com/role: appdaemon
     spec:
