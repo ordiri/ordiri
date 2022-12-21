@@ -13,7 +13,7 @@ spec:
       labels:
         app: home-assistant
     spec:
-      hostNetwork: false
+      hostNetwork: true
       dnsConfig:
         options:
         - name: ndots
