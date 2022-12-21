@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dashboard
+  template:
+    metadata:
+      labels:
+        app: dashboard
+    spec:
+      serviceAccount: dashboard
+      volumes:
+      - name: media-nfs
+        nfs:
+          path: /homelab/media
+          server: ceph.homelab.dmann.xyz
+      - name: dashboard-tls
+        secret:
+          secretName: dashboard-tls
+      containers:
+      - name: oauth2-proxy
+        command:
+        - sh
+        - -c
+        args:
+        - |
+          source /vault/secrets/oidc;
+          /bin/oauth2-proxy \
+          --provider=oidc \
+          --email-domain=* \
+          --oidc-email-claim=sub \
+          --upstream=http://127.0.0.1:80 \
+          --https-address=[::]:4180 \
+          --tls-cert-file=/opt/dashboard-tls/tls.crt \
+          --tls-key-file=/opt/dashboard-tls/tls.key \
+          --provider-display-name="Vault" \
+          --client-id="${oidc_client_id}" \
+          --client-secret="${oidc_client_secret}" \
+          --redirect-url="https://dashboard.dmann.xyz" \
+          --oidc-issuer-url="https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/default" \
+          --cookie-secure=false \
+          --cookie-secret=secret12secret12
+        env: []
+        image: harbor.dmann.dev/quay.io/oauth2-proxy/oauth2-proxy:latest
+        ports:
+        - containerPort: 4180
+          protocol: TCP
+          name: oauth2-proxy
+        resources: 
+        volumeMounts:
+        - name: dashboard-tls
+          mountPath: /opt/dashboard-tls
+      - name: dashboard
+        image: ghcr.io/benphelps/homepage:latest
+        volumeMounts:
+        - name: dashboard-tls
+          mountPath: /opt/dashboard-tls
+        - name: media-nfs
+          mountPath: /app/config
+        readinessProbe:
+          httpGet:
+            path: /live
+            port: webui
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /live
+            port: webui
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        ports:
+        - name:  webui
+          containerPort: 3000
+          protocol: TCP
+        resources:
