@@ -31,7 +31,7 @@ POLICY
 resource "vault_identity_oidc_client" "appdaemon" {
   name          = "appdaemon"
   redirect_uris = [
-    "https://appdaemon.dmann.xyz/callback/oauth2/callback"
+    "https://appdaemon.dmann.xyz/oauth2/callback"
   ]
   assignments = ["allow_all"]
 }
