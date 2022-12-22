@@ -20,6 +20,16 @@ spec:
           export oidc_client_id="{{ .Data.client_id }}"
           export oidc_client_secret="{{ .Data.client_secret }}"
           {{- end }}
+        vault.hashicorp.com/agent-inject-secret-bazarr: secret/data/media/bazarr/api
+        vault.hashicorp.com/agent-inject-template-bazarr: |
+          {{- with secret "secret/data/media/bazarr/api" -}}
+          export bazarr_api_token="{{ .Data.data.token }}"
+          {{- end }}
+        vault.hashicorp.com/agent-inject-secret-plex: secret/data/media/plex/api
+        vault.hashicorp.com/agent-inject-template-plex: |
+          {{- with secret "secret/data/media/plex/api" -}}
+          export plex_api_token="{{ .Data.data.token }}"
+          {{- end }}
     spec:
       serviceAccount: dashboard
       volumes:
@@ -68,11 +78,23 @@ spec:
           mountPath: /opt/dashboard-tls
       - name: dashboard
         image: ghcr.io/benphelps/homepage:latest
+        command:
+        - sh
+        - -c
+        args:
+        - |
+          source /vault/secrets/bazarr;
+          source /vault/secrets/plex;
+          cat /opt/app-config/bookmarks.yaml.tpl | envsubst > /app/config/bookmarks.yaml;
+          cat /opt/app-config/services.yaml.tpl | envsubst > /app/config/services.yaml;
+          cat /opt/app-config/settings.yaml.tpl | envsubst > /app/config/settings.yaml;
+          cat /opt/app-config/widgets.yaml.tpl | envsubst > /app/config/widgets.yaml;
+          node /app/server.js;
         volumeMounts:
         - name: dashboard-tls
           mountPath: /opt/dashboard-tls
         - name: dashboard-config
-          mountPath: /app/config
+          mountPath: /opt/apt-config
         readinessProbe:
           httpGet:
             path: /

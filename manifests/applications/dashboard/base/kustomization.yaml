@@ -4,10 +4,10 @@ kind: Kustomization
 configMapGenerator:
 - name: dashboard-config
   files:
-  - bookmarks.yaml=configuration/bookmarks.yaml
-  - services.yaml=configuration/services.yaml
-  - settings.yaml=configuration/settings.yaml
-  - widgets.yaml=configuration/widgets.yaml
+  - bookmarks.yaml.tpl=configuration/bookmarks.yaml
+  - services.yaml.tpl=configuration/services.yaml
+  - settings.yaml.tpl=configuration/settings.yaml
+  - widgets.yaml.tpl=configuration/widgets.yaml
 resources:
   - certificate.yaml
   - deployment.yaml

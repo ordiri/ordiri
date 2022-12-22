@@ -1,5 +1,15 @@
 - Group A:
-    - Service A:
+    - Plex:
+        type: plex
+        url: https://plex.dmann.xyz
+        key: ${plex_api_token}
+    - Bazarr:
+        type: bazarr
+        url: https://bazarr.dmann.xyz
+        key: ${bazarr_api_token}
+
+- Group B:
+    - Service B:
         href: http://localhost/
 
 - Group B:
