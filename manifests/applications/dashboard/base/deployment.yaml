@@ -31,6 +31,10 @@ spec:
           export plex_api_token="{{ .Data.data.token }}"
           {{- end }}
     spec:
+      dnsConfig:
+        options:
+        - name: ndots
+          value: "1"
       serviceAccount: dashboard
       volumes:
       - name: media-nfs
@@ -44,6 +48,38 @@ spec:
         configMap:
           name: dashboard-config
       containers:
+      - name: dashboard
+        image: ghcr.io/benphelps/homepage:latest
+        command:
+        - sh
+        - -c
+        args:
+        - |
+          apt install envsubst;
+          source /vault/secrets/bazarr;
+          source /vault/secrets/plex;
+          cat /opt/app-config/bookmarks.yaml.tpl | envsubst > /app/config/bookmarks.yaml;
+          cat /opt/app-config/services.yaml.tpl | envsubst > /app/config/services.yaml;
+          cat /opt/app-config/settings.yaml.tpl | envsubst > /app/config/settings.yaml;
+          cat /opt/app-config/widgets.yaml.tpl | envsubst > /app/config/widgets.yaml;
+          node /app/server.js;
+        volumeMounts:
+        - name: dashboard-tls
+          mountPath: /opt/dashboard-tls
+        - name: dashboard-config
+          mountPath: /opt/app-config
+        readinessProbe:
+          httpGet:
+            path: /
+            port: webui
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /
+            port: webui
+          initialDelaySeconds: 5
+          periodSeconds: 10
       - name: oauth2-proxy
         command:
         - sh
@@ -76,37 +112,6 @@ spec:
         volumeMounts:
         - name: dashboard-tls
           mountPath: /opt/dashboard-tls
-      - name: dashboard
-        image: ghcr.io/benphelps/homepage:latest
-        command:
-        - sh
-        - -c
-        args:
-        - |
-          source /vault/secrets/bazarr;
-          source /vault/secrets/plex;
-          cat /opt/app-config/bookmarks.yaml.tpl | envsubst > /app/config/bookmarks.yaml;
-          cat /opt/app-config/services.yaml.tpl | envsubst > /app/config/services.yaml;
-          cat /opt/app-config/settings.yaml.tpl | envsubst > /app/config/settings.yaml;
-          cat /opt/app-config/widgets.yaml.tpl | envsubst > /app/config/widgets.yaml;
-          node /app/server.js;
-        volumeMounts:
-        - name: dashboard-tls
-          mountPath: /opt/dashboard-tls
-        - name: dashboard-config
-          mountPath: /opt/apt-config
-        readinessProbe:
-          httpGet:
-            path: /
-            port: webui
-          initialDelaySeconds: 5
-          periodSeconds: 10
-        livenessProbe:
-          httpGet:
-            path: /
-            port: webui
-          initialDelaySeconds: 5
-          periodSeconds: 10
           
         ports:
         - name:  webui
