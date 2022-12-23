@@ -80,6 +80,11 @@ spec:
             port: webui
           initialDelaySeconds: 5
           periodSeconds: 10
+        ports:
+        - name:  webui
+          containerPort: 3000
+          protocol: TCP
+        resources:
       - name: oauth2-proxy
         command:
         - sh
@@ -112,9 +117,3 @@ spec:
         volumeMounts:
         - name: dashboard-tls
           mountPath: /opt/dashboard-tls
-          
-        ports:
-        - name:  webui
-          containerPort: 3000
-          protocol: TCP
-        resources:
