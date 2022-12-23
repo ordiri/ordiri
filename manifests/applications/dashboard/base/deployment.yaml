@@ -44,30 +44,34 @@ spec:
       - name: dashboard-tls
         secret:
           secretName: dashboard-tls
-      - name: dashboard-config
+      - name: dashboard-config-tpl
         configMap:
           name: dashboard-config
-      containers:
-      - name: dashboard
-        image: ghcr.io/benphelps/homepage:latest
+      - name: dashboard-config
+        emptyDir: {}
+      initContainers:
+      - name: config-template
+        image: harbor.dmann.dev/docker.io/bhgedigital/envsubst:latest
         command:
         - sh
         - -c
         args:
         - |
-          apt install envsubst;
-          source /vault/secrets/bazarr;
-          source /vault/secrets/plex;
           cat /opt/app-config/bookmarks.yaml.tpl | envsubst > /app/config/bookmarks.yaml;
           cat /opt/app-config/services.yaml.tpl | envsubst > /app/config/services.yaml;
           cat /opt/app-config/settings.yaml.tpl | envsubst > /app/config/settings.yaml;
           cat /opt/app-config/widgets.yaml.tpl | envsubst > /app/config/widgets.yaml;
-          node /app/server.js;
         volumeMounts:
-        - name: dashboard-tls
-          mountPath: /opt/dashboard-tls
-        - name: dashboard-config
+        - name: dashboard-config-tpl
           mountPath: /opt/app-config
+        - name: dashboard-config
+          mountPath: /app/config
+      containers:
+      - name: dashboard
+        image: ghcr.io/benphelps/homepage:latest
+        volumeMounts:
+        - name: dashboard-config
+          mountPath: /app/config
         readinessProbe:
           httpGet:
             path: /
