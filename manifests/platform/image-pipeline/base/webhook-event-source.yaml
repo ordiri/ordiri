@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: EventSource
+metadata:
+  name: gitea-webhook-event
+spec:
+  template:
+    dnsConfig:
+      options:
+      - name: ndots
+        value: "1"
+  service:
+    ports:
+      - port: 12000
+        targetPort: 12000
+  webhook:
+    gitea-event:
+      # port to run HTTP server on
+      port: "12000"
+      # endpoint to listen to
+      endpoint: /gitea-event
+      # HTTP request method to allow. In this case, only POST requests are accepted
+      method: POST

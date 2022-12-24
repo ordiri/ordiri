@@ -1,0 +1,48 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  name: gitea-event
+spec:
+  template:
+    serviceAccountName: gitea-event-sa
+    dnsConfig:
+      options:
+      - name: ndots
+        value: "1"
+  dependencies:
+  - name: gitea-event-dep
+    eventSourceName: gitea-event
+    eventName: gitea-event
+  triggers:
+  - template:
+      name: log-trigger2
+      log:
+        intervalSeconds: 4
+  - template:
+      name: argo-workflow-trigger
+      argoWorkflow:
+        operation: submit
+        parameters:
+        - src:
+            dependencyName: gitea-event-dep
+            dataKey: body.version
+          dest: metadata.name
+          operation: append
+        - src:
+            dependencyName: gitea-event-dep
+            dataKey: body
+          dest: spec.arguments.parameters.0.value
+        source:
+          resource:
+            apiVersion: argoproj.io/v1alpha1
+            kind: Workflow
+            metadata:
+              generateName: image-pipeline-
+            spec:
+                serviceAccountName: image-pipeline-wf-sa
+                entrypoint: main
+                arguments:
+                  parameters:
+                    - name: raw
+                workflowTemplateRef:
+                  name: image-pipeline
