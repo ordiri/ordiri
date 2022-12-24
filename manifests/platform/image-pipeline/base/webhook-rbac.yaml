@@ -11,31 +11,17 @@ metadata:
     kubernetes.io/service-account.name: gitea-webhook-sa
 type: kubernetes.io/service-account-token
 ---
-# Just enough permissions to submit a workflow template.
-# You could tighten this further (but perhaps impractically) by using `resourceNames`
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: gitea-webhook-executor
 rules:
 - apiGroups:
-  - argoproj.io
-  resources:
-  - workfloweventbindings
+  - "*"
   verbs:
-  - list
-- apiGroups:
-  - argoproj.io
+  - "*"
   resources:
-  - workflowtemplates
-  verbs:
-  - get
-- apiGroups:
-  - argoproj.io
-  resources:
-  - workflows
-  verbs:
-  - create
+  - "*"
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding

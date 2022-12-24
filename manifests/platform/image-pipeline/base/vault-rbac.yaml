@@ -7,6 +7,6 @@ roleRef:
   kind: ClusterRole
   name: system:auth-delegator
 subjects:
-  - kind: ServiceAccount
-    name: image-pipeline-wf-sa
-    namespace: image-pipeline
+- kind: ServiceAccount
+  name: image-pipeline-wf-sa
+  namespace: image-pipeline
