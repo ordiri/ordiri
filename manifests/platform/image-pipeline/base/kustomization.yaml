@@ -8,5 +8,6 @@ resources:
 - workflow-event-binding.yaml
 - workflow-template.yaml
 - event-bus.yaml
+- event-rbac.yaml
 - webhook-event-sensor.yaml
 - webhook-event-source.yaml
