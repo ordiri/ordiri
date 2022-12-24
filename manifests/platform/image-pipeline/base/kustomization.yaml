@@ -7,5 +7,6 @@ resources:
 - wf-rbac.yaml
 - workflow-event-binding.yaml
 - workflow-template.yaml
+- event-bus.yaml
 - webhook-event-sensor.yaml
 - webhook-event-source.yaml
