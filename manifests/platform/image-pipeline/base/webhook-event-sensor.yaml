@@ -9,6 +9,10 @@ spec:
       options:
       - name: ndots
         value: "1"
+    container:
+      env:
+        - name: DEBUG_LOG
+          value: "true"
   dependencies:
   - name: gitea-event-dep
     eventSourceName: gitea-webhook-event
