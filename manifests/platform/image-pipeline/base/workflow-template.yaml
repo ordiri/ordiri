@@ -7,7 +7,7 @@ spec:
   serviceAccountName: image-pipeline-wf-sa
   arguments:
     parameters:
-    - name: repo
+    - name: repository
     - name: revision
     - name: destination
   templates:
@@ -17,7 +17,7 @@ spec:
       - name: source
         path: /src
         git:
-          repo: "{{inputs.parameters.repo}}"
+          repo: "{{inputs.parameters.repository}}"
           revision: "{{inputs.parameters.revision}}"
     container:
       image: gcr.io/kaniko-project/executor

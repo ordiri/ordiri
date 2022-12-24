@@ -50,7 +50,7 @@ spec:
               entrypoint: main
               arguments:
                 parameters:
-                - name: repo
+                - name: repository
                   value: pending
                 - name: revision
                   value: pending
