@@ -62,19 +62,8 @@ approle_role_name="node-provisioner"
 cert_role_name=""
 issuer_role=""
 
-if [[ -s "/etc/ssl/private/node.key" ]] && [[ -s "/etc/ssl/certs/node.crt" ]]; then
-    issuer_role="dmann-dot-xyz-node"
-    node_token=$(vault login -field=token  \
-        -method=cert  \
-        -ca-cert=/etc/ssl/certs/ca-certificates.crt  \
-        -client-cert=/etc/ssl/certs/node.crt  \
-        -client-key=/etc/ssl/private/node.key \
-        name="node")
-else
-    if [ ! -s "${wrapped_secret_id_token_file}" ]; then
-        echo "missing wrapped token in ${wrapped_secret_id_token_file}"
-        exit 2
-    fi
+if [[ -s "${wrapped_secret_id_token_file}" ]]; then
+    rm -f /etc/ssl/certs/node.crt /etc/ssl/private/node.key
 
     issuer_role="dmann-dot-xyz-approle-node"
     wrapped_token=$(cat "$wrapped_secret_id_token_file" && rm -f "$wrapped_secret_id_token_file")
@@ -83,7 +72,21 @@ else
     node_token=$(vault write -field=token auth/approle/login \
         role_id=$approle_role_name \
         secret_id="${secret_id}")
+elif [[ -s "/etc/ssl/private/node.key" ]] && [[ -s "/etc/ssl/certs/node.crt" ]]; then
+    issuer_role="dmann-dot-xyz-node"
+    node_token=$(vault login -field=token  \
+        -method=cert  \
+        -ca-cert=/etc/ssl/certs/ca-certificates.crt  \
+        -client-cert=/etc/ssl/certs/node.crt  \
+        -client-key=/etc/ssl/private/node.key \
+        name="node" || true)
 fi
+
+if [[ -z "${node_token}" ]]; then
+    echo "Failed to get node token ${node_token}"
+    exit 2
+fi
+
 
 # We do this as a 2 step process to ensure a failed issue won't overwrite the current cert
 generated_cert=$(VAULT_TOKEN="${node_token}" vault write -format=json "dmann-xyz/v1/ica2/v1/issue/${issuer_role}" \
@@ -106,7 +109,7 @@ chain: ${chain}"
 fi
 
 echo "${private_key}" > /etc/ssl/private/node.key
-echo "${certificate}" > /etc/ssl/private/node.crt
+echo "${certificate}" > /etc/ssl/certs/node.crt
 echo "${chain}" | awk 'BEGIN {c=0;} /BEGIN CERT/{c++} { print > "/usr/local/share/ca-certificates/node-root-ca." c ".crt"}'
 
 update-ca-certificates
@@ -122,7 +125,7 @@ StartLimitIntervalSec=0
 Type=oneshot
 User=root
 Environment=VAULT_ADDR=https://vault.homelab.dmann.xyz:8200
-ExecCondition=/usr/bin/env sh -c "(! test -s /etc/ssl/certs/node.crt || ! /usr/bin/openssl x509 -checkend 1800 -noout -in /etc/ssl/certs/node.crt) || true"
+ExecCondition=/usr/bin/env sh -c "(! test -s /etc/ssl/certs/node.crt || ! /usr/bin/openssl x509 -checkend 2700 -noout -in /etc/ssl/certs/node.crt) || true"
 
 Restart=on-failure
 RestartSec=5
