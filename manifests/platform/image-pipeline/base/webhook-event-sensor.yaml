@@ -29,11 +29,6 @@ spec:
         parameters:
         - src:
             dependencyName: gitea-event-dep
-            dataKey: body.version
-          dest: metadata.name
-          operation: append
-        - src:
-            dependencyName: gitea-event-dep
             dataKey: body
           dest: spec.arguments.parameters.0.value
         source:
