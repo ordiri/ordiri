@@ -23,6 +23,7 @@ spec:
             argocd.image_updater.images: 'harbor.dmann.dev/default/k8-workshop'
             argocd.image_updater.method: git
             argocd.image_updater.target: kustomize
+            argocd.image_updater.update_strategy: latest
 
   template:
     metadata:
@@ -31,6 +32,7 @@ spec:
         argocd-image-updater.argoproj.io/image-list: '{{argocd.image_updater.images}}'
         argocd-image-updater.argoproj.io/write-back-method: '{{argocd.image_updater.method}}'
         argocd-image-updater.argoproj.io/write-back-target: '{{argocd.image_updater.target}}'
+        argocd-image-updater.argoproj.io/update-strategy: '{{argocd.image_updater.update_strategy}}'
 
     spec:
       project: '{{path[1]}}'
