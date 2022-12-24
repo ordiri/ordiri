@@ -1,3 +1,7 @@
 {
-    "credsStore": "ecr-login"
-}
+    "auths": {
+      "https://harbor.dmann.dev/": {
+        "auth": "xxxxxxxxxxxxxxx"
+      }
+    }
+  }

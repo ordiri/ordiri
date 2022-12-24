@@ -37,7 +37,7 @@ spec:
           dest: spec.arguments.parameters.1.value
         - src:
             dependencyName: gitea-event-dep
-            dataTemplate: harbor.dmann.dev/default/{{ .Input.body.repository.full_name }}:{{ .Input.body.after }}
+            dataTemplate: harbor.dmann.dev/default/{{ .Input.body.repository.name }}:{{ .Input.body.after }}
           dest: spec.arguments.parameters.2.value
         source:
           resource:
