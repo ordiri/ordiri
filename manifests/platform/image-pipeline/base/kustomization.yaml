@@ -3,6 +3,8 @@ kind: Kustomization
 
 configMapGenerator:
 - name: docker-config
+  options:
+    disableNameSuffixHash: true
   files:
   - config.json=config/config.json
 
