@@ -23,7 +23,6 @@ spec:
     inputs:
       parameters:
       - name: raw
-      - name: appellation
     container:
       image: argoproj/argosay:v2
       args: [ echo, "{{workflow.parameters}} {{inputs.parameters}}" ]
