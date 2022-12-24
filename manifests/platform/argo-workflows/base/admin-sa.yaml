@@ -58,7 +58,8 @@ rules:
 - apiGroups:
   - ""
   resources:
-  - "pod/logs"
+  - "pods"
+  - "pods/logs"
   verbs:
   - "get"
   - "list"
