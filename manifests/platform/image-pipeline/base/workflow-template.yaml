@@ -7,26 +7,22 @@ spec:
   serviceAccountName: image-pipeline-wf-sa
   arguments:
     parameters:
-    - name: salutation
+    - name: raw
       value: "hello"
-    - name: appellation
-      value: "sir"
   templates:
   - name: main
     steps:
-    - - name: a
+    - - name: default
         template: argosay
         arguments:
           parameters:
-          - name: salutation
-            value: "{{workflow.parameters.salutation}}"
-          - name: appellation
-            value: "{{workflow.parameters.appellation}}"
+          - name: raw
+            value: "{{workflow.parameters.raw}}"
 
   - name: argosay
     inputs:
       parameters:
-      - name: salutation
+      - name: raw
       - name: appellation
     container:
       image: argoproj/argosay:v2
