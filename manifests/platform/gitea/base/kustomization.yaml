@@ -79,3 +79,5 @@ helmCharts:
           KEY_FILE: /opt/gitea-tls/tls.key
         service:
           DISABLE_REGISTRATION: true
+        webhook:
+          ALLOWED_HOST_LIST: "*"
