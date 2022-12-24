@@ -7,22 +7,23 @@ spec:
   serviceAccountName: image-pipeline-wf-sa
   arguments:
     parameters:
-    - name: raw
-      value: "hello"
+    - name: repo
+    - name: revision
+    - name: destintion
   templates:
   - name: main
-    steps:
-    - - name: default
-        template: argosay
-        arguments:
-          parameters:
-          - name: raw
-            value: "{{workflow.parameters.raw}}"
-
-  - name: argosay
     inputs:
-      parameters:
-      - name: raw
+      artifacts:
+      - name: source
+        path: /src
+        git:
+          repo: "{{inputs.parameters.repo}}"
+          revision: "{{inputs.parameters.revision}}"
     container:
-      image: argoproj/argosay:v2
-      args: [ echo, "{{workflow.parameters}} {{inputs.parameters}}" ]
+      image: gcr.io/kaniko-project/executor
+      args:
+        - --context=/src
+        - --destination={{inputs.parameters.destination}}
+      volumeMounts:
+      - name: docker-config
+        mountPath: /kaniko/.docker/

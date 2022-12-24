@@ -11,8 +11,8 @@ spec:
         value: "1"
     container:
       env:
-        - name: DEBUG_LOG
-          value: "true"
+      - name: DEBUG_LOG
+        value: "true"
   dependencies:
   - name: gitea-event-dep
     eventSourceName: gitea-webhook-event
@@ -29,8 +29,16 @@ spec:
         parameters:
         - src:
             dependencyName: gitea-event-dep
-            dataKey: body
+            dataKey: body.repository.clone_url
           dest: spec.arguments.parameters.0.value
+        - src:
+            dependencyName: gitea-event-dep
+            dataKey: body.after
+          dest: spec.arguments.parameters.1.value
+        - src:
+            dependencyName: gitea-event-dep
+            dataTemplate: harbor.dmann.dev/default/{{ .Input.body.repository.full_name }}:{{ .Input.body.after }}
+          dest: spec.arguments.parameters.2.value
         source:
           resource:
             apiVersion: argoproj.io/v1alpha1
@@ -38,10 +46,15 @@ spec:
             metadata:
               generateName: image-pipeline-
             spec:
-                serviceAccountName: image-pipeline-wf-sa
-                entrypoint: main
-                arguments:
-                  parameters:
-                    - name: raw
-                workflowTemplateRef:
-                  name: image-pipeline
+              serviceAccountName: image-pipeline-wf-sa
+              entrypoint: main
+              arguments:
+                parameters:
+                - name: repo
+                  value: pending
+                - name: revision
+                  value: pending
+                - name: destination
+                  value: pending
+              workflowTemplateRef:
+                name: image-pipeline
