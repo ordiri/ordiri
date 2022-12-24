@@ -1,3 +1,3 @@
 kustomize:
   images:
-  - harbor.dmann.dev/default/k8-workshop:v0.0.5
+  - harbor.dmann.dev/default/kubernetes-workshop:4d28997624b28dc6d04924736a9bd2bf4c560f02
