@@ -11,7 +11,7 @@ spec:
         value: "1"
   dependencies:
   - name: gitea-event-dep
-    eventSourceName: gitea-event
+    eventSourceName: gitea-webhook-event
     eventName: gitea-event
   triggers:
   - template:
