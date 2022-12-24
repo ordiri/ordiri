@@ -22,7 +22,8 @@ POLICY
 resource "vault_identity_oidc_client" "argo-workflows" {
   name          = "argo-workflows"
   redirect_uris = [
-    "https://argo-workflows.dmann.xyz/oauth2/callback"
+    "https://argo.dmann.xyz/oauth2/callback",
+    "https://argo.dmann.dev/oauth2/callback"
   ]
   assignments = ["allow_all"]
 }
