@@ -9,7 +9,7 @@ spec:
     parameters:
     - name: repo
     - name: revision
-    - name: destintion
+    - name: destination
   templates:
   - name: main
     inputs:
