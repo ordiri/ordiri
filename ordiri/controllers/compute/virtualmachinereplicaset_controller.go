@@ -100,60 +100,12 @@ func (r *VirtualMachineReplicaSetReconciler) Reconcile(ctx context.Context, req 
 	}
 
 	for i := int32(0); i < int32(math.Max(float64(rs.Spec.Replicas), float64(rs.Status.Replicas))); i++ {
-		vm := &computev1alpha1.VirtualMachine{}
-		vm.Name = fmt.Sprintf("%s-%d", rs.Name, int64(i))
-		vm.Namespace = rs.Namespace
-		if i >= rs.Spec.Replicas {
-			log.Info("deleting item", "vm", vm.Name)
-			if err := r.Client.Delete(ctx, vm); err != nil && !errors.IsNotFound(err) {
-				return ctrl.Result{}, err
-			}
-			continue
-		}
-
-		_, err := ctrl.CreateOrUpdate(ctx, r.Client, vm, func() error {
-			if vm.Spec.ScheduledNode != "" {
-				rs.Spec.Template.Spec.ScheduledNode = vm.Spec.ScheduledNode
-			}
-			vm2 := vm.DeepCopy()
-			// vm3 := vm.DeepCopy()
-			// todo: hack remove this
-			existingIfaces := map[string]*computev1alpha1.VirtualMachineNetworkInterface{}
-			for _, nw := range vm2.Spec.NetworkInterfaces {
-				existingIfaces[nw.Network+nw.Subnet] = nw.DeepCopy()
-				nw.Mac = ""
-				nw.Ips = nil
-			}
-
-			if !reflect.DeepEqual(vm2.Spec, rs.Spec.Template.Spec) {
-				vm.Spec = rs.Spec.Template.Spec
-				for _, nw := range vm.Spec.NetworkInterfaces {
-					if existing, ok := existingIfaces[nw.Network+nw.Subnet]; ok {
-						nw.Mac = existing.Mac
-						nw.Ips = existing.Ips
-					}
-				}
-			}
-			if vm.Annotations == nil {
-				vm.Annotations = map[string]string{}
-			}
-			if vm.Labels == nil {
-				vm.Labels = map[string]string{}
-			}
-			for key, val := range rs.Spec.Template.Metadata.GetAnnotations() {
-				vm.Annotations[key] = val
-			}
-			for key, val := range rs.Spec.Template.Metadata.GetLabels() {
-				vm.Labels[key] = val
-			}
-
-			return ctrl.SetControllerReference(rs, vm, r.Scheme)
-		})
-		log = log.WithValues(fmt.Sprintf("vm-%d", i), vm.Name)
-		log.V(5).Info("found vm " + fmt.Sprint(i))
-
+		vm, err := r.createOrDeletePod(ctx, rs, i)
 		if err != nil {
 			return ctrl.Result{}, err
+		}
+		if vm == nil {
+			continue
 		}
 	}
 	if rs.Spec.Replicas != rs.Status.Replicas {
@@ -164,6 +116,74 @@ func (r *VirtualMachineReplicaSetReconciler) Reconcile(ctx context.Context, req 
 	}
 
 	return ctrl.Result{}, nil
+}
+func (r *VirtualMachineReplicaSetReconciler) createOrDeletePod(ctx context.Context, rs *computev1alpha1.VirtualMachineReplicaSet, i int32) (*computev1alpha1.VirtualMachine, error) {
+	log := log.FromContext(ctx)
+	vm := &computev1alpha1.VirtualMachine{}
+	vm.Name = fmt.Sprintf("%s-%d", rs.Name, int64(i))
+	vm.Namespace = rs.Namespace
+	if i >= rs.Spec.Replicas {
+		log.Info("deleting item", "vm", vm.Name)
+		if err := r.Client.Delete(ctx, vm); err != nil && !errors.IsNotFound(err) {
+			return nil, err
+		}
+		return nil, nil
+	} else {
+		log.Info("creating item", "vm", vm.Name)
+	}
+
+	_, err := ctrl.CreateOrUpdate(ctx, r.Client, vm, func() error {
+		replicaSpecTemplate := rs.Spec.Template.Spec.DeepCopy()
+		if vm.Spec.ScheduledNode != "" {
+			replicaSpecTemplate.ScheduledNode = vm.Spec.ScheduledNode
+		}
+		for _, iface := range replicaSpecTemplate.NetworkInterfaces {
+			iface.Mac = ""
+			iface.Ips = []string{}
+		}
+		vm2 := vm.DeepCopy()
+		// vm3 := vm.DeepCopy()
+		// todo: hack remove this
+		existingIfaces := map[string]*computev1alpha1.VirtualMachineNetworkInterface{}
+		for _, nw := range vm2.Spec.NetworkInterfaces {
+			existingIfaces[nw.Network+nw.Subnet] = nw.DeepCopy()
+			nw.Mac = ""
+			nw.Ips = nil
+		}
+		log.Info("existing iface for machine", "vm", vm.Name, "ifaces", existingIfaces)
+
+		if !reflect.DeepEqual(vm2.Spec, replicaSpecTemplate) {
+			replicaSpecTemplate.DeepCopyInto(&vm.Spec)
+			for _, nw := range vm.Spec.NetworkInterfaces {
+				if existing, ok := existingIfaces[nw.Network+nw.Subnet]; ok {
+					nw.Mac = existing.Mac
+					nw.Ips = existing.Ips
+				}
+			}
+		}
+		if vm.Annotations == nil {
+			vm.Annotations = map[string]string{}
+		}
+		if vm.Labels == nil {
+			vm.Labels = map[string]string{}
+		}
+		for key, val := range rs.Spec.Template.Metadata.GetAnnotations() {
+			vm.Annotations[key] = val
+		}
+		for key, val := range rs.Spec.Template.Metadata.GetLabels() {
+			vm.Labels[key] = val
+		}
+
+		log.Info("will create or update vm", "vm", vm.Name, "vm", vm.Spec)
+
+		return ctrl.SetControllerReference(rs, vm, r.Scheme)
+	})
+	if err != nil {
+		return nil, err
+	}
+	log = log.WithValues(fmt.Sprintf("vm-%d", i), vm.Name)
+	log.V(5).Info("found vm " + fmt.Sprint(i))
+	return vm, nil
 }
 
 // SetupWithManager sets up the controller with the Manager.
