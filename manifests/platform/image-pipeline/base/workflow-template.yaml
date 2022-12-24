@@ -17,13 +17,13 @@ spec:
       - name: source
         path: /src
         git:
-          repo: "{{inputs.parameters.repository}}"
-          revision: "{{inputs.parameters.revision}}"
+          repo: "{{workflow.parameters.repository}}"
+          revision: "{{workflow.parameters.revision}}"
     container:
       image: gcr.io/kaniko-project/executor
       args:
         - --context=/src
-        - --destination={{inputs.parameters.destination}}
+        - --destination={{workflow.parameters.destination}}
       volumeMounts:
       - name: docker-config
         mountPath: /kaniko/.docker/
