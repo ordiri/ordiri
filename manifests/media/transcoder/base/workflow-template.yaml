@@ -34,10 +34,12 @@ spec:
     container:
       image: harbor.dmann.dev/docker.io/jlesage/makemkv:v1.22.2
       command:
-      - echo
-      args:
       - /opt/makemkv/bin/makemkvcon
-      - '{{inputs.parameters.file}}'
+      args:
+      - mkv
+      - 'iso:{{inputs.parameters.file}}'
+      - all
+      - /media/transcoded
       volumeMounts:
       - name: media-nfs
         mountPath: /media
