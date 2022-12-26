@@ -80,7 +80,7 @@ spec:
           -and \
           -iname '{{inputs.parameters.filter}}' \
           -exec printf "{\"filename\": \"{}\"}\n" ';' \
-          | jq -s '.| flatten'
+          | jq -s '.| flatten | .[0:1]'
       volumeMounts:
       - name: media-nfs
         mountPath: /media
