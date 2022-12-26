@@ -24,7 +24,7 @@ spec:
         arguments:
           parameters:
           - name: file
-            value: "{{item}}"
+            value: "{{item.filename}}"
         withParam: "{{steps.generate.outputs.result}}"
   - name: rip-blueray
     inputs: 
@@ -74,7 +74,7 @@ spec:
       - '{{inputs.parameters.filter}}'
       - -exec
       - printf
-      - "\"{}\"\n"
+      - "{\"filename\": \"{}\"}\n"
       - ';'
       volumeMounts:
       - name: media-nfs
