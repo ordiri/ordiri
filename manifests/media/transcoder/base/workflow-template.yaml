@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: transcode
+spec:
+  entrypoint: main
+  serviceAccountName: transcode-wf-sa
+  templates:
+  - name: discover
+    volumes:
+    - name: media-nfs
+      nfs:
+        path: /homelab/media
+        server: ceph.homelab.dmann.xyz
+    container:
+      image: alpine
+      command:
+      - /usr/bin/find
+      args:
+      - /media
+      - -iname
+      - "*.iso"
+      volumeMounts:
+      - name: media-nfs
+        mountPath: /media
