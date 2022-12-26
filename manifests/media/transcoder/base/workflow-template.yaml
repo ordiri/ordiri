@@ -52,6 +52,9 @@ spec:
         /opt/makemkv/bin/makemkvcon --robot \
           --decrypt \
           --cache=1024 \
+          --noscan \
+          --upnp=false \
+          --progress=-same \
           mkv 'iso:{{inputs.parameters.file}}' all $(dirname "{{inputs.parameters.file}}")
       volumeMounts:
       - name: media-nfs
