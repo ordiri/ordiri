@@ -47,7 +47,8 @@ spec:
       - -c 
       args:
       - |
-        mkdir -p /config/.MakeMKV;
+        outputdir=$(dirname "{{inputs.parameters.file}}");
+        mkdir -p /config/.MakeMKV "${outputdir}"; 
         echo 'app_Key = "$(BETA_KEY)"' > /config/.MakeMKV/settings.conf;
         /opt/makemkv/bin/makemkvcon --robot \
           --decrypt \
@@ -55,7 +56,7 @@ spec:
           --noscan \
           --upnp=false \
           --progress=-same \
-          mkv 'iso:{{inputs.parameters.file}}' all $(dirname "{{inputs.parameters.file}}")
+          mkv 'iso:{{inputs.parameters.file}}' all "${outputdir}"
       volumeMounts:
       - name: media-nfs
         mountPath: /media
