@@ -17,7 +17,7 @@ spec:
       command:
       - /usr/bin/find
       args:
-      - /media
+      - /media/downloads/complete
       - -iname
       - "*.iso"
       volumeMounts:
