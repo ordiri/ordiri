@@ -27,7 +27,7 @@ spec:
             value: "{{item.filename}}"
         withParam: "{{steps.generate.outputs.result}}"
   - name: rip-blueray
-    inputs: 
+    inputs:
       parameters:
       - name: file
     volumes:
@@ -51,7 +51,7 @@ spec:
       - name: media-nfs
         mountPath: /media
   - name: find-media
-    inputs: 
+    inputs:
       parameters:
       - name: filter
       - name: directory
@@ -61,21 +61,17 @@ spec:
         path: /homelab/media
         server: ceph.homelab.dmann.xyz
     container:
-      image: alpine
+      image: harbor.dmann.dev/docker.io/alpine/k8s:1.25.5
       command:
-      - /usr/bin/find
+      - /bin/sh
       args:
-      - '{{inputs.parameters.directory}}'
-      - -not
-      - -path
-      - '*_UNPACK*'
-      - -and
-      - -iname
-      - '{{inputs.parameters.filter}}'
-      - -exec
-      - printf
-      - "{\"filename\": \"{}\"}\n"
-      - ';'
+      - |
+        /usr/bin/find '{{inputs.parameters.directory}}' \
+          -not -path '*_UNPACK*' \
+          -and \
+          -iname '{{inputs.parameters.filter}}' \
+          -exec printf "{\"filename\": \"{}\"}\n" ';' \
+          | jq -s '.| flatten'
       volumeMounts:
       - name: media-nfs
         mountPath: /media
