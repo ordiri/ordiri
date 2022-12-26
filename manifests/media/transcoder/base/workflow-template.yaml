@@ -18,8 +18,12 @@ spec:
       - /usr/bin/find
       args:
       - /media/downloads/complete
+      - -not
+      - -path
+      - '*_UNPACK*'
+      - -and
       - -iname
-      - "*.iso"
+      - '*.iso'
       volumeMounts:
       - name: media-nfs
         mountPath: /media
