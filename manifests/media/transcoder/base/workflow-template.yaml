@@ -74,7 +74,7 @@ spec:
       - '{{inputs.parameters.filter}}'
       - -exec
       - printf
-      - "{}"
+      - "\"{}\"\n"
       - ';'
       volumeMounts:
       - name: media-nfs
