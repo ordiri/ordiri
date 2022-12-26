@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
 - grafana-service.yaml
 - certificate.yaml
+- vault-rbac.yaml
 
 helmCharts:
 - name: kube-prometheus-stack
