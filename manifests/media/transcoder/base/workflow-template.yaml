@@ -48,7 +48,7 @@ spec:
       args:
       - |
         outputdir=$(dirname "{{inputs.parameters.file}}");
-        mkdir -p /config/.MakeMKV "${outputdir}"; 
+        mkdir -p /config/.MakeMKV "${outputdir}/transcoded"; 
         echo 'app_Key = "$(BETA_KEY)"' > /config/.MakeMKV/settings.conf;
         /opt/makemkv/bin/makemkvcon --robot \
           --decrypt \
@@ -56,7 +56,12 @@ spec:
           --noscan \
           --upnp=false \
           --progress=-same \
-          mkv 'iso:{{inputs.parameters.file}}' all "${outputdir}"
+          mkv 'iso:{{inputs.parameters.file}}' all "${outputdir}/transcoded";
+
+          cd ${outputdir}/transcoded;
+          for file in *.mkv; do
+              echo mv "$file" "../$(basename "{{inputs.parameters.file}}" .iso).$(basename $file)"
+          done
       volumeMounts:
       - name: media-nfs
         mountPath: /media
