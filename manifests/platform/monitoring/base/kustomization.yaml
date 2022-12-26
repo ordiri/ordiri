@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
 - grafana-service.yaml
+- certificate.yaml
 
 helmCharts:
 - name: kube-prometheus-stack
@@ -14,3 +15,60 @@ helmCharts:
   valuesInline:
     kubeEtcd:
       enabled: false
+    grafana:
+      extraContainerVolumes:
+      - name: grafana-tls
+        secret:
+          secretName: grafana-tls
+
+      grafana.ini:
+        server:
+          protocol: https
+          domain: grafana.dmann.dev
+          cert_file: /opt/grafana-tls/tls.crt
+          cert_key: /opt/grafana-tls/tls.key
+      auth:
+        generic_oauth:
+          name: OAuth
+          icon: signin
+          enabled: true
+          client_id: $__file{/vault/secrets/oidc-id}
+          client_secret: $__file{/vault/secrets/oidc-secret}
+          scopes: openid profile email groups
+          empty_scopes: false
+          auth_url: https://vault.homelab.dmann.xyz:8200/ui/vault/identity/oidc/provider/default/authorize
+          token_url: https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/default/token
+          api_url: https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/default/userinfo
+          allowed_domains: dmann.xyz dmann.dev
+          allow_sign_up: true
+          tls_skip_verify_insecure: false
+
+patches:
+  - |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: prometheus-grafana
+      namespace: monitoring
+    spec:
+      template:
+        metadata:
+          annotations:
+            vault.hashicorp.com/agent-inject: 'true'
+            vault.hashicorp.com/role: grafana
+            vault.hashicorp.com/agent-inject-secret-oidc-id: identity/oidc/client/grafana
+            vault.hashicorp.com/agent-inject-template-oidc-id: |
+              {{- with secret "identity/oidc/client/grafana" -}}
+              {{ .Data.client_id }}
+              {{- end }}
+            vault.hashicorp.com/agent-inject-secret-oidc-secret: identity/oidc/client/grafana
+            vault.hashicorp.com/agent-inject-template-oidc-secret: |
+              {{- with secret "identity/oidc/client/grafana" -}}
+              {{ .Data.client_secret }}
+              {{- end }}
+        spec:
+          containers:
+          - name: grafana
+            volumeMounts:
+            - mountPath: /opt/grafana-tls
+              name: grafana-tls
