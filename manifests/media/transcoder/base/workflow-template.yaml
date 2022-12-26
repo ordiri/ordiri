@@ -51,8 +51,8 @@ spec:
         echo 'app_Key = "$(BETA_KEY)"' > /config/.MakeMKV/settings.conf;
         /opt/makemkv/bin/makemkvcon --robot \
           --decrypt \
-          --cache=1024MB \
-          mkv 'iso:{{inputs.parameters.file}}' all /media/transcoded
+          --cache=1024 \
+          mkv 'iso:{{inputs.parameters.file}}' all $(dirname "{{inputs.parameters.file}}")
       volumeMounts:
       - name: media-nfs
         mountPath: /media
@@ -72,6 +72,7 @@ spec:
       image: harbor.dmann.dev/docker.io/alpine/k8s:1.25.5
       command:
       - /bin/sh
+      - -x
       - -c
       args:
       - |
