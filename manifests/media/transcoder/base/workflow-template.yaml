@@ -60,7 +60,7 @@ spec:
 
           cd ${outputdir}/transcoded;
           for file in *.mkv; do
-            mv "$file" "../$(basename "{{inputs.parameters.file}}" .iso).$(basename $file)"
+            mv "$file" "../$(basename "{{inputs.parameters.file}}" ".iso").$(basename "$file" "mkv")"
           done
       volumeMounts:
       - name: media-nfs
@@ -78,6 +78,10 @@ spec:
         path: /homelab/media
         server: ceph.homelab.dmann.xyz
     container:
+      resources:
+        limits:
+          cpu: 100m
+          memory: 1G
       image: harbor.dmann.dev/docker.io/alpine/k8s:1.25.5
       command:
       - /bin/sh
@@ -90,7 +94,7 @@ spec:
           -and \
           -iname '{{inputs.parameters.filter}}' \
           -exec printf "{\"filename\": \"{}\"}\n" ';' \
-          | jq -s '.| flatten'
+          | jq -s '.| flatten | .[0:1]'
       volumeMounts:
       - name: media-nfs
         mountPath: /media
