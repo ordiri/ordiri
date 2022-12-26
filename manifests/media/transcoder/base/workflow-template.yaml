@@ -35,21 +35,29 @@ spec:
       nfs:
         path: /homelab/media
         server: ceph.homelab.dmann.xyz
+    - name: config
+      emptyDir: {}
     container:
       image: harbor.dmann.dev/docker.io/jlesage/makemkv:v1.22.2
+      env:
+      - name: BETA_KEY
+        value: T-2KF3Fsx1NkAkuKtr3o47Fv4Bf4YoFgqnxEPqm9sTPIT1Ya70CTlIcRXbSPPzHIDq7z
       command:
-      - /opt/makemkv/bin/makemkvcon
+      - sh
+      - -c 
       args:
-      - --robot
-      - --decrypt
-      - --cache=1024MB
-      - mkv
-      - 'iso:{{inputs.parameters.file}}'
-      - all
-      - /media/transcoded
+      - |
+        mkdir -p /config/.MakeMKV;
+        echo 'app_Key = "$(BETA_KEY)"' > /config/.MakeMKV/settings.conf;
+        /opt/makemkv/bin/makemkvcon --robot \
+          --decrypt \
+          --cache=1024MB \
+          mkv 'iso:{{inputs.parameters.file}}' all /media/transcoded
       volumeMounts:
       - name: media-nfs
         mountPath: /media
+      - name: config
+        mountPath: /config
   - name: find-media
     inputs:
       parameters:
