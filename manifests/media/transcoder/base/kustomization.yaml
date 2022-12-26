@@ -9,7 +9,6 @@ configMapGenerator: []
 #   - config.json=config/config.json
 
 resources:
-- oidc-secretclass.yaml
 - vault-rbac.yaml
 - wf-rbac.yaml
 - workflow-template.yaml
