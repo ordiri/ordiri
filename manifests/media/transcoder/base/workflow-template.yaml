@@ -60,7 +60,7 @@ spec:
 
           cd ${outputdir}/transcoded;
           for file in *.mkv; do
-              echo mv "$file" "../$(basename "{{inputs.parameters.file}}" .iso).$(basename $file)"
+            mv "$file" "../$(basename "{{inputs.parameters.file}}" .iso).$(basename $file)"
           done
       volumeMounts:
       - name: media-nfs
@@ -90,7 +90,7 @@ spec:
           -and \
           -iname '{{inputs.parameters.filter}}' \
           -exec printf "{\"filename\": \"{}\"}\n" ';' \
-          | jq -s '.| flatten | .[0:1]'
+          | jq -s '.| flatten'
       volumeMounts:
       - name: media-nfs
         mountPath: /media
