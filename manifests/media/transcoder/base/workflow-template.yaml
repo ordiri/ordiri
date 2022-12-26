@@ -72,7 +72,10 @@ spec:
       - -and
       - -iname
       - '{{inputs.parameters.filter}}'
-      - -printf "\"%p\"\n"
+      - -exec
+      - printf
+      - "{}"
+      - ';'
       volumeMounts:
       - name: media-nfs
         mountPath: /media
