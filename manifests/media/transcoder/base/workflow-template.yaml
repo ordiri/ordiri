@@ -5,6 +5,10 @@ metadata:
 spec:
   entrypoint: main
   serviceAccountName: transcode-wf-sa
+  arguments:
+    parameters:
+    - name: filter
+      default: '*.iso'
   templates:
   - name: main
     steps:
@@ -54,7 +58,8 @@ spec:
       - '*_UNPACK*'
       - -and
       - -iname
-      - '*.iso'
+      - '{{workflow.parameters.filter}}'
+      - -printf "\"%p\"\n"
       volumeMounts:
       - name: media-nfs
         mountPath: /media
