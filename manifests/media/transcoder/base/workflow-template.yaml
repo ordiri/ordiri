@@ -64,6 +64,7 @@ spec:
       image: harbor.dmann.dev/docker.io/alpine/k8s:1.25.5
       command:
       - /bin/sh
+      - -c
       args:
       - |
         /usr/bin/find '{{inputs.parameters.directory}}' \
