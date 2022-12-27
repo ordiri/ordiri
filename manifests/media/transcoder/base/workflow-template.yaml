@@ -75,13 +75,6 @@ spec:
         path: /homelab/media
         server: ceph.homelab.dmann.xyz
     container:
-      resources:
-        limits:
-          cpu: 100m
-          memory: 2G
-        requests:
-          cpu: 100m
-          memory: 2G
       image: harbor.dmann.dev/docker.io/alpine/k8s:1.25.5
       command:
       - /bin/sh
