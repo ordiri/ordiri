@@ -7,7 +7,7 @@ spec:
   serviceAccountName: transcode-wf-sa
   arguments:
     parameters: []
-  parallelism: 2
+  parallelism: 1
   templates:
   - name: transcode-blueray
     steps:
@@ -59,6 +59,8 @@ spec:
           --upnp=false \
           --progress=-same \
           mkv 'iso:{{inputs.parameters.file}}' all "${outputdir}/transcoded";
+
+          mv {{inputs.parameters.file}} {{inputs.parameters.file}}.transcoded
       volumeMounts:
       - name: media-nfs
         mountPath: /media
