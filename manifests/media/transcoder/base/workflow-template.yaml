@@ -7,6 +7,7 @@ spec:
   serviceAccountName: transcode-wf-sa
   arguments:
     parameters: []
+  parallelism: 2
   templates:
   - name: transcode-blueray
     steps:
@@ -49,16 +50,15 @@ spec:
       - |
         outputdir=$(dirname "{{inputs.parameters.file}}");
         mkdir -p /config/.MakeMKV "${outputdir}/transcoded"; 
-        if [ -z "$(ls "${outputdir}/transcoded")" ]; then
-          echo 'app_Key = "$(BETA_KEY)"' > /config/.MakeMKV/settings.conf;
-          /opt/makemkv/bin/makemkvcon --robot \
-            --decrypt \
-            --cache=1024 \
-            --noscan \
-            --upnp=false \
-            --progress=-same \
-            mkv 'iso:{{inputs.parameters.file}}' all "${outputdir}/transcoded";
-        fi
+        echo 'app_Key = "$(BETA_KEY)"' > /config/.MakeMKV/settings.conf;
+        /opt/makemkv/bin/makemkvcon --robot \
+          --decrypt \
+          --cache=1024 \
+          --minlength=1800 \
+          --noscan \
+          --upnp=false \
+          --progress=-same \
+          mkv 'iso:{{inputs.parameters.file}}' all "${outputdir}/transcoded";
       volumeMounts:
       - name: media-nfs
         mountPath: /media
