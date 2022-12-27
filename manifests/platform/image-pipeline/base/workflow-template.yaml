@@ -10,6 +10,10 @@ spec:
     - name: repository
     - name: revision
     - name: destination
+  dnsConfig:
+    options:
+    - name: ndots
+      value: "1"
   templates:
   - name: main
     inputs:
