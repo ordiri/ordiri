@@ -79,9 +79,6 @@ spec:
         - containerPort:  32414
           protocol: UDP
         resources:
-          limits:
-            memory: "4Gi"
-            cpu: "4"
           requests:
             memory: "4Gi"
             cpu: "4"
