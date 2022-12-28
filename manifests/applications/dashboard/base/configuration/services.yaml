@@ -1,17 +1,22 @@
 - Group A:
-    - Plex:
+  - Plex:
+      icon: plex.png
+      href: http://plex.dmann.xyz
+      widget:
         type: plex
         url: https://plex.dmann.xyz
         key: ${plex_api_token}
-    - Bazarr:
+  - Bazarr:
+      href: https://bazarr.dmann.xyz
+      widget:
         type: bazarr
         url: https://bazarr.dmann.xyz
         key: ${bazarr_api_token}
 
 - Group B:
-    - Service B:
-        href: http://localhost/
+  - Service B:
+      href: http://localhost/
 
-- Group B:
-    - Service B:
-        href: http://localhost/
+- Group C:
+  - Service B:
+      href: http://localhost/
