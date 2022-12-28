@@ -75,7 +75,7 @@ spec:
         - |
           source /vault/secrets/bazarr; 
           source /vault/secrets/plex;
-          source /vault/secrets/radar;
+          source /vault/secrets/radarr;
           source /vault/secrets/sonarr;
           source /vault/secrets/sabnzbd;
           source /vault/secrets/oidc;
