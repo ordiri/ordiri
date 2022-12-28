@@ -13,6 +13,7 @@ spec:
         app: dashboard
       annotations:
         vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/agent-init-first: true
         vault.hashicorp.com/role: dashboard
         vault.hashicorp.com/agent-inject-secret-oidc: identity/oidc/client/dashboard
         vault.hashicorp.com/agent-inject-template-oidc: |
