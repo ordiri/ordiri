@@ -16,14 +16,14 @@
         type: bazarr
         url: http://bazarr.bazarr.svc.cluster.local:6767
         key: ${bazarr_api_token}
-        
+
   - Sonarr:
       icon: sonarr.png
       href: https://sonarr.dmann.xyz
       description: TV Management
       widget:
         type: sonarr
-        url: http://sonarr.sonarr.svc.cluster.local:6767
+        url: http://sonarr.sonarr.svc.cluster.local:8989
         key: ${sonarr_api_token}
 
   - Radarr:
@@ -32,7 +32,7 @@
       description: Movie Management
       widget:
         type: radarr
-        url: http://radarr.radarr.svc.cluster.local:6767
+        url: http://radarr.radarr.svc.cluster.local:7878
         key: ${radarr_api_token}
 
   - Sabnzbd:
@@ -41,7 +41,7 @@
       description: Usenet downloads
       widget:
         type: sabnzbd
-        url: http://sabnzbd.sabnzbd.svc.cluster.local:6767
+        url: http://sabnzbd.sabnzbd.svc.cluster.local:8080
         key: ${sabnzbd_api_token}
 
 - Group B:
