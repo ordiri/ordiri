@@ -7,6 +7,7 @@
         type: plex
         url: https://plex.dmann.xyz
         key: ${plex_api_token}
+
   - Bazarr:
       icon: bazarr.png
       href: https://bazarr.dmann.xyz
@@ -15,6 +16,33 @@
         type: bazarr
         url: http://bazarr.bazarr.svc.cluster.local:6767
         key: ${bazarr_api_token}
+        
+  - Sonarr:
+      icon: sonarr.png
+      href: https://sonarr.dmann.xyz
+      description: TV Management
+      widget:
+        type: sonarr
+        url: http://sonarr.sonarr.svc.cluster.local:6767
+        key: ${sonarr_api_token}
+
+  - Radarr:
+      icon: radarr.png
+      href: https://radarr.dmann.xyz
+      description: Movie Management
+      widget:
+        type: radarr
+        url: http://radarr.radarr.svc.cluster.local:6767
+        key: ${radarr_api_token}
+
+  - Sabnzbd:
+      icon: sabnzbd.png
+      href: https://sabnzbd.dmann.xyz
+      description: Usenet downloads
+      widget:
+        type: sabnzbd
+        url: http://sabnzbd.sabnzbd.svc.cluster.local:6767
+        key: ${sabnzbd_api_token}
 
 - Group B:
   - Service B:

@@ -31,6 +31,21 @@ spec:
           {{- with secret "secret/data/media/plex/api" -}}
           export plex_api_token="{{ .Data.data.token }}"
           {{- end }}
+        vault.hashicorp.com/agent-inject-secret-sonarr: secret/data/media/sonarr/api
+        vault.hashicorp.com/agent-inject-template-sonarr: |
+          {{- with secret "secret/data/media/sonarr/api" -}}
+          export sonarr_api_token="{{ .Data.data.token }}"
+          {{- end }}
+        vault.hashicorp.com/agent-inject-secret-radarr: secret/data/media/radarr/api
+        vault.hashicorp.com/agent-inject-template-radarr: |
+          {{- with secret "secret/data/media/radarr/api" -}}
+          export radarr_api_token="{{ .Data.data.token }}"
+          {{- end }}
+        vault.hashicorp.com/agent-inject-secret-sabnzbd: secret/data/media/sabnzbd/api
+        vault.hashicorp.com/agent-inject-template-sabnzbd: |
+          {{- with secret "secret/data/media/sabnzbd/api" -}}
+          export sabnzbd_api_token="{{ .Data.data.token }}"
+          {{- end }}
     spec:
       dnsConfig:
         options:
@@ -60,6 +75,9 @@ spec:
         - |
           source /vault/secrets/bazarr; 
           source /vault/secrets/plex;
+          source /vault/secrets/radar;
+          source /vault/secrets/sonarr;
+          source /vault/secrets/sabnzbd;
           source /vault/secrets/oidc;
           cat /opt/app-config/bookmarks.yaml.tpl | envsubst > /app/config/bookmarks.yaml;
           cat /opt/app-config/services.yaml.tpl | envsubst > /app/config/services.yaml;
