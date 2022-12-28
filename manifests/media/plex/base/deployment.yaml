@@ -80,7 +80,7 @@ spec:
         resources:
           limits:
             memory: "2Gi"
-            cpu: "2000M"
+            cpu: "1500M"
           requests:
             memory: "2Gi"
-            cpu: "2000M"
+            cpu: "1500M"
