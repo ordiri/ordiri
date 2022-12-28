@@ -57,6 +57,9 @@ spec:
         - -c
         args:
         - |
+          source /vault/secrets/bazarr; 
+          source /vault/secrets/plex;
+          source /vault/secrets/oidc;
           cat /opt/app-config/bookmarks.yaml.tpl | envsubst > /app/config/bookmarks.yaml;
           cat /opt/app-config/services.yaml.tpl | envsubst > /app/config/services.yaml;
           cat /opt/app-config/settings.yaml.tpl | envsubst > /app/config/settings.yaml;
