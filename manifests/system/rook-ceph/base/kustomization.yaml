@@ -38,6 +38,15 @@ helmCharts:
       enablePluginSelinuxHostMount: false
       # set to true to enable Ceph CSI pvc encryption support.
       enableCSIEncryption: false
+      csiRBDProvisionerResource: |
+        - name : csi-rbdplugin
+          resource:
+            requests:
+              memory: 256Mi
+              cpu: 100m
+            limits:
+              memory: 512Mi
+              cpu: 200m
 # - name: rook-ceph-cluster
 #   repo: https://charts.rook.io/release
 #   version: v1.10.4
