@@ -33,8 +33,8 @@ spec:
         persistentVolumeClaim:
           claimName: plex-config-data
       - name: transcode-storage # Idea being we would mount a dedicated ssd storage class pvc here
-        emptyDir: 
-          medium: Memory
+        hostPath:
+          path: /tmp/plex-transcoder
       containers:
       - name: plex-server
         image: harbor.dmann.dev/docker.io/plexinc/pms-docker
