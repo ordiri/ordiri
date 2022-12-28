@@ -1,16 +1,19 @@
-- Group A:
+- Media:
   - Plex:
       icon: plex.png
       href: http://plex.dmann.xyz
+      description: Movie management
       widget:
         type: plex
         url: https://plex.dmann.xyz
         key: ${plex_api_token}
   - Bazarr:
+      icon: bazarr.png
       href: https://bazarr.dmann.xyz
+      description: Subtitle management
       widget:
         type: bazarr
-        url: https://bazarr.dmann.xyz
+        url: http://bazarr.bazarr.svc.cluster.local:6767
         key: ${bazarr_api_token}
 
 - Group B:
