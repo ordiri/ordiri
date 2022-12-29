@@ -2,7 +2,7 @@
   - Plex:
       icon: plex.png
       href: http://plex.dmann.xyz
-      ping: http://plex.plex.svc.cluster.local
+      ping: http://plex-server.plex.svc.cluster.local:32400
       description: Movie management
       widget:
         type: plex
