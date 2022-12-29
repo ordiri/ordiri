@@ -153,14 +153,14 @@ spec:
           httpGet:
             path: /ping
             port: oauth2-proxy
-            scheme: HTTP
+            scheme: HTTPS
           initialDelaySeconds: 0
           timeoutSeconds: 1
         readinessProbe:
           httpGet:
             path: /ready
             port: oauth2-proxy
-            scheme: HTTP
+            scheme: HTTPS
           initialDelaySeconds: 0
           timeoutSeconds: 5
           successThreshold: 1
