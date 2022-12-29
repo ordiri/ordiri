@@ -15,7 +15,7 @@
       ping: https://overseer.dmann.xyz
       description: Content requests
       widget:
-        type: overseer
+        type: overseerr
         url: https://overseer.dmann.xyz
         key: ${overseer_api_token}
 - Monitoring:
