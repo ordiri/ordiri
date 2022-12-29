@@ -137,8 +137,12 @@ spec:
           --client-secret="${oidc_client_secret}" \
           --redirect-url="https://dashboard.dmann.xyz" \
           --oidc-issuer-url="https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/default" \
-          --cookie-secure=false \
-          --cookie-secret=secret12secret12
+          --cookie-secret=secret12secret12 \
+          --force-https \
+          --footer "-" \
+          --banner "-" \
+          --logo "-" \
+          --ping-user-agent=KubernetesHealthCheck
         env: []
         image: harbor.dmann.dev/quay.io/oauth2-proxy/oauth2-proxy:latest
         ports:
@@ -154,14 +158,17 @@ spec:
             path: /ping
             port: oauth2-proxy
             scheme: HTTPS
-          initialDelaySeconds: 0
-          timeoutSeconds: 1
+            httpHeaders:
+            - name:  UserAgent
+              value: KubernetesHealthCheck
+          initialDelaySeconds: 10
+          timeoutSeconds: 5
         readinessProbe:
           httpGet:
             path: /ready
             port: oauth2-proxy
             scheme: HTTPS
-          initialDelaySeconds: 0
+          initialDelaySeconds: 10
           timeoutSeconds: 5
-          successThreshold: 1
+          successThreshold: 2
           periodSeconds: 10
