@@ -152,14 +152,14 @@ spec:
         livenessProbe:
           httpGet:
             path: /ping
-            port: http
+            port: oauth2-proxy
             scheme: HTTP
           initialDelaySeconds: 0
           timeoutSeconds: 1
         readinessProbe:
           httpGet:
             path: /ready
-            port: http
+            port: oauth2-proxy
             scheme: HTTP
           initialDelaySeconds: 0
           timeoutSeconds: 5
