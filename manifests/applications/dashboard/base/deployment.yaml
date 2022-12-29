@@ -163,12 +163,12 @@ spec:
               value: KubernetesHealthCheck
           initialDelaySeconds: 10
           timeoutSeconds: 5
-        readinessProbe:
-          httpGet:
-            path: /ready
-            port: oauth2-proxy
-            scheme: HTTPS
-          initialDelaySeconds: 10
-          timeoutSeconds: 5
-          successThreshold: 2
-          periodSeconds: 10
+        # readinessProbe: # https://github.com/oauth2-proxy/oauth2-proxy/pull/1839 pending release
+        #   httpGet:
+        #     path: /ready
+        #     port: oauth2-proxy
+        #     scheme: HTTPS
+        #   initialDelaySeconds: 10
+        #   timeoutSeconds: 5
+        #   successThreshold: 2
+        #   periodSeconds: 10
