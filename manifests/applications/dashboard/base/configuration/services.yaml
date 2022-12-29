@@ -2,7 +2,7 @@
   - Plex:
       icon: plex.png
       href: http://plex.dmann.xyz
-      ping: http://plex-server.plex.svc.cluster.local:32400
+      ping: http://plex.plex.svc.cluster.local:443
       description: Movie management
       widget:
         type: plex
@@ -21,7 +21,7 @@
 - Monitoring:
   - Grafana:
       href: https://grafana.dmann.xyz/
-      ping: http://grafana.grafana.svc.cluster.local:3000
+      ping: http://prometheus-grafana.monitoring.svc.cluster.local:3000
 
 - Group C:
   - Service B:
