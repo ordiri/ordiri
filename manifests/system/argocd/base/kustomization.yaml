@@ -22,6 +22,9 @@ helmCharts:
   namespace: argocd
   includeCRDs: true
   valuesInline: 
+    global:
+      image:
+        repository: harbor.dmann.dev/quay.io/argoproj/argocd
     singleNamespace: true
     apiVersionOverrides:
       certmanager: cert-manager.io/v1
@@ -29,6 +32,10 @@ helmCharts:
     applicationSet:
       args:
         policy: create-update
+    ## Repo Server
+    repoServer:
+      name: repo-server
+      replicas: 2
     configs:
       cm:
         # Argo CD's externally facing base URL (optional). Required when configuring SSO
