@@ -141,7 +141,7 @@ spec:
           --force-https \
           --footer "-" \
           --banner "-" \
-          --logo "-" \
+          --custom-sign-in-logo "-" \
           --ping-user-agent=KubernetesHealthCheck
         env: []
         image: harbor.dmann.dev/quay.io/oauth2-proxy/oauth2-proxy:latest
