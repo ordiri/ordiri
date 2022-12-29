@@ -30,7 +30,7 @@
   - Bazarr:
       icon: bazarr.png
       href: https://bazarr.dmann.xyz
-      ping: http://bazarr.bazarr.svc.cluster.local:4180
+      ping: http://bazarr.bazarr.svc.cluster.local:6767
       description: Subtitle management
       widget:
         type: bazarr
