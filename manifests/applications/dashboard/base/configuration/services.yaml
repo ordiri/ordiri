@@ -26,7 +26,6 @@
 - Group C:
   - Service B:
       href: http://localhost/
-      ping: http://localhost/
 - Media Management:
   - Bazarr:
       icon: bazarr.png
