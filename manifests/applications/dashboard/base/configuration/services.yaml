@@ -1,16 +1,37 @@
-- Media:
+- Content:
   - Plex:
       icon: plex.png
       href: http://plex.dmann.xyz
+      ping: http://plex.dmann.xyz
       description: Movie management
       widget:
         type: plex
         url: https://plex.dmann.xyz
         key: ${plex_api_token}
 
+  - Overseer:
+      icon: overseer.png
+      href: https://overseer.dmann.xyz
+      ping: https://overseer.dmann.xyz
+      description: Content requests
+      widget:
+        type: overseer
+        url: https://overseer.dmann.xyz
+        key: ${overseer_api_token}
+- Monitoring:
+  - Grafana:
+      href: https://grafana.dmann.xyz/
+      ping: https://grafana.dmann.xyz/
+
+- Group C:
+  - Service B:
+      href: http://localhost/
+      ping: http://localhost/
+- Media Management:
   - Bazarr:
       icon: bazarr.png
       href: https://bazarr.dmann.xyz
+      ping: https://bazarr.dmann.xyz
       description: Subtitle management
       widget:
         type: bazarr
@@ -20,6 +41,7 @@
   - Sonarr:
       icon: sonarr.png
       href: https://sonarr.dmann.xyz
+      ping: https://sonarr.dmann.xyz
       description: TV Management
       widget:
         type: sonarr
@@ -29,6 +51,7 @@
   - Radarr:
       icon: radarr.png
       href: https://radarr.dmann.xyz
+      ping: https://radarr.dmann.xyz
       description: Movie Management
       widget:
         type: radarr
@@ -38,16 +61,9 @@
   - Sabnzbd:
       icon: sabnzbd.png
       href: https://sabnzbd.dmann.xyz
+      ping: https://sabnzbd.dmann.xyz
       description: Usenet downloads
       widget:
         type: sabnzbd
         url: http://sabnzbd.sabnzbd.svc.cluster.local:8080
         key: ${sabnzbd_api_token}
-
-- Group B:
-  - Service B:
-      href: http://localhost/
-
-- Group C:
-  - Service B:
-      href: http://localhost/

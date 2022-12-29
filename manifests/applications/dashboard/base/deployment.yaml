@@ -46,6 +46,11 @@ spec:
           {{- with secret "secret/data/media/sabnzbd/api" -}}
           export sabnzbd_api_token="{{ .Data.data.token }}"
           {{- end }}
+        vault.hashicorp.com/agent-inject-secret-overseer: secret/data/media/overseer/api
+        vault.hashicorp.com/agent-inject-template-overseer: |
+          {{- with secret "secret/data/media/overseer/api" -}}
+          export overseer_api_token="{{ .Data.data.token }}"
+          {{- end }}
     spec:
       dnsConfig:
         options:
@@ -76,6 +81,7 @@ spec:
           source /vault/secrets/bazarr; 
           source /vault/secrets/plex;
           source /vault/secrets/radarr;
+          source /vault/secrets/overseer;
           source /vault/secrets/sonarr;
           source /vault/secrets/sabnzbd;
           source /vault/secrets/oidc;
