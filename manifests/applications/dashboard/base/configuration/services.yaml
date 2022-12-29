@@ -2,7 +2,7 @@
   - Plex:
       icon: plex.png
       href: http://plex.dmann.xyz
-      ping: http://plex.dmann.xyz
+      ping: http://plex.plex.svc.cluster.local
       description: Movie management
       widget:
         type: plex
@@ -12,7 +12,7 @@
   - Overseer:
       icon: overseer.png
       href: https://overseer.dmann.xyz
-      ping: https://overseer.dmann.xyz
+      ping: https://overseer.overseer.svc.cluster.local:5055
       description: Content requests
       widget:
         type: overseerr
@@ -21,7 +21,7 @@
 - Monitoring:
   - Grafana:
       href: https://grafana.dmann.xyz/
-      ping: https://grafana.dmann.xyz/
+      ping: https://grafana.grafana.svc.cluster.local:3000
 
 - Group C:
   - Service B:
@@ -30,7 +30,7 @@
   - Bazarr:
       icon: bazarr.png
       href: https://bazarr.dmann.xyz
-      ping: https://bazarr.dmann.xyz
+      ping: https://bazarr.bazarr.svc.cluster.local:4180
       description: Subtitle management
       widget:
         type: bazarr
@@ -40,7 +40,7 @@
   - Sonarr:
       icon: sonarr.png
       href: https://sonarr.dmann.xyz
-      ping: https://sonarr.dmann.xyz
+      ping: https://sonarr.sonarr.svc.cluster.local:8989
       description: TV Management
       widget:
         type: sonarr
@@ -50,7 +50,7 @@
   - Radarr:
       icon: radarr.png
       href: https://radarr.dmann.xyz
-      ping: https://radarr.dmann.xyz
+      ping: https://radarr.radarr.svc.cluster.local:7878
       description: Movie Management
       widget:
         type: radarr
@@ -60,7 +60,7 @@
   - Sabnzbd:
       icon: sabnzbd.png
       href: https://sabnzbd.dmann.xyz
-      ping: https://sabnzbd.dmann.xyz
+      ping: https://sabnzbd.sabnzbd.svc.cluster.local:8080
       description: Usenet downloads
       widget:
         type: sabnzbd
