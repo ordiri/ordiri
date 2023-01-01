@@ -36,6 +36,9 @@ spec:
       containers:
       - name: home-assistant
         image: ghcr.io/home-assistant/home-assistant:stable
+        securityContext:
+          capabilities:
+            - CAP_NET_RAW
         volumeMounts:
         - name: data
           mountPath: /config
