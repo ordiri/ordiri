@@ -27,7 +27,14 @@ water_ph:
   template:
   - sensor:
     - name: "calibrated_ph_sensor"
-      state: "{{ (int(states('input_number.max_calibrate_ph_value')) - int(states('input_number.min_calibrate_ph_value')))/(int(states('input_number.ph_sensor_max_calibrate_value')) - int(states('input_number.ph_sensor_min_calibrate_value')))*(int(states('sensor.water_ph')) - int(states('input_number.ph_sensor_min_calibrate_value'))) + int(states('input_number.min_calibrate_ph_value')) }}"
+      state: >
+        {% set min_ph_value = int(states('input_number.min_calibrate_ph_value')) %}
+        {% set max_ph_value = int(states('input_number.max_calibrate_ph_value')) %}
+        {% set max_sensor_value = int(states('input_number.ph_sensor_max_calibrate_value')) %}
+        {% set min_sensor_value = int(states('input_number.ph_sensor_min_calibrate_value')) %}
+        {% set sensor_water_ph = int(states('sensor.water_ph')) %}
+
+        {{ (max_ph_value - min_ph_value) / (max_sensor_value - min_sensor_value) * (sensor_water_ph - min_sensor_value) + min_ph_value }}
 
   sensor:
   - platform: statistics
