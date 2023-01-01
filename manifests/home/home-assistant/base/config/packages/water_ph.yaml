@@ -15,12 +15,12 @@ water_ph:
       name: Sensors minimum
       initial: 0
       min: 0
-      max: 2
+      max: 3
     ph_sensor_max_calibrate_value:
       name: Sensors maximum
       initial: 2
       min: 0
-      max: 2
+      max: 3
 
   template:
   - sensor:
