@@ -23,9 +23,9 @@ water_ph:
       min: 0
       max: 3
       step: 0.01
-
   template:
-  - sensor:
+  - unique_id: calibrated_ph_sensor_template
+    sensor:
     - name: "calibrated_ph_sensor"
       unit_of_measurement: pH
       state: >
