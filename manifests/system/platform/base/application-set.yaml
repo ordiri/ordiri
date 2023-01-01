@@ -45,3 +45,5 @@ spec:
         namespace: '{{path.basename}}'
       syncPolicy:
         automated: {}
+        syncOptions:
+        - ServerSideApply=true
