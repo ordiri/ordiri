@@ -23,8 +23,7 @@ water_ph:
       max: 2
 
   template:
-  - unique_id: calibrated_ph_sensor
-    sensor:
+  - sensor:
     - name: "calibrated_ph_sensor"
       state: "{{ (int(states.input_number.max_calibrate_ph_value.state) - int(states.input_number.min_calibrate_ph_value.state))/(int(states.input_number.ph_sensor_max_calibrate_value.state) - int(states.input_number.ph_sensor_min_calibrate_value.state))*(int(states.sensor.water_ph.state) - int(states.input_number.ph_sensor_min_calibrate_value.state)) + int(states.input_number.min_calibrate_ph_value.state) }}"
 
