@@ -21,6 +21,8 @@ helmCharts:
         datasources:
           skipReload: true
           initDatasources: true
+        dashboards:
+          skipReload: true
         plugins:
           skipReload: true
           initPlugins: true
