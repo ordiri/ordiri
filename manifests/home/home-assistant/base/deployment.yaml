@@ -30,7 +30,9 @@ spec:
         nfs:
           server: ceph.homelab.dmann.xyz
           path: /homelab/media
-
+      - name: mdns-tunnel-config
+        configMap:
+          name: mdns-tunnel-config
       containers:
       - name: home-assistant
         image: ghcr.io/home-assistant/home-assistant:stable
@@ -55,6 +57,21 @@ spec:
             fieldRef:
               fieldPath: status.podIP
         resources:
+      - name: mdns-tunnel
+        image: harbor.dmann.dev/docker.io/toxuin/mdns-tunneller
+        resources:
+          requests:
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - name: tunnel
+          containerPort: 42069
+          protocol: TCP
+        volumeMounts:
+        - name: mdns-tunnel-config
+          mountPath: /app/config
   volumeClaimTemplates:
   - metadata:
       name: data

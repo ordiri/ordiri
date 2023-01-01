@@ -5,6 +5,9 @@ configMapGenerator:
   - name: home-assistant-config
     files:
       - configuration.yaml=config/configuration.yaml
+  - name: mdns-tunnel-config
+    files:
+    - default.yaml=config/mdns-tunnel-default.yaml
 resources:
 - deployment.yaml
 - home-assistant-statefulset.yaml
