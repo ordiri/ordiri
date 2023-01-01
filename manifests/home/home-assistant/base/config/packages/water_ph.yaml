@@ -28,3 +28,11 @@ water_ph:
       calibrated_ph_sensor:
         friendly_name: "PH Sensor"
         value_template: "{{ (int(states.input_number.max_calibrate_ph_value.state) - int(states.input_number.min_calibrate_ph_value.state))/(int(states.input_number.ph_sensor_max_calibrate_value.state) - int(states.input_number.ph_sensor_min_calibrate_value.state))*(int(states.sensor.water_ph.state) - int(states.input_number.ph_sensor_min_calibrate_value.state)) + int(states.input_number.min_calibrate_ph_value.state) }}"
+
+  - platform: statistics
+    name: "Calibrated PH value"
+    entity_id: sensor.calibrated_ph_sensor
+    state_characteristic: average_linear
+    max_age:
+      minutes: 30
+    sampling_size: 50
