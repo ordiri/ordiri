@@ -32,10 +32,10 @@ var ipxeVars = map[string]string{
 	"gateway":      "gateway",
 	"dns":          "dns",
 	"syslog":       "syslog",
-	"ntp-server":   "42:ipv4",
-	"next-server":  "next-server",
-	"filename":     "filename",
-	"node-role":    "smbios/node-role",
+	// "ntp-server":   "42:ipv4",
+	"next-server": "next-server",
+	"filename":    "filename",
+	// "node-role":    "smbios/node-role",
 }
 
 type machineClient interface {

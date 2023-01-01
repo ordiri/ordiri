@@ -24,6 +24,7 @@ import (
 
 	"inet.af/netaddr"
 	k8err "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/api/resource"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
@@ -121,6 +122,9 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	needsCreate := domain == nil
 	needsUpdate = needsUpdate || needsCreate
 
+	m := vm.Spec.Resources.Memory.DeepCopy()
+	memory := uint(m.ScaledValue(resource.Kilo))
+
 	log.V(5).Info("creating virtual machine")
 	domainOptions := []internallibvirt.DomainOption{
 		internallibvirt.WithBasicDefaults(),
@@ -128,7 +132,7 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		internallibvirt.WithBootDevice(vm.Spec.BootDevices...),
 		internallibvirt.WithConsole(0, "serial"),
 		internallibvirt.WithCpu(uint(vm.Spec.Resources.CPU)),
-		internallibvirt.WithMemory(4 * 1e3 * 1024), // (uint(vm.Spec.Resources.Memory.Value())),
+		internallibvirt.WithMemory(memory), // (uint(vm.Spec.Resources.Memory.Value())),
 		internallibvirt.WithVnc(),
 		internallibvirt.WithMetadata("ordiri", "https://ordiri.com/tenant", "tenant", vm.Namespace),
 	}

@@ -7,6 +7,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/ordiri/ordiri/config"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
 )
 
@@ -19,7 +20,7 @@ ifstat ||
 set attempt:int8 1
 :dhcp_retry
 echo DHCP attempt ${attempt}
-dhcp --timeout 5000 && goto dhcp_ok ||
+dhcp && goto dhcp_ok ||
 ifstat ||
 inc attempt
 iseq ${attempt} 10 || goto dhcp_retry
@@ -42,17 +43,17 @@ const IpxeDiscoverTemplate = `#!ipxe
 
 {{ if .NeedsDiscovery }}
 # Node needs discovery, sending to discovery URL to record information
-chain -ar {{ .Node | DiscoveryUrl }}
+chain {{ .Node | DiscoveryUrl }}
 {{ else if .Node | IsNodePending }}
 # Node is pending approval
 sleep 60
-chain -ar {{ .Node | DiscoveryUrl }}
+chain {{ .Node | DiscoveryUrl }}
 {{ else if .Node | IsNodeRejected }}
 # Node was rejected from joining 
 echo node join request was rejected
 {{ else if .Node | IsNodeApproved }}
 # Node was approved to join
-chain -ar {{ .Node | BootUrl }}
+chain {{ .Node | BootUrl }}
 {{ end}}
 `
 
@@ -93,10 +94,10 @@ func ipxeFuncs() template.FuncMap {
 			for key, value := range ipxeVars {
 				queryString = append(queryString, fmt.Sprintf("%s=${%s}", url.QueryEscape(key), value))
 			}
-			return "discover.ipxe?" + strings.Join(queryString, "&")
+			return "http://" + config.IPXEBootHost.String() + ":8090/discover.ipxe?" + strings.Join(queryString, "&")
 		},
 		"BootUrl": func(node *corev1alpha1.Machine) string {
-			return "boot.ipxe?uuid=${uuid}"
+			return "http://" + config.IPXEBootHost.String() + ":8090/boot.ipxe?uuid=${uuid}"
 		},
 		"NeedsDiscovery": needsDiscovery,
 		"IsNodeRejected": func(nodeObj *corev1alpha1.Machine) bool {

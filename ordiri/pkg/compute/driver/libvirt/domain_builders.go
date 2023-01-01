@@ -4,6 +4,7 @@ package libvirt
 
 import (
 	"fmt"
+	"strings"
 
 	"libvirt.org/go/libvirtxml"
 )
@@ -118,9 +119,10 @@ func WithMemory(size uint) DomainOption {
 	return func(domain *libvirtxml.Domain) error {
 		if domain.CurrentMemory == nil {
 			domain.CurrentMemory = &libvirtxml.DomainCurrentMemory{}
-			domain.CurrentMemory.Value = size
-			domain.CurrentMemory.Unit = "KiB"
 		}
+		domain.CurrentMemory.Value = size
+		domain.CurrentMemory.Unit = "KiB"
+
 		if domain.Memory == nil {
 			domain.Memory = &libvirtxml.DomainMemory{}
 		}
@@ -186,7 +188,10 @@ func WithMetadata(ns, uri, key, value string) DomainOption {
 		if domain.Metadata == nil {
 			domain.Metadata = &libvirtxml.DomainMetadata{}
 		}
-		domain.Metadata.XML = domain.Metadata.XML + fmt.Sprintf("<%s:%s xmlns:%s=%q>%s</%s:%s>", ns, key, ns, uri, value, ns, key)
+		newXml := fmt.Sprintf("<%s:%s xmlns:%s=%q>%s</%s:%s>", ns, key, ns, uri, value, ns, key)
+		if !strings.Contains(domain.Metadata.XML, newXml) {
+			domain.Metadata.XML = domain.Metadata.XML + newXml
+		}
 		return nil
 	}
 }

@@ -24,7 +24,7 @@ const (
 
 func EnsureExisting(ctx context.Context, client *Libvirt, dom libvirt.Domain, opts ...DomainOption) (EnsureResult, *libvirtxml.Domain, error) {
 	log := log.FromContext(ctx)
-	existingXml, err := client.DomainGetXMLDesc(dom, libvirt.DomainXMLSecure|libvirt.DomainXMLUpdateCPU|libvirt.DomainXMLInactive)
+	existingXml, err := client.DomainGetXMLDesc(dom, libvirt.DomainXMLSecure|libvirt.DomainXMLInactive)
 	if err != nil {
 		return EnsureResultDomainUnknown, nil, err
 	}
@@ -56,6 +56,10 @@ func EnsureExisting(ctx context.Context, client *Libvirt, dom libvirt.Domain, op
 		existingXml, err := existing.Marshal()
 		if err != nil {
 			return true
+		}
+
+		if domainStr != existingXml {
+			fmt.Printf("\n\n\n\n\nhererere\n\n\n%s\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n%s", domainStr, existingXml)
 		}
 
 		return domainStr != existingXml
