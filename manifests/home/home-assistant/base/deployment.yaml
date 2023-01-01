@@ -45,6 +45,9 @@ spec:
           mountPath: /config
         - name: nfs-volume
           mountPath: /media
+        - name: nfs-volume
+          mountPath: /config/backups
+          subPath: backups/home-assistant
         - name: home-assistant-config
           mountPath: /config/configuration.yaml
           subPath: configuration.yaml
