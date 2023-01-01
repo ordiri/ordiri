@@ -98,7 +98,7 @@ spec:
           httpGet:
             path: /
             port: webui
-            scheme: http
+            scheme: HTTP
           initialDelaySeconds: 10
           timeoutSeconds: 5
         readinessProbe:
