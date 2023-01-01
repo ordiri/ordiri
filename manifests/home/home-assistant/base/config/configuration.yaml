@@ -4,9 +4,7 @@ default_config:
 homeassistant:
   external_url: "https://home-assistant.dmann.xyz"
   internal_url: "https://home-assistant.dmann.xyz"
-  media_dirs:
-    movies: /media/movies
-    tv: /media/tv
+  media_dirs: {}
 
 http:
   ssl_certificate: /opt/home-assistant-tls/tls.crt
@@ -14,10 +12,6 @@ http:
 
 logger:
   default: warning
-  logs:
-    homeassistant.components.homekit: debug
-    pyhap: debug
-
 
 homekit:
 - name: HASS Bridge
@@ -36,7 +30,16 @@ homekit:
   filter:
     include_entities:
     - lock.front_door_lock
-  
+
+automation: !include automations.yaml
+automation backups:
+  - alias: "Backup Home Assistant every night at 3 AM"
+    trigger:
+      platform: time
+      at: "03:00:00"
+    action:
+      alias: "Create backup now"
+      service: backup.create
 # This is no longer a thing, you *have* to use the UI 🙃
 # mqtt:
 #   broker: mqtt.dmann.xyz

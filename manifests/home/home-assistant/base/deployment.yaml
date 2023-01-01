@@ -51,6 +51,9 @@ spec:
         - name: nfs-volume
           mountPath: /config/custom_components
           subPath: home-assistant/custom_components
+        - name: nfs-volume
+          mountPath: /config/automations.yaml
+          subPath: home-assistant/automations.yaml
         - name: home-assistant-config
           mountPath: /config/configuration.yaml
           subPath: configuration.yaml
