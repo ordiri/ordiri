@@ -38,6 +38,7 @@ spec:
         image: ghcr.io/home-assistant/home-assistant:stable
         securityContext:
           capabilities:
+            add:
             - CAP_NET_RAW
         volumeMounts:
         - name: data
