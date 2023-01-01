@@ -11,7 +11,8 @@ interface:
 
 sendersBlacklist: []
 
-serviceWhitelist: []
+serviceWhitelist:
+- '.local'
 # UNCOMMENT THIS TO ADD SUPPORT FOR CHROMECAST
 
 # UNCOMMENT THIS TO START AS A CLIENT:
