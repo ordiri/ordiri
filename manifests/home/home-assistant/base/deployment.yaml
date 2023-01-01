@@ -94,7 +94,9 @@ spec:
         - name: mdns-tunnel-config
           mountPath: /app/config
   volumeClaimTemplates:
-  - metadata:
+  - apiVersion: v1		
+    kind: PersistentVolumeClaim
+    metadata:
       name: data
     spec:
       storageClassName: ceph-retain
