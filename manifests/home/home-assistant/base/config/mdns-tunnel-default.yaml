@@ -11,17 +11,7 @@ interface:
 
 sendersBlacklist: []
 
-serviceWhitelist:
-- '_homekit._tcp.local'
-- '_airplay._tcp.local'
-- '_companion-link._tcp.local'
-- '_dacp._tcp.local'
-- '_hap._tcp.local'
-- '_esphomelib._tcp.local'
-- '_http._tcp.local'
-- '_meshcop._udp.local'
-- '_googlecast._tcp.local'
-- '_raop._tcp.local'
+serviceWhitelist: []
 # UNCOMMENT THIS TO ADD SUPPORT FOR CHROMECAST
 
 # UNCOMMENT THIS TO START AS A CLIENT:
