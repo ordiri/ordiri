@@ -24,12 +24,6 @@ spec:
         - name: tunnel
           containerPort: 42069
           protocol: TCP
-        livenessProbe:
-          tcpSocket:
-            port: tunnel
-        readinessProbe:
-          tcpSocket:
-            port: tunnel
         volumeMounts:
         - name: mdns-tunnel-config
           mountPath: /app/config
