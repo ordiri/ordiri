@@ -33,6 +33,7 @@ water_ph:
     name: "Calibrated PH value"
     entity_id: sensor.calibrated_ph_sensor
     state_characteristic: average_linear
+    unit_of_measurement: pH
     max_age:
       minutes: 30
     sampling_size: 50
