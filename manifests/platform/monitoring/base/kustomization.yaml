@@ -17,6 +17,16 @@ helmCharts:
     kubeEtcd:
       enabled: false
     grafana:
+      sidecar:
+        datasources:
+          skipReload: true
+          initDatasources: true
+        plugins:
+          skipReload: true
+          initPlugins: true
+        notifiers:
+          skipReload: true
+          initNotifiers: true
       extraContainerVolumes:
       - name: grafana-tls
         secret:
@@ -76,6 +86,7 @@ patches:
             readinessProbe:
               httpGet:
                 scheme: HTTPS
+              initialDelaySeconds: 30
             livenessProbe:
               httpGet:
-                scheme: HTTPS
+                scheme: HTTPS;
