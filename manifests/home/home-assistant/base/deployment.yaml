@@ -65,6 +65,9 @@ spec:
           limits:
             memory: "128Mi"
             cpu: "500m"
+        env:
+        - name: DEBUG
+          value: '*' 
         ports:
         - name: tunnel
           containerPort: 42069
