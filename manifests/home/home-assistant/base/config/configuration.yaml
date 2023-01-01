@@ -4,6 +4,9 @@ default_config:
 homeassistant:
   external_url: "https://home-assistant.dmann.xyz"
   internal_url: "https://home-assistant.dmann.xyz"
+  media_dirs:
+    movies: /media/movies
+    tv: /media/tv
 
 http:
   ssl_certificate: /opt/home-assistant-tls/tls.crt
@@ -14,6 +17,7 @@ logger:
   logs:
     homeassistant.components.homekit: debug
     pyhap: debug
+
 
 homekit:
 - name: HASS Bridge
