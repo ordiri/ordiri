@@ -105,10 +105,17 @@ spec:
           tcpSocket:
             port: webui
         volumeMounts:
+        - name: nfs-volume
+          mountPath: /app/data/generated
+          subPath: zigbee2mqtt
         - name: zigbee2mqtt-config
           mountPath: /app/data/configuration.yaml
           subPath: configuration.yaml
       volumes:
+      - name: nfs-volume
+        nfs:
+          server: ceph.homelab.dmann.xyz
+          path: /homelab/media
       - name: zigbee2mqtt-config
         configMap:
           name: zigbee2mqtt-config

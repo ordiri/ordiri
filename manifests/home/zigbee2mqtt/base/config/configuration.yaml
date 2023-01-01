@@ -1,3 +1,7 @@
+# Define the files which contains the configs 
+devices: generated/devices.yaml
+groups: generated/groups.yaml
+
 frontend:
   # Optional, default 8080
   port: 8080
@@ -28,5 +32,3 @@ serial:
   adapter: deconz
   # Location of CC2531 USB sniffer
   port: "tcp://WLAN_raspberrypi.lan.house.dmann.xyz:20108"
-
-devices: []
