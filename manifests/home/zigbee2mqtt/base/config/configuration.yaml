@@ -11,10 +11,10 @@ frontend:
   url: 'https://zigbee2mqtt.dmann.xyz'
 
 # Home Assistant integration (MQTT discovery)
-homeassistant: false
+homeassistant: true
 
 # allow new devices to join
-permit_join: true
+permit_join: false
 
 # MQTT settings
 mqtt:
