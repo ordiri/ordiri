@@ -1,0 +1,30 @@
+# This was written by ChatGPT...
+water_ph:
+  input_number:
+    min_calibrate_ph_value:
+      name: Calibrated PH minimum
+      initial: 4
+      min: 0
+      max: 7
+    max_calibrate_ph_value:
+      name: Calibrated PH maximum
+      initial: 7
+      min: 0
+      max: 7
+    ph_sensor_min_calibrate_value:
+      name: Sensors minimum
+      initial: 0
+      min: 0
+      max: 2
+    ph_sensor_max_calibrate_value:
+      name: Sensors maximum
+      initial: 2
+      min: 0
+      max: 2
+
+  sensor:
+  - platform: template
+    sensors:
+      ph_sensor:
+        friendly_name: "PH Sensor"
+        value_template: "{{ (input_number.max_calibrate_ph_value.state - input_number.min_calibrate_ph_value.state)/(input_number.ph_sensor_max_calibrate_value.state - input_number.ph_sensor_min_calibrate_value.state)*(states.sensor.water_ph.state - input_number.ph_sensor_min_calibrate_value.state) + input_number.min_calibrate_ph_value.state }}"

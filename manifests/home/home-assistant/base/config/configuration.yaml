@@ -5,6 +5,8 @@ homeassistant:
   external_url: "https://home-assistant.dmann.xyz"
   internal_url: "https://home-assistant.dmann.xyz"
   media_dirs: {}
+  packages: !include_dir_merge_named packages/
+
 
 http:
   ssl_certificate: /opt/home-assistant-tls/tls.crt

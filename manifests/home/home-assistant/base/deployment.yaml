@@ -26,6 +26,9 @@ spec:
       - name: home-assistant-config
         configMap:
           name: home-assistant-config
+      - name: home-assistant-packages
+        configMap:
+          name: home-assistant-packages
       - name: nfs-volume
         nfs:
           server: ceph.homelab.dmann.xyz
@@ -54,6 +57,8 @@ spec:
         - name: nfs-volume
           mountPath: /config/automations.yaml
           subPath: home-assistant/automations.yaml
+        - name: home-assistant-packages
+          mountPath: /config/packages
         - name: home-assistant-config
           mountPath: /config/configuration.yaml
           subPath: configuration.yaml

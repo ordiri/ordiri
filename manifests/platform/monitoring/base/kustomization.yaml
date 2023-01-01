@@ -47,7 +47,7 @@ helmCharts:
           enabled: true
           client_id: $__file{/vault/secrets/oidc-id}
           client_secret: $__file{/vault/secrets/oidc-secret}
-          scopes: openid profile email groups
+          scopes: openid profile email groups user
           empty_scopes: false
           auth_url: https://vault.homelab.dmann.xyz:8200/ui/vault/identity/oidc/provider/default/authorize
           token_url: https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/default/token
