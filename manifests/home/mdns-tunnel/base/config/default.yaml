@@ -18,6 +18,6 @@ serviceWhitelist:
 # UNCOMMENT THIS TO ADD SUPPORT FOR CHROMECAST
 
 # UNCOMMENT THIS TO START AS A CLIENT:
-remote: http://10.0.1.1:42069
+remote: http://10.0.1.1
 # or
 # remote: https://192.168.1.10
