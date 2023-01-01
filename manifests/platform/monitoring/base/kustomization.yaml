@@ -38,6 +38,7 @@ helmCharts:
         server:
           protocol: https
           domain: grafana.dmann.dev
+          root_url: https://grafana.dmann.dev/
           cert_file: /opt/grafana-tls/tls.crt
           cert_key: /opt/grafana-tls/tls.key
         auth.generic_oauth:
