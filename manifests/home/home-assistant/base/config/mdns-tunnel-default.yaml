@@ -12,6 +12,7 @@ interface:
 sendersBlacklist: []
 
 serviceWhitelist:
+- '.local.'
 - '.local'
 # UNCOMMENT THIS TO ADD SUPPORT FOR CHROMECAST
 
