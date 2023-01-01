@@ -89,4 +89,4 @@ patches:
               initialDelaySeconds: 30
             livenessProbe:
               httpGet:
-                scheme: HTTPS;
+                scheme: HTTPS
