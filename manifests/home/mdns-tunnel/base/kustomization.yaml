@@ -4,7 +4,7 @@ kind: Kustomization
 configMapGenerator:
   - name: mdns-tunnel-config
     files:
-    - config.yaml=config/config.yaml
+    - default.yaml=config/default.yaml
 resources:
 - deployment.yaml
 - service.yaml
