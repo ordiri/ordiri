@@ -40,7 +40,7 @@ helmCharts:
           domain: grafana.dmann.dev
           cert_file: /opt/grafana-tls/tls.crt
           cert_key: /opt/grafana-tls/tls.key
-        auth.vault:
+        auth:
           generic_oauth:
             name: OAuth
             icon: signin
