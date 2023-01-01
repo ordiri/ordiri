@@ -27,6 +27,7 @@ water_ph:
   template:
   - sensor:
     - name: "calibrated_ph_sensor"
+      unit_of_measurement: pH
       state: >
         {% set min_ph_value = states('input_number.min_calibrate_ph_value') | float %}
         {% set max_ph_value = states('input_number.max_calibrate_ph_value') | float %}
