@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mdns-tunnel
+spec:
+  selector:
+    matchLabels:
+      app: mdns-tunnel
+  template:
+    metadata:
+      labels:
+        app: mdns-tunnel
+    spec:
+      containers:
+      - name: mdns-tunnel
+        image: harbor.dmann.dev/docker.io/toxuin/mdns-tunneller
+        resources:
+          requests:
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - name: tunnel
+          containerPort: 42069
+          protocol: TCP
+        livenessProbe:
+          tcpSocket:
+            port: tunnel
+        readinessProbe:
+          tcpSocket:
+            port: tunnel
+        volumeMounts:
+        - name: mdns-tunnel-config
+          mountPath: /app/config
+      volumes:
+      - name: mdns-tunnel-config
+        configMap:
+          name: mdns-tunnel-config

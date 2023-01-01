@@ -1,0 +1,23 @@
+port: 42069
+enableIpv6: true
+
+# THIS IS WHERE SERVER WILL LISTEN ON HTTP CONNECTIONS
+interface:
+- '::'
+
+# UNCOMMENT TO LISTEN FOR MDNS PACKETS ONLY ON SPECIFIC INTERFACES:
+#mdnsInterfaces:
+#  - en0
+
+sendersBlacklist: []
+
+serviceWhitelist:
+- '_homekit._tcp.local'
+- '_hap._tcp.local'
+- '_googlecast._tcp.local'
+# UNCOMMENT THIS TO ADD SUPPORT FOR CHROMECAST
+
+# UNCOMMENT THIS TO START AS A CLIENT:
+remote: http://10.0.1.1:42069
+# or
+# remote: https://192.168.1.10
