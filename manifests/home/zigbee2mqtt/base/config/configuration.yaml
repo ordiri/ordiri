@@ -1,6 +1,6 @@
 # Define the files which contains the configs 
-devices: generated/devices.yaml
-groups: generated/groups.yaml
+devices: devices.yaml
+groups: groups.yaml
 
 frontend:
   # Optional, default 8080
