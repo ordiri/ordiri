@@ -16,7 +16,7 @@ cd $(mktemp -d)
 
 local_ip=$(curl --retry 5 --retry-all-errors --retry-delay 5 --retry-max-time 120 -fsSL 169.254.169.254/latest/meta-data/local-ipv4)
 local_hostname=$(curl --retry 5 --retry-all-errors --retry-delay 5 --retry-max-time 120 -fsSL 169.254.169.254/latest/meta-data/local-hostname)
-export local_ip local_hostname # Export these so we can use them in envsubst call below
+export local_ip local_hostname
 
 curl -fsSL ${DOWNLOAD_URL}/${ETCD_VER}/etcd-${ETCD_VER}-linux-amd64.tar.gz -o etcd-${ETCD_VER}-linux-amd64.tar.gz
 tar xzvf etcd-${ETCD_VER}-linux-amd64.tar.gz --strip-components=1
