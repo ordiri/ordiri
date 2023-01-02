@@ -7,7 +7,6 @@
     ":autodetectPinVersions",
     ":prHourlyLimit2",
     ":prConcurrentLimit10",
-    "group:monorepos",
     "group:kubernetes",
     "workarounds:all"
   ]
