@@ -65266,7 +65266,7 @@ spec:
         - configMapRef:
             name: kubernetes-services-endpoint
             optional: true
-        image: quay.io/tigera/operator:v1.28.3
+        image: quay.io/tigera/operator:v1.28.7
         imagePullPolicy: IfNotPresent
         name: tigera-operator
         volumeMounts:
