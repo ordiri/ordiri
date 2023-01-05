@@ -4,7 +4,7 @@
     "config:base"
   ],
   "enabledManagers": ["kustomize", "kubernetes"],
-  "prhourlylimit": 10
+  "ignorePresets": [":prHourlyLimit2"]
 }
 
 
