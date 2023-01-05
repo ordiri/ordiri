@@ -3,6 +3,9 @@
   "extends": [
     "config:base"
   ],
-  "enabledManagers": ["kustomize", "kubernetes"],
-  "ignorePresets": [":prHourlyLimit2"]
+  "enabledManagers": ["kustomize", "kubernetes", "dockerfile"],
+  "ignorePresets": [":prHourlyLimit2"],
+  "kubernetes": {
+    "fileMatch": ["manifests/.+\\.yaml$"]
+  }
 }
