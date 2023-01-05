@@ -2936,7 +2936,7 @@ spec:
           value: /tmp/gitea
         - name: TMPDIR
           value: /tmp/gitea
-        image: gitea/gitea:1.17.3
+        image: gitea/gitea:1.18.0
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 10
@@ -2990,7 +2990,7 @@ spec:
           value: /data
         - name: GITEA_TEMP
           value: /tmp/gitea
-        image: gitea/gitea:1.17.3
+        image: gitea/gitea:1.18.0
         imagePullPolicy: Always
         name: init-directories
         securityContext:
@@ -3015,7 +3015,7 @@ spec:
           value: /data
         - name: GITEA_TEMP
           value: /tmp/gitea
-        image: gitea/gitea:1.17.3
+        image: gitea/gitea:1.18.0
         imagePullPolicy: Always
         name: init-app-ini
         securityContext:
@@ -3056,7 +3056,7 @@ spec:
           value: gitea_admin
         - name: GITEA_ADMIN_PASSWORD
           value: r8sA8CPHD9!bt6d
-        image: gitea/gitea:1.17.3
+        image: gitea/gitea:1.18.0
         imagePullPolicy: Always
         name: configure-gitea
         securityContext:
