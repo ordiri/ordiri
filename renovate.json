@@ -1,15 +1,9 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    ":dependencyDashboard",
-    ":semanticPrefixFixDepsChoreOthers",
-    ":ignoreModulesAndTests",
-    ":autodetectPinVersions",
-    ":prHourlyLimit2",
-    ":prConcurrentLimit10",
-    "group:kubernetes",
-    "workarounds:all"
-  ]
+    "config:base"
+  ],
+  "enabledManagers": ["kustomize", "kubernetes"]
 }
 
 
