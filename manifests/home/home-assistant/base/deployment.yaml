@@ -75,6 +75,18 @@ spec:
             fieldRef:
               fieldPath: status.podIP
         resources:
+        readinessProbe:
+          httpGet:
+            path: /manifest.json
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /manifest.json
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 10
       - name: mdns-tunnel
         image: harbor.dmann.dev/docker.io/toxuin/mdns-tunneller
         resources:
