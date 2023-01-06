@@ -27,7 +27,6 @@ homekit:
     - binary_sensor.zone_*
     include_entities:
     - button.garage_door_opener
-    - script.garage_door
 - name: HASS Bridge - Security
   port: 21065
   advertise_ip: !env_var HOME_ASSISTANT_INGRESS_PORT_21065_TCP_ADDR
