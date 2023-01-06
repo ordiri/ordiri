@@ -79,14 +79,14 @@ spec:
           httpGet:
             path: /manifest.json
             port: webui
-            scheme: https
+            scheme: HTTPS
           initialDelaySeconds: 5
           periodSeconds: 10
         livenessProbe:
           httpGet:
             path: /manifest.json
             port: webui
-            scheme: https
+            scheme: HTTPS
           initialDelaySeconds: 5
           periodSeconds: 10
       - name: mdns-tunnel
