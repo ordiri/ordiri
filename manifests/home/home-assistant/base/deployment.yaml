@@ -78,13 +78,13 @@ spec:
         readinessProbe:
           httpGet:
             path: /manifest.json
-            port: http
+            port: webui
           initialDelaySeconds: 5
           periodSeconds: 10
         livenessProbe:
           httpGet:
             path: /manifest.json
-            port: http
+            port: webui
           initialDelaySeconds: 5
           periodSeconds: 10
       - name: mdns-tunnel
