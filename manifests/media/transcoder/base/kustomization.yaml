@@ -13,3 +13,4 @@ resources:
 - wf-rbac.yaml
 - workflow-template.yaml
 - event-bus.yaml
+- transcode-cronwf.yaml

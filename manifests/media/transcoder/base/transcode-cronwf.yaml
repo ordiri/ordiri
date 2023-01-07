@@ -1,0 +1,14 @@
+apiVersion: argoproj.io/v1alpha1
+kind: CronWorkflow
+metadata:
+  name: transcode-daily
+spec:
+  schedule: "0 0 0 * * *"
+  timezone: "Australia/Sydney"   # Default to local machine timezone
+  startingDeadlineSeconds: 0
+  concurrencyPolicy: "Forbid"      # Default to "Allow"
+  successfulJobsHistoryLimit: 4     # Default 3
+  failedJobsHistoryLimit: 4         # Default 1
+  workflowSpec:
+    workflowTemplateRef:
+      name: transcode
