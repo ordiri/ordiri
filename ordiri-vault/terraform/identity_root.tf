@@ -88,4 +88,7 @@ resource "vault_identity_group" "root" {
 resource "vault_identity_entity" "admin" {
   name      = "admin"
   policies  = []
+  metadata = {
+    "email" = "admin@dmann.xyz"
+  }
 }

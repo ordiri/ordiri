@@ -10,8 +10,7 @@ resource "vault_kubernetes_auth_backend_role" "dashboard" {
   token_policies                   = [
     "default", 
     "dashboard-oidc-read", 
-    "bazarr-api-token-read",
-    "plex-api-token-read",
+    "media-api-token-read",
   ]
 }
 
@@ -23,18 +22,10 @@ path "identity/oidc/client/dashboard" {
 }
 POLICY
 }
-resource "vault_policy" "plex-api-token-read" {
-    name = "plex-api-token-read"
+resource "vault_policy" "media-api-token-read" {
+    name = "media-api-token-read"
     policy = <<POLICY
-path "secret/data/media/plex/api" {
- capabilities = ["read"] 
-}
-POLICY
-}
-resource "vault_policy" "bazarr-api-token-read" {
-    name = "bazarr-api-token-read"
-    policy = <<POLICY
-path "secret/data/media/bazarr/api" {
+path "secret/data/media/+/api" {
  capabilities = ["read"] 
 }
 POLICY

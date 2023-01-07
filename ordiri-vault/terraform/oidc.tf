@@ -15,11 +15,16 @@ resource "vault_identity_oidc_scope" "user" {
   name        = "user"
   template    = <<EOT
 {
-    "username": {{identity.entity.name}},
-    "contact": {
-        "email": {{identity.entity.metadata.email}},
-        "phone_number": {{identity.entity.metadata.phone_number}}
-    }
+    "username": {{identity.entity.name}}
+}
+EOT
+  description = "Vault OIDC user Scope"
+}
+resource "vault_identity_oidc_scope" "email" {
+  name        = "email"
+  template    = <<EOT
+{
+    "email": {{identity.entity.metadata.email}}
 }
 EOT
   description = "Vault OIDC user Scope"
@@ -30,7 +35,8 @@ resource "vault_identity_oidc_provider" "vault" {
   allowed_client_ids = [ "*" ]
   scopes_supported = [
     vault_identity_oidc_scope.user.name,
-    vault_identity_oidc_scope.groups.name
+    vault_identity_oidc_scope.groups.name,
+    vault_identity_oidc_scope.email.name,
   ]
 }
 
