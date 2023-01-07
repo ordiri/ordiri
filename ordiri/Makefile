@@ -148,8 +148,13 @@ bin/controller-manager:
 
 .PHONY: linux-ipam
 linux-ipam:
-	go build -ldflags="-X 'github.com/ordiri/ordiri/version.BuildTime=${BUILD_TIMESTAMP}'" -o bin/ordiri-ipam-amd64-linux ./cmd/ordiri-ipam
+	GOOS=linux GOARCH=amd64 go build -ldflags="-X 'github.com/ordiri/ordiri/version.BuildTime=${BUILD_TIMESTAMP}'" -o bin/ordiri-ipam-amd64-linux ./cmd/ordiri-ipam
 	chmod +x bin/ordiri-ipam-amd64-linux
+
+.PHONY: linux-ipxe
+linux-ipxe:
+	GOOS=linux GOARCH=amd64 go build -ldflags="-X 'github.com/ordiri/ordiri/version.BuildTime=${BUILD_TIMESTAMP}'" -o bin/ordiri-bootserver-amd64-linux ./cmd/bootserver
+	chmod +x bin/ordiri-bootserver-amd64-linux
 
 .PHONY: linux-md
 linux-md: 
@@ -339,10 +344,12 @@ run-manager: run-controllers
 
 run-vault: 
 	VAULT_DEV_LISTEN_ADDRESS="0.0.0.0:8200"  vault server -dev
-run-ipxe: 
-	killall bootserver || true
-	go build -o bin/bootserver ./cmd/bootserver
-	KUBECONFIG=kubeconfig ./bin/bootserver server
+run-ipxe: linux-ipxe
+	scp ordiri-bootserver.service root@mothership:/etc/systemd/system/.
+	ssh root@mothership 'systemctl daemon-reload && systemctl enable ordiri-bootserver.service'
+	scp bin/ordiri-bootserver-amd64-linux root@mothership:~/ordiri-bootserver
+	ssh root@mothership 'mv ~/ordiri-bootserver /usr/local/bin/ordiri-bootserver && chmod +x /usr/local/bin/ordiri-bootserver && systemctl daemon-reload && systemctl restart ordiri-bootserver'
+	
 run-vmmetaserver: 
 	killall vmmetaserver || true
 	go build -o bin/vmmetaserver ./cmd/vmmetaserver

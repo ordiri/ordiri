@@ -8,7 +8,7 @@ roles:
       args:
       - "initrd=initrd.gz"
       - "install"
-      - "preseed/url=http://netboot.homelab.dmann.xyz:8090/fetch?&uuid=${uuid}&file=preseed.cfg"
+      - "preseed/url=http://ipxe-discover.homelab.dmann.xyz:8090/fetch?&uuid=${uuid}&file=preseed.cfg"
       - "debian-installer=en_US.UTF-8"
       - "auto"
       - "priority=critical"
