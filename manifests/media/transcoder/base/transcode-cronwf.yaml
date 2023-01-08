@@ -3,7 +3,7 @@ kind: CronWorkflow
 metadata:
   name: transcode-daily
 spec:
-  schedule: "0 0 0 * * *"
+  schedule: "1 1 * * *"
   timezone: "Australia/Sydney"   # Default to local machine timezone
   startingDeadlineSeconds: 0
   concurrencyPolicy: "Forbid"      # Default to "Allow"
