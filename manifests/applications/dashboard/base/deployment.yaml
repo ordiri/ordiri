@@ -15,8 +15,8 @@ spec:
         vault.hashicorp.com/agent-inject: 'true'
         vault.hashicorp.com/agent-limits-cpu: 100m
         vault.hashicorp.com/agent-requests-cpu: 50m
-        vault.hashicorp.com/agent-limits-mem: 128mi
-        vault.hashicorp.com/agent-requests-mem: 64mi
+        vault.hashicorp.com/agent-limits-mem: 128Mi
+        vault.hashicorp.com/agent-requests-mem: 64Mi
         vault.hashicorp.com/agent-init-first: 'true'
         vault.hashicorp.com/role: dashboard
         vault.hashicorp.com/agent-inject-secret-oidc: identity/oidc/client/dashboard
