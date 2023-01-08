@@ -95,10 +95,10 @@ spec:
         - name:  webui
           containerPort:  8080
           protocol: TCP
-        resources:
-          limits:
-            memory: "6Gi"
-            cpu: "1500M"
-          requests:
-            memory: "4Gi"
-            cpu: "1500M"
+        # resources:
+          # limits:
+          #   memory: "6Gi"
+          #   cpu: "1500M"
+          # requests:
+          #   memory: "4Gi"
+          #   cpu: "1500M"
