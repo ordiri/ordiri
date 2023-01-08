@@ -87,7 +87,6 @@ spec:
           value: "1000"
         - name: TZ
           value: "Australia/Sydney"
-
         ports:
         - name:  webui
           containerPort:  8080
@@ -95,4 +94,7 @@ spec:
         resources:
           limits:
             memory: "4Gi"
+            cpu: "1"
+          requests:
+            memory: "2Gi"
             cpu: "1"
