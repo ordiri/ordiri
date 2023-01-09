@@ -87,9 +87,6 @@ spec:
           subPath: esphome
         - name: esphome-cache
           mountPath: /config/.esphome
-        env:
-        - name: ESPHOME_DASHBOARD_USE_PING
-          value: "true"
         ports:
         - name:  esphome
           containerPort:  6052
