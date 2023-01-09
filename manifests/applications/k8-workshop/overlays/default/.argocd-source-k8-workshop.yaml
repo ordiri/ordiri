@@ -1,3 +1,3 @@
 kustomize:
   images:
-  - harbor.dmann.dev/default/kubernetes-course:a658398254ca47d75e0ea0c6a69021ba399fd18b
+  - harbor.dmann.dev/default/kubernetes-course:fc7fa662006f2f713d690a3e07cc547ee518df27
