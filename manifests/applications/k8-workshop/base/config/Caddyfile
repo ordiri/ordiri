@@ -4,9 +4,6 @@
   root * /opt/workshop
   tls /opt/workshop-tls/tls.crt /opt/workshop-tls/tls.key
 
-  # Templates give static sites some dynamic features
-  templates
-  
   # Compress responses according to Accept-Encoding headers
   encode gzip zstd
   
