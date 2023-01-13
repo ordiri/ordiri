@@ -8,7 +8,7 @@ resources:
 helmCharts:
 - name: tigera-operator
   repo: https://docs.projectcalico.org/charts
-  version: v3.24.5
+  version: v3.25.0
   releaseName: calico
   namespace: tigera-operator
   includeCRDs: true
