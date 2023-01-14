@@ -3,6 +3,9 @@ kind: Kustomization
 
 namespace: blog
 
+components:
+- ../../../../common/images
+
 resources:
 - namespace.yaml
 - ../../base

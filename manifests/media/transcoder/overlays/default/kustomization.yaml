@@ -3,6 +3,9 @@ kind: Kustomization
 
 namespace: transcoder
 
+components:
+- ../../../../common/images
+
 resources:
 - namespace.yaml
 - ../../base

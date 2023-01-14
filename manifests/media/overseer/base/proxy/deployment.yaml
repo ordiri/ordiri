@@ -21,7 +21,7 @@ spec:
           secretName: overseer-tls
       containers:
       - name: proxy
-        image: harbor.dmann.dev/docker.io/caddy
+        image: docker.io/caddy:latest
         volumeMounts:
         - name: caddyfile
           mountPath: /opt/caddyfile

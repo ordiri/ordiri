@@ -3,6 +3,9 @@ kind: Kustomization
 
 namespace: k8-workshop
 
+components:
+- ../../../../common/images
+
 resources:
 - namespace.yaml
 - ../../base

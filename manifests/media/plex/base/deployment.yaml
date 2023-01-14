@@ -37,7 +37,7 @@ spec:
           path: /tmp/plex-transcoder
       containers:
       - name: plex-server
-        image: harbor.dmann.dev/docker.io/plexinc/pms-docker
+        image: docker.io/plexinc/pms-docker
         volumeMounts:
         - name: media-nfs
           mountPath: /media

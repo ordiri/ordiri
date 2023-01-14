@@ -3,6 +3,9 @@ kind: Kustomization
 
 namespace: home-assistant
 
+components:
+- ../../../../common/images
+
 resources:
 - namespace.yaml
 - ../../base

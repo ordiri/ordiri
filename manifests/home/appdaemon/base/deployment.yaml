@@ -68,7 +68,7 @@ spec:
           --cookie-secure=false \
           --cookie-secret=secret12secret12
         env: []
-        image: harbor.dmann.dev/quay.io/oauth2-proxy/oauth2-proxy:latest
+        image: quay.io/oauth2-proxy/oauth2-proxy:latest
         ports:
         - containerPort: 4180
           protocol: TCP
@@ -78,7 +78,7 @@ spec:
         - name: appdaemon-tls
           mountPath: /opt/appdaemon-tls
       - name: appdaemon
-        image: harbor.dmann.dev/docker.io/acockburn/appdaemon:latest
+        image: docker.io/acockburn/appdaemon:latest
         env:
         - name: DASH_URL
           value: https://appdaemon.dmann.xyz

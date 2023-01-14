@@ -3,6 +3,9 @@ kind: Kustomization
 
 namespace: esphome
 
+components:
+- ../../../../common/images
+
 resources:
 - namespace.yaml
 - ../../base

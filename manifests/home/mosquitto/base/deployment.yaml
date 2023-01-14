@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: mosquitto
-        image: harbor.dmann.dev/docker.io/eclipse-mosquitto:2.0.15-openssl
+        image: docker.io/eclipse-mosquitto:2.0.15-openssl
         resources:
           requests:
             cpu: "50m"

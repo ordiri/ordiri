@@ -90,7 +90,7 @@ spec:
           initialDelaySeconds: 5
           periodSeconds: 10
       - name: mdns-tunnel
-        image: harbor.dmann.dev/docker.io/toxuin/mdns-tunneller
+        image: docker.io/toxuin/mdns-tunneller
         resources:
           requests:
             cpu: "50m"

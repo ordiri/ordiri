@@ -24,7 +24,7 @@ spec:
           secretName: blog-tls
       containers:
       - name: blog
-        image: harbor.dmann.dev/docker.io/caddy
+        image: docker.io/caddy
         volumeMounts:
         - name: caddyfile
           mountPath: /opt/caddyfile
