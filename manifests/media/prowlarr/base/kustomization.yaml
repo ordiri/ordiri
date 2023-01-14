@@ -12,6 +12,7 @@ resources:
 - statefulset.yaml
 - pvc.yaml
 - service.yaml
+- ingress.yaml
 - certificate.yaml
 - sa.yaml
 - vault-rbac.yaml
