@@ -98,4 +98,4 @@ spec:
         resources:
           limits:
             cpu: "2"
-            memory: 4gb
+            memory: 4Gi
