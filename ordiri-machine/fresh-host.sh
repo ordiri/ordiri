@@ -29,7 +29,7 @@ fi
 
 echo '/var/lib/libvirt/** rwk,' > /etc/apparmor.d/local/abstractions/libvirt-qemu 
 
-cat << EOF > /etc/modules-load.d/nat.conf
+cat << EOF > /etc/modules-load.d/90-nat.conf
 nf_nat_tftp
 nf_conntrack
 nf_nat
