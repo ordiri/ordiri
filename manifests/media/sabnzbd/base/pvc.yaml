@@ -10,3 +10,19 @@ spec:
   accessModes:
     - ReadWriteOnce
   storageClassName: ceph-retain
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: test-clone
+spec:
+  storageClassName: ceph-rbd
+  dataSource:
+    name: sabnzbd-config-data
+    kind: PersistentVolumeClaim
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100G
