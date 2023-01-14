@@ -175,9 +175,11 @@ deploy-ipam: linux-ipam
 	scp bin/ordiri-ipam-amd64-linux root@mothership:~/ordiri-ipam
 	ssh root@mothership 'mv ~/ordiri-ipam /usr/local/bin/ordiri-ipam && systemctl daemon-reload'
 
+.PHONY: clean-controllers
+clean-controllers: 
+	rm bin/controller-manager
 .PHONY: deploy-controllers
 deploy-controllers: bin/controller-manager
-	@echo  "WARNING, DEPLOYING CONTROLLER DOES NOT RECOMPILE"
 	scp kubeconfig root@mothership:/etc/ordiri.conf
 	scp ordiri-controllers.service root@mothership:/etc/systemd/system/.
 	ssh root@mothership 'systemctl daemon-reload && systemctl enable ordiri-controllers.service'
@@ -252,7 +254,7 @@ run-ipam: deploy-ipam
 # modprobe nf_nat_tftp nf_conntrack && 
 	ssh mothership 'systemctl restart ordiri-ipam'
 	
-run-controllers: deploy-controllers
+run-controllers: clean-controllers deploy-controllers
 # modprobe nf_nat_tftp nf_conntrack && 
 	ssh mothership 'systemctl restart ordiri-controllers'
 

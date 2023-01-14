@@ -109,6 +109,7 @@ func (r *VmIpAllocator) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 
 		foundPrivate := false
 		foundPrivate6 := sn.Spec.Cidr6 == ""
+		foundLl6 := sn.Spec.Cidr6 == ""
 		foundPublic := false
 		foundPublic6 := sn.Spec.Cidr6 == ""
 		for _, ip := range iface.Ips {
@@ -121,8 +122,17 @@ func (r *VmIpAllocator) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 			if network.Contains(parsedIp) {
 				foundPrivate = true
 			}
-			if _, mac, err := eui64.ParseIP(parsedIpNw.IPNet().IP); err == nil && mac.String() == iface.Mac {
-				foundPrivate6 = true
+			log.Info("Parsing IP", "ip", parsedIp)
+			if _, mac, err := eui64.ParseIP(parsedIpNw.Masked().IP().IPAddr().IP); err == nil && mac.String() == iface.Mac {
+				log.Info("Checking", "ip", parsedIp.IPAddr().IP, "IsGlobalUnicast", parsedIp.IsGlobalUnicast(), "IsPrivate", parsedIp.IsPrivate(), "IsPrivate", parsedIp.IsLinkLocalUnicast())
+				if parsedIp.IsGlobalUnicast() {
+					foundPrivate6 = true
+				} else if parsedIp.IsLinkLocalUnicast() {
+					foundLl6 = true
+					continue
+				}
+			} else {
+				log.Info("Error checking if IP was EUI64", "ip", parsedIp.String(), "err", err)
 			}
 
 			if r.PublicCidr.Contains(parsedIp) {
@@ -164,7 +174,30 @@ func (r *VmIpAllocator) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 				return ctrl.Result{}, fmt.Errorf("unknown error converting to netaddr - %+v", eui64Addr)
 			}
 
-			euAddr := netaddr.IPPrefixFrom(eui64NetAddr, network.Bits())
+			euAddr := netaddr.IPPrefixFrom(eui64NetAddr, network6.Bits())
+
+			iface.Ips = append(iface.Ips, euAddr.String())
+			changed = true
+		}
+
+		if !foundLl6 {
+			privateNetwork := netaddr.MustParseIPPrefix("fe80::/8").IPNet()
+			log.Info("allocating ll IP6", "blockName", subnetIpam6BlockName)
+			mac, err := net.ParseMAC(iface.Mac)
+			if err != nil {
+				return ctrl.Result{}, fmt.Errorf("unable to parse mac for private ipv6 - %w", err)
+			}
+			eui64Addr, err := eui64.ParseMAC(privateNetwork.IP, mac)
+			if err != nil {
+				return ctrl.Result{}, fmt.Errorf("unable to create eui64 address from %s and %s - %w", network6.IPNet().IP.String(), mac.String(), err)
+			}
+
+			eui64NetAddr, ok := netaddr.FromStdIP(eui64Addr)
+			if !ok {
+				return ctrl.Result{}, fmt.Errorf("unknown error converting to netaddr - %+v", eui64Addr)
+			}
+
+			euAddr := netaddr.IPPrefixFrom(eui64NetAddr, 64)
 
 			iface.Ips = append(iface.Ips, euAddr.String())
 			changed = true
@@ -202,6 +235,7 @@ func (r *VmIpAllocator) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 		}
 
 		if changed {
+			iface.Ips = uniqueIpList(iface.Ips)
 			if err := r.Client.Update(ctx, vm); err != nil {
 				return ctrl.Result{}, fmt.Errorf("unable to update vm with allocated IP - %w", err)
 			}
@@ -231,4 +265,18 @@ func (r *VmIpAllocator) SetupWithManager(mgr ctrl.Manager) error {
 		// 	Type: &computev1alpha1.VirtualMachine{},
 		// }, scheduledVmHandler).
 		Complete(r)
+}
+
+func uniqueIpList(ips []string) []string {
+	seen := map[string]struct{}{}
+	newList := []string{}
+	for _, ip := range ips {
+		if _, ok := seen[ip]; ok {
+			continue
+		}
+		seen[ip] = struct{}{}
+
+		newList = append(newList, ip)
+	}
+	return newList
 }
