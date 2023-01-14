@@ -4,7 +4,7 @@ kind: Kustomization
 namespace: argocd
 
 components:
-- ../../../images
+- ../../../../common/images
 
 resources:
 - namespace.yaml
