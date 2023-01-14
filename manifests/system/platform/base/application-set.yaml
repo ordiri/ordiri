@@ -16,6 +16,8 @@ spec:
           - path: manifests/*/*
           - path: manifests/system/platform
             exclude: true
+          - path: manifests/common
+            exclude: true
           # For a specific cluster, enable Redis.
       - list:
           elements:
