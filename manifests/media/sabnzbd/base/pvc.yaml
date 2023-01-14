@@ -19,6 +19,7 @@ metadata:
 spec:
   storageClassName: ceph-rbd
   dataSource:
+    apiGroup: ""
     name: sabnzbd-config-data
     kind: PersistentVolumeClaim
   accessModes:

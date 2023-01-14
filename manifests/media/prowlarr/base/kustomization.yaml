@@ -9,7 +9,7 @@ secretGenerator:
       - password=password
 
 resources:
-- sts.yaml
+- statefulset.yaml
 - pvc.yaml
 - service.yaml
 - certificate.yaml

@@ -3,7 +3,7 @@ kind: StatefulSet
 metadata:
   name: home-assistant
 spec:
-  serviceName: home-assistant-statufulset
+  serviceName: home-assistant
   replicas: 1
   selector:
     matchLabels:

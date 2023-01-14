@@ -13,4 +13,5 @@ resources:
 - deployment.yaml
 - home-assistant-statefulset.yaml
 - service.yaml
+- ingress.yaml
 - certificate.yaml
