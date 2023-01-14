@@ -6,7 +6,8 @@ configMapGenerator:
     files:
     - configuration.yaml=config/configuration.yaml
 resources:
-- deployment.yaml
+- statefulset.yaml
+- ingress.yaml
 - service.yaml
 - certificate.yaml
 - sa.yaml
