@@ -1,0 +1,30 @@
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+images:
+- name: docker.io/caddy
+  newName: harbor.dmann.dev/docker.io/caddy
+- name: docker.io/toxuin/mdns-tunneller
+  newName: harbor.dmann.dev/docker.io/toxuin/mdns-tunneller
+- name: quay.io/oauth2-proxy/oauth2-proxy
+  newName: harbor.dmann.dev/quay.io/oauth2-proxy/oauth2-proxy
+- name: docker.io/acockburn/appdaemon
+  newName: harbor.dmann.dev/docker.io/acockburn/appdaemon
+- name: docker.io/eclipse-mosquitto
+  newName: harbor.dmann.dev/docker.io/eclipse-mosquitto
+- name: docker.io/bhgedigital/envsubst
+  newName: harbor.dmann.dev/docker.io/bhgedigital/envsubst
+- name: docker.io/esphome/esphome
+  newName: harbor.dmann.dev/docker.io/esphome/esphome
+- name: docker.io/koenkk/zigbee2mqtt
+  newName: harbor.dmann.dev/docker.io/koenkk/zigbee2mqtt
+- name: docker.io/plexinc/pms-docker
+  newName: harbor.dmann.dev/docker.io/plexinc/pms-docker
+- name: docker.io/jlesage/makemkv
+  newName: harbor.dmann.dev/docker.io/jlesage/makemkv
+- name: docker.io/alpine/k8s
+  newName: harbor.dmann.dev/docker.io/alpine/k8s
+  newTag: 1.25.5
+- name: quay.io/ceph/ceph
+  newName: harbor.dmann.dev/quay.io/ceph/ceph
+  
