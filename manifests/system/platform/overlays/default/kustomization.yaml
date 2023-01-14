@@ -3,5 +3,8 @@ kind: Kustomization
 
 namespace: argocd
 
+components:
+- ../../../../common/images
+
 resources:
 - ../../base
