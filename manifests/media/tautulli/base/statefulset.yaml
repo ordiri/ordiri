@@ -75,6 +75,7 @@ spec:
           --client-secret="${oidc_client_secret}" \
           --redirect-url="https://tautulli.dmann.xyz" \
           --oidc-issuer-url="https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/default" \
+          --force-https=true \
           --cookie-secure=false \
           --cookie-secret=secret12secret12
         env: []
