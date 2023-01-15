@@ -28,3 +28,6 @@ images:
 - name: quay.io/ceph/ceph
   newName: harbor.dmann.dev/quay.io/ceph/ceph
   
+- name: ghcr.io/tautulli/tautulli:v2.11.0
+  # newName: harbor.dmann.dev/quay.io/ceph/ceph
+  
