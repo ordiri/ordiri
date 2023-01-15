@@ -3,7 +3,6 @@ kind: Kustomization
 
 resources:
 - statefulset.yaml
-- pvc.yaml
 - service.yaml
 - ingress.yaml
 - certificate.yaml
