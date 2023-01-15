@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: tautulli-tls
+spec:
+  secretName: tautulli-tls
+  dnsNames:
+    - tautulli.dmann.xyz
+    - tautulli.dmann.dev
+  issuerRef:
+    name: letsencrypt
+    kind: ClusterIssuer

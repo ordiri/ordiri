@@ -1,0 +1,108 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: tautulli
+spec:
+  serviceName: tautulli
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tautulli
+  volumeClaimTemplates:
+    - metadata:
+        name: tautulli-config-data
+      spec:
+        resources:
+          requests:
+            storage: 100G
+        volumeMode: Filesystem
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: ceph-retain
+        
+  template:
+    metadata:
+      labels:
+        app: tautulli
+      annotations:
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/agent-limits-cpu: 100m
+        vault.hashicorp.com/agent-requests-cpu: 50m
+        vault.hashicorp.com/agent-limits-mem: 128Mi
+        vault.hashicorp.com/agent-requests-mem: 64Mi
+        vault.hashicorp.com/role: tautulli
+        vault.hashicorp.com/agent-inject-secret-oidc: identity/oidc/client/tautulli
+        vault.hashicorp.com/agent-inject-template-oidc: |
+          {{- with secret "identity/oidc/client/tautulli" -}}
+          export oidc_client_id="{{ .Data.client_id }}"
+          export oidc_client_secret="{{ .Data.client_secret }}"
+          {{- end }}
+    spec:
+      serviceAccount: tautulli
+      dnsConfig:
+        options:
+        - name: ndots
+          value: "1"
+      volumes:
+      - name: tautulli-tls
+        secret:
+          secretName: tautulli-tls
+          defaultMode: 0777
+      - name: media-nfs
+        nfs:
+          server: ceph.homelab.dmann.xyz
+          path: /homelab/media
+      containers:
+      - name: oauth2-proxy
+        command:
+        - sh
+        - -c
+        args:
+        - |
+          source /vault/secrets/oidc;
+          /bin/oauth2-proxy \
+          --provider=oidc \
+          --email-domain=* \
+          --oidc-email-claim=sub \
+          --upstream=http://127.0.0.1:9696 \
+          --https-address=[::]:4180 \
+          --tls-cert-file=/opt/tautulli-tls/tls.crt \
+          --tls-key-file=/opt/tautulli-tls/tls.key \
+          --provider-display-name="Vault" \
+          --client-id="${oidc_client_id}" \
+          --client-secret="${oidc_client_secret}" \
+          --redirect-url="https://tautulli.dmann.xyz" \
+          --oidc-issuer-url="https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/default" \
+          --cookie-secure=false \
+          --cookie-secret=secret12secret12
+        env: []
+        image: quay.io/oauth2-proxy/oauth2-proxy:latest
+        ports:
+        - containerPort: 4180
+          protocol: TCP
+          name: oauth2-proxy
+        resources: 
+        volumeMounts:
+        - name: tautulli-tls
+          mountPath: /opt/tautulli-tls
+      - name: tautulli
+        image: ghcr.io/tautulli/tautulli:v2.11.0
+        volumeMounts:
+        - name: tautulli-config-data
+          mountPath: /config
+        env:
+        - name: PUID
+          value: "1000"
+        - name: PGID
+          value: "1000"
+        - name: TZ
+          value: "Australia/Sydney"
+        ports:
+        - name:  webui
+          containerPort:  8181
+          protocol: TCP
+        resources:
+        #   limits:
+        #     memory: "4Gi"
+        #     cpu: "4"
+    
