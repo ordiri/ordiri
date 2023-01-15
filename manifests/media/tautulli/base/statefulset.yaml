@@ -9,16 +9,18 @@ spec:
     matchLabels:
       app: tautulli
   volumeClaimTemplates:
-    - metadata:
-        name: tautulli-config-data
-      spec:
-        resources:
-          requests:
-            storage: 100G
-        volumeMode: Filesystem
-        accessModes:
-          - ReadWriteOnce
-        storageClassName: ceph-retain
+  - apiVersion: v1		
+    kind: PersistentVolumeClaim		
+    metadata:
+      name: tautulli-config-data
+    spec:
+      resources:
+        requests:
+          storage: 100G
+      volumeMode: Filesystem
+      accessModes:
+        - ReadWriteOnce
+      storageClassName: ceph-retain
         
   template:
     metadata:
