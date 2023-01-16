@@ -1,0 +1,16 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: mosquitto-tls
+spec:
+  secretName: mosquitto-tls
+  dnsNames:
+    - mosquitto.dmann.xyz
+    - mosquitto.dmann.dev
+    - mqtt.dmann.xyz
+    - mqtt.dmann.dev
+    - '*.mosquitto.dmann.xyz'
+    - '*.mosquitto.dmann.dev'
+  issuerRef:
+    name: letsencrypt
+    kind: ClusterIssuer
