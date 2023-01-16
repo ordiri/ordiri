@@ -21,6 +21,9 @@ spec:
   - name: homekit-alarm
     port: 21065
     protocol: TCP
+  - name: homekit-dns
+    port: 5353
+    protocol: UDP
   selector:
     app: home-assistant
   sessionAffinity: None

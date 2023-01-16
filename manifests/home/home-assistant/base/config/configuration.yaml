@@ -14,11 +14,14 @@ http:
 
 logger:
   default: warning
+  logs:
+    homeassistant.components.homekit: debug
+    pyhap: debug
 
 homekit:
 - name: HASS Bridge
-  advertise_ip: !env_var HOME_ASSISTANT_INGRESS_PORT_21063_TCP_ADDR
-  port: 21063
+  advertise_ip: !env_var HOME_ASSISTANT_INGRESS_SERVICE_HOST
+  port: !env_var HOME_ASSISTANT_INGRESS_SERVICE_PORT_HOMEKIT_BRIDGE
   filter:
     include_domains:
     - climate
@@ -27,9 +30,10 @@ homekit:
     - binary_sensor.zone_*
     include_entities:
     - button.garage_door_opener
+
 - name: HASS Bridge - Security
-  port: 21065
-  advertise_ip: !env_var HOME_ASSISTANT_INGRESS_PORT_21065_TCP_ADDR
+  advertise_ip: !env_var HOME_ASSISTANT_INGRESS_SERVICE_HOST
+  port: !env_var HOME_ASSISTANT_INGRESS_SERVICE_PORT_HOMEKIT_ALARM
   mode: accessory
   filter:
     include_entities:
