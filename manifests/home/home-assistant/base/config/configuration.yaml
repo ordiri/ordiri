@@ -7,6 +7,8 @@ homeassistant:
   media_dirs: {}
   packages: !include_dir_merge_named packages/
 
+tts:
+  - platform: google_translate
 
 http:
   ssl_certificate: /opt/home-assistant-tls/tls.crt
