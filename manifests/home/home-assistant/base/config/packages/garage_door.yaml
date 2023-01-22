@@ -1,9 +1,0 @@
-garage_door:
-  script:
-    garage_door:
-      sequence:
-      # This is written using the Script Syntax
-      - alias: "Open the garage door"
-        service: button.press
-        target:
-          entity_id: button.garage_door_opener

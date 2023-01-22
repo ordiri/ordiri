@@ -5,4 +5,3 @@ configMapGenerator:
   - name: home-assistant-packages
     files:
       - water_ph.yaml
-      - garage_door.yaml

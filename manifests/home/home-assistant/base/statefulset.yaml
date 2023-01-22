@@ -80,14 +80,14 @@ spec:
             path: /manifest.json
             port: webui
             scheme: HTTPS
-          initialDelaySeconds: 5
+          initialDelaySeconds: 30
           periodSeconds: 10
         livenessProbe:
           httpGet:
             path: /manifest.json
             port: webui
             scheme: HTTPS
-          initialDelaySeconds: 5
+          initialDelaySeconds: 30
           periodSeconds: 10
       - name: mdns-tunnel
         image: docker.io/toxuin/mdns-tunneller
