@@ -2,10 +2,11 @@
 default_config:
 
 homeassistant:
-  external_url: "https://home-assistant.dmann.xyz"
-  internal_url: "https://home-assistant.dmann.xyz"
+  external_url: "https://home-assistant.dmann.xyz:443"
+  internal_url: "http://home-assistant.dmann.xyz:443"
   media_dirs: {}
   packages: !include_dir_merge_named packages/
+  
 
 tts:
   - platform: google_translate
@@ -28,6 +29,7 @@ homekit:
     include_domains:
     - climate
     - light
+    - cover
     include_entity_globs:
     - binary_sensor.zone_*
     include_entities:
