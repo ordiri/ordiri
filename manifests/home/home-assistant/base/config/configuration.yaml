@@ -18,8 +18,10 @@ http:
 logger:
   default: warning
   logs:
-    pyatv: debug
     custom_components.apple_tv: debug
+    homeassistant.components.homekit: debug
+    pyatv: debug
+    pyhap: debug
 
 automation: !include automations.yaml
 automation backups:
