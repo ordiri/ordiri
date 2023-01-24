@@ -9,8 +9,7 @@ homeassistant:
   
 
 tts:
-  - platform: google_translate
-    base_url: https://home-assistant.dmann.xyz:443
+- platform: google_translate
 
 http:
   ssl_certificate: /opt/home-assistant-tls/tls.crt
@@ -24,13 +23,13 @@ logger:
 
 automation: !include automations.yaml
 automation backups:
-  - alias: "Backup Home Assistant every night at 3 AM"
-    trigger:
-      platform: time
-      at: "03:00:00"
-    action:
-      alias: "Create backup now"
-      service: backup.create
+- alias: "Backup Home Assistant every night at 3 AM"
+  trigger:
+    platform: time
+    at: "03:00:00"
+  action:
+    alias: "Create backup now"
+    service: backup.create
 # This is no longer a thing, you *have* to use the UI 🙃
 # mqtt:
 #   broker: mqtt.dmann.xyz
