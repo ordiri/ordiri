@@ -10,6 +10,7 @@ homeassistant:
 
 tts:
   - platform: google_translate
+    base_url: https://home-assistant.dmann.xyz:443
 
 http:
   ssl_certificate: /opt/home-assistant-tls/tls.crt
