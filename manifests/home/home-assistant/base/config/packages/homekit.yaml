@@ -21,7 +21,7 @@ homekit:
       include_entities:
       - lock.front_door_lock
 
-  - name: HASS Bridge - Loungeroom TV
+  - name: Samsung TV
     advertise_ip: !env_var HOME_ASSISTANT_INGRESS_SERVICE_HOST
     port: !env_var HOME_ASSISTANT_INGRESS_SERVICE_PORT_HOMEKIT_TV
     mode: accessory
