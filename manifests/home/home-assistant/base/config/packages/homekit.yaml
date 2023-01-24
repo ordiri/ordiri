@@ -1,0 +1,30 @@
+homekit:
+  homekit:
+  - name: HASS Bridge
+    advertise_ip: !env_var HOME_ASSISTANT_INGRESS_SERVICE_HOST
+    port: !env_var HOME_ASSISTANT_INGRESS_SERVICE_PORT_HOMEKIT_BRIDGE
+    filter:
+      include_domains:
+      - climate
+      - light
+      - cover
+      include_entity_globs:
+      - binary_sensor.zone_*
+      include_entities:
+      - button.garage_door_opener
+
+  - name: HASS Bridge - Security
+    advertise_ip: !env_var HOME_ASSISTANT_INGRESS_SERVICE_HOST
+    port: !env_var HOME_ASSISTANT_INGRESS_SERVICE_PORT_HOMEKIT_ALARM
+    mode: accessory
+    filter:
+      include_entities:
+      - lock.front_door_lock
+
+  - name: HASS Bridge - Loungeroom TV
+    advertise_ip: !env_var HOME_ASSISTANT_INGRESS_SERVICE_HOST
+    port: !env_var HOME_ASSISTANT_INGRESS_SERVICE_PORT_HOMEKIT_TV
+    mode: accessory
+    filter:
+      include_entities:
+      - media_player.samsung_q80ba_55_tv

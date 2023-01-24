@@ -21,6 +21,9 @@ spec:
   - name: homekit-alarm
     port: 21065
     protocol: TCP
+  - name: homekit-tv
+    port: 21066
+    protocol: TCP
   - name: homekit-dns
     port: 5353
     protocol: UDP
