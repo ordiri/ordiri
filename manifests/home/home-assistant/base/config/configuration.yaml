@@ -18,9 +18,9 @@ http:
 
 logger:
   default: warning
-  logs:
-    homeassistant.components.homekit: debug
-    pyhap: debug
+  # logs:
+  #   homeassistant.components.homekit: debug
+  #   pyhap: debug
 
 automation: !include automations.yaml
 automation backups:
