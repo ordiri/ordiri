@@ -3,7 +3,7 @@ default_config:
 
 homeassistant:
   external_url: "https://home-assistant.dmann.xyz:443"
-  internal_url: "http://home-assistant.dmann.xyz:443"
+  internal_url: "https://home-assistant.dmann.xyz:443"
   media_dirs: {}
   packages: !include_dir_merge_named packages/
   
