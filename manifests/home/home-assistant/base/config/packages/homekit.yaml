@@ -10,6 +10,7 @@ homekit:
       - cover
       include_entity_globs:
       - binary_sensor.zone_*
+      - binary_sensor.doorbell
       include_entities:
       - button.garage_door_opener
 
