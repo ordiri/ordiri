@@ -75,6 +75,9 @@ spec:
             fieldRef:
               fieldPath: status.podIP
         resources:
+          limits:
+            memory: "2Gi"
+            cpu: "1024m"
         readinessProbe:
           httpGet:
             path: /manifest.json
