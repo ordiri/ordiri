@@ -6,7 +6,7 @@ configMapGenerator:
     options:
       disableNameSuffixHash: true
     files:
-    - env.py=apps/env.py
+    - hello_world.py=apps/hello_world.py
     - apps.yaml=config/apps.yaml
   - name: appdaemon-config
     files:
