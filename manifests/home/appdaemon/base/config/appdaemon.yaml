@@ -4,15 +4,19 @@ appdaemon:
   longitude: 0
   elevation: 30
   time_zone: Australia/Sydney
-  app_dir: /opt/appdaemon-conf/apps
+  app_dir: /opt/appdaemon-apps
   plugins:
     HASS:
       type: hass
       ha_url: https://home-assistant.dmann.xyz
       token: !secret home_assistant_token
+
 http:
     url: http://0.0.0.0:80
+
 admin:
+
 api:
+
 hadashboard:
   dashboard_dir: /opt/appdaemon-conf/dashboards

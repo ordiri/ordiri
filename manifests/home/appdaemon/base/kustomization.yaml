@@ -3,6 +3,12 @@ kind: Kustomization
 
 configMapGenerator: 
   - name: appdaemon-config
+    options:
+      disableNameSuffixHash: true
+    files:
+    - env.py=apps/env.py
+    - apps.yaml=config/apps.yaml
+  - name: appdaemon-config
     files:
     - appdaemon.yaml=config/appdaemon.yaml
 resources:

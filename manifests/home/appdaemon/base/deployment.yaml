@@ -10,7 +10,6 @@ spec:
     metadata:
       labels:
         app: appdaemon
-
       annotations:
         vault.hashicorp.com/agent-inject: 'true'
         vault.hashicorp.com/agent-limits-cpu: 100m
@@ -39,8 +38,9 @@ spec:
       - name: appdaemon-config
         configMap:
           name: appdaemon-config
-      - name: appdaemon-data
-        emptyDir: { } # todo make a PVC
+      - name: appdaemon-apps
+        configMap:
+          name: appdaemon-apps
       - name: appdaemon-tls
         secret:
           secretName: appdaemon-tls
@@ -91,11 +91,11 @@ spec:
             memory: "128Mi"
             cpu: "500m"
         volumeMounts:
-          - name: appdaemon-config
-            mountPath: /conf/appdaemon.yaml 
-            subPath: appdaemon.yaml
-          - name: appdaemon-data
-            mountPath: /opt/appdaemon-conf
+        - name: appdaemon-config
+          mountPath: /conf/appdaemon.yaml 
+          subPath: appdaemon.yaml
+        - name: appdaemon-apps
+          mountPath: /opt/appdaemon-apps
         ports:
         - name: webui
           containerPort: 80
@@ -103,6 +103,3 @@ spec:
         livenessProbe:
           tcpSocket:
             port: webui
-        # readinessProbe:
-        #   tcpSocket:
-        #     port: webui
