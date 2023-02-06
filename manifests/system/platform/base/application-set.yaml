@@ -26,6 +26,11 @@ spec:
             argocd.image_updater.method: git
             argocd.image_updater.target: kustomize
             argocd.image_updater.update_strategy: latest
+          - path.basename: blog
+            argocd.image_updater.images: 'harbor.dmann.dev/default/blog'
+            argocd.image_updater.method: git
+            argocd.image_updater.target: kustomize
+            argocd.image_updater.update_strategy: latest
 
   template:
     metadata:
