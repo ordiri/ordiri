@@ -4,7 +4,7 @@ kind: Kustomization
 helmCharts:
 - name: argo-workflows
   repo: https://argoproj.github.io/argo-helm
-  version: 0.22.9
+  version: 0.22.10
   releaseName: argo-workflows
   namespace: argo-workflows
   includeCRDs: true
