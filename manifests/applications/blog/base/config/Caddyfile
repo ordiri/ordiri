@@ -12,6 +12,8 @@
   
   # Serve everything else from the file system
   file_server
+
+  cors
 }
 
 :80 {
