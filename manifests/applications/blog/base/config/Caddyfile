@@ -1,6 +1,6 @@
 (cors) {
-	@origin{args.0} header Origin {args.0}
-	header @origin{args.0} Access-Control-Allow-Origin "{args.0}"
+	@origin{args.0} header Origin {args.1}
+	header @origin{args.0} Access-Control-Allow-Origin "{args.1}"
 	header @origin{args.0} Access-Control-Allow-Headers "content-type, x-requested-with"
 	header @origin{args.0} Vary Origin
 }
@@ -23,9 +23,9 @@
     method OPTIONS
   }
   respond @options 204
-  
-  import cors https://blog.dmann.dev
-  import cors https://blog.dmann.xyz
+
+  import cors 1 https://blog.dmann.dev
+  import cors 2 https://blog.dmann.xyz
 }
 
 :80 {
