@@ -1,3 +1,3 @@
 kustomize:
   images:
-  - harbor.dmann.dev/default/blog:7723d3f8601ba4113e06911faddb07cd876b73de
+  - harbor.dmann.dev/default/blog:d7d390bdb3e7b4d257144bf411e9762d97dc75ed
