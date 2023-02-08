@@ -24,8 +24,9 @@
   }
   respond @options 204
 
-  import cors 1 https://blog.dmann.dev
-  import cors 2 https://blog.dmann.xyz
+	header Access-Control-Allow-Origin "blog.dmann.dev,blog.dmann.xyz"
+	header Access-Control-Allow-Headers "content-type, x-requested-with"
+	header Vary Origin
 }
 
 :80 {
