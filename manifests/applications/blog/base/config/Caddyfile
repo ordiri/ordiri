@@ -24,7 +24,7 @@
   }
   respond @options 204
 
-	header Access-Control-Allow-Origin "https://blog.dmann.dev,https://blog.dmann.xyz"
+	header Access-Control-Allow-Origin "*"
 	header Access-Control-Allow-Headers "content-type, x-requested-with"
 	header Vary Origin
 }
