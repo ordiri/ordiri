@@ -18,13 +18,14 @@
   # Serve everything else from the file system
   file_server
 
-  	header Access-Control-Allow-Methods "POST, GET, OPTIONS"
-    @options {
-      method OPTIONS
-    }
-    respond @options 204
-    import cors https://blog.dmann.dev
-    import cors https://blog.dmann.xyz
+  header Access-Control-Allow-Methods "POST, GET, OPTIONS"
+  @options {
+    method OPTIONS
+  }
+  respond @options 204
+  
+  import cors https://blog.dmann.dev
+  import cors https://blog.dmann.xyz
 }
 
 :80 {
