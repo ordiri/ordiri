@@ -23,6 +23,8 @@
       method OPTIONS
     }
     respond @options 204
+    import cors https://blog.dmann.dev
+    import cors https://blog.dmann.xyz
 }
 
 :80 {
