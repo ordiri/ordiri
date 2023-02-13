@@ -9,6 +9,7 @@ homeassistant:
   
 recorder:
   db_url: postgresql://admin:psltest@postgres.home-assistant.svc.cluster.local:5432/postgresdb
+  
 tts:
 - platform: google_translate
 

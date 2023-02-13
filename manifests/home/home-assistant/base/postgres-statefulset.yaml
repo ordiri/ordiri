@@ -13,7 +13,6 @@ spec:
       labels:
         app: postgres
     spec:
-      hostNetwork: false
       dnsConfig:
         options:
         - name: ndots

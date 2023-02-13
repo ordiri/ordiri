@@ -14,3 +14,5 @@ spec:
     protocol: TCP
     targetPort: webui
   type: ClusterIP
+  selector:
+    app: home-assistant
