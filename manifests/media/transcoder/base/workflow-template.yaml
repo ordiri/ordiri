@@ -39,7 +39,7 @@ spec:
     - name: config
       emptyDir: {}
     container:
-      image: docker.io/jlesage/makemkv:v1.22.2
+      image: docker.io/jlesage/makemkv:v23.02.1
       env:
       - name: BETA_KEY
         value: T-2KF3Fsx1NkAkuKtr3o47Fv4Bf4YoFgqnxEPqm9sTPIT1Ya70CTlIcRXbSPPzHIDq7z
