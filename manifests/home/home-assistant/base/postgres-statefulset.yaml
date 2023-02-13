@@ -20,7 +20,7 @@ spec:
           value: "1"
       containers:
       - name: postgres
-        image: postgres:10.1 # Sets Image
+        image: postgres:15.2 # Sets Image
         imagePullPolicy: "IfNotPresent"
           ports:
           - containerPort: 5432  # Exposes container port
