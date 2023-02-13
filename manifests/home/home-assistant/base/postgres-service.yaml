@@ -12,5 +12,5 @@ spec:
   - name: postgres
     port: 5432
     protocol: TCP
-    targetPort: webui
+    targetPort: postgres
   type: ClusterIP
