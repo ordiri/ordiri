@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: postgres
+spec:
+  ipFamilyPolicy: SingleStack
+  ipFamilies:
+  - IPv4
+  clusterIP: None
+  ports:
+  - name: postgres
+    port: 5432
+    protocol: TCP
+    targetPort: webui
+  type: ClusterIP

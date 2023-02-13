@@ -109,7 +109,7 @@ spec:
         - name: mdns-tunnel-config
           mountPath: /app/config
   volumeClaimTemplates:
-  - apiVersion: v1		
+  - apiVersion: v1
     kind: PersistentVolumeClaim
     metadata:
       name: data
