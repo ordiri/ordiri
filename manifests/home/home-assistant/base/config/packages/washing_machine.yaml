@@ -6,7 +6,6 @@ washing_machine:
       platform: state
       entity_id:
         - sensor.washing_machine
-      attribute: assumed_state
       from: "on"
       to: "off"
     action:
