@@ -6,3 +6,4 @@ configMapGenerator:
     files:
       - water_ph.yaml
       - homekit.yaml
+      - washing_machine.yaml.yaml

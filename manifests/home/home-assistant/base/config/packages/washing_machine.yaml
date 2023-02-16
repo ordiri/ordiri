@@ -1,0 +1,16 @@
+washing_machine:
+  automation washing_machine:
+  - alias: "Notify when the washing machine finishes"
+    id: washing_machine_completed_notify
+    trigger:
+      platform: state
+      entity_id:
+        - sensor.washing_machine
+      attribute: assumed_state
+      from: "on"
+      to: "off"
+    action:
+      service: notify.notify
+      data:
+        title: Washing Machine
+        message: "The washing machine has finished!"

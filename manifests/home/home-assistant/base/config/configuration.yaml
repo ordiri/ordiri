@@ -9,6 +9,7 @@ homeassistant:
   
 recorder:
   db_url: postgresql://admin:psltest@postgres.home-assistant.svc.cluster.local:5432/postgresdb
+  purge_keep_days: 365
   
 tts:
 - platform: google_translate
@@ -23,6 +24,7 @@ logger:
 automation: !include automations.yaml
 automation backups:
 - alias: "Backup Home Assistant every night at 3 AM"
+  id: backup_home_assistant_daily
   trigger:
     platform: time
     at: "03:00:00"
