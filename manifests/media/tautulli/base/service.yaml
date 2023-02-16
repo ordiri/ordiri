@@ -8,7 +8,17 @@ spec:
   ipFamilies:
   - IPv4
   ports:
-  - port: 8181
+  - name: https
+    port: 443
+    protocol: TCP
+    targetPort: oauth2-proxy-https
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: oauth2-proxy-http
+  - name: tautulli
+    port: 8181
+    protocol: TCP
     targetPort: webui
   selector:
     app: tautulli

@@ -67,7 +67,8 @@ spec:
           --email-domain=* \
           --oidc-email-claim=sub \
           --upstream=http://127.0.0.1:8181 \
-          --https-address=[::]:4180 \
+          --http-address=[::]:4180 \
+          --https-address=[::]:4181 \
           --tls-cert-file=/opt/tautulli-tls/tls.crt \
           --tls-key-file=/opt/tautulli-tls/tls.key \
           --provider-display-name="Vault" \
@@ -75,7 +76,7 @@ spec:
           --client-secret="${oidc_client_secret}" \
           --redirect-url="https://tautulli.dmann.xyz" \
           --oidc-issuer-url="https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/default" \
-          --force-https=true \
+          --force-https \
           --cookie-secure=false \
           --cookie-secret=secret12secret12
         env: []
@@ -83,7 +84,10 @@ spec:
         ports:
         - containerPort: 4180
           protocol: TCP
-          name: oauth2-proxy
+          name: oauth2-proxy-http
+        - containerPort: 4181
+          protocol: TCP
+          name: oauth2-proxy-https
         resources: 
         volumeMounts:
         - name: tautulli-tls
