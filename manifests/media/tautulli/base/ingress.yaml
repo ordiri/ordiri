@@ -13,11 +13,11 @@ spec:
   - name: https
     port: 443
     protocol: TCP
-    targetPort: oauth2-proxy-https
+    targetPort: oauth2-https
   - name: http
     port: 80
     protocol: TCP
-    targetPort: oauth2-proxy-http
+    targetPort: oauth2-http
   selector:
     app: tautulli
   sessionAffinity: None

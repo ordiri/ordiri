@@ -84,10 +84,10 @@ spec:
         ports:
         - containerPort: 4180
           protocol: TCP
-          name: oauth2-proxy-http
+          name: oauth2-http
         - containerPort: 4181
           protocol: TCP
-          name: oauth2-proxy-https
+          name: oauth2-https
         resources: 
         volumeMounts:
         - name: tautulli-tls
