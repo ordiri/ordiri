@@ -17,3 +17,5 @@ spec:
     protocol: TCP
     targetPort: webui
   type: ClusterIP
+  selector:
+    app: zigbee2mqtt

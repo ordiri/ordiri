@@ -14,3 +14,19 @@ spec:
   ports:
   - port: 443
     targetPort: webui
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: plex-server
+spec:
+  ipFamilyPolicy: SingleStack
+  ipFamilies:
+  - IPv4
+  selector:
+    app: plex-server
+  ports:
+  - port: 443
+    targetPort: webui

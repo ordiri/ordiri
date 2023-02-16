@@ -10,3 +10,5 @@ spec:
   ports:
   - port: 9696
     targetPort: webui
+  selector:
+    app: prowlarr
