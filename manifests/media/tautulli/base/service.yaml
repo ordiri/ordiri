@@ -10,3 +10,5 @@ spec:
   ports:
   - port: 8181
     targetPort: webui
+  selector:
+    app: tautulli
