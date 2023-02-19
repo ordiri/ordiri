@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-ingress
+  annotations:
+    k8s.dmann.xyz/cloudflare-domain-dmann-xyz: prometheus
+    k8s.dmann.xyz/cloudflare-zone-dmann-xyz: dmann.xyz
+    k8s.dmann.xyz/cloudflare-domain-dmann-dev: prometheus
+    k8s.dmann.xyz/cloudflare-zone-dmann-dev: dmann.dev
+spec:
+  ipFamilyPolicy: PreferDualStack
+  ports:
+  - name: http-web
+    port: 443
+    protocol: TCP
+    targetPort: 3000
+  selector:
+    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/name: prometheus
+  sessionAffinity: None
+  type: ClusterIP
