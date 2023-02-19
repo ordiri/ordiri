@@ -18,7 +18,8 @@ helmCharts:
     kubeEtcd:
       enabled: false
     prometheus:
-      serviceMonitorSelectorNilUsesHelmValues: false
+      prometheusSpec:
+        serviceMonitorSelectorNilUsesHelmValues: false
     grafana:
       dashboardProviders:
         dashboardproviders.yaml:
