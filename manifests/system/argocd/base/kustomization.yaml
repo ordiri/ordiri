@@ -32,8 +32,18 @@ helmCharts:
     applicationSet:
       args:
         policy: create-update
+      metrics:
+        enabled: true
+      serviceMonitor:
+        # -- Enable a prometheus ServiceMonitor
+        enabled: true
     ## Repo Server
     repoServer:
+      metrics:
+        enabled: true
+      serviceMonitor:
+        # -- Enable a prometheus ServiceMonitor
+        enabled: true
       name: repo-server
       replicas: 2
     configs:
@@ -58,6 +68,18 @@ helmCharts:
               essential: true
 
         kustomize.buildOptions: --enable-helm
+    controller:
+      metrics:
+        enabled: true
+      serviceMonitor:
+        # -- Enable a prometheus ServiceMonitor
+        enabled: true
+    redis:
+      metrics:
+        enabled: true
+      serviceMonitor:
+        # -- Enable a prometheus ServiceMonitor
+        enabled: true
     server:
       extensions:
         enabled: true
