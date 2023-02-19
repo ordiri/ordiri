@@ -17,6 +17,8 @@ helmCharts:
   valuesInline:
     kubeEtcd:
       enabled: false
+    prometheus:
+      serviceMonitorSelectorNilUsesHelmValues: false
     grafana:
       dashboardProviders:
         dashboardproviders.yaml:
@@ -35,15 +37,15 @@ helmCharts:
           hashicorp-vault:
             gnetId: 12904
             revision: 2
-            datasource: Prometheus
+            datasource: prometheus
           cert-manager:
             gnetId: 11001
             revision: 1
-            datasource: Prometheus
+            datasource: prometheus
           argocd:
             gnetId: 14584
             revision: 1
-            datasource: Prometheus
+            datasource: prometheus
       defaultDashboardsTimezone: Australia/Sydney
       sidecar:
         datasources:
