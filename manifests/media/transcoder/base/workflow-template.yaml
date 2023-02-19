@@ -61,7 +61,7 @@ spec:
           --progress=-same \
           mkv 'iso:{{inputs.parameters.file}}' all "${outputdir}";
 
-          mv {{inputs.parameters.file}} {{inputs.parameters.file}}.transcoded
+          mv '{{inputs.parameters.file}}' '{{inputs.parameters.file}}.transcoded'
       volumeMounts:
       - name: media-nfs
         mountPath: /media
