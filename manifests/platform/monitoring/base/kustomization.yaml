@@ -17,9 +17,20 @@ helmCharts:
     kubeEtcd:
       enabled: false
     grafana:
-
+      dashboardProviders:
+        dashboardproviders.yaml:
+          apiVersion: 1
+          providers:
+          - name: provider-site
+            orgId: 1
+            folder: ''
+            type: file
+            disableDeletion: false
+            editable: false
+            options:
+              path: /var/lib/grafana/dashboards/provider-site
       dashboards:
-        default:
+        provider-site:
           hashicorp-vault:
             gnetId: 12904
             revision: 2
