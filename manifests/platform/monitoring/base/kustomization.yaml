@@ -17,6 +17,22 @@ helmCharts:
     kubeEtcd:
       enabled: false
     grafana:
+
+      dashboards:
+        default:
+          hashicorp-vault:
+            gnetId: 12904
+            revision: 2
+            datasource: Prometheus
+          cert-manager:
+            gnetId: 11001
+            revision: 1
+            datasource: Prometheus
+          argocd:
+            gnetId: 14584
+            revision: 1
+            datasource: Prometheus
+      defaultDashboardsTimezone: Australia/Sydney
       sidecar:
         datasources:
           skipReload: true
