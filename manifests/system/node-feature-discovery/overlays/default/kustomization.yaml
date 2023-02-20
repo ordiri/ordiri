@@ -7,5 +7,4 @@ components:
 - ../../../../common/images
 
 resources:
-- namespace.yaml
 - ../../base
