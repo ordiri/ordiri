@@ -56,7 +56,7 @@ spec:
       - name: plex-server
         securityContext:
           privileged: true
-        image: docker.io/plexinc/pms-docker
+        image: lscr.io/linuxserver/plex:latest
         volumeMounts:
         - name: media-nfs
           mountPath: /media
