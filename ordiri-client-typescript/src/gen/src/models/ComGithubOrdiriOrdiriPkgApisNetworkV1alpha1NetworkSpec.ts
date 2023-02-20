@@ -51,6 +51,12 @@ export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSpec {
      */
     cidr: string;
     /**
+     * Cidr address to represent this network
+     * @type {string}
+     * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSpec
+     */
+    cidr6: string;
+    /**
      * 
      * @type {ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkDnsSpec}
      * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSpec
@@ -82,6 +88,7 @@ export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSpec {
 export function instanceOfComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSpec(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "cidr" in value;
+    isInstance = isInstance && "cidr6" in value;
 
     return isInstance;
 }
@@ -97,6 +104,7 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSpecFromJSONTy
     return {
         
         'cidr': json['cidr'],
+        'cidr6': json['cidr6'],
         'dns': !exists(json, 'dns') ? undefined : ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkDnsSpecFromJSON(json['dns']),
         'internetGateway': !exists(json, 'internetGateway') ? undefined : ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1InternetGatewaySpecFromJSON(json['internetGateway']),
         'nat': !exists(json, 'nat') ? undefined : ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkNatSpecFromJSON(json['nat']),
@@ -114,6 +122,7 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSpecToJSON(val
     return {
         
         'cidr': value.cidr,
+        'cidr6': value.cidr6,
         'dns': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkDnsSpecToJSON(value.dns),
         'internetGateway': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1InternetGatewaySpecToJSON(value.internetGateway),
         'nat': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkNatSpecToJSON(value.nat),

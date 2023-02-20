@@ -31,6 +31,12 @@ export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkRouterSpec {
      * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkRouterSpec
      */
     ip?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkRouterSpec
+     */
+    ip6?: string;
 }
 
 /**
@@ -55,6 +61,7 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkRouterSpecFrom
         
         'enabled': json['enabled'],
         'ip': !exists(json, 'ip') ? undefined : json['ip'],
+        'ip6': !exists(json, 'ip6') ? undefined : json['ip6'],
     };
 }
 
@@ -69,6 +76,7 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkRouterSpecToJS
         
         'enabled': value.enabled,
         'ip': value.ip,
+        'ip6': value.ip6,
     };
 }
 

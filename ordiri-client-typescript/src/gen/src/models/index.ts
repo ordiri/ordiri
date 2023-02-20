@@ -37,6 +37,7 @@ export * from './ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineProperty';
 export * from './ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineSpec';
 export * from './ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineStatus';
 export * from './ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Node';
+export * from './ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeDevice';
 export * from './ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeList';
 export * from './ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeNetworkStatus';
 export * from './ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeSpec';

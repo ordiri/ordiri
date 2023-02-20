@@ -24,6 +24,12 @@ export interface ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetwor
      * @type {Array<string>}
      * @memberof ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterface
      */
+    dnsNames?: Array<string>;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterface
+     */
     ip?: Array<string>;
     /**
      * 
@@ -72,6 +78,7 @@ export function ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetwork
     }
     return {
         
+        'dnsNames': !exists(json, 'dnsNames') ? undefined : json['dnsNames'],
         'ip': !exists(json, 'ip') ? undefined : json['ip'],
         'mac': !exists(json, 'mac') ? undefined : json['mac'],
         'network': json['network'],
@@ -89,6 +96,7 @@ export function ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetwork
     }
     return {
         
+        'dnsNames': value.dnsNames,
         'ip': value.ip,
         'mac': value.mac,
         'network': value.network,

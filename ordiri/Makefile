@@ -177,7 +177,7 @@ deploy-ipam: linux-ipam
 
 .PHONY: clean-controllers
 clean-controllers: 
-	rm bin/controller-manager
+	rm -f bin/controller-manager
 .PHONY: deploy-controllers
 deploy-controllers: bin/controller-manager
 	scp kubeconfig root@mothership:/etc/ordiri.conf

@@ -58,6 +58,12 @@ export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetSpec {
     cidr: string;
     /**
      * 
+     * @type {string}
+     * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetSpec
+     */
+    cidr6: string;
+    /**
+     * 
      * @type {ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1DhcpConfiguration}
      * @memberof ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetSpec
      */
@@ -94,6 +100,7 @@ export interface ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetSpec {
 export function instanceOfComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetSpec(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "cidr" in value;
+    isInstance = isInstance && "cidr6" in value;
     isInstance = isInstance && "network" in value;
 
     return isInstance;
@@ -110,6 +117,7 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetSpecFromJSONTyp
     return {
         
         'cidr': json['cidr'],
+        'cidr6': json['cidr6'],
         'dhcp': !exists(json, 'dhcp') ? undefined : ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1DhcpConfigurationFromJSON(json['dhcp']),
         'metadataServer': !exists(json, 'metadataServer') ? undefined : ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetMetadataServerFromJSON(json['metadataServer']),
         'network': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSelectorFromJSON(json['network']),
@@ -128,6 +136,7 @@ export function ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetSpecToJSON(valu
     return {
         
         'cidr': value.cidr,
+        'cidr6': value.cidr6,
         'dhcp': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1DhcpConfigurationToJSON(value.dhcp),
         'metadataServer': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1SubnetMetadataServerToJSON(value.metadataServer),
         'network': ComGithubOrdiriOrdiriPkgApisNetworkV1alpha1NetworkSelectorToJSON(value.network),

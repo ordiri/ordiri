@@ -149,7 +149,7 @@ func (r *VirtualMachineReconciler) schedule(ctx context.Context, vm *computev1al
 			return fmt.Errorf("error fetching node list - %w", err)
 		}
 		log.Info("finding node to schedule on out of", "nodes", nodes.Items)
-		scheduledNode, err := r.Scheduler(nodes.Items)
+		scheduledNode, err := r.Scheduler(nodes.Items, vm)
 		if err != nil {
 			return fmt.Errorf("couldn't schedule node - %w", err)
 		}

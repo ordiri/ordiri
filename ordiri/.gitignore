@@ -1,6 +1,6 @@
 default.etcd
 apiserver.local.config
-bin/
+/bin/
 *.pdf
 *.pcap
 *.gz

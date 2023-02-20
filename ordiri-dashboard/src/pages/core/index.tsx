@@ -28,6 +28,9 @@ const CoreResourcesPage = (props: CoreResourceProps) => {
                                     networks: {res.networks.map(it => <Chip size='small' key={it.name} label={it.name} />)}
                                 </div>
                                 <div>
+                                    Devices: {res.devices?.map(it => <Chip size='small' key={it.deviceName} label={`${it.vendorName}: ${it.deviceName}(${it.deviceClassName})`} />)}
+                                </div>
+                                <div>
                                     VMs: {res.virtualMachines.map(it => <Chip size='small' key={it.name} label={it.name} />)}
                                 </div>
                             </>

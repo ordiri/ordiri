@@ -13,6 +13,12 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeDevice } from './ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeDevice';
+import {
+    ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeDeviceFromJSON,
+    ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeDeviceFromJSONTyped,
+    ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeDeviceToJSON,
+} from './ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeDevice';
 import type { ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeNetworkStatus } from './ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeNetworkStatus';
 import {
     ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeNetworkStatusFromJSON,
@@ -46,6 +52,12 @@ export interface ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeStatus {
     cephSecretUuid: string;
     /**
      * 
+     * @type {Array<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeDevice>}
+     * @memberof ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeStatus
+     */
+    devices: Array<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeDevice>;
+    /**
+     * 
      * @type {Array<ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeNetworkStatus>}
      * @memberof ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeStatus
      */
@@ -70,6 +82,7 @@ export interface ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeStatus {
 export function instanceOfComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeStatus(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "cephSecretUuid" in value;
+    isInstance = isInstance && "devices" in value;
     isInstance = isInstance && "networks" in value;
     isInstance = isInstance && "subnets" in value;
     isInstance = isInstance && "virtualMachines" in value;
@@ -88,6 +101,7 @@ export function ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeStatusFromJSONTyped(
     return {
         
         'cephSecretUuid': json['cephSecretUuid'],
+        'devices': ((json['devices'] as Array<any>).map(ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeDeviceFromJSON)),
         'networks': ((json['networks'] as Array<any>).map(ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeNetworkStatusFromJSON)),
         'subnets': ((json['subnets'] as Array<any>).map(ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeSubnetStatusFromJSON)),
         'virtualMachines': ((json['virtualMachines'] as Array<any>).map(ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeVirtualMachineStatusFromJSON)),
@@ -104,6 +118,7 @@ export function ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeStatusToJSON(value?:
     return {
         
         'cephSecretUuid': value.cephSecretUuid,
+        'devices': ((value.devices as Array<any>).map(ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeDeviceToJSON)),
         'networks': ((value.networks as Array<any>).map(ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeNetworkStatusToJSON)),
         'subnets': ((value.subnets as Array<any>).map(ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeSubnetStatusToJSON)),
         'virtualMachines': ((value.virtualMachines as Array<any>).map(ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeVirtualMachineStatusToJSON)),
