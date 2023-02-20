@@ -46,6 +46,9 @@ spec:
       - name: transcode-storage # Idea being we would mount a dedicated ssd storage class pvc here
         hostPath:
           path: /tmp/plex-transcoder
+      - name: dev
+        hostPath:
+          path: /dev\
       containers:
       - name: plex-server
         securityContext:
@@ -62,6 +65,8 @@ spec:
           mountPath: /opt/plex-tls
         - name: plex-tls-pkcs12-password
           mountPath: /opt/plex-tls-pkcs12-password
+        - name: gpu
+          mountPath: /dev/
         # - name: gpu-lib
         #   mountPath: /usr/lib/x86_64-linux-gnu/
         env:
@@ -76,7 +81,7 @@ spec:
         - name: NVIDIA_VISIBLE_DEVICES
           value: all
         - name: NVIDIA_DRIVER_CAPABILITIES
-          value: compute,video,utility
+          value: all
 
         ports:
         - name:  webui
