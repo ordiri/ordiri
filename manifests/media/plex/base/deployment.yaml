@@ -48,7 +48,7 @@ spec:
           path: /tmp/plex-transcoder
       - name: gpu
         hostPath:
-          path: /dev/nvidia0
+          path: /dev
       containers:
       - name: plex-server
         image: docker.io/plexinc/pms-docker
