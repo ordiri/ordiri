@@ -278,12 +278,11 @@ func (clnr *createLocalNodeRunnable) Start(ctx context.Context) error {
 		}
 	}
 
-	clnr.Node.Status.Devices = []corev1alpha1.NodeDevice{}
 	for _, device := range devices {
 		log.Info("registering device", "device", *device)
 		found := false
 		for _, existing := range clnr.Node.Status.Devices {
-			if existing.Address == device.Addr {
+			if existing.Address == device.FullPath {
 				found = true
 			}
 		}

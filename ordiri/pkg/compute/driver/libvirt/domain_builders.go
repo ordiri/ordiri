@@ -4,6 +4,7 @@ package libvirt
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/u-root/u-root/pkg/pci"
@@ -134,21 +135,79 @@ func WithMemory(size uint) DomainOption {
 	}
 }
 
-func WithDevice(device pci.PCI) DomainOption {
+func extractPcieDevice(addr string) (uint, uint, uint, uint, error) {
+	// 0000:04:00.0
+	parts := strings.Split(addr, ":")
+	if len(parts) != 3 {
+		return 0, 0, 0, 0, fmt.Errorf("invalid device addr - %s", addr)
+	}
+	domainStr := parts[0]
+	domain, err := strconv.Atoi(domainStr)
+	if err != nil {
+		return 0, 0, 0, 0, fmt.Errorf("unable to convert domain %q to number - %w", domain, err)
+	}
+
+	slotStr := parts[1]
+
+	slot, err := strconv.Atoi(slotStr)
+	if err != nil {
+		return 0, 0, 0, 0, fmt.Errorf("unable to convert slot %q to number - %w", slot, err)
+	}
+	busAndFunc := parts[2]
+	bfParts := strings.Split(busAndFunc, ".")
+	if len(bfParts) != 2 {
+		return 0, 0, 0, 0, fmt.Errorf("missing function in device addr - %s", addr)
+	}
+	busStr := bfParts[0]
+	bus, err := strconv.Atoi(busStr)
+	if err != nil {
+		return 0, 0, 0, 0, fmt.Errorf("unable to convert bus %q to number - %w", bus, err)
+	}
+	functionStr := bfParts[1]
+	function, err := strconv.Atoi(functionStr)
+	if err != nil {
+		return 0, 0, 0, 0, fmt.Errorf("unable to convert function %q to number - %w", function, err)
+	}
+
+	return uint(domain), uint(slot), uint(bus), uint(function), nil
+}
+
+func WithDevice(devices ...*pci.PCI) DomainOption {
 	return func(domain *libvirtxml.Domain) error {
-		domain.Devices.Hostdevs = append(domain.Devices.Hostdevs, libvirtxml.DomainHostdev{
-			SubsysPCI: &libvirtxml.DomainHostdevSubsysPCI{
-				Source: &libvirtxml.DomainHostdevSubsysPCISource{
-					Address: &libvirtxml.DomainAddressPCI{
-						Domain:   "",
-						Slot:     "",
-						Bus:      "",
-						Function: "",
+		for _, device := range devices {
+
+			pcieDomain, pcieBus, pcieSlot, pcieFunction, err := extractPcieDevice(device.Addr)
+			if err != nil {
+				panic("invalid pcie addr - " + device.Addr)
+			}
+			found := false
+			for _, device := range domain.Devices.Hostdevs {
+				if device.SubsysPCI != nil && device.SubsysPCI.Source != nil && device.SubsysPCI.Source.Address != nil {
+					if pcieDomain == *device.SubsysPCI.Source.Address.Domain &&
+						pcieBus == *device.SubsysPCI.Source.Address.Bus &&
+						pcieSlot == *device.SubsysPCI.Source.Address.Slot &&
+						pcieFunction == *device.SubsysPCI.Source.Address.Function {
+						found = true
+					}
+				}
+			}
+
+			if !found {
+				domain.Devices.Hostdevs = append(domain.Devices.Hostdevs, libvirtxml.DomainHostdev{
+					SubsysPCI: &libvirtxml.DomainHostdevSubsysPCI{
+						Source: &libvirtxml.DomainHostdevSubsysPCISource{
+							Address: &libvirtxml.DomainAddressPCI{
+								Domain:   &pcieDomain,
+								Slot:     &pcieSlot,
+								Bus:      &pcieBus,
+								Function: &pcieFunction,
+							},
+						},
 					},
-				},
-			},
-			Managed: "yes",
-		})
+					Managed: "yes",
+				})
+			}
+		}
 		return nil
 	}
 }

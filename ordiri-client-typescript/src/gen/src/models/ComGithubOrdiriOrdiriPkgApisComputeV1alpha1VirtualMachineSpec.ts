@@ -13,6 +13,12 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDevice } from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDevice';
+import {
+    ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeviceFromJSON,
+    ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeviceFromJSONTyped,
+    ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeviceToJSON,
+} from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDevice';
 import type { ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterface } from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterface';
 import {
     ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterfaceFromJSON,
@@ -44,6 +50,12 @@ export interface ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineSpec {
      * @memberof ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineSpec
      */
     bootDevices?: Array<string>;
+    /**
+     * 
+     * @type {Array<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDevice>}
+     * @memberof ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineSpec
+     */
+    devices?: Array<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDevice>;
     /**
      * 
      * @type {Array<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterface>}
@@ -117,6 +129,7 @@ export function ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineSpecFro
     return {
         
         'bootDevices': !exists(json, 'bootDevices') ? undefined : json['bootDevices'],
+        'devices': !exists(json, 'devices') ? undefined : ((json['devices'] as Array<any>).map(ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeviceFromJSON)),
         'networkInterfaces': !exists(json, 'networkInterfaces') ? undefined : ((json['networkInterfaces'] as Array<any>).map(ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterfaceFromJSON)),
         'node': !exists(json, 'node') ? undefined : json['node'],
         'resources': ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineResourcesFromJSON(json['resources']),
@@ -138,6 +151,7 @@ export function ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineSpecToJ
     return {
         
         'bootDevices': value.bootDevices,
+        'devices': value.devices === undefined ? undefined : ((value.devices as Array<any>).map(ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeviceToJSON)),
         'networkInterfaces': value.networkInterfaces === undefined ? undefined : ((value.networkInterfaces as Array<any>).map(ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterfaceToJSON)),
         'node': value.node,
         'resources': ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineResourcesToJSON(value.resources),

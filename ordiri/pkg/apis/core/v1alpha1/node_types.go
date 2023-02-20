@@ -75,7 +75,7 @@ type NodeDevice struct {
 	DeviceClaim     *NodeDeviceClaim `json:"deviceClaim,omitempty"`
 }
 type NodeDeviceClaim struct {
-	v1.ObjectReference
+	v1.ObjectReference `json:",inline"`
 }
 
 var _ resource.Object = &Node{}

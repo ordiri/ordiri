@@ -20,9 +20,12 @@ import (
 	"context"
 	"encoding/xml"
 	"fmt"
+	"io/fs"
+	"path/filepath"
 	"time"
 
 	"inet.af/netaddr"
+	corev1 "k8s.io/api/core/v1"
 	k8err "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/resource"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -38,11 +41,13 @@ import (
 	k8log "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/digitalocean/go-libvirt"
 	"github.com/google/uuid"
 	internallibvirt "github.com/ordiri/ordiri/pkg/compute/driver/libvirt"
 	"github.com/ordiri/ordiri/pkg/network/api"
 	"github.com/ordiri/ordiri/pkg/ordlet"
+	"github.com/u-root/u-root/pkg/pci"
 
 	computev1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
 	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
@@ -59,6 +64,8 @@ type VirtualMachineReconciler struct {
 
 	PublicCidr  netaddr.IPPrefix
 	Public6Cidr netaddr.IPPrefix
+
+	devices pci.Devices
 }
 
 //+kubebuilder:rbac:groups=compute,resources=virtualmachines,verbs=get;list;watch;create;update;patch;delete
@@ -116,19 +123,77 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		}
 	}
 
+	vmDevices := []internallibvirt.DomainOption{}
+
 	if len(vm.Spec.Devices) > 0 {
 		allocatedDevice := false
-		for _, device := range vm.Spec.Devices {
+		r.Node.Refresh(ctx)
+		node := r.Node.GetNode()
+		status := node.Status
+		for didx, device := range vm.Spec.Devices {
+			log.Info("allocating virtual machine device", "requestedDevice", device)
 			allocatedDevice = false
-			for _, d := range r.Node.GetNode().Status.Devices {
+			for idx, d := range node.Status.Devices {
 				if device.DeviceClassName != d.DeviceClassName {
 					continue
 				}
+				log.Info("checking device compatability2", "requestedDevice", *device, "availableDevice", d)
 
 				if d.DeviceClaim != nil && (d.DeviceClaim.Name != vm.Name || d.DeviceClaim.Namespace != vm.Namespace) {
 					continue
 				}
+				log.Info("checking device compatability3", "requestedDevice", *device, "availableDevice", d)
+				if d.DeviceClaim == nil {
+					log.Info("checking device compatability4", "requestedDevice", *device, "availableDevice", d)
+					dev := status.Devices[idx]
+					dev.DeviceClaim = &corev1alpha1.NodeDeviceClaim{
+						ObjectReference: corev1.ObjectReference{
+							Kind:            vm.Kind,
+							Namespace:       vm.Namespace,
+							Name:            vm.Name,
+							UID:             vm.UID,
+							APIVersion:      vm.APIVersion,
+							ResourceVersion: vm.ResourceVersion,
+							FieldPath:       fmt.Sprintf("spec.devices[%d]", didx),
+						},
+					}
+					status.Devices[idx] = dev
+
+					log.Info("checking device compatability5", "requestedDevice", *device, "availableDevice", d)
+				}
 				allocatedDevice = true
+
+				for _, pd := range r.devices {
+					if pd.FullPath == d.Address {
+						rootDir := fmt.Sprintf("%s/iommu_group/devices/", pd.FullPath)
+						err := filepath.WalkDir(rootDir, func(path string, d fs.DirEntry, err error) error {
+							if err != nil {
+								return err
+							}
+							if path == rootDir {
+								return err
+							}
+							spew.Dump("checking ", rootDir, path, d)
+							dev, err := filepath.EvalSymlinks(path)
+							if err != nil {
+								return err
+							}
+							iommuDev, err := pci.OnePCI(dev)
+							if err != nil {
+								return nil
+							}
+
+							vmDevices = append(vmDevices, internallibvirt.WithDevice(iommuDev))
+							return nil
+						})
+
+						if err != nil {
+							return ctrl.Result{}, err
+						}
+
+						break
+					}
+				}
 			}
 
 			if device.Optional {
@@ -143,7 +208,15 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		if !allocatedDevice {
 			return ctrl.Result{}, fmt.Errorf("unable to allocate due to no devices")
 		}
+		node.Status = status
+
+		err := r.Client.Status().Update(ctx, node)
+		if err != nil {
+			return ctrl.Result{}, err
+		}
 	}
+
+	spew.Dump("\n\n\n\n", "vmDevices", vmDevices, "\n\n\n\n")
 
 	_, domain := r.GetDomain(ctx, vm)
 	// r.LibvirtClient.attach
@@ -165,6 +238,7 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		internallibvirt.WithVnc(),
 		internallibvirt.WithMetadata("ordiri", "https://ordiri.com/tenant", "tenant", vm.Namespace),
 	}
+	domainOptions = append(domainOptions, vmDevices...)
 	// newDomain := libvirtxml.Domain{}
 
 	// vm.Status.Volumes = []computev1alpha1.VirtualMachineVolumeStatus{}
@@ -458,6 +532,16 @@ func (r *VirtualMachineReconciler) SetupWithManager(mgr ctrl.Manager) error {
 			})
 		}
 	}()
+
+	reader, err := pci.NewBusReader()
+	if err != nil {
+		return fmt.Errorf("unable to find pci devices - %w", err)
+	}
+	devices, err := reader.Read()
+	if err != nil {
+		return fmt.Errorf("unable to find pci devices - %w", err)
+	}
+	r.devices = devices
 
 	// todo we should make our own controller class
 	// that let's people subscribe to the node obj

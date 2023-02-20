@@ -13,6 +13,7 @@ export * from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeploy
 export * from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeploymentList';
 export * from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeploymentSpec';
 export * from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDeploymentStatus';
+export * from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDevice';
 export * from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineList';
 export * from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterface';
 export * from './ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterfaceStatus';
@@ -38,6 +39,7 @@ export * from './ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineSpec';
 export * from './ComGithubOrdiriOrdiriPkgApisCoreV1alpha1MachineStatus';
 export * from './ComGithubOrdiriOrdiriPkgApisCoreV1alpha1Node';
 export * from './ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeDevice';
+export * from './ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeDeviceClaim';
 export * from './ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeList';
 export * from './ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeNetworkStatus';
 export * from './ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeSpec';

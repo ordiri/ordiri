@@ -13,6 +13,13 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeDeviceClaim } from './ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeDeviceClaim';
+import {
+    ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeDeviceClaimFromJSON,
+    ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeDeviceClaimFromJSONTyped,
+    ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeDeviceClaimToJSON,
+} from './ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeDeviceClaim';
+
 /**
  * 
  * @export
@@ -25,6 +32,12 @@ export interface ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeDevice {
      * @memberof ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeDevice
      */
     address: string;
+    /**
+     * 
+     * @type {ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeDeviceClaim}
+     * @memberof ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeDevice
+     */
+    deviceClaim?: ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeDeviceClaim;
     /**
      * 
      * @type {string}
@@ -69,6 +82,7 @@ export function ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeDeviceFromJSONTyped(
     return {
         
         'address': json['address'],
+        'deviceClaim': !exists(json, 'deviceClaim') ? undefined : ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeDeviceClaimFromJSON(json['deviceClaim']),
         'deviceClassName': json['deviceClassName'],
         'deviceName': json['deviceName'],
         'vendorName': json['vendorName'],
@@ -85,6 +99,7 @@ export function ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeDeviceToJSON(value?:
     return {
         
         'address': value.address,
+        'deviceClaim': ComGithubOrdiriOrdiriPkgApisCoreV1alpha1NodeDeviceClaimToJSON(value.deviceClaim),
         'deviceClassName': value.deviceClassName,
         'deviceName': value.deviceName,
         'vendorName': value.vendorName,
