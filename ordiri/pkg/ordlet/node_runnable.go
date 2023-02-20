@@ -18,6 +18,7 @@ import (
 	"github.com/ordiri/ordiri/pkg/generated/clientset/versioned"
 	"github.com/ordiri/ordiri/pkg/network/api"
 	"github.com/ordiri/ordiri/pkg/network/sdn"
+	"github.com/u-root/u-root/pkg/pci"
 	"github.com/vishvananda/netlink"
 	"inet.af/netaddr"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -109,6 +110,25 @@ func (clnr *createLocalNodeRunnable) Start(ctx context.Context) error {
 	if clnr.client == nil {
 		return fmt.Errorf("missing client on local node creator")
 	}
+
+	reader, err := pci.NewBusReader()
+	if err != nil {
+		return fmt.Errorf("unable to create PCI device bus reader")
+	}
+
+	devices, err := reader.Read(func(p *pci.PCI) bool {
+		// strip out matrox VGA adaptors
+		if p.Vendor == 4139 {
+			return false
+		}
+
+		return p.ClassName == "DisplayVGA"
+		// return strings.Contains(strings.ToLower(p.VendorName), "nvidia")
+	})
+	if err != nil {
+		return fmt.Errorf("unable to read PCI devices")
+	}
+	// spew.Dump(devices)
 
 	for _, role := range clnr.roles {
 		if role == "storage" {
@@ -257,6 +277,27 @@ func (clnr *createLocalNodeRunnable) Start(ctx context.Context) error {
 			}
 		}
 	}
+
+	clnr.Node.Status.Devices = []corev1alpha1.NodeDevice{}
+	for _, device := range devices {
+		log.Info("registering device", "device", *device)
+		found := false
+		for _, existing := range clnr.Node.Status.Devices {
+			if existing.Address == device.Addr {
+				found = true
+			}
+		}
+
+		if !found {
+			clnr.Node.Status.Devices = append(clnr.Node.Status.Devices, corev1alpha1.NodeDevice{
+				Address:         device.FullPath,
+				DeviceName:      device.DeviceName,
+				VendorName:      device.VendorName,
+				DeviceClassName: device.ClassName,
+			})
+		}
+	}
+
 	log.Info("updating existing node")
 
 	if _, err := clnr.client.CoreV1alpha1().Nodes().UpdateStatus(ctx, clnr.Node, v1.UpdateOptions{}); err != nil {

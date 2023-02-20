@@ -40,8 +40,7 @@ type Interface interface {
 	StorageV1alpha1() storagev1alpha1.StorageV1alpha1Interface
 }
 
-// Clientset contains the clients for groups. Each group has exactly one
-// version included in a Clientset.
+// Clientset contains the clients for groups.
 type Clientset struct {
 	*discovery.DiscoveryClient
 	authorizationV1alpha1 *authorizationv1alpha1.AuthorizationV1alpha1Client

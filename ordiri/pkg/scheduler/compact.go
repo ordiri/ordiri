@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
+	computev1alpha1 "github.com/ordiri/ordiri/pkg/apis/compute/v1alpha1"
+	corev1alpha1 "github.com/ordiri/ordiri/pkg/apis/core/v1alpha1"
 )
 
 func CompactScheduler() Scheduler {
-	return func(nodes []v1alpha1.Node) (*v1alpha1.Node, error) {
-		nodeList := nodes[:]
+	return func(nodes []corev1alpha1.Node, vm *computev1alpha1.VirtualMachine) (*corev1alpha1.Node, error) {
+		nodeList := filterApplicableNodes(nodes[:], vm)
 		if len(nodeList) == 0 {
 			return nil, fmt.Errorf("no nodes available to schedule on")
 		}

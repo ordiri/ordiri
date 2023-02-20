@@ -67,6 +67,17 @@ type NodeSpec struct {
 	ManagementAddresses []string   `json:"managementAddresses"`
 }
 
+type NodeDevice struct {
+	Address         string           `json:"address"`
+	DeviceName      string           `json:"deviceName"`
+	VendorName      string           `json:"vendorName"`
+	DeviceClassName string           `json:"deviceClassName"`
+	DeviceClaim     *NodeDeviceClaim `json:"deviceClaim,omitempty"`
+}
+type NodeDeviceClaim struct {
+	v1.ObjectReference
+}
+
 var _ resource.Object = &Node{}
 var _ resourcestrategy.Validater = &Node{}
 
@@ -220,6 +231,12 @@ type NodeStatus struct {
 	// +listType=map
 	// +listMapKey=name
 	Networks []NodeNetworkStatus `json:"networks" patchStrategy:"merge" patchMergeKey:"name"`
+
+	// +patchMergeKey=Address
+	// +patchStrategy=merge
+	// +listType=map
+	// +listMapKey=Address
+	Devices []NodeDevice `json:"devices" patchStrategy:"merge" patchMergeKey:"Address"`
 }
 
 type NodeVirtualMachineStatus struct {

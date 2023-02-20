@@ -95,6 +95,9 @@ type VirtualMachineSpec struct {
 	Volumes []*VirtualMachineVolume `json:"volumes"`
 
 	// +optional
+	Devices []*VirtualMachineDevice `json:"devices"`
+
+	// +optional
 	NetworkInterfaces []*VirtualMachineNetworkInterface `json:"networkInterfaces"`
 }
 
@@ -118,6 +121,12 @@ type VirtualMachineNetworkInterface struct {
 
 func (in *VirtualMachineNetworkInterface) Key(vmName string) string {
 	return fmt.Sprintf("%s:%s:%s", in.Network, in.Subnet, vmName)
+}
+
+type VirtualMachineDevice struct {
+	Name            string `json:"name"`
+	DeviceClassName string `json:"deviceClassName"`
+	Optional        bool   `json:"optional,omitempty"`
 }
 
 type VirtualMachineVolume struct {

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/u-root/u-root/pkg/pci"
 	"libvirt.org/go/libvirtxml"
 )
 
@@ -129,6 +130,25 @@ func WithMemory(size uint) DomainOption {
 
 		domain.Memory.Value = size
 		domain.Memory.Unit = "KiB"
+		return nil
+	}
+}
+
+func WithDevice(device pci.PCI) DomainOption {
+	return func(domain *libvirtxml.Domain) error {
+		domain.Devices.Hostdevs = append(domain.Devices.Hostdevs, libvirtxml.DomainHostdev{
+			SubsysPCI: &libvirtxml.DomainHostdevSubsysPCI{
+				Source: &libvirtxml.DomainHostdevSubsysPCISource{
+					Address: &libvirtxml.DomainAddressPCI{
+						Domain:   "",
+						Slot:     "",
+						Bus:      "",
+						Function: "",
+					},
+				},
+			},
+			Managed: "yes",
+		})
 		return nil
 	}
 }

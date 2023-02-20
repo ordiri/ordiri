@@ -116,6 +116,35 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		}
 	}
 
+	if len(vm.Spec.Devices) > 0 {
+		allocatedDevice := false
+		for _, device := range vm.Spec.Devices {
+			allocatedDevice = false
+			for _, d := range r.Node.GetNode().Status.Devices {
+				if device.DeviceClassName != d.DeviceClassName {
+					continue
+				}
+
+				if d.DeviceClaim != nil && (d.DeviceClaim.Name != vm.Name || d.DeviceClaim.Namespace != vm.Namespace) {
+					continue
+				}
+				allocatedDevice = true
+			}
+
+			if device.Optional {
+				allocatedDevice = true
+			}
+
+			if !allocatedDevice {
+				break
+			}
+		}
+
+		if !allocatedDevice {
+			return ctrl.Result{}, fmt.Errorf("unable to allocate due to no devices")
+		}
+	}
+
 	_, domain := r.GetDomain(ctx, vm)
 	// r.LibvirtClient.attach
 
