@@ -48,7 +48,7 @@ spec:
           path: /tmp/plex-transcoder
       - name: dev
         hostPath:
-          path: /dev\
+          path: /dev
       containers:
       - name: plex-server
         securityContext:
@@ -65,8 +65,8 @@ spec:
           mountPath: /opt/plex-tls
         - name: plex-tls-pkcs12-password
           mountPath: /opt/plex-tls-pkcs12-password
-        - name: gpu
-          mountPath: /dev/
+        # - name: gpu
+        #   mountPath: /dev/
         # - name: gpu-lib
         #   mountPath: /usr/lib/x86_64-linux-gnu/
         env:
