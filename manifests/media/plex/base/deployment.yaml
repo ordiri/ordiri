@@ -49,6 +49,9 @@ spec:
       - name: gpu
         hostPath:
           path: /dev
+      - name: gpu-lib
+        hostPath:
+          path: /usr/lib/x86_64-linux-gnu/
       containers:
       - name: plex-server
         securityContext:
@@ -67,6 +70,8 @@ spec:
           mountPath: /opt/plex-tls-pkcs12-password
         - name: gpu
           mountPath: /dev
+        - name: gpu-lib
+          mountPath: /usr/lib/x86_64-linux-gnu/
         env:
         - name: PUID
           value: "1000"
