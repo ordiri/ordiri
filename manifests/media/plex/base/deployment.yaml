@@ -64,7 +64,7 @@ spec:
         - name: plex-tls-pkcs12-password
           mountPath: /opt/plex-tls-pkcs12-password
         - name: gpu
-          mountPath: /dev/nvidia0
+          mountPath: /dev
         env:
         - name: PUID
           value: "1000"
