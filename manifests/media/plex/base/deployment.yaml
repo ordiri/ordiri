@@ -46,6 +46,9 @@ spec:
       - name: transcode-storage # Idea being we would mount a dedicated ssd storage class pvc here
         hostPath:
           path: /tmp/plex-transcoder
+      - name: gpu
+        hostPath:
+          path: /dev/nvidia0
       containers:
       - name: plex-server
         image: docker.io/plexinc/pms-docker
@@ -60,6 +63,8 @@ spec:
           mountPath: /opt/plex-tls
         - name: plex-tls-pkcs12-password
           mountPath: /opt/plex-tls-pkcs12-password
+        - name: gpu
+          mountPath: /dev/nvidia0
         env:
         - name: PUID
           value: "1000"
