@@ -75,6 +75,8 @@ spec:
           value: "10.0.0.0/8,192.168.0.0/16,172.16.0.0/12"
         - name: NVIDIA_VISIBLE_DEVICES
           value: all
+        - name: NVIDIA_DRIVER_CAPABILITIES
+          value: compute,video,utility
 
         ports:
         - name:  webui
