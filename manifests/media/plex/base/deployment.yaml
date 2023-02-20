@@ -12,6 +12,15 @@ spec:
       labels:
         app: plex-server
     spec:
+
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: feature.node.kubernetes.io/pci-1013.present
+                operator: Exists
+    
       dnsConfig:
         options:
         - name: ndots
