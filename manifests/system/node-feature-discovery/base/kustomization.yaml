@@ -1,4 +1,5 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- https://github.com/kubernetes-sigs/node-feature-discovery/deployment/overlays/default?ref=v0.12.1
+- https://raw.githubusercontent.com/NVIDIA/gpu-feature-discovery/v0.7.0/deployments/static/nfd.yaml
+# - https://raw.githubusercontent.com/NVIDIA/gpu-feature-discovery/v0.7.0/deployments/static/gpu-feature-discovery-daemonset.yaml
