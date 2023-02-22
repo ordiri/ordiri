@@ -41,9 +41,9 @@ spec:
         image: alpine
         command:
         - /bin/sh
-        - -c
+        - -euc
         - |
-          while !nc -z postgres.home-assistant.svc.cluster.local 5432; do echo "Waiting for Postgres to boot"; sleep 1; done;
+          while ! nc -z postgres.home-assistant.svc.cluster.local 5432; do echo "Waiting for Postgres to boot"; sleep 1; done;
       containers:
       - name: home-assistant
         image: ghcr.io/home-assistant/home-assistant:stable
