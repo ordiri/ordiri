@@ -46,7 +46,11 @@ spec:
       - name: transcode-storage # Idea being we would mount a dedicated ssd storage class pvc here
         hostPath:
           path: /tmp/plex-transcoder
-      hostname: plex.dmann.xyz
+      hostAliases:
+      - ip: "127.0.0.1"
+        hostnames:
+        - "plex.dmann.xyz"
+        - "plex.dmann.dev"
       containers:
       - name: plex-server
         securityContext:
