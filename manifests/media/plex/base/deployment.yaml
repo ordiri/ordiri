@@ -46,9 +46,9 @@ spec:
       - name: transcode-storage # Idea being we would mount a dedicated ssd storage class pvc here
         hostPath:
           path: /tmp/plex-transcoder
+      hostname: plex.dmann.xyz
       containers:
       - name: plex-server
-        hostname: plex.dmann.xyz
         securityContext:
           privileged: true
         image: lscr.io/linuxserver/plex:latest
