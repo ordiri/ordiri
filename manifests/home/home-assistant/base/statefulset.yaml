@@ -43,7 +43,11 @@ spec:
         - /bin/sh
         - -euc
         - |
-          while ! nc -z postgres.home-assistant.svc.cluster.local 5432; do echo "Waiting for Postgres to boot"; sleep 1; done;
+          while ! nc -z postgres.home-assistant.svc.cluster.local 5432; do
+            echo "Waiting for Postgres to boot";
+            sleep 1;
+          done;
+          echo "Postgres is ready"
       containers:
       - name: home-assistant
         image: ghcr.io/home-assistant/home-assistant:stable
