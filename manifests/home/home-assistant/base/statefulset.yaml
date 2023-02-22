@@ -36,6 +36,14 @@ spec:
       - name: mdns-tunnel-config
         configMap:
           name: mdns-tunnel-config
+      initContainers:
+      - name: alpine
+        image: alpine
+        command:
+        - /bin/sh
+        - -c
+        - |
+          while !nc -z postgres.home-assistant.svc.cluster.local 5432; do echo "Waiting for Postgres to boot"; sleep 1; done;
       containers:
       - name: home-assistant
         image: ghcr.io/home-assistant/home-assistant:stable
