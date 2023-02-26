@@ -8,10 +8,13 @@ homekit:
       - climate
       - light
       - cover
+      - switch
       include_entity_globs:
       - binary_sensor.zone_*
-      - binary_sensor.doorbell
       include_entities:
+      - sensor.calibrated_ph_value
+      - binary_sensor.doorbell
+      - sensor.washing_machine
       - button.garage_door_opener
 
   - name: HASS Bridge - Security
