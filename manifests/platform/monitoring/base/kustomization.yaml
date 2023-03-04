@@ -121,6 +121,10 @@ patches:
               {{ .Data.client_secret }}
               {{- end }}
         spec:
+          dnsConfig:
+            options:
+            - name: ndots
+              value: "1"
           containers:
           - name: grafana
             volumeMounts:
