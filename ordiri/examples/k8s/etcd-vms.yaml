@@ -25,6 +25,6 @@ spec:
       - device: vda
         hostLocal:
           poolName: etcd
-          size: 30Gi
+          size: 100Gi
           volName: root
         name: root

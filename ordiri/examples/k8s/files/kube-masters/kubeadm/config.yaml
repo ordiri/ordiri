@@ -21,6 +21,10 @@ apiServer:
   extraArgs:
     bind-address: "::"
     permit-address-sharing: "true"
+    # oidc-issuer-url: https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/default
+    # oidc-client-id: $oidcClientId
+    # oidc-username-claim: email
+    # oidc-groups-claim: groups
 controllerManager:
   extraArgs:
     bind-address: "::"
