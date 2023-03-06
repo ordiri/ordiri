@@ -27,7 +27,6 @@ helmCharts:
               resources:
                 requests:
                   storage: 100Gi
-              selector: {}
     grafana:
       dashboards:
         ordiri:
