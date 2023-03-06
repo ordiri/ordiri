@@ -9,6 +9,11 @@ spec:
       creationTimestamp: null
     spec:
       userData: !include kube-workers/preseed.sh
+      devices: # Passthrough a GPU device if there is one in the pool available
+      - deviceClassName: DisplayVGA
+        name: GPU
+        optional: true
+
       bootDevices:
       - hd
       - network
