@@ -228,11 +228,19 @@ func NewDomain(name string, opts ...DomainOption) (*libvirtxml.Domain, error) {
 					},
 				},
 			},
+			MemBalloon: &libvirtxml.DomainMemBalloon{
+				Model: "none",
+			},
 		},
 		Features: &libvirtxml.DomainFeatureList{
 			PAE:  &libvirtxml.DomainFeature{},
 			ACPI: &libvirtxml.DomainFeature{},
 			APIC: &libvirtxml.DomainFeatureAPIC{},
+			KVM: &libvirtxml.DomainFeatureKVM{
+				Hidden: &libvirtxml.DomainFeatureState{
+					State: "on",
+				},
+			},
 		},
 	}
 

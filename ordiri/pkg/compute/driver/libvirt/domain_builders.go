@@ -96,9 +96,9 @@ func WithCpu(cpus uint) DomainOption {
 		}
 		if domain.CPU == nil {
 			domain.CPU = &libvirtxml.DomainCPU{}
-			domain.CPU.Mode = "custom"
+			domain.CPU.Mode = "host-passthrough"
 			domain.CPU.Match = "exact"
-			domain.CPU.Check = "none"
+			domain.CPU.Check = "partial"
 		}
 		if domain.CPU.Model == nil {
 			domain.CPU.Model = &libvirtxml.DomainCPUModel{}
@@ -119,11 +119,6 @@ func WithCpu(cpus uint) DomainOption {
 
 func WithMemory(size uint) DomainOption {
 	return func(domain *libvirtxml.Domain) error {
-		if domain.CurrentMemory == nil {
-			domain.CurrentMemory = &libvirtxml.DomainCurrentMemory{}
-		}
-		domain.CurrentMemory.Value = size
-		domain.CurrentMemory.Unit = "KiB"
 
 		if domain.Memory == nil {
 			domain.Memory = &libvirtxml.DomainMemory{}
