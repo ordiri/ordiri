@@ -20,14 +20,14 @@ helmCharts:
     prometheus:
       prometheusSpec:
         serviceMonitorSelectorNilUsesHelmValues: false
-      storageSpec:
-        volumeClaimTemplate:
-          spec:
-            accessModes: ["ReadWriteOnce"]
-            resources:
-              requests:
-                storage: 100Gi
-            selector: {}
+        storageSpec:
+          volumeClaimTemplate:
+            spec:
+              accessModes: ["ReadWriteOnce"]
+              resources:
+                requests:
+                  storage: 100Gi
+              selector: {}
     grafana:
       dashboards:
         ordiri:
