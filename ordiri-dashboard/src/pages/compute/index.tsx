@@ -1,4 +1,4 @@
-import { ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine, ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterface, ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineVolume, ComputeOrdiriComV1alpha1Api } from '@ordiri/client-typescript';
+import { ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachine, ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDevice, ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineNetworkInterface, ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineVolume, ComputeOrdiriComV1alpha1Api } from '@ordiri/client-typescript';
 import ordiriConfig from '../../ordiri-config';
 import { CreateResourcePage } from '../generic-resource';
 import { Button, Dialog, DialogContent, DialogTitle } from '@mui/material';
@@ -108,6 +108,20 @@ const ComputeResourcesPage = (props: ComputeResourceProps) => {
                         return <>
                             {res.map(it => {
                                 return <div>{it.name}/{it.device}/{it.hostLocal?.size}</div>
+                            })}
+                        </>
+                    }
+                }, devices: {
+                    label: "Devices",
+                    selector: "spec.devices",
+                    formatter: (res: Array<ComGithubOrdiriOrdiriPkgApisComputeV1alpha1VirtualMachineDevice>) => {
+                        if (!Array.isArray(res)) {
+                            return
+                        }
+
+                        return <>
+                            {res.map(it => {
+                                return <div>{it.deviceClassName}({it.name})  -{it.optional ?"Optional": "Required"}</div>
                             })}
                         </>
                     }
