@@ -121,5 +121,5 @@ spec:
         securityContext: {}
         volumeMounts:
         - name: uptime-kuma-config-data
-          mountPath: /config
+          mountPath: /app/data
     
