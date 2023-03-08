@@ -1,0 +1,125 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: uptime-kuma
+spec:
+  serviceName: uptime-kuma
+  replicas: 1
+  selector:
+    matchLabels:
+      app: uptime-kuma
+  volumeClaimTemplates:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: uptime-kuma-config-data
+    spec:
+      resources:
+        requests:
+          storage: 10G
+      volumeMode: Filesystem
+      accessModes:
+        - ReadWriteOnce
+      storageClassName: ceph-retain
+  template:
+    metadata:
+      labels:
+        app: uptime-kuma
+      annotations:
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/agent-limits-cpu: 100m
+        vault.hashicorp.com/agent-requests-cpu: 50m
+        vault.hashicorp.com/agent-limits-mem: 128Mi
+        vault.hashicorp.com/agent-requests-mem: 64Mi
+        vault.hashicorp.com/role: uptime-kuma
+        vault.hashicorp.com/agent-inject-secret-oidc: identity/oidc/client/uptime-kuma
+        vault.hashicorp.com/agent-inject-template-oidc: |
+          {{- with secret "identity/oidc/client/uptime-kuma" -}}
+          export oidc_client_id="{{ .Data.client_id }}"
+          export oidc_client_secret="{{ .Data.client_secret }}"
+          {{- end }}
+    spec:
+      serviceAccount: uptime-kuma
+      dnsConfig:
+        options:
+        - name: ndots
+          value: "1"
+      volumes:
+      - name: uptime-kuma-tls
+        secret:
+          secretName: uptime-kuma-tls
+          defaultMode: 0777
+      - name: media-nfs
+        nfs:
+          server: ceph.homelab.dmann.xyz
+          path: /homelab/media
+      containers:
+      - name: oauth2-proxy
+        command:
+        - sh
+        - -c
+        args:
+        - |
+          source /vault/secrets/oidc;
+          /bin/oauth2-proxy \
+          --provider=oidc \
+          --email-domain=* \
+          --oidc-email-claim=sub \
+          --upstream=http://127.0.0.1:3001 \
+          --http-address=[::]:4180 \
+          --https-address=[::]:4181 \
+          --tls-cert-file=/opt/uptime-kuma-tls/tls.crt \
+          --tls-key-file=/opt/uptime-kuma-tls/tls.key \
+          --provider-display-name="Vault" \
+          --client-id="${oidc_client_id}" \
+          --client-secret="${oidc_client_secret}" \
+          --redirect-url="https://status.dmann.xyz" \
+          --oidc-issuer-url="https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/default" \
+          --force-https \
+          --cookie-secure=false \
+          --cookie-secret=secret12secret12
+        env: []
+        image: quay.io/oauth2-proxy/oauth2-proxy:latest
+        ports:
+        - containerPort: 4180
+          protocol: TCP
+          name: oauth2-http
+        - containerPort: 4181
+          protocol: TCP
+          name: oauth2-https
+        resources: 
+        volumeMounts:
+        - name: uptime-kuma-tls
+          mountPath: /opt/uptime-kuma-tls
+      - env:
+        - name: UPTIME_KUMA_PORT
+          value: "3001"
+        image: louislam/uptime-kuma:1.20.2-debian
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - node
+            - extra/healthcheck.js
+          initialDelaySeconds: 15
+          timeoutSeconds: 2
+        name: uptime-kuma
+        ports:
+        - containerPort: 4180
+          protocol: TCP
+          name: oauth2-http
+        - containerPort: 4181
+          protocol: TCP
+          name: oauth2-https
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 3001
+            scheme: HTTP
+          initialDelaySeconds: 5
+        resources: {}
+        securityContext: {}
+        volumeMounts:
+        - name: uptime-kuma-config-data
+          mountPath: /config
+    

@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: uptime-kuma-ingress
+  annotations:
+    k8s.dmann.xyz/cloudflare-domain-dmann-xyz: status
+    k8s.dmann.xyz/cloudflare-zone-dmann-xyz: dmann.xyz
+    k8s.dmann.xyz/cloudflare-domain-dmann-dev: status
+    k8s.dmann.xyz/cloudflare-zone-dmann-dev: dmann.dev
+spec:
+  ipFamilyPolicy: PreferDualStack
+  ports:
+  - name: https
+    port: 443
+    protocol: TCP
+    targetPort: oauth2-https
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: oauth2-http
+  selector:
+    app: uptime-kuma
+  sessionAffinity: None
+  type: ClusterIP
