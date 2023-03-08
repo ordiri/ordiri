@@ -39,7 +39,7 @@ spec:
           export oidc_client_secret="{{ .Data.client_secret }}"
           {{- end }}
     spec:
-      # serviceAccount: uptime-kuma
+      serviceAccount: uptime-kuma
       dnsConfig:
         options:
         - name: ndots
