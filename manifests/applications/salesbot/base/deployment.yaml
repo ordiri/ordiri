@@ -21,7 +21,7 @@ spec:
           secretName: salesbot-tls
       containers:
       - name: caddy
-        image: harbor.dmann.dev/default/caddy:pending
+        image: docker.io/caddy:latest
         volumeMounts:
         - name: caddyfile
           mountPath: /opt/caddyfile
