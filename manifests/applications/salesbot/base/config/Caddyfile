@@ -12,13 +12,8 @@
   # Compress responses according to Accept-Encoding headers
   encode gzip zstd
   
-  # Make HTML file extension optional
-  try_files {path}.html /opt/salesbot/{path}
-  
   # Serve everything else from the file system
-  proxy /api/v1/streaming http://localhost:8181 {
-      websocket
-  } 
+  reverse_proxy /stream/* localhost:8181
 
   header Access-Control-Allow-Methods "POST, GET, OPTIONS"
   @options {
