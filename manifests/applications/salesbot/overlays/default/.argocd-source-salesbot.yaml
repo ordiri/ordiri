@@ -1,0 +1,4 @@
+kustomize:
+  images:
+  - harbor.dmann.dev/default/salesbot:a11e5778d5c5823b62fc8997f032c64b0452ed7e
+
