@@ -55,18 +55,18 @@ spec:
         resources:
       - name: salesbot
         image: harbor.dmann.dev/default/salesbot:pending
-        readinessProbe:
-          httpGet:
-            path: /live
-            port: http
-          initialDelaySeconds: 5
-          periodSeconds: 10
-        livenessProbe:
-          httpGet:
-            path: /live
-            port: http
-          initialDelaySeconds: 5
-          periodSeconds: 10
+        # readinessProbe:
+        #   httpGet:
+        #     path: /live
+        #     port: http
+        #   initialDelaySeconds: 5
+        #   periodSeconds: 10
+        # livenessProbe:
+        #   httpGet:
+        #     path: /live
+        #     port: http
+        #   initialDelaySeconds: 5
+        #   periodSeconds: 10
         command:
         - /salesbot
         args:
