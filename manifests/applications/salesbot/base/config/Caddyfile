@@ -1,0 +1,41 @@
+(cors) {
+	@origin{args.0} header Origin {args.1}
+	header @origin{args.0} Access-Control-Allow-Origin "{args.1}"
+	header @origin{args.0} Access-Control-Allow-Headers "content-type, x-requested-with"
+	header @origin{args.0} Vary Origin
+}
+
+:443 {
+  root * /opt/salesbot
+  tls /opt/salesbot-tls/tls.crt /opt/salesbot-tls/tls.key
+
+  # Compress responses according to Accept-Encoding headers
+  encode gzip zstd
+  
+  # Make HTML file extension optional
+  try_files {path}.html /opt/salesbot/{path}
+  
+  # Serve everything else from the file system
+  proxy /api/v1/streaming http://localhost:8181 {
+      websocket
+  } 
+
+  header Access-Control-Allow-Methods "POST, GET, OPTIONS"
+  @options {
+    method OPTIONS
+  }
+  respond @options 204
+
+	header Access-Control-Allow-Origin "salesbot.dmann.xyz"
+	header Access-Control-Allow-Headers "content-type, x-requested-with"
+	header Vary Origin
+}
+
+:80 {
+  respond /live 200
+  respond /ready 200
+}
+
+salesbot.dmann.dev {  
+  redir https://salesbot.dmann.xyz{uri} permanent
+}

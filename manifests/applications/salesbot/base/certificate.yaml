@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: salesbot-tls
+spec:
+  secretName: salesbot-tls
+  dnsNames:
+    - salesbot.dmann.xyz
+    - salesbot.dmann.dev
+  issuerRef:
+    name: letsencrypt
+    kind: ClusterIssuer
