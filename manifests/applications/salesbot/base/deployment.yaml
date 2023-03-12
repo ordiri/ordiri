@@ -81,7 +81,8 @@ spec:
         - name: gcloud-credentials
           mountPath: /opt/gcloud
         command:
-        - /workspace/salesbot
+        - /salesbot
+        workingDir: /workspace
         args:
         - 'server'
         ports:
