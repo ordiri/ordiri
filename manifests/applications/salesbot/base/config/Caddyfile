@@ -13,7 +13,7 @@
   encode gzip zstd
   
   # Serve everything else from the file system
-  reverse_proxy /stream/* localhost:8181
+  reverse_proxy localhost:8181
 
   header Access-Control-Allow-Methods "POST, GET, OPTIONS"
   @options {
