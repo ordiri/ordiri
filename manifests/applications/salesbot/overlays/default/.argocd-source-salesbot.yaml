@@ -1,3 +1,3 @@
 kustomize:
   images:
-  - harbor.dmann.dev/default/salesbot:854ba446f4168d52c27c724587f68f7b03d94518
+  - harbor.dmann.dev/default/salesbot:9242d415e2342b96a6695541cd8453d35f2aaa69
