@@ -83,7 +83,7 @@ spec:
         command:
         - /salesbot
         args:
-        - '[::]:8181'
+        - 'server'
         ports:
         - name: salesbotws
           containerPort: 8181
