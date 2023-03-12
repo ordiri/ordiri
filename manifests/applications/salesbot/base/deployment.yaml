@@ -19,6 +19,9 @@ spec:
       - name: salesbot-tls
         secret:
           secretName: salesbot-tls
+      - name: gcloud-credentials
+        secret:
+          secretName: gcloud-credentials
       containers:
       - name: caddy
         image: docker.io/caddy:latest
@@ -55,6 +58,13 @@ spec:
         resources:
       - name: salesbot
         image: harbor.dmann.dev/default/salesbot:pending
+        envFrom:
+        - secretRef:
+            name: openai-credentials
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /opt/gcloud/credentials.json
+
         # readinessProbe:
         #   httpGet:
         #     path: /live
@@ -67,6 +77,9 @@ spec:
         #     port: http
         #   initialDelaySeconds: 5
         #   periodSeconds: 10
+        volumeMounts:
+        - name: gcloud-credentials
+          mountPath: /opt/gcloud
         command:
         - /salesbot
         args:
