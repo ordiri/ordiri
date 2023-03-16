@@ -17,12 +17,8 @@ spec:
   securityContext:
     capabilities:
       add:
-        - SETGID
-        - SETUID
-      drop:
-        - ALL
-    privileged: false
-    runAsUser: 1000
+        - SYS_CAP_ADMIN
+    privileged: true
     allowPrivilegeEscalation: true
   templates:
   - name: main
