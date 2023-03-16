@@ -28,7 +28,14 @@ spec:
       args:
         - --context=/src
         - --destination={{workflow.parameters.destination}}
+      resources:
+        limits:
+          memory: 2Gi
+          cpu: 1
+          ephemeral-storage: 1Gi
       volumeMounts:
+      - name: emptyDir
+        mountPath: /kaniko
       - name: docker-config
         mountPath: /kaniko/.docker/
       securityContext:
@@ -48,3 +55,5 @@ spec:
     - name: docker-config
       configMap:
         name: docker-config
+    - name: context
+      emptyDir: {}
