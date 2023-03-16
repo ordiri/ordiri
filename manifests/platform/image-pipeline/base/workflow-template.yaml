@@ -14,12 +14,6 @@ spec:
     options:
     - name: ndots
       value: "1"
-  securityContext:
-    capabilities:
-      add:
-        - SYS_CAP_ADMIN
-    privileged: true
-    allowPrivilegeEscalation: true
   templates:
   - name: main
     inputs:
@@ -37,6 +31,19 @@ spec:
       volumeMounts:
       - name: docker-config
         mountPath: /kaniko/.docker/
+      securityContext:
+        capabilities:
+          add:
+            - CHOWN
+            - DAC_OVERRIDE
+            - FOWNER
+            - SETFCAP
+            - SETGID
+            - SETUID
+          drop:
+            - ALL
+        privileged: false
+        allowPrivilegeEscalation: true
     volumes:
     - name: docker-config
       configMap:
