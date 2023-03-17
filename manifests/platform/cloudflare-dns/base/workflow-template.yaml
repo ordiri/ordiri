@@ -67,11 +67,12 @@ spec:
           set -eou pipefail
           defaultZone="{{workflow.parameters.defaultZone}}"
           defaultService="{{inputs.parameters.namespace}}/{{inputs.parameters.name}}"
+          defaultProxyVal=true
 
           records=""
           # Extract all the annotations
           records=$(kubectl get {{inputs.parameters.kind}} --namespace {{inputs.parameters.namespace}} --output json {{inputs.parameters.name}} \
-          | jq  --arg defaultService "$defaultService" --arg defaultZone "$defaultZone" '. | .metadata.annotations as $annotations | $annotations
+          | jq  --arg defaultService "$defaultService" --arg defaultZone "$defaultZone" --arg defaultProxyVal "$defaultProxyVal" '. | .metadata.annotations as $annotations | $annotations
             | to_entries
               | [
                   .[] | 
@@ -81,6 +82,7 @@ spec:
                         key: (.key | sub("k8s.dmann.xyz/cloudflare-domain-";"")), 
                         value: { 
                           prefix: .value,
+                          proxy: ($annotations[(.key | sub("k8s.dmann.xyz/cloudflare-domain-";"k8s.dmann.xyz/cloudflare-proxy-"))] // $defaultProxyVal),
                           zone: ($annotations[(.key | sub("k8s.dmann.xyz/cloudflare-domain-";"k8s.dmann.xyz/cloudflare-zone-"))] // $defaultZone),
                           service: ($annotations[(.key | sub("k8s.dmann.xyz/cloudflare-domain-";"k8s.dmann.xyz/cloudflare-service-"))] // $defaultService)
                         }
@@ -93,13 +95,15 @@ spec:
           (
             for key in $keys; do
               service=$(echo $records | jq -r --arg key "$key" '.[$key].service')
+              proxy=$(echo $records | jq -r --arg key "$key" '.[$key].proxy')
               service_namespace=$(echo $service | cut -d/ -f1)
               service_name=$(echo $service | cut -d/ -f2)
               service_ip4=$(kubectl get service --namespace "$service_namespace" "$service_name" --output json | jq -r '[.spec.clusterIPs[] | select(test(":") | not)] | first')
               service_ip6=$(kubectl get service --namespace "$service_namespace" "$service_name" --output json | jq -r '[.spec.clusterIPs[] | select(test(":"))] | first')
               if [[ -n "${service_ip6}" ]]; then
-                echo $records | jq --arg service_ip "$service_ip6" --arg key "$key" '{ key: $key, value: (.[$key] + { 
+                echo $records | jq --arg service_ip "$service_ip6" --arg key "$key" --arg proxy "$proxy" '{ key: $key, value: (.[$key] + { 
                   service_ip: $service_ip,
+                  proxy: $proxy,
                   type: "AAAA"
                 }) }'
               fi
@@ -118,6 +122,7 @@ spec:
         parameters:
           - name: url
           - name: service_ip
+          - name: proxy
           - name: type
           - name: zone
           - name: action
@@ -175,7 +180,7 @@ spec:
               "name": "$url",
               "content": "$service_ip",
               "ttl": 1,
-              "proxied": false
+              "proxied": {{inputs.parameters.proxy}}
           }
           EOF
 

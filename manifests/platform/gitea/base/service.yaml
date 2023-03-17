@@ -6,6 +6,7 @@ metadata:
   annotations:
     k8s.dmann.xyz/cloudflare-domain-dmann-xyz: git
     k8s.dmann.xyz/cloudflare-zone-dmann-xyz: dmann.xyz
+    k8s.dmann.xyz/cloudflare-proxy-dmann-xyz: false
     k8s.dmann.xyz/cloudflare-domain-dmann-dev: git
     k8s.dmann.xyz/cloudflare-zone-dmann-dev: dmann.dev
 spec:
