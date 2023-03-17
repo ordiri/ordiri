@@ -48,6 +48,10 @@ helmCharts:
         - vault-argo-oidc-client-secret
       workflowNamespaces: []
       containerRuntimeExecutor: emissary
+    executor:
+      resources:
+        requests: 
+          ephemeral-storage: 100Mi
 
 
 resources:
