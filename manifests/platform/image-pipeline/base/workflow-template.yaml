@@ -35,7 +35,7 @@ spec:
         - --destination={{workflow.parameters.destination}}
       resources:
         requests:
-          memory: 4Gi
+          memory: 2Gi
           cpu: 1
           ephemeral-storage: 5Gi
       volumeMounts:
