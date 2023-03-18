@@ -27,6 +27,7 @@ spec:
       image: gcr.io/kaniko-project/executor
       args:
         - --cache
+        - --compressed-caching=false
         - --reproducible
         - --use-new-run
         - --snapshotMode=redo
