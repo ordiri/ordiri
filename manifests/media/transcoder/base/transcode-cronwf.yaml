@@ -10,5 +10,6 @@ spec:
   successfulJobsHistoryLimit: 4     # Default 3
   failedJobsHistoryLimit: 4         # Default 1
   workflowSpec:
+    entrypoint: transcode-blueray
     workflowTemplateRef:
       name: transcode
