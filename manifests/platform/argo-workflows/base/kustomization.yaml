@@ -50,8 +50,8 @@ helmCharts:
       containerRuntimeExecutor: emissary
     executor:
       resources:
-        requests: 
-          ephemeral-storage: 100Mi
+        limits:
+          ephemeral-storage: 500M
 
 
 resources:
