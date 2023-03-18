@@ -84,7 +84,9 @@ spec:
         - /salesbot
         workingDir: /workspace
         args:
-        - 'server'
+        - server
+        - --static-dir
+        - /staticfiles
         ports:
         - name: salesbotws
           containerPort: 8080
