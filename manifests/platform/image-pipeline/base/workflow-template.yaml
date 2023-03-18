@@ -26,6 +26,11 @@ spec:
     container:
       image: gcr.io/kaniko-project/executor
       args:
+        - --cache
+        - --reproducible
+        - --use-new-run
+        - --snapshotMode=redo
+        - --skip-unused-stages
         - --context=/src
         - --destination={{workflow.parameters.destination}}
       resources:
