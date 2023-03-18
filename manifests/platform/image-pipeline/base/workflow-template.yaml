@@ -35,9 +35,13 @@ spec:
         - --destination={{workflow.parameters.destination}}
       resources:
         requests:
-          memory: 2Gi
+          memory: 2G
           cpu: 1
-          ephemeral-storage: 5Gi
+          ephemeral-storage: 5G
+        limits:
+          memory: 2G
+          cpu: 1
+          ephemeral-storage: 5G
       volumeMounts:
       - name: docker-config
         mountPath: /kaniko/.docker/
