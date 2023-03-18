@@ -13,7 +13,6 @@ spec:
       - deviceClassName: DisplayVGA
         name: GPU
         optional: true
-
       bootDevices:
       - hd
       - network
@@ -30,6 +29,6 @@ spec:
       - device: vda
         hostLocal:
           poolName: kube-workers
-          size: 30Gi
+          size: 60Gi
           volName: root
         name: root
