@@ -193,6 +193,7 @@ func NewDomain(name string, opts ...DomainOption) (*libvirtxml.Domain, error) {
 				},
 			},
 		},
+		MemoryBacking: &libvirtxml.DomainMemoryBacking{},
 		OS: &libvirtxml.DomainOS{
 			Type: &libvirtxml.DomainOSType{
 				Type: "hvm",

@@ -63,12 +63,24 @@ func (r *VirtualMachineReconciler) ensureVolume(ctx context.Context, vm *compute
 
 		hostLocalVolumeName := vm.Name + "-" + disk.HostLocal.VolName
 
-		if _, err := r.LibvirtClient.StorageVolLookupByName(*pool, hostLocalVolumeName); err == nil {
+		sizeWanted := uint64(disk.HostLocal.Size.Value())
+		if pool, err := r.LibvirtClient.StorageVolLookupByName(*pool, hostLocalVolumeName); err == nil {
+			_, cap, _, err := r.LibvirtClient.StorageVolGetInfo(pool)
+			if err != nil {
+				return status, nil, err
+			}
+
+			if sizeWanted-cap > 0 {
+				log.Info(fmt.Sprintf("Resizing drive %s", hostLocalVolumeName))
+				if err := r.LibvirtClient.StorageVolResize(pool, sizeWanted, 0); err != nil {
+					return status, nil, err
+				}
+			}
 			return status, internallibvirt.WithPoolVolume(pool.Name, hostLocalVolumeName, disk.Device), nil
 		}
 
 		volume, err := internallibvirt.NewVolume(hostLocalVolumeName,
-			internallibvirt.WithSize(uint64(disk.HostLocal.Size.Value())),
+			internallibvirt.WithSize(sizeWanted),
 		)
 		if err != nil {
 			return status, nil, fmt.Errorf("error creating new internal volume - %w", err)
