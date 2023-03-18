@@ -10,7 +10,7 @@ spec:
     spec:
       resources:
         cpu: 2
-        memory: 2Gi
+        memory: 4Gi
       userData: !include kube-masters/preseed.sh
       bootDevices:
       - hd
