@@ -28,7 +28,6 @@ spec:
       args:
         - --cache
         - --compressed-caching=false
-        - --reproducible
         - --use-new-run
         - --snapshotMode=redo
         - --context=/src
