@@ -40,8 +40,6 @@ spec:
         limits:
           memory: 10Gi
       volumeMounts:
-      - name: kaniko
-        mountPath: /kaniko
       - name: docker-config
         mountPath: /kaniko/.docker/
       securityContext:
