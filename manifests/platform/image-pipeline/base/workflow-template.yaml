@@ -31,14 +31,13 @@ spec:
         - --reproducible
         - --use-new-run
         - --snapshotMode=redo
-        - --skip-unused-stages
         - --context=/src
         - --destination={{workflow.parameters.destination}}
       resources:
         requests:
           memory: 2G
           cpu: 2
-          ephemeral-storage: 5G
+          ephemeral-storage: 10Gi
         limits:
           memory: 10Gi
       volumeMounts:
