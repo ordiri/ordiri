@@ -26,21 +26,22 @@ spec:
     container:
       image: gcr.io/kaniko-project/executor
       args:
-        # - --cache
-        # - --compressed-caching=false
-        # - --reproducible
+        - --cache
+        - --compressed-caching=false
+        - --reproducible
         - --use-new-run
-        - --snapshotMode=full
+        - --snapshotMode=redo
         - --context=/src
         - --destination={{workflow.parameters.destination}}
       resources:
         requests:
           memory: 2G
           cpu: 2
-          ephemeral-storage: 10Gi
         limits:
           memory: 10Gi
       volumeMounts:
+      - name: kaniko
+        mountPath: /kaniko
       - name: docker-config
         mountPath: /kaniko/.docker/
       securityContext:
@@ -60,3 +61,7 @@ spec:
     - name: docker-config
       configMap:
         name: docker-config
+    - name: kaniko
+      emptyDir:
+        sizeLimit: 10Gi
+        
