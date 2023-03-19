@@ -37,8 +37,10 @@ spec:
       resources:
         requests:
           memory: 2G
-          cpu: 1
+          cpu: 2
           ephemeral-storage: 5G
+        limits:
+          memory: 4G
       volumeMounts:
       - name: docker-config
         mountPath: /kaniko/.docker/
