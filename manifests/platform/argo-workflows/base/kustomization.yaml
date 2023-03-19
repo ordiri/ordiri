@@ -51,7 +51,7 @@ helmCharts:
     executor:
       resources:
         limits:
-          ephemeral-storage: 5G
+          ephemeral-storage: 10Gi
 
 
 resources:
