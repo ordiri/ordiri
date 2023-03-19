@@ -9,8 +9,8 @@ spec:
     matchLabels:
       app: tautulli
   volumeClaimTemplates:
-  - apiVersion: v1		
-    kind: PersistentVolumeClaim		
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
     metadata:
       name: tautulli-config-data
     spec:
