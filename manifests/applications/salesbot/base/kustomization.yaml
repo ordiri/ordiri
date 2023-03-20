@@ -12,4 +12,5 @@ resources:
   - deployment.yaml
   - deployment-website.yaml
   - service.yaml
-  - certificate.yaml
+  - certificate-website.yaml
+  - certificate-app.yaml

@@ -1,0 +1,11 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: salesbot-website-tls
+spec:
+  secretName: salesbot-website-tls
+  dnsNames:
+    - voxora.ai
+  issuerRef:
+    name: letsencrypt
+    kind: ClusterIssuer

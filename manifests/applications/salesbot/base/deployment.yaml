@@ -16,9 +16,9 @@ spec:
       - name: caddyfile
         configMap:
           name: caddyfile-app
-      - name: salesbot-tls
+      - name: salesbot-app-tls
         secret:
-          secretName: salesbot-tls
+          secretName: salesbot-app-tls
       - name: gcloud-credentials
         secret:
           secretName: gcloud-credentials
@@ -28,8 +28,8 @@ spec:
         volumeMounts:
         - name: caddyfile
           mountPath: /opt/caddyfile
-        - name: salesbot-tls
-          mountPath: /opt/salesbot-tls
+        - name: salesbot-app-tls
+          mountPath: /opt/salesbot-app-tls
         readinessProbe:
           httpGet:
             path: /live

@@ -16,9 +16,9 @@ spec:
       - name: caddyfile
         configMap:
           name: caddyfile-website
-      - name: salesbot-tls
+      - name: salesbot-website-tls
         secret:
-          secretName: salesbot-tls
+          secretName: salesbot-website-tls
       - name: webfiles
         emptyDir: {}
       initContainers:
@@ -27,8 +27,8 @@ spec:
         volumeMounts:
         - name: caddyfile
           mountPath: /opt/caddyfile
-        - name: salesbot-tls
-          mountPath: /opt/salesbot-tls
+        - name: salesbot-website-tls
+          mountPath: /opt/salesbot-website-tls
         - name: webfiles
           mountPath: /opt/website
         command:
@@ -43,8 +43,8 @@ spec:
         volumeMounts:
         - name: caddyfile
           mountPath: /opt/caddyfile
-        - name: salesbot-tls
-          mountPath: /opt/salesbot-tls
+        - name: salesbot-website-tls
+          mountPath: /opt/salesbot-website-tls
         - name: webfiles
           mountPath: /opt/website
         readinessProbe:
