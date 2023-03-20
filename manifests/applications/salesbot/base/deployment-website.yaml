@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: salesbot
+  name: salesbot-website
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: salesbot
+      app: salesbot-website
   template:
     metadata:
       labels:
-        app: salesbot
+        app: salesbot-website
     spec:
       volumes:
       - name: caddyfile
