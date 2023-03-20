@@ -43,7 +43,7 @@ spec:
           arguments:
             parameters: 
             - name: url
-              value: "{{=sprig.trimPrefix('.', sprig.join([jsonpath(item.value, '$.prefix'), jsonpath(item.value, '$.zone')])) }}"
+              value: "{{=sprig.trimPrefix('.', sprig.join('.', [jsonpath(item.value, '$.prefix'), jsonpath(item.value, '$.zone')])) }}"
             - name: service_ip
               value: "{{=jsonpath(item.value, '$.service_ip')}}"
             - name: type
