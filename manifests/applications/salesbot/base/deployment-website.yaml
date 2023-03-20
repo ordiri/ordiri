@@ -22,7 +22,7 @@ spec:
       - name: webfiles
         emptyDir: {}
       initContainers:
-      - name: voxora.ai
+      - name: voxora-ai
         image: harbor.dmann.dev/default/salesbot:pending
         volumeMounts:
         - name: caddyfile
