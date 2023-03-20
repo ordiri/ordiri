@@ -1,0 +1,6 @@
+voxora.ai {
+	root * /website
+	encode gzip
+	try_files {path} /index.html
+	file_server
+}

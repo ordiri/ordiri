@@ -2,9 +2,12 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 configMapGenerator:
-  - name: caddyfile
+  - name: caddyfile-app
     files:
-    - "Caddyfile=./config/Caddyfile"
+    - "Caddyfile=./config/Caddyfile.app"
+  - name: caddyfile-website
+    files:
+    - "Caddyfile=./config/Caddyfile.website"
 resources:
   - deployment.yaml
   - deployment-website.yaml

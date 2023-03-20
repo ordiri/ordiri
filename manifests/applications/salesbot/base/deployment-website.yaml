@@ -15,7 +15,7 @@ spec:
       volumes:
       - name: caddyfile
         configMap:
-          name: caddyfile
+          name: caddyfile-website
       - name: salesbot-tls
         secret:
           secretName: salesbot-tls

@@ -1,10 +1,3 @@
-(cors) {
-	@origin{args.0} header Origin {args.1}
-	header @origin{args.0} Access-Control-Allow-Origin "{args.1}"
-	header @origin{args.0} Access-Control-Allow-Headers "content-type, x-requested-with"
-	header @origin{args.0} Vary Origin
-}
-
 :443 {
   root * /opt/salesbot
   tls /opt/salesbot-tls/tls.crt /opt/salesbot-tls/tls.key
@@ -31,14 +24,10 @@
   respond /ready 200
 }
 
-voxora.ai {
-  root * /website
-  file_server
-}
-
 salesbot.dmann.dev {  
   redir https://app.voxora.ai{uri} permanent
 }
+
 salesbot.dmann.xyz {  
   redir https://app.voxora.ai{uri} permanent
 }
