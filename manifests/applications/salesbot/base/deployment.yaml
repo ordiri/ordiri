@@ -55,9 +55,9 @@ spec:
         - name:  https
           containerPort: 443
           protocol: TCP
-        - name:  https
+        - name:  metrics
           containerPort: 8150
-          protocol: metrics
+          protocol: TCP
         resources:
       - name: salesbot
         image: harbor.dmann.dev/default/salesbot:pending
