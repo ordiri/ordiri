@@ -43,7 +43,7 @@ spec:
           arguments:
             parameters: 
             - name: url
-              value: "{{=jsonpath(item.value, '$.prefix')}}.{{=jsonpath(item.value, '$.zone')}}"
+              value: "{{=list jsonpath(item.value, '$.prefix') jsonpath(item.value, '$.zone') | join "." | trimPrefix "." }}"
             - name: service_ip
               value: "{{=jsonpath(item.value, '$.service_ip')}}"
             - name: type
