@@ -10,12 +10,6 @@ metadata:
     
     k8s.dmann.xyz/cloudflare-domain-voxora-app: 'app'
     k8s.dmann.xyz/cloudflare-zone-voxora-app: voxora.ai
-
-    k8s.dmann.xyz/cloudflare-domain-voxora-root: ''
-    k8s.dmann.xyz/cloudflare-zone-voxora-root: voxora.ai
-    
-    k8s.dmann.xyz/cloudflare-domain-voxora-www: 'www'
-    k8s.dmann.xyz/cloudflare-zone-voxora-www: voxora.ai
 spec:
   selector:
     app: salesbot
