@@ -1,5 +1,6 @@
 voxora.ai {
 	root * /website
+  tls /opt/salesbot-tls/tls.crt /opt/salesbot-tls/tls.key
 	encode gzip
 	try_files {path} /index.html
 	file_server
