@@ -1,0 +1,12 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: salesbot
+spec:
+  selector:
+    matchLabels:
+      app: salesbot
+  podMetricsEndpoints:
+  - port: 8150
+  namespaceSelector:
+    any: true

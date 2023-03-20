@@ -7,6 +7,10 @@ metadata:
     k8s.dmann.xyz/cloudflare-zone-dmann-xyz: dmann.xyz
     k8s.dmann.xyz/cloudflare-domain-dmann-dev: salesbot
     k8s.dmann.xyz/cloudflare-zone-dmann-dev: dmann.dev
+    k8s.dmann.xyz/cloudflare-domain-voxora-root: '@'
+    k8s.dmann.xyz/cloudflare-zone-voxora-root: voxora.ai
+    k8s.dmann.xyz/cloudflare-domain-voxora-www: 'www'
+    k8s.dmann.xyz/cloudflare-zone-voxora-www: voxora.ai
 spec:
   selector:
     app: salesbot
