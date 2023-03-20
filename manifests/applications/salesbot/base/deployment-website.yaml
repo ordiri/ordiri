@@ -25,10 +25,6 @@ spec:
       - name: voxora-ai
         image: harbor.dmann.dev/default/salesbot:pending
         volumeMounts:
-        - name: caddyfile
-          mountPath: /opt/caddyfile
-        - name: salesbot-website-tls
-          mountPath: /opt/salesbot-website-tls
         - name: webfiles
           mountPath: /opt/website
         command:
