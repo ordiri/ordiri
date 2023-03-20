@@ -25,3 +25,24 @@ spec:
     name: http
   - port: 443
     name: https
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: salesbot-website
+  annotations:
+    k8s.dmann.xyz/cloudflare-domain-voxora-root: ''
+    k8s.dmann.xyz/cloudflare-zone-voxora-root: voxora.ai
+    
+    k8s.dmann.xyz/cloudflare-domain-voxora-www: 'www'
+    k8s.dmann.xyz/cloudflare-zone-voxora-www: voxora.ai
+spec:
+  selector:
+    app: salesbot-web
+  ipFamilyPolicy: PreferDualStack
+  ports:
+  - port: 443
+    name: https
+

@@ -31,6 +31,11 @@
   respond /ready 200
 }
 
+voxora.ai {
+  root * /website
+  file_server
+}
+
 salesbot.dmann.dev {  
   redir https://app.voxora.ai{uri} permanent
 }
