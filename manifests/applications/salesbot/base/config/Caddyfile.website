@@ -5,3 +5,8 @@ voxora.ai {
 	try_files {path} /index.html
 	file_server
 }
+
+:80 {
+  respond /live 200
+  respond /ready 200
+}
