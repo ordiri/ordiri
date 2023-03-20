@@ -50,6 +50,8 @@ spec:
               value: "{{=jsonpath(item.value, '$.type')}}"
             - name: zone
               value: "{{=jsonpath(item.value, '$.zone')}}"
+            - name: proxy
+              value: "{{=jsonpath(item.value, '$.proxy')}}"
             - name: action
               value: '{{workflow.parameters.action}}'
           withParam: "{{tasks.extract-dns-annotations.outputs.result}}"
