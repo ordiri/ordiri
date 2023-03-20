@@ -1,6 +1,6 @@
 :443 {
   root * /opt/salesbot
-  tls /opt/salesbot-tls/tls.crt /opt/salesbot-tls/tls.key
+  tls /opt/salesbot-app-tls/tls.crt /opt/salesbot-app-tls/tls.key
 
   # Compress responses according to Accept-Encoding headers
   encode gzip zstd
