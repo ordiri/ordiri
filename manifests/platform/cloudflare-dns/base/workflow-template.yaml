@@ -159,6 +159,12 @@ spec:
             -H "Authorization: Bearer $cloudflare_auth_token" \
             -H "Content-Type: application/json" | jq -r '{"result"}[] | .[0] | .id // ""')
 
+          if [[ -z "${zoneid}" ]]; then
+            echo "Unable to resolve the zone ID"
+            exit 2
+          fi
+          
+
 
           # if here, the dns record needs updating
           # get the dns record id 
