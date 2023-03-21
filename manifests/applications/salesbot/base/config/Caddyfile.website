@@ -6,7 +6,7 @@
 
   handle_path /mailing-list-subscribe/* {
     reverse_proxy voxora.us8.list-manage.com:443
-	  header_up Host voxora.us8.list-manage.com
+	  header Host voxora.us8.list-manage.com
   }
 
 	root * /opt/website/website
