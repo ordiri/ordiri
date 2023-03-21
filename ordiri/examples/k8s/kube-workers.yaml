@@ -18,7 +18,7 @@ spec:
       - network
       resources:
         cpu: 6
-        memory: 6Gi
+        memory: 16Gi
       networkInterfaces:
       - mac: ""
         network: kubevms
@@ -29,6 +29,6 @@ spec:
       - device: vda
         hostLocal:
           poolName: kube-workers
-          size: 60Gi
+          size: 100Gi
           volName: root
         name: root
