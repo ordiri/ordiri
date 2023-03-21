@@ -123,9 +123,16 @@ func WithMemory(size uint) DomainOption {
 		if domain.Memory == nil {
 			domain.Memory = &libvirtxml.DomainMemory{}
 		}
+		if domain.CurrentMemory == nil {
+			domain.CurrentMemory = &libvirtxml.DomainCurrentMemory{}
+		}
+
+		domain.CurrentMemory.Value = size
+		domain.CurrentMemory.Unit = "KiB"
 
 		domain.Memory.Value = size
 		domain.Memory.Unit = "KiB"
+
 		return nil
 	}
 }
