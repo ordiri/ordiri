@@ -9,6 +9,7 @@ configMapGenerator:
     files:
     - "Caddyfile=./config/Caddyfile.website"
 resources:
+  - ory
   - deployment.yaml
   - deployment-website.yaml
   - service.yaml
