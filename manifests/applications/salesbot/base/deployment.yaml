@@ -85,11 +85,11 @@ spec:
           mountPath: /opt/gcloud
         command:
         - /salesbot
-        workingDir: /workspace
         args:
         - server
         - --static-dir
         - /staticfiles
+        workingDir: /workspace
         ports:
         - name: salesbotws
           containerPort: 8080
