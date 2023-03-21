@@ -1,6 +1,8 @@
 :443 {
   tls /opt/salesbot-website-tls/tls.crt /opt/salesbot-website-tls/tls.key
 
+  log
+
   reverse_proxy /mailing-list/ voxora.us8.list-manage.com:443 {
 	  header_up Host {upstream_hostport}
     rewrite "/subscribe/post?u=676868f1afe9c99f8a8fd6f2a&amp;id=8fd520dbf3&amp;f_id=00466fe0f0"
