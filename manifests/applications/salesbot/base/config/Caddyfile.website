@@ -1,14 +1,5 @@
 :443 {
   tls /opt/salesbot-website-tls/tls.crt /opt/salesbot-website-tls/tls.key
-
-  log
-
-
-  handle_path /mailing-list-subscribe/* {
-    reverse_proxy voxora.us8.list-manage.com:443
-	  header Host voxora.us8.list-manage.com
-  }
-
 	root * /opt/website/website
 	encode gzip
 	try_files {path} /index.html
