@@ -34,7 +34,7 @@ metadata:
     k8s.dmann.xyz/cloudflare-zone-voxora-www: voxora.ai
 spec:
   selector:
-    app: salesbot-web
+    app: salesbot-website
   ipFamilyPolicy: PreferDualStack
   ports:
   - port: 443
