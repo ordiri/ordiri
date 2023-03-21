@@ -23,11 +23,3 @@
   respond /live 200
   respond /ready 200
 }
-
-salesbot.dmann.dev {  
-  redir https://app.voxora.ai{uri} permanent
-}
-
-salesbot.dmann.xyz {  
-  redir https://app.voxora.ai{uri} permanent
-}
