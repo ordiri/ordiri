@@ -13,7 +13,9 @@ helmCharts:
       config:
         dsn: postgres://foo:bar@baz:1234/db'
         secrets:
-          system: 'randomsecret'
+          system:
+          - 'randomsecret'
+          
         urls:
           self:
             issuer: https://my-hydra/'
