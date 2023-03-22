@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+spec:
+  serviceName: postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      dnsConfig:
+        options:
+        - name: ndots
+          value: "1"
+      containers:
+      - name: postgres
+        image: postgres:15.2 # Sets Image
+        ports:
+        - containerPort: 5432
+          name: postgres
+        envFrom:
+        - configMapRef:
+            name: postgres-config
+        volumeMounts:
+        - mountPath: /var/lib/postgresql
+          name: data
+  volumeClaimTemplates: 
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: data
+    spec:
+      storageClassName: ceph-retain
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 100Gi
