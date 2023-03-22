@@ -87,8 +87,8 @@ spec:
         - /salesbot
         args:
         - server
-        - --static-dir
-        - /staticfiles
+        - --ory-endpoint
+        - https://identity.voxora.ai
         workingDir: /workspace
         ports:
         - name: salesbotws
