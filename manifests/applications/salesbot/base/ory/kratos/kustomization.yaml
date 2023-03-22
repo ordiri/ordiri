@@ -4,7 +4,7 @@ kind: Kustomization
 helmCharts:
 - name: kratos
   repo: https://k8s.ory.sh/helm/charts
-  version: 7.0.4
+  version: v0.28.2
   releaseName: kratos
   namespace: salesbot
   includeCRDs: true
