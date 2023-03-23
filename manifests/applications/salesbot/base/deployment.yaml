@@ -89,6 +89,8 @@ spec:
         - server
         - --ory-endpoint
         - https://identity.voxora.ai
+        - --environment
+        - prod
         workingDir: /workspace
         ports:
         - name: salesbotws
