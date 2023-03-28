@@ -4,7 +4,7 @@ kind: Kustomization
 helmCharts:
 - name: hydra
   repo: https://k8s.ory.sh/helm/charts
-  version: v0.28.2
+  version: 0.29.0
   releaseName: hydra
   namespace: salesbot
   includeCRDs: true
