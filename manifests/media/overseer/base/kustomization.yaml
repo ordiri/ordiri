@@ -13,9 +13,10 @@ configMapGenerator:
   - name: caddyfile
     files:
     - "Caddyfile=./config/Caddyfile"
-    
+
 resources:
 - deployment.yaml
 - pvc.yaml
 - service.yaml
 - certificate.yaml
+- ingress.yaml
