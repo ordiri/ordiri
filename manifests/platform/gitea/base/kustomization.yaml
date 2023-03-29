@@ -28,7 +28,7 @@ patches:
     template:
       spec:
         containers:
-        - name: gitea-postgresql
+        - name: postgresql
           command: 
           - /bin/sh
           - '-c'
