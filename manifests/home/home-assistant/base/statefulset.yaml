@@ -50,7 +50,7 @@ spec:
           echo "Postgres is ready"
       containers:
       - name: home-assistant
-        image: ghcr.io/home-assistant/home-assistant:stable
+        image: ghcr.io/home-assistant/home-assistant:stable@sha256:e7dfc608bb75a75a105a4a98c72873113d7f75f1102122127caf9653676ecd38
         securityContext:
           capabilities:
             add:
