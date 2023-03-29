@@ -21,6 +21,9 @@ spec:
         secret:
           secretName: overseer-tls
           defaultMode: 0777
+      - name: caddyfile
+        configMap:
+            name: caddyfile
       - name: media-nfs
         nfs:
           server: ceph.homelab.dmann.xyz
@@ -29,8 +32,41 @@ spec:
         persistentVolumeClaim:
           claimName: overseer-config-data
       containers:
+      - name: proxy
+        image: docker.io/caddy:latest
+        volumeMounts:
+        - name: caddyfile
+          mountPath: /opt/caddyfile
+        - name: overseer-tls
+          mountPath: /opt/overseer-tls
+        readinessProbe:
+          httpGet:
+            path: /live
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /live
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        command:
+        - caddy
+        args:
+        - run
+        - --config
+        - /opt/caddyfile/Caddyfile
+        ports:
+        - name:  http
+          containerPort: 80
+          protocol: TCP
+        - name:  https
+          containerPort: 443
+          protocol: TCP
+        resources:
       - name: overseer
-        image: lscr.io/linuxserver/overseerr:latest
+        image: lscr.io/linuxserver/overseerr:1.32.5
         volumeMounts:
         - name: media-nfs
           mountPath: /media
