@@ -23,6 +23,7 @@ patches:
   kind: StatefulSet
   metadata:
     name: gitea-postgresql
+    namespace: gitea
   spec:
     template:
       spec:
