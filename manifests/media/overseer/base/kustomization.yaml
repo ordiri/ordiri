@@ -8,8 +8,13 @@ secretGenerator:
     literals:
       - password=password
 
+
+configMapGenerator:
+  - name: caddyfile
+    files:
+    - "Caddyfile=./config/Caddyfile"
+    
 resources:
-- proxy
 - deployment.yaml
 - pvc.yaml
 - service.yaml
