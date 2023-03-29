@@ -15,6 +15,7 @@ patches:
   metadata:
     name: gitea
   spec:
+    replicas: 0
     template:
       spec:
         serviceAccountName: gitea
