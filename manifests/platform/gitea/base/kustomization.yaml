@@ -18,21 +18,21 @@ patches:
     template:
       spec:
         serviceAccountName: gitea
-- |
-  apiVersion: apps/v1
-  kind: StatefulSet
-  metadata:
-    name: gitea-postgresql
-    namespace: gitea
-  spec:
-    template:
-      spec:
-        containers:
-        - name: postgresql
-          command: 
-          - /bin/sh
-          - '-c'
-          - sleep 100000;
+# - |
+#   apiVersion: apps/v1
+#   kind: StatefulSet
+#   metadata:
+#     name: gitea-postgresql
+#     namespace: gitea
+#   spec:
+#     template:
+#       spec:
+#         containers:
+#         - name: postgresql
+#           command: 
+#           - /bin/sh
+#           - '-c'
+#           - sleep 100000;
 
 helmCharts:
 - name: gitea
