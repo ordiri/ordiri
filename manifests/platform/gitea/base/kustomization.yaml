@@ -1,6 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
+# - ../../../../../../common/components/postgres
 - service.yaml
 - certificate.yaml
 - oidc-secretclass.yaml
@@ -17,11 +18,24 @@ patches:
     template:
       spec:
         serviceAccountName: gitea
+  apiVersion: apps/v1
+  kind: StatefulSet
+  metadata:
+    name: gitea-postgresql
+  spec:
+    template:
+      spec:
+        containers:
+        - name: gitea-postgresql
+          command: 
+          - /bin/sh
+          - '-c'
+          - sleep 100000;
 
 helmCharts:
 - name: gitea
   repo: https://dl.gitea.io/charts/
-  version: 7.0.4
+  version: 8.0.2
   releaseName: gitea
   namespace: gitea
   includeCRDs: true
@@ -29,7 +43,6 @@ helmCharts:
     image:
       registry: harbor.dmann.dev
       repository: docker.io/gitea/gitea
-      # tag: 1.18-dev
     dnsConfig: 
       options:
       - name: ndots
