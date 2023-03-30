@@ -67,6 +67,8 @@ spec:
         env:
         - name: GOOGLE_APPLICATION_CREDENTIALS
           value: /opt/gcloud/credentials.json
+        - name: POSTGRES_DSN
+          value: /opt/gcloud/credentials.json
 
         # readinessProbe:
         #   httpGet:

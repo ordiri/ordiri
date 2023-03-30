@@ -9,9 +9,9 @@ configMapGenerator:
     files:
     - "Caddyfile=./config/Caddyfile.website"
 resources:
-  # - ory
-  - deployment.yaml
-  - deployment-website.yaml
-  - service.yaml
-  - certificate-website.yaml
-  - certificate-app.yaml
+- ../../../../../../common/components/postgres
+- deployment.yaml
+- deployment-website.yaml
+- service.yaml
+- certificate-website.yaml
+- certificate-app.yaml
