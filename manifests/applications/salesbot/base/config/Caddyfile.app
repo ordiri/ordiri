@@ -14,7 +14,7 @@
   }
   respond @options 204
 
-	header Access-Control-Allow-Origin "app.voxora.ai"
+	header Access-Control-Allow-Origin "beta.voxora.ai"
 	header Access-Control-Allow-Headers "content-type, x-requested-with"
 	header Vary Origin
 }

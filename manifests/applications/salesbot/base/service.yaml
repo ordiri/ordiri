@@ -2,6 +2,9 @@ apiVersion: v1
 kind: Service
 metadata:
   name: salesbot
+  annotations:
+    k8s.dmann.xyz/cloudflare-domain-voxora-app: 'beta'
+    k8s.dmann.xyz/cloudflare-zone-voxora-app: voxora.ai
 spec:
   selector:
     app: salesbot

@@ -5,7 +5,7 @@ metadata:
 spec:
   secretName: salesbot-app-tls
   dnsNames:
-    - app.voxora.ai
+    - beta.voxora.ai
   issuerRef:
     name: letsencrypt
     kind: ClusterIssuer
