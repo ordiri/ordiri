@@ -69,7 +69,7 @@ spec:
           value: /opt/gcloud/credentials.json
           
         - name: DB_HOST
-          value: postgres.home-assistant.svc.cluster.local:5432
+          value: postgres.salesbot.svc.cluster.local:5432
         - name: DB_USERNAME
           value: admin
         - name: DB_PASSWORD
