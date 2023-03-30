@@ -67,8 +67,13 @@ spec:
         env:
         - name: GOOGLE_APPLICATION_CREDENTIALS
           value: /opt/gcloud/credentials.json
-        - name: POSTGRES_DSN
-          value: /opt/gcloud/credentials.json
+          
+        - name: DB_HOST
+          value: postgres.home-assistant.svc.cluster.local:5432
+        - name: DB_USERNAME
+          value: admin
+        - name: DB_PASSWORD
+          value: psltest
 
         # readinessProbe:
         #   httpGet:
