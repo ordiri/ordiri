@@ -9,7 +9,7 @@ configMapGenerator:
     files:
     - "Caddyfile=./config/Caddyfile.website"
 resources:
-- ../../../../../../common/components/postgres
+- ../../../common/components/postgres
 - deployment.yaml
 - deployment-website.yaml
 - service.yaml
