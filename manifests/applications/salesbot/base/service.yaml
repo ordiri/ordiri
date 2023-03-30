@@ -2,14 +2,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: salesbot
-  annotations:
-    k8s.dmann.xyz/cloudflare-domain-dmann-xyz: salesbot
-    k8s.dmann.xyz/cloudflare-zone-dmann-xyz: dmann.xyz
-    k8s.dmann.xyz/cloudflare-domain-dmann-dev: salesbot
-    k8s.dmann.xyz/cloudflare-zone-dmann-dev: dmann.dev
-    
-    k8s.dmann.xyz/cloudflare-domain-voxora-app: 'app'
-    k8s.dmann.xyz/cloudflare-zone-voxora-app: voxora.ai
 spec:
   selector:
     app: salesbot
