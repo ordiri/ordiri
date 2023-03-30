@@ -6,7 +6,7 @@
   encode gzip zstd
   
   # Serve everything else from the file system
-  reverse_proxy localhost:8080
+  reverse_proxy http://10.0.2.102:4000
 
   header Access-Control-Allow-Methods "POST, GET, OPTIONS"
   @options {
