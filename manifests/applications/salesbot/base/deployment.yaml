@@ -103,7 +103,7 @@ spec:
         - --ory-endpoint
         - https://identity.voxora.ai
         - --environment
-        - prod
+        - beta
         workingDir: /workspace
         ports:
         - name: salesbotws
