@@ -78,12 +78,13 @@ spec:
           value: '5432'
         - name: DB_USERNAME
           valueFrom:
-            configMap:
+            configMapKeyRef:
               name: postgres-config
               key: POSTGRES_USERNAME
+
         - name: DB_PASSWORD
           valueFrom:
-            configMap:
+            configMapKeyRef:
               name: postgres-config
               key: POSTGRES_PASSWORD
 
