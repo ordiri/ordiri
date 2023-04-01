@@ -77,9 +77,15 @@ spec:
         - name: DB_PORT
           value: '5432'
         - name: DB_USERNAME
-          value: admin
+          valueFrom:
+            configMap:
+              name: postgres-config
+              key: POSTGRES_USERNAME
         - name: DB_PASSWORD
-          value: psltest
+          valueFrom:
+            configMap:
+              name: postgres-config
+              key: POSTGRES_PASSWORD
 
         # readinessProbe:
         #   httpGet:
