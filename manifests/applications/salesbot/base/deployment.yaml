@@ -76,6 +76,8 @@ spec:
           value: postgres.salesbot.svc.cluster.local
         - name: DB_PORT
           value: '5432'
+        - name: DB_NAME
+          value: postgres
         - name: DB_USERNAME
           valueFrom:
             configMapKeyRef:
