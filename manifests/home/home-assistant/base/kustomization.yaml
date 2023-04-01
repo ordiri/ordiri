@@ -15,7 +15,7 @@ configMapGenerator:
     files:
     - default.yaml=config/mdns-tunnel-default.yaml
 components:
-- ../../common/components/postgres
+- ../../../common/components/postgres
 resources:
 - config/packages
 - statefulset.yaml
