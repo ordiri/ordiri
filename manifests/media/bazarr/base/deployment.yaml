@@ -76,7 +76,7 @@ spec:
         - name: bazarr-tls
           mountPath: /opt/bazarr-tls
       - name: bazarr
-        image: lscr.io/linuxserver/bazarr:development@sha256:c9a739c029a1b74cbc9bd969da09633af176e1bfa7ee0fa3aac7659a687e521a
+        image: lscr.io/linuxserver/bazarr:development@sha256:3185958d9dc23b691850cd74dc3f9447ad19de7878bd77acdcababfaa9bc8d02
         volumeMounts:
         - name: media-nfs
           mountPath: /media
