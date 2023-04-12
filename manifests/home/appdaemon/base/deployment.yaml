@@ -78,7 +78,7 @@ spec:
         - name: appdaemon-tls
           mountPath: /opt/appdaemon-tls
       - name: appdaemon
-        image: docker.io/acockburn/appdaemon:dev@sha256:988ff690f327979b1c00f87b65ff5f999a19d2a576da53f8a2dedc975f1ebb97
+        image: docker.io/acockburn/appdaemon:dev@sha256:ec185e1ea20558306ff76e4b0d8e5a1a42e1f635d1296131356be7d882106df0
         env:
         - name: DASH_URL
           value: https://appdaemon.dmann.xyz
