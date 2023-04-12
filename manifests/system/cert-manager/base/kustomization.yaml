@@ -22,32 +22,32 @@ helmCharts:
     installCRDs: true
 
 patches:
-- |
-  apiVersion: apps/v1
-  kind: Deployment
-  metadata:
-    name: cert-manager
-    namespace: cert-manager
-  spec:
-    template:
-      spec:
-        volumes:
-        - name: cloudflare-api
-          csi:
-            driver: secrets-store.csi.k8s.io
-            readOnly: true
-            volumeAttributes:
-              secretProviderClass: "vault-cert-manager-cloudflare-token"
-        - name: zerossl-api
-          csi:
-            driver: secrets-store.csi.k8s.io
-            readOnly: true
-            volumeAttributes:
-              secretProviderClass: "vault-cert-manager-zerossl-token"
-        containers:
-        - name: cert-manager-controller
-          volumeMounts:
-          - name:  cloudflare-api
-            mountPath:  /run/secrets/cloudflare-api
-          - name:  zerossl-api
-            mountPath:  /run/secrets/zerossl-api
+- patch: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: cert-manager
+      namespace: cert-manager
+    spec:
+      template:
+        spec:
+          volumes:
+          - name: cloudflare-api
+            csi:
+              driver: secrets-store.csi.k8s.io
+              readOnly: true
+              volumeAttributes:
+                secretProviderClass: "vault-cert-manager-cloudflare-token"
+          - name: zerossl-api
+            csi:
+              driver: secrets-store.csi.k8s.io
+              readOnly: true
+              volumeAttributes:
+                secretProviderClass: "vault-cert-manager-zerossl-token"
+          containers:
+          - name: cert-manager-controller
+            volumeMounts:
+            - name:  cloudflare-api
+              mountPath:  /run/secrets/cloudflare-api
+            - name:  zerossl-api
+              mountPath:  /run/secrets/zerossl-api

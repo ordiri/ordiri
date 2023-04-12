@@ -9,15 +9,15 @@ resources:
 - sa.yaml
 
 patches:
-- |
-  apiVersion: apps/v1
-  kind: StatefulSet
-  metadata:
-    name: gitea
-  spec:
-    template:
-      spec:
-        serviceAccountName: gitea
+- patch: |
+    apiVersion: apps/v1
+    kind: StatefulSet
+    metadata:
+      name: gitea
+    spec:
+      template:
+        spec:
+          serviceAccountName: gitea
 # - |
 #   apiVersion: apps/v1
 #   kind: StatefulSet

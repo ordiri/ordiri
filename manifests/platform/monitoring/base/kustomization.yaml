@@ -97,7 +97,7 @@ helmCharts:
           tls_skip_verify_insecure: false
 
 patches:
-  - |
+- patch: |
     apiVersion: apps/v1
     kind: Deployment
     metadata:
