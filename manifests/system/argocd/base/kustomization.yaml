@@ -109,7 +109,7 @@ resources:
 - oidc-secretclass.yaml
 
 patches:
-  - |
+- patch: |
     apiVersion: v1
     kind: Service
     metadata:
@@ -121,7 +121,8 @@ patches:
         k8s.dmann.xyz/cloudflare-zone-dmann-dev: dmann.dev
     spec:
       ipFamilyPolicy: PreferDualStack
-  - |
+
+- patch: |
     apiVersion: apps/v1
     kind: Deployment
     metadata:
@@ -141,7 +142,7 @@ patches:
             volumeMounts:
             - name:  argocd-oidc-creds
               mountPath:  /run/secrets/oidc
-  - |
+- patch: |
     apiVersion: apps/v1
     kind: Deployment
     metadata:
@@ -153,7 +154,7 @@ patches:
             options:
             - name: ndots
               value: "1"
-  - |
+- patch: |
     apiVersion: apps/v1
     kind: Deployment
     metadata:
@@ -165,7 +166,7 @@ patches:
             options:
             - name: ndots
               value: "1"
-  - |
+- patch: |
     apiVersion: apps/v1
     kind: Deployment
     metadata:
