@@ -62,7 +62,7 @@ spec:
           - name: namespace
           - name: name
       script:
-        image: docker.io/alpine/k8s:1.26.1
+        image: docker.io/alpine/k8s:1.27.1
         command: [bash]
         source: |
           #!/usr/bin/env bash
@@ -136,7 +136,7 @@ spec:
           volumeAttributes:
             secretProviderClass: "vault-dns-cloudflare-token"
       script:
-        image: docker.io/alpine/k8s:1.26.1
+        image: docker.io/alpine/k8s:1.27.1
         command: [bash]
         volumeMounts:
         - name:  cloudflare-api
