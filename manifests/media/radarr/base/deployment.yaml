@@ -76,7 +76,7 @@ spec:
         - name: radarr-tls
           mountPath: /opt/radarr-tls
       - name: radarr
-        image: lscr.io/linuxserver/radarr:develop@sha256:c1b6859095409b695e3f90fa382449cf57126d7daff6358d808d6b885706bb1a
+        image: lscr.io/linuxserver/radarr:develop@sha256:4732ff1115121f8f0a2f6486dd287fbffca0f44f21394a9b6b386b06d53b3e69
         volumeMounts:
         - name: media-nfs
           mountPath: /media
