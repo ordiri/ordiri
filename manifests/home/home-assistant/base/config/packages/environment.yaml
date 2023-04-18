@@ -1,0 +1,27 @@
+# This was written by ChatGPT...
+environment:
+  automation:
+  - description: ""
+    mode: single
+    trigger:
+      - platform: time
+        at: "11:30:00"
+    condition: []
+    action:
+      - type: turn_off
+        device_id: deeb1b9f62cd6fb2ee6541b102556913
+        entity_id: switch.tp_link_smart_plug_c659
+        domain: switch
+    alias: environment.lux.off
+  - description: ""
+    mode: single
+    trigger:
+      - platform: time
+        at: "23:00:00"
+    condition: []
+    action:
+      - type: turn_on
+        device_id: deeb1b9f62cd6fb2ee6541b102556913
+        entity_id: switch.tp_link_smart_plug_c659
+        domain: switch
+    alias: environment.lux.on
