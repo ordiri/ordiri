@@ -7,4 +7,5 @@ entrypointDiscovery:
     - test.test
     - test.test2
     - core.kubernetes.generic
+    - core.from.sancire.config
     
