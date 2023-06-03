@@ -1,8 +1,7 @@
 entrypointDiscovery:
 - type: kustomize
-  regex: /home-assistant/overlays/(?P<overlay>[^/]+)
+  regex: home/(?P<name>[^/]+)/overlays/(?P<overlay>[^/]+)
   context:
-    name: home-assistant
     policies:
     - test.test
     - test.test2
