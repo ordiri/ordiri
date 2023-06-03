@@ -77,7 +77,7 @@ spec:
         - name: sabnzbd-tls
           mountPath: /opt/sabnzbd-tls
       - name: sabnzbd
-        image: lscr.io/linuxserver/sabnzbd:latest@sha256:199c1bad0fa9d627f5aead50d122ab6acf3330099f5217020618c97ca3a7c602
+        image: lscr.io/linuxserver/sabnzbd:unstable
         volumeMounts:
         - name: media-nfs
           mountPath: /media
