@@ -78,7 +78,7 @@ spec:
         path: /homelab/media
         server: ceph.homelab.dmann.xyz
     container:
-      image: docker.io/alpine/k8s:1.26.1
+      image: docker.io/alpine/k8s:1.27.1
       command:
       - /bin/sh
       - -x
