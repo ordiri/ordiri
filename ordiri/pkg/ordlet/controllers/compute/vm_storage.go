@@ -71,7 +71,7 @@ func (r *VirtualMachineReconciler) ensureVolume(ctx context.Context, vm *compute
 			}
 
 			if sizeWanted-cap > 0 {
-				log.Info(fmt.Sprintf("Resizing drive %s", hostLocalVolumeName))
+				log.V(8).Info(fmt.Sprintf("Resizing drive %s", hostLocalVolumeName))
 				if err := r.LibvirtClient.StorageVolResize(pool, sizeWanted, 0); err != nil {
 					return status, nil, err
 				}

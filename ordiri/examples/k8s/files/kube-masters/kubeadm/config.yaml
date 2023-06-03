@@ -12,8 +12,8 @@ kubernetesVersion: stable
 controlPlaneEndpoint: "cluster.homelab.dmann.xyz:6443"
 clusterName: "homelab"
 networking:
-  podSubnet: "10.240.0.0/16,2403:5806:97ec:6300::/56"
-  serviceSubnet: "10.241.0.0/16,2403:5806:97ec:6400::/112"
+  podSubnet: "10.240.0.0/16,2403:5807:c863:6300::/56"
+  serviceSubnet: "10.241.0.0/16,2403:5807:c863:6400::/112"
 apiServer:
   certSANs:
   - cluster.homelab.dmann.xyz

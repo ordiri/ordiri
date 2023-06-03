@@ -9,7 +9,7 @@ Type=simple
 Environment=KUBECONFIG=/etc/ordiri.conf
 Environment=VAULT_ADDR=https://vault.homelab.dmann.xyz:8200
 
-ExecStart=/usr/local/bin/ordlet -zap-log-level=5
+ExecStart=/usr/local/bin/ordlet -zap-log-level=2
 Restart=always
 RestartSec=10s
 

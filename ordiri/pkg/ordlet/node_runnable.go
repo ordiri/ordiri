@@ -141,7 +141,7 @@ func (clnr *createLocalNodeRunnable) Start(ctx context.Context) error {
 	}
 
 	log := clnr.log.WithValues("hostname", clnr.Node.Name)
-	log.Info("Starting local node runner")
+	log.V(8).Info("Starting local node runner")
 
 	ovsClient := sdn.Ovs()
 	if err := ovsClient.VSwitch.AddBridge(sdn.ExternalSwitchName); err != nil {
@@ -198,7 +198,7 @@ func (clnr *createLocalNodeRunnable) Start(ctx context.Context) error {
 		return err
 	}
 
-	var updateAddrs = func(node *corev1alpha1.Node) (bool, error) {
+	updateAddrs := func(node *corev1alpha1.Node) (bool, error) {
 		iface, err := net.InterfaceByName("ordiri-external")
 		if err != nil {
 			return false, err
@@ -255,14 +255,14 @@ func (clnr *createLocalNodeRunnable) Start(ctx context.Context) error {
 	}
 
 	if clnr.Node.UID == "" {
-		log.Info("creating node")
+		log.V(8).Info("creating node")
 		node, err := clnr.client.CoreV1alpha1().Nodes().Create(ctx, clnr.Node, v1.CreateOptions{})
 		if err != nil {
 			return err
 		}
 		clnr.Node = node
 	} else {
-		log.Info("updating existing node")
+		log.V(8).Info("updating existing node")
 		node, err := clnr.client.CoreV1alpha1().Nodes().Update(ctx, clnr.Node, v1.UpdateOptions{})
 		if err != nil {
 			return err
@@ -279,7 +279,7 @@ func (clnr *createLocalNodeRunnable) Start(ctx context.Context) error {
 	}
 
 	for _, device := range devices {
-		log.Info("registering device", "device", *device)
+		log.V(8).Info("registering device", "device", *device)
 		found := false
 		for _, existing := range clnr.Node.Status.Devices {
 			if existing.Address == device.FullPath {
@@ -297,13 +297,13 @@ func (clnr *createLocalNodeRunnable) Start(ctx context.Context) error {
 		}
 	}
 
-	log.Info("updating existing node")
+	log.V(8).Info("updating existing node")
 
 	if _, err := clnr.client.CoreV1alpha1().Nodes().UpdateStatus(ctx, clnr.Node, v1.UpdateOptions{}); err != nil {
 		return err
 	}
 
-	log.Info("node runnable complette")
+	log.V(8).Info("node runnable complette")
 
 	return nil
 }
@@ -373,19 +373,24 @@ func (clnr *createLocalNodeRunnable) createCephSecret() error {
 
 	return nil
 }
+
 func (clnr *createLocalNodeRunnable) NeedLeaderElection() bool {
 	return false
 }
+
 func (clnr *createLocalNodeRunnable) InjectClient(k8Client versioned.Interface) error {
 	clnr.client = k8Client
 	return nil
 }
+
 func (clnr *createLocalNodeRunnable) InjectLogger(log logr.Logger) error {
 	clnr.log = log
 	return nil
 }
 
-var _ manager.Runnable = &createLocalNodeRunnable{}
-var _ manager.LeaderElectionRunnable = &createLocalNodeRunnable{}
-var _ inject.Logger = &createLocalNodeRunnable{}
-var _ NodeProvider = &createLocalNodeRunnable{}
+var (
+	_ manager.Runnable               = &createLocalNodeRunnable{}
+	_ manager.LeaderElectionRunnable = &createLocalNodeRunnable{}
+	_ inject.Logger                  = &createLocalNodeRunnable{}
+	_ NodeProvider                   = &createLocalNodeRunnable{}
+)

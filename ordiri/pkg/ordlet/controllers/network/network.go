@@ -89,7 +89,7 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 			if err := r.NetworkManager.RemoveNetwork(ctx, nw.Name); err != nil {
 				return ctrl.Result{}, err
 			}
-			log.Info("network references the node but the node doesn't want it, removing")
+			log.V(8).Info("network references the node but the node doesn't want it, removing")
 		} else {
 			log.V(5).Info("network not on this node, skipping")
 		}
@@ -141,7 +141,7 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 
 				if !hasGateway4Ip {
 					// panic("missing gateway ip")
-					log.Info("allocating gateway IP", "blockName", "_shared::gateway")
+					log.V(8).Info("allocating gateway IP", "blockName", "_shared::gateway")
 					allocated, err := r.Allocator.Allocate(ctx, &api.AllocateRequest{
 						BlockName: "_shared::gateway",
 					})
@@ -156,7 +156,7 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 				}
 				if !hasGateway6Ip {
 					// panic("missing gateway ip")
-					log.Info("allocating gateway IP", "blockName", "_shared::gateway6")
+					log.V(8).Info("allocating gateway IP", "blockName", "_shared::gateway6")
 					allocated, err := r.Allocator.Allocate(ctx, &api.AllocateRequest{
 						BlockName: "_shared::gateway6",
 					})
@@ -210,7 +210,7 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 		if err := r.NetworkManager.RegisterNetwork(ctx, net); err != nil {
 			return ctrl.Result{}, err
 		}
-		log.Info("node wants the network")
+		log.V(8).Info("node wants the network")
 		// ensure we are referencing the node we are running on in the subnets status so we can decommission the node
 		// when removed
 		if err := r.addNodeToNetworkStatus(ctx, nw); err != nil {
@@ -261,6 +261,7 @@ func (r *NetworkReconciler) addNodeToNetworkStatus(ctx context.Context, nw *netw
 		return nil
 	})
 }
+
 func (r *NetworkReconciler) removeNodeFromNetworkStatus(ctx context.Context, nw *networkv1alpha1.Network) error {
 	return retry.RetryOnConflict(retry.DefaultBackoff, func() error {
 		network := &networkv1alpha1.Network{}

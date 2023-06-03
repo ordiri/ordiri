@@ -117,19 +117,20 @@ func (r *VirtualMachineReplicaSetReconciler) Reconcile(ctx context.Context, req 
 
 	return ctrl.Result{}, nil
 }
+
 func (r *VirtualMachineReplicaSetReconciler) createOrDeletePod(ctx context.Context, rs *computev1alpha1.VirtualMachineReplicaSet, i int32) (*computev1alpha1.VirtualMachine, error) {
 	log := log.FromContext(ctx)
 	vm := &computev1alpha1.VirtualMachine{}
 	vm.Name = fmt.Sprintf("%s-%d", rs.Name, int64(i))
 	vm.Namespace = rs.Namespace
 	if i >= rs.Spec.Replicas {
-		log.Info("deleting item", "vm", vm.Name)
+		log.V(8).Info("deleting item", "vm", vm.Name)
 		if err := r.Client.Delete(ctx, vm); err != nil && !errors.IsNotFound(err) {
 			return nil, err
 		}
 		return nil, nil
 	} else {
-		log.Info("creating item", "vm", vm.Name)
+		log.V(8).Info("creating item", "vm", vm.Name)
 	}
 
 	_, err := ctrl.CreateOrUpdate(ctx, r.Client, vm, func() error {
@@ -150,7 +151,7 @@ func (r *VirtualMachineReplicaSetReconciler) createOrDeletePod(ctx context.Conte
 			nw.Mac = ""
 			nw.Ips = nil
 		}
-		log.Info("existing iface for machine", "vm", vm.Name, "ifaces", existingIfaces)
+		log.V(8).Info("existing iface for machine", "vm", vm.Name, "ifaces", existingIfaces)
 
 		if !reflect.DeepEqual(vm2.Spec, replicaSpecTemplate) {
 			replicaSpecTemplate.DeepCopyInto(&vm.Spec)
@@ -174,7 +175,7 @@ func (r *VirtualMachineReplicaSetReconciler) createOrDeletePod(ctx context.Conte
 			vm.Labels[key] = val
 		}
 
-		log.Info("will create or update vm", "vm", vm.Name, "vm", vm.Spec)
+		log.V(8).Info("will create or update vm", "vm", vm.Name, "vm", vm.Spec)
 
 		return ctrl.SetControllerReference(rs, vm, r.Scheme)
 	})

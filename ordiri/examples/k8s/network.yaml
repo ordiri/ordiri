@@ -4,7 +4,7 @@ metadata:
   name: kubevms
 spec:
   cidr: 10.200.0.0/12
-  cidr6: 2403:5806:97ec:0200::/60
+  cidr6: 2403:5807:c863:0200::/60
   dns:
     enabled: true
   nat:

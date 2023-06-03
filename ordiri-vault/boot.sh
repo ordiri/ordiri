@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 export VAULT_ADDR="https://vault.homelab.dmann.xyz:8200"
-ip addr add 2403:5806:97ec:2::76:6175:6C74/24 dev eth0
+ip addr add 2403:5807:c863:2::76:6175:6C74/24 dev eth0
 
 apt update && apt install gpg snapd
 wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg >/dev/null

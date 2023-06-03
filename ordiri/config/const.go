@@ -16,7 +16,7 @@ var (
 	// who requests a publicly resolvable IP address. As these point to single
 	// virtual machines and are floating, routes are shared directly via the bgp speaker
 	VmPublicCidr   = netaddr.MustParseIPPrefix("172.20.0.2/24")
-	VmPublicV6Cidr = netaddr.MustParseIPPrefix("2403:5806:97ec:0101::/64")
+	VmPublicV6Cidr = netaddr.MustParseIPPrefix("2403:5807:c863:0101::/64")
 
 	// Management cidr is used for communicating with control plane resources, such as
 	// the bgp speaker, node-to-node mesh etc.
@@ -24,9 +24,9 @@ var (
 	ManagementCidr   = netaddr.MustParseIPPrefix("10.0.0.0/8")
 	ManagementV6Cidr = netaddr.MustParseIPPrefix("fd49:32ac:7d20:ffff::/64")
 )
-var (
-	IPXEBootHost = netaddr.MustParseIP("10.0.1.196")
-)
+
+var IPXEBootHost = netaddr.MustParseIP("10.0.1.196")
+
 var (
 	BgpPeerIp      = netaddr.MustParseIP("fd49:32ac:7d20:ffff::1")
 	BgpPeerAsn     = uint(65000)
@@ -35,6 +35,4 @@ var (
 	CustomerAsn    = uint(65003)
 )
 
-var (
-	IpamAddr = "ipam.ordiri.homelab.dmann.xyz:50051"
-)
+var IpamAddr = "ipam.ordiri.homelab.dmann.xyz:50051"

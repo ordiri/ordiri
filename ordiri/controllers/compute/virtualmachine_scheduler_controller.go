@@ -92,7 +92,7 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	}
 
 	if _, scheduled := vm.ScheduledNode(); !scheduled {
-		log.Info("scheduling vm ", "vm", vm)
+		log.V(8).Info("scheduling vm ", "vm", vm)
 		err := r.schedule(ctx, vm)
 		if err != nil {
 			return ctrl.Result{}, fmt.Errorf("error scheduling - %w", err)
@@ -148,7 +148,7 @@ func (r *VirtualMachineReconciler) schedule(ctx context.Context, vm *computev1al
 		if err := r.Client.List(ctx, nodes); err != nil {
 			return fmt.Errorf("error fetching node list - %w", err)
 		}
-		log.Info("finding node to schedule on out of", "nodes", nodes.Items)
+		log.V(8).Info("finding node to schedule on out of", "nodes", nodes.Items)
 		scheduledNode, err := r.Scheduler(nodes.Items, vm)
 		if err != nil {
 			return fmt.Errorf("couldn't schedule node - %w", err)
@@ -198,7 +198,6 @@ func (r *VirtualMachineReconciler) addVmToNodeStatus(ctx context.Context, vm *co
 		}
 
 		return nil
-
 	})
 }
 

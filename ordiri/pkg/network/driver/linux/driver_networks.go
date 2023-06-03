@@ -151,7 +151,7 @@ dynamic-neighbors:
     prefix: 10.240.0.0/16
     peer-group: subnet-nodes
 - config:
-    prefix: 2403:5806:97ec:6300::/56
+    prefix: 2403:5807:c863:6300::/56
     peer-group: subnet-nodes
 
 neighbors:
@@ -192,7 +192,7 @@ defined-sets:
     prefix-list:
     - ip-prefix: fc00::/7
       masklength-range: "7..128"
-    - ip-prefix: 2403:5806:97ec:1::/64
+    - ip-prefix: 2403:5807:c863:1::/64
       masklength-range: "64..128"
 
 policy-definitions:
@@ -230,7 +230,7 @@ policy-definitions:
 	)
 
 	err := func() error {
-		tplFile, err := os.OpenFile(cfgFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
+		tplFile, err := os.OpenFile(cfgFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o644)
 		if err != nil {
 			return fmt.Errorf("unable to open file for bgp config - %w", err)
 		}
@@ -263,7 +263,7 @@ policy-definitions:
 	}
 	// startCmd := strings.Join(append([]string{"ip", "netns", "exec", namespace, "/usr/sbin/dnsmasq"}, dnsMasqOptions.Args()...), " ")
 	cleanupCommand := strings.Join([]string{"/usr/bin/rm", "-f", pidFile}, " ")
-	startCmd := strings.Join([]string{"/usr/local/bin/gobgpd", "-ldebug", "-t", "yaml", "-f", cfgFile, "--api-hosts", fmt.Sprintf("unix://%s", pidFile)}, " ")
+	startCmd := strings.Join([]string{"/usr/local/bin/gobgpd", "-t", "yaml", "-f", cfgFile, "--api-hosts", fmt.Sprintf("unix://%s", pidFile)}, " ")
 	// create the systemd file to manage this metadata
 	unitName := networkBgpRouterUnitName(nw)
 	zebraUnitName := networkBgpZebraUnitName(nw)
@@ -315,7 +315,7 @@ func (ln *linuxDriver) installNetworkZebra(ctx context.Context, nw api.Network) 
 	zebraPidFile := filepath.Join(baseDir, "zebra.pid")
 
 	// startCmd := strings.Join(append([]string{"ip", "netns", "exec", namespace, "/usr/sbin/dnsmasq"}, dnsMasqOptions.Args()...), " ")
-	startCmd := strings.Join([]string{"/usr/lib/frr/zebra", "--config_file", "/dev/null", "--socket", zebraSocketFile, "--pid_file", zebraPidFile, "--log-level", "debug"}, " ")
+	startCmd := strings.Join([]string{"/usr/lib/frr/zebra", "--config_file", "/dev/null", "--socket", zebraSocketFile, "--pid_file", zebraPidFile}, " ")
 	// create the systemd file to manage this metadata
 	unitName := networkBgpZebraUnitName(nw)
 	opts := []*unit.UnitOption{
@@ -459,7 +459,6 @@ func (ln *linuxDriver) removeNetworkFlows(ctx context.Context, nw api.Network) e
 	}
 
 	return nil
-
 }
 
 func (ln *linuxDriver) installNetworkFlows(ctx context.Context, nw api.Network) error {
@@ -470,7 +469,6 @@ func (ln *linuxDriver) installNetworkFlows(ctx context.Context, nw api.Network) 
 	ovsClient := sdn.Ovs()
 
 	for _, flow := range flows {
-
 		if err := flow.Install(ovsClient); err != nil {
 			return fmt.Errorf("error adding flow - %w", err)
 		}

@@ -50,26 +50,26 @@ func (ln *linuxDriver) RemoveSubnet(ctx context.Context, nw api.Network, sn api.
 
 func (ln *linuxDriver) RegisterSubnet(ctx context.Context, nw api.Network, sn api.Subnet) error {
 	log := log.FromContext(ctx)
-	log.Info("Installing Services Network")
+	log.V(8).Info("Installing Services Network")
 	if err := ln.createSubnetServicesNs(ctx, nw, sn); err != nil {
 		return err
 	}
 
-	log.Info("Installing Services Network")
+	log.V(8).Info("Installing Services Network")
 	if err := ln.installDhcp(ctx, nw, sn); err != nil {
 		return err
 	}
-	log.Info("Installing MetadataService")
+	log.V(8).Info("Installing MetadataService")
 	if err := ln.installMetadataServer(ctx, nw, sn); err != nil {
 		return err
 	}
 
-	log.Info("Installing Subnet router")
+	log.V(8).Info("Installing Subnet router")
 	if err := ln.EnsureRouter(ctx, nw, sn); err != nil {
 		return err
 	}
 
-	log.Info("Subnet Ensured")
+	log.V(8).Info("Subnet Ensured")
 
 	return nil
 }
@@ -87,12 +87,12 @@ func (ln *linuxDriver) removeMetadataServer(ctx context.Context, nw api.Network,
 	cableName := metadataCableName(nw, subnet)
 	unitName := metadataServerUnitName(subnet)
 
-	log.Info("Deleting port for metadata", "cableName", cableName)
+	log.V(8).Info("Deleting port for metadata", "cableName", cableName)
 	// need to create flow rules taking this to the vxlan?
 	if err := sdn.Ovs().VSwitch.DeletePort(sdn.WorkloadSwitchName, cableName.Root()); err != nil && !isPortNotExist(err) {
 		return fmt.Errorf("unable to remove metadata port - %w", err)
 	}
-	log.Info("Deleting veth cable for metadata", "cableName", cableName)
+	log.V(8).Info("Deleting veth cable for metadata", "cableName", cableName)
 
 	if _, iface := ln.interfaces.search(cableName.Root()); iface != nil {
 		if err := netlink.LinkDel(iface.Link); err != nil && !errors.As(err, &netlink.LinkNotFoundError{}) {
@@ -129,18 +129,19 @@ func (ln *linuxDriver) removeMetadataServer(ctx context.Context, nw api.Network,
 	}
 	return nil
 }
+
 func (ln *linuxDriver) removeDhcp(ctx context.Context, nw api.Network, subnet api.Subnet) error {
 	cableName := dhcpCableName(nw, subnet)
 	log := log.FromContext(ctx)
 	namespace := namespaceForDhcp(nw, subnet)
 	unitName := dhcpUnitName(subnet)
 
-	log.Info("Deleting port for dhcp", "cableName", cableName)
+	log.V(8).Info("Deleting port for dhcp", "cableName", cableName)
 	// need to create flow rules taking this to the vxlan?
 	if err := sdn.Ovs().VSwitch.DeletePort(sdn.WorkloadSwitchName, cableName.Root()); err != nil && !isPortNotExist(err) {
 		return fmt.Errorf("unable to remove dhcp port - %w", err)
 	}
-	log.Info("Deleting veth cable for dhcp ", "cableName", cableName)
+	log.V(8).Info("Deleting veth cable for dhcp ", "cableName", cableName)
 
 	if _, iface := ln.interfaces.search(cableName.Root()); iface != nil {
 		if err := netlink.LinkDel(iface.Link); err != nil && !errors.As(err, &netlink.LinkNotFoundError{}) {
@@ -176,7 +177,7 @@ func (ln *linuxDriver) removeDhcp(ctx context.Context, nw api.Network, subnet ap
 		return fmt.Errorf("unable to remove subnet runtime files - %w", err)
 	}
 
-	log.Info("deleting the network namespace for DHCP ", "ns", namespace)
+	log.V(8).Info("deleting the network namespace for DHCP ", "ns", namespace)
 
 	return nil
 }
@@ -191,12 +192,12 @@ func (ln *linuxDriver) installMetadataServer(ctx context.Context, nw api.Network
 	}
 
 	// need to create flow rules taking this to the vxlan?
-	log.Info("adding metadata cable to workload switch", "cableName", cableName)
+	log.V(8).Info("adding metadata cable to workload switch", "cableName", cableName)
 	if err := sdn.Ovs().VSwitch.AddPort(sdn.WorkloadSwitchName, cableName.Root()); err != nil {
 		return err
 	}
 
-	log.Info("ensuring correct vlan tag on metadata cable", "cableName", cableName)
+	log.V(8).Info("ensuring correct vlan tag on metadata cable", "cableName", cableName)
 	if err := sdn.Ovs().VSwitch.Set.Port(cableName.Root(), ovs.PortOptions{
 		Tag: int(subnet.Segment()),
 	}); err != nil {
@@ -238,7 +239,7 @@ func (ln *linuxDriver) createSubnetServicesNs(ctx context.Context, nw api.Networ
 	log := log.FromContext(ctx)
 	dhcpNamespace := namespaceForDhcp(nw, subnet)
 
-	log.Info("creating dhcp namespace", "namespace", dhcpNamespace)
+	log.V(8).Info("creating dhcp namespace", "namespace", dhcpNamespace)
 	if err := createNetworkNs(dhcpNamespace); err != nil {
 		return fmt.Errorf("unable to create dhcp namespace - %w", err)
 	}
@@ -255,11 +256,11 @@ func (ln *linuxDriver) installDhcp(ctx context.Context, nw api.Network, subnet a
 	}
 
 	// need to create flow rules taking this to the vxlan?
-	log.Info("adding dhcp cable to workload switch", "cableName", cableName)
+	log.V(8).Info("adding dhcp cable to workload switch", "cableName", cableName)
 	if err := sdn.Ovs().VSwitch.AddPort(sdn.WorkloadSwitchName, cableName.Root()); err != nil {
 		return err
 	}
-	log.Info("ensuring correct vlan tag on dhcp cable", "cableName", cableName)
+	log.V(8).Info("ensuring correct vlan tag on dhcp cable", "cableName", cableName)
 	if err := sdn.Ovs().VSwitch.Set.Port(cableName.Root(), ovs.PortOptions{
 		Tag: int(subnet.Segment()),
 	}); err != nil {
@@ -388,8 +389,8 @@ func (ln *linuxDriver) removeSubnetFlows(ctx context.Context, nw api.Network, su
 	}
 
 	return nil
-
 }
+
 func (ln *linuxDriver) installSubnetFlows(ctx context.Context, nw api.Network, subnet api.Subnet) error {
 	flows, err := ln.flows(ctx, nw, subnet)
 	if err != nil {
@@ -398,7 +399,6 @@ func (ln *linuxDriver) installSubnetFlows(ctx context.Context, nw api.Network, s
 	ovsClient := sdn.Ovs()
 
 	for _, flow := range flows {
-
 		if err := flow.Install(ovsClient); err != nil {
 			return fmt.Errorf("error adding flow - %w", err)
 		}

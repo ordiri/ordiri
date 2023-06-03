@@ -83,11 +83,11 @@ func (r *MachineMetadataController) SetupWithManager(mgr ctrl.Manager) error {
 		go func() {
 			<-ctx.Done()
 			if err := srv.Shutdown(ctx); err != nil {
-				log.Info("error shutting down metadata server - %w", err)
+				log.V(8).Info("error shutting down metadata server - %w", err)
 			}
 		}()
 
-		log.Info("server starting")
+		log.V(8).Info("server starting")
 
 		if err := srv.Serve(conn); err != nil {
 			if err != http.ErrServerClosed {

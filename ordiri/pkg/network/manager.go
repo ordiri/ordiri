@@ -65,7 +65,7 @@ func (ln *networkManager) Close() error {
 // and stops when the context finishes
 func (ln *networkManager) Start(ctx context.Context) error {
 	log := log.FromContext(ctx)
-	log.Info("Starting NetworkManager", "driver", ln.driver.Info().String())
+	log.V(8).Info("Starting NetworkManager", "driver", ln.driver.Info().String())
 
 	err := ln.speaker.AddPeerGroup(ctx, apipb.PeerGroup{
 		Conf: &apipb.PeerGroupConf{
@@ -112,13 +112,13 @@ func (ln *networkManager) Start(ctx context.Context) error {
 	}
 
 	if starter, isStarter := ln.driver.(driver.RunnableDriver); isStarter {
-		log.Info("Starting driver")
+		log.V(8).Info("Starting driver")
 		if err := starter.Start(ctx); err != nil {
 			log.Error(err, "Error encountered running driver")
 			return err
 		}
 	}
-	log.Info("Shutting down network manager")
+	log.V(8).Info("Shutting down network manager")
 
 	return nil
 }

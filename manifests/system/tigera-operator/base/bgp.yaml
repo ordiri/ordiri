@@ -8,7 +8,7 @@ spec:
   logSeverityScreen: Info
   asNumber: 65003
   serviceClusterIPs:
-  - cidr: "2403:5806:97ec:6400::/112"
+  - cidr: "2403:5807:c863:6400::/112"
   - cidr: "10.241.0.0/16"
 ---
 apiVersion: crd.projectcalico.org/v1

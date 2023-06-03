@@ -111,7 +111,7 @@ func (r *BGPSpeakerReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 				return ctrl.Result{}, fmt.Errorf("unable to parse ip addr %q - %w", ip, err)
 			}
 			if !r.PublicCidr.Contains(vmPublicIp.IP()) && !r.Public6Cidr.Contains(vmPublicIp.IP()) {
-				log.Info("Skipping IP as it's not a part of the public range", "ip", vmPublicIp.String())
+				log.V(8).Info("Skipping IP as it's not a part of the public range", "ip", vmPublicIp.String())
 				continue
 			}
 
@@ -138,7 +138,7 @@ func (r *BGPSpeakerReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 			routerInterface6 := ""
 			routerIp := netaddr.IP{}
 			routerIp6 := netaddr.IP{}
-			//todo: we have this in the status now on the network as it's external gateway ip
+			// todo: we have this in the status now on the network as it's external gateway ip
 			// so remove this hack
 			for _, iface := range res {
 				if !strings.HasPrefix(iface.Name, "prtr") {
@@ -146,7 +146,7 @@ func (r *BGPSpeakerReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 				}
 
 				for _, addr := range iface.Addrs {
-					log.Info("got the addr", "addr", addr)
+					log.V(8).Info("got the addr", "addr", addr)
 
 					if addr.Ip.Is6() && r.Gateway6Cidr.Contains(addr.Ip) {
 						routerInterface6 = iface.Name
@@ -175,7 +175,7 @@ func (r *BGPSpeakerReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 			}
 
 			if r.speaker == nil {
-				log.Info("not announcing as no speaker configured")
+				log.V(8).Info("not announcing as no speaker configured")
 				return ctrl.Result{}, nil
 			}
 

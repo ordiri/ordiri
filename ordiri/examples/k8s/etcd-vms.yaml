@@ -9,7 +9,7 @@ spec:
       creationTimestamp: null
     spec:
       resources:
-        cpu: 2
+        cpu: 3
         memory: 4Gi
       userData: !include etcd/preseed.sh
       bootDevices:

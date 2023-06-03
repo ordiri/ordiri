@@ -21,15 +21,15 @@ import (
 
 func (ld *linuxDriver) EnsureRouter(ctx context.Context, nw api.Network, sn api.Subnet) error {
 	log := log.FromContext(ctx)
-	log.Info("ensuring router")
+	log.V(8).Info("ensuring router")
 	if err := ld.installRouter(ctx, nw, sn); err != nil {
 		return err
 	}
-	log.Info("ensuring router")
+	log.V(8).Info("ensuring router")
 	if err := ld.installNetworkRouterAdvertisement(ctx, nw, sn); err != nil {
 		return err
 	}
-	log.Info("ensuring subnet flows")
+	log.V(8).Info("ensuring subnet flows")
 	if err := ld.installSubnetFlows(ctx, nw, sn); err != nil {
 		return err
 	}
@@ -48,7 +48,7 @@ func (ld *linuxDriver) RemoveRouter(ctx context.Context, nw api.Network, sn api.
 		}
 	}
 
-	log.Info("Deleting port for router ", "cableName", internalRouterCableName)
+	log.V(8).Info("Deleting port for router ", "cableName", internalRouterCableName)
 	// need to create flow rules taking this to the vxlan?
 	if err := sdn.Ovs().VSwitch.DeletePort(sdn.WorkloadSwitchName, internalRouterCableName.Root()); err != nil && !isPortNotExist(err) {
 		return fmt.Errorf("unable to remove ovs port - %w", err)
@@ -56,7 +56,7 @@ func (ld *linuxDriver) RemoveRouter(ctx context.Context, nw api.Network, sn api.
 
 	ruleSets := ld.rulesets(publicGwCable(nw).Namespace(), internalRouterCableName.Namespace())
 	if handle, err := netns.GetFromName(routerNetworkNamespace); err == nil {
-		log.Info("removing ip table rules ", "ns", routerNetworkNamespace, "rule_count", len(ruleSets))
+		log.V(8).Info("removing ip table rules ", "ns", routerNetworkNamespace, "rule_count", len(ruleSets))
 		defer handle.Close()
 		ipt, err := sdn.Iptables(routerNetworkNamespace)
 		if err != nil {
@@ -71,9 +71,9 @@ func (ld *linuxDriver) RemoveRouter(ctx context.Context, nw api.Network, sn api.
 			}
 		}
 	} else {
-		log.Info("router network namespace does not exist, skipping ", "ns", routerNetworkNamespace, "rule_count", len(ruleSets))
+		log.V(8).Info("router network namespace does not exist, skipping ", "ns", routerNetworkNamespace, "rule_count", len(ruleSets))
 	}
-	log.Info("router has been removed from node")
+	log.V(8).Info("router has been removed from node")
 	return nil
 }
 
@@ -243,7 +243,7 @@ prefix = "::/0"
 	)
 
 	err := func() error {
-		tplFile, err := os.OpenFile(cfgFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
+		tplFile, err := os.OpenFile(cfgFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o644)
 		if err != nil {
 			return fmt.Errorf("unable to open file for bgp config - %w", err)
 		}
@@ -288,13 +288,14 @@ prefix = "::/0"
 }
 
 func (nw *linuxDriver) rulesets(externalCablename string, internalCableName string) []iptRule {
-	return []iptRule{{
-		Table: "filter",
-		Chain: "FORWARD",
-		Rules: [][]string{
-			{"-i", externalCablename, "-o", internalCableName, "-j", "ACCEPT"},
-			{"-i", internalCableName, "-o", externalCablename, "-j", "ACCEPT"},
+	return []iptRule{
+		{
+			Table: "filter",
+			Chain: "FORWARD",
+			Rules: [][]string{
+				{"-i", externalCablename, "-o", internalCableName, "-j", "ACCEPT"},
+				{"-i", internalCableName, "-o", externalCablename, "-j", "ACCEPT"},
+			},
 		},
-	},
 	}
 }

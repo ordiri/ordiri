@@ -75,8 +75,7 @@ func (r *NodeSubnetVlanAllocator) Reconcile(ctx context.Context, req ctrl.Reques
 		}
 		previouslyAllocatedNetworks[network.ObjectReference.Name] = network
 		if _, exists := previouslyAllocatedVlanNumbers[network.VlanId]; exists {
-			log.Info("already allocated", "network", network)
-
+			log.V(8).Info("already allocated", "network", network)
 		}
 		previouslyAllocatedVlanNumbers[network.VlanId] = true
 	}

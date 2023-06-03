@@ -77,22 +77,22 @@ func (r *VolumeClaimReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		}
 	}
 
-	log.Info("opening io ctx")
+	log.V(8).Info("opening io ctx")
 	ioctx, err := r.ceph.OpenIOContext(poolName)
 	if err != nil {
 		return ctrl.Result{}, fmt.Errorf("unable to open io ctx - %w", err)
 	}
 
-	log.Info("starting rbd pool init")
+	log.V(8).Info("starting rbd pool init")
 	if err := rbd.PoolInit(ioctx, false); err != nil {
 		return ctrl.Result{}, fmt.Errorf("unable to initialize rbd pool - %w", err)
 	}
-	log.Info("init rbd pool complete")
+	log.V(8).Info("init rbd pool complete")
 	newSize := uint64(vc.Spec.Size.Value())
 
 	img, err := rbd.OpenImage(ioctx, vc.Name, rbd.NoSnapshot)
 	if err != nil {
-		log.Info("missing image", "err", err)
+		log.V(8).Info("missing image", "err", err)
 		opts := rbd.NewRbdImageOptions()
 		defer opts.Destroy()
 		if err := rbd.CreateImage(ioctx, vc.Name, newSize, opts); err != nil {
@@ -109,7 +109,6 @@ func (r *VolumeClaimReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	defer img.Close()
 
 	stat, err := img.Stat()
-
 	if err != nil {
 		return ctrl.Result{}, err
 	}
@@ -142,7 +141,7 @@ func (r *VolumeClaimReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		}
 	}
 
-	log.Info("completed claim controller")
+	log.V(8).Info("completed claim controller")
 
 	// TODO(user): your logic here
 

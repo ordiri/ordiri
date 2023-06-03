@@ -81,7 +81,7 @@ func (r *RouterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	// for _, selector := range router.Spec.Subnets {
 	// 	nodeWantsRouter := false // The node wants the router if the current node has it's subnet in the list of node subnets
 	// 	if _, err := node.Subnet(router.Spec.Net selector.Name); err == nil {
-	// 		log.Info("node wants router", "subnet", selector)
+	// 		log.V(8).Info("node wants router", "subnet", selector)
 	// 		nodeWantsRouter = true
 	// 	}
 
@@ -89,7 +89,7 @@ func (r *RouterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	// 	nodeLocalMac := mac.Unicast()
 	// 	for _, snh := range router.Status.Hosts {
 	// 		if snh.Node == node.Name && snh.Subnet == selector.Name {
-	// 			log.Info("node has router", "subnet", selector)
+	// 			log.V(8).Info("node has router", "subnet", selector)
 	// 			nodeHasRouter = true
 	// 			nlc, err := net.ParseMAC(snh.Mac)
 	// 			if err != nil {
@@ -148,7 +148,7 @@ func (r *RouterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	// 	}
 
 	// 	if !nodeWantsRouter {
-	// 		log.Info("removing router", "subnet", subnet, "wants_router", nodeWantsRouter)
+	// 		log.V(8).Info("removing router", "subnet", subnet, "wants_router", nodeWantsRouter)
 	// 		if err := r.NetworkManager.RemoveRouter(ctx, net, sn, rtr); err != nil {
 	// 			return ctrl.Result{}, fmt.Errorf("aoeaoeao - %w", err)
 	// 		}
@@ -156,7 +156,7 @@ func (r *RouterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	// 			return ctrl.Result{}, fmt.Errorf("aoeaoeao - %w", err)
 	// 		}
 	// 	} else {
-	// 		log.Info("installing router", "subnet", subnet, "wants_router", nodeWantsRouter)
+	// 		log.V(8).Info("installing router", "subnet", subnet, "wants_router", nodeWantsRouter)
 	// 		if err := r.addNodeSubnetToRouterStatus(ctx, subnet, router, nodeLocalMac); err != nil {
 	// 			return ctrl.Result{}, fmt.Errorf("aoeaoeao - %w", err)
 	// 		}

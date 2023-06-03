@@ -56,7 +56,7 @@ type SubnetReconciler struct {
 
 func (r *SubnetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := log.FromContext(ctx)
-	log.Info("Starting to reconcile", "request", req)
+	log.V(8).Info("Starting to reconcile", "request", req)
 	subnet := &networkv1alpha1.Subnet{}
 	if err := r.Client.Get(ctx, req.NamespacedName, subnet); err != nil {
 		if k8err.IsNotFound(err) {
@@ -91,7 +91,7 @@ func (r *SubnetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	// If the node doesn't want this subnet anymore
 	// but the subnet is setup on it, we need to remove all the subnet configs from it
 	if !nodeWantsSubnet {
-		log.Info("node does not want subnet, removing")
+		log.V(8).Info("node does not want subnet, removing")
 		if sn, err := r.NetworkManager.GetSubnet(nw.Name, subnet.Name); err == nil {
 			log.V(5).Info("removing subnet from network manager", "subnet", sn)
 			if err := r.NetworkManager.RemoveSubnet(ctx, nw.Name, subnet.Name); err != nil {
@@ -101,12 +101,12 @@ func (r *SubnetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 		}
 
 		// We want to ensure we remove this node if we need
-		log.Info("removing node from subnet status")
+		log.V(8).Info("removing node from subnet status")
 		if err := r.removeNodeFromSubnetStatus(ctx, subnet); err != nil {
 			return ctrl.Result{}, fmt.Errorf("error removing node from subnet status: %s from %s", subnet.Name, r.Node.GetNode().GetName())
 		}
 
-		log.Info("removing node finalizers from subnet")
+		log.V(8).Info("removing node finalizers from subnet")
 		// finally we remove the finalizer from the subnet
 		if err := r.removeNodeFinalizerFromSubnet(ctx, subnet); err != nil {
 			return ctrl.Result{}, fmt.Errorf("error removing node from subnet finalizers: %s from %s", subnet.Name, r.Node.GetNode().GetName())
@@ -138,7 +138,7 @@ func (r *SubnetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 			return ctrl.Result{}, fmt.Errorf("missing vlan on subnet")
 		}
 
-		log.Info("network manager has not seen this subnet yet, creating a new one")
+		log.V(8).Info("network manager has not seen this subnet yet, creating a new one")
 		routerMac, err := mac.Parse(subnet.Spec.Router.Mac)
 		if err != nil {
 			return ctrl.Result{}, fmt.Errorf("error parsing router mac - %w", err)
@@ -148,7 +148,7 @@ func (r *SubnetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 			return ctrl.Result{}, err
 		}
 		sn = newSubnet
-		log.Info("got new subnet", "subnet", newSubnet)
+		log.V(8).Info("got new subnet", "subnet", newSubnet)
 	}
 
 	if sn == nil {
@@ -178,16 +178,16 @@ func (r *SubnetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 		}
 	}
 
-	log.Info("ensuring subnet is configured by the driver", "subnet", sn)
+	log.V(8).Info("ensuring subnet is configured by the driver", "subnet", sn)
 	if err := r.NetworkManager.RegisterSubnet(ctx, nw.Name, sn); err != nil {
 		return ctrl.Result{}, fmt.Errorf("unable to ensure subnet is configured correctly - %w", err)
 	}
 
-	log.Info("adding node to status", "subnet", subnet)
+	log.V(8).Info("adding node to status", "subnet", subnet)
 	if err := r.addNodeToSubnetStatus(ctx, subnet, hostLocalMac); err != nil {
 		return ctrl.Result{}, err
 	}
-	log.Info("added node to status", "subnet", subnet)
+	log.V(8).Info("added node to status", "subnet", subnet)
 
 	return ctrl.Result{}, nil
 }
@@ -227,18 +227,18 @@ func (r *SubnetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 // 	}
 // 	if r.Node.GetNode().HasRole(corev1alpha1.NodeRoleNetwork) {
 
-// 		log.Info("installing NAT on node")
+// 		log.V(8).Info("installing NAT on node")
 // 		if err := r.installNat(ctx, subnet); err != nil {
 // 			return err
 // 		}
 // 		if subnet.Spec.Dhcp.Enabled {
-// 			log.Info("dhcp enabled, installing dhcp on node")
+// 			log.V(8).Info("dhcp enabled, installing dhcp on node")
 // 			// Create the DHCP service for this subnet
 // 			if err := r.installDhcp(ctx, subnet); err != nil {
 // 				return err
 // 			}
 // 		} else {
-// 			log.Info("dhcp disabled, ensuring dhcp is removed")
+// 			log.V(8).Info("dhcp disabled, ensuring dhcp is removed")
 // 			if err := r.removeDhcp(ctx, nw, subnet); err != nil {
 // 				return err
 // 			}
@@ -246,7 +246,7 @@ func (r *SubnetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 // 	}
 
 // 	// Setup all the flow rules for any VM in this subnet
-// 	log.Info("installing openflow rules on node")
+// 	log.V(8).Info("installing openflow rules on node")
 // 	if err := r.installFlows(ctx, subnet); err != nil {
 // 		return err
 // 	}

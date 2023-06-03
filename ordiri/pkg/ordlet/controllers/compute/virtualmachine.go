@@ -131,20 +131,20 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		node := r.Node.GetNode()
 		status := node.Status
 		for didx, device := range vm.Spec.Devices {
-			log.Info("allocating virtual machine device", "requestedDevice", device)
+			log.V(8).Info("allocating virtual machine device", "requestedDevice", device)
 			allocatedDevice = false
 			for idx, d := range node.Status.Devices {
 				if device.DeviceClassName != d.DeviceClassName {
 					continue
 				}
-				log.Info("checking device compatability2", "requestedDevice", *device, "availableDevice", d)
+				log.V(8).Info("checking device compatability2", "requestedDevice", *device, "availableDevice", d)
 
 				if d.DeviceClaim != nil && (d.DeviceClaim.Name != vm.Name || d.DeviceClaim.Namespace != vm.Namespace) {
 					continue
 				}
-				log.Info("checking device compatability3", "requestedDevice", *device, "availableDevice", d)
+				log.V(8).Info("checking device compatability3", "requestedDevice", *device, "availableDevice", d)
 				if d.DeviceClaim == nil {
-					log.Info("checking device compatability4", "requestedDevice", *device, "availableDevice", d)
+					log.V(8).Info("checking device compatability4", "requestedDevice", *device, "availableDevice", d)
 					dev := status.Devices[idx]
 					dev.DeviceClaim = &corev1alpha1.NodeDeviceClaim{
 						ObjectReference: corev1.ObjectReference{
@@ -159,7 +159,7 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 					}
 					status.Devices[idx] = dev
 
-					log.Info("checking device compatability5", "requestedDevice", *device, "availableDevice", d)
+					log.V(8).Info("checking device compatability5", "requestedDevice", *device, "availableDevice", d)
 				}
 				allocatedDevice = true
 
@@ -186,7 +186,6 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 							vmDevices = append(vmDevices, internallibvirt.WithDevice(iommuDev))
 							return nil
 						})
-
 						if err != nil {
 							return ctrl.Result{}, err
 						}
@@ -215,8 +214,6 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 			return ctrl.Result{}, err
 		}
 	}
-
-	spew.Dump("\n\n\n\n", "vmDevices", vmDevices, "\n\n\n\n")
 
 	_, domain := r.GetDomain(ctx, vm)
 	// r.LibvirtClient.attach
@@ -272,7 +269,6 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	defer cancel()
 
 	domain, _, result, err := internallibvirt.Ensure(ensureCtx, r.LibvirtClient, vm.Namespace, vm.Name, libvirtStatus(vm.Spec.State), domainOptions...)
-
 	if err != nil {
 		return ctrl.Result{}, fmt.Errorf("error ensuring domain - %w", err)
 	}
@@ -314,7 +310,7 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	}
 
 	if needsUpdate {
-		log.Info("updating status of machine")
+		log.V(8).Info("updating status of machine")
 
 		if err := r.Client.Status().Update(ctx, vm); err != nil {
 			return ctrl.Result{}, fmt.Errorf("unable to update status of vm - %w", err)
@@ -349,8 +345,8 @@ func (r *VirtualMachineReconciler) createOrUpdateMachine(ctx context.Context, vm
 		}
 		return ctrl.SetControllerReference(vm, machine, r.Scheme)
 	})
-
 }
+
 func (r *VirtualMachineReconciler) ReconcileDeletion(ctx context.Context, vm *computev1alpha1.VirtualMachine) (ctrl.Result, error) {
 	log := k8log.FromContext(ctx)
 
@@ -362,7 +358,7 @@ func (r *VirtualMachineReconciler) ReconcileDeletion(ctx context.Context, vm *co
 		if err != nil {
 			return ctrl.Result{}, fmt.Errorf("unable to get domain state - %w", err)
 		}
-		log.Info("got the virtual machine state", "state", state, "reason", reason)
+		log.V(8).Info("got the virtual machine state", "state", state, "reason", reason)
 		if libvirt.DomainState(state) == libvirt.DomainRunning || libvirt.DomainState(state) == libvirt.DomainPaused {
 			if err := r.LibvirtClient.DomainDestroyFlags(*domain, libvirt.DomainDestroyDefault); err != nil {
 				return ctrl.Result{}, fmt.Errorf("unable to destroy vm - %w", err)
@@ -414,7 +410,6 @@ func (r *VirtualMachineReconciler) ReconcileDeletion(ctx context.Context, vm *co
 				}
 			}
 		}
-
 	}
 
 	machine := &corev1alpha1.Machine{}
