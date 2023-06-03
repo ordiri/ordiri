@@ -94,7 +94,7 @@ spec:
       - env:
         - name: UPTIME_KUMA_PORT
           value: "3001"
-        image: louislam/uptime-kuma:1.21.1-debian
+        image: louislam/uptime-kuma:1.21.3-debian
         imagePullPolicy: IfNotPresent
         livenessProbe:
           exec:
