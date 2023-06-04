@@ -3,9 +3,10 @@ kind: Service
 metadata:
   name: blog
   annotations:
-    k8s.dmann.xyz/cloudflare-domain-dmann-xyz: blog
-    k8s.dmann.xyz/cloudflare-zone-dmann-xyz: dmann.xyz
-    k8s.dmann.xyz/cloudflare-domain-dmann-dev: blog
+    k8s.dmann.xyz/cloudflare-domain-blog-dmann-xyz: blog
+    k8s.dmann.xyz/cloudflare-zone-blog-dmann-xyz: dmann.xyz
+    k8s.dmann.xyz/cloudflare-domain-blog-dmann-dev: blog
+    k8s.dmann.xyz/cloudflare-zone-blog-dmann-dev: dmann.dev
     k8s.dmann.xyz/cloudflare-zone-dmann-dev: dmann.dev
 spec:
   selector:
