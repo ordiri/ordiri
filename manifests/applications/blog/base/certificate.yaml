@@ -6,7 +6,9 @@ spec:
   secretName: blog-tls
   dnsNames:
     - blog.dmann.xyz
-    - blog.dmann.dev
+    - blog.dmann.xyz
+    - dmann.dev
+    - dmann.xyz
   issuerRef:
     name: zerossl
     kind: ClusterIssuer
