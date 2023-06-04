@@ -7,6 +7,7 @@ metadata:
     k8s.dmann.xyz/cloudflare-zone-blog-dmann-xyz: dmann.xyz
     k8s.dmann.xyz/cloudflare-domain-blog-dmann-dev: blog
     k8s.dmann.xyz/cloudflare-zone-blog-dmann-dev: dmann.dev
+    k8s.dmann.xyz/cloudflare-domain-dmann-dev: ""
     k8s.dmann.xyz/cloudflare-zone-dmann-dev: dmann.dev
 spec:
   selector:
