@@ -6,8 +6,10 @@ metadata:
   annotations:
     k8s.dmann.xyz/cloudflare-domain-dmann-xyz: mqtt
     k8s.dmann.xyz/cloudflare-zone-dmann-xyz: dmann.xyz
+    k8s.dmann.xyz/cloudflare-proxy-dmann-xyz: false
     k8s.dmann.xyz/cloudflare-domain-dmann-dev: mqtt
     k8s.dmann.xyz/cloudflare-zone-dmann-dev: dmann.dev
+    k8s.dmann.xyz/cloudflare-proxy-dmann-dev: false
 spec:
   ipFamilyPolicy: PreferDualStack
   ports:
