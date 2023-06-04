@@ -34,6 +34,12 @@
   respond /ready 200
 }
 
+blog.dmann.xyz {  
+  redir https://dmann.dev{uri} permanent
+}
 blog.dmann.dev {  
-  redir https://blog.dmann.xyz{uri} permanent
+  redir https://dmann.dev{uri} permanent
+}
+dmann.xyz {  
+  redir https://dmann.dev{uri} permanent
 }
