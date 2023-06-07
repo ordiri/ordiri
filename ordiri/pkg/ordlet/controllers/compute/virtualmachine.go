@@ -241,12 +241,12 @@ func (r *VirtualMachineReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	// vm.Status.Volumes = []computev1alpha1.VirtualMachineVolumeStatus{}
 	volumes := []computev1alpha1.VirtualMachineVolumeStatus{}
 	for _, disk := range vm.Spec.Volumes {
-		log.V(5).Info("getting volume", "disk", disk)
+		log.V(8).Info("getting volume", "disk", disk)
 		volumeStatus, domainOption, err := r.ensureVolume(ctx, vm, disk)
 		if err != nil {
 			return ctrl.Result{}, fmt.Errorf("error ensuring volume - %w", err)
 		}
-		log.V(5).Info("found volume", "status", volumeStatus)
+		log.V(8).Info("found volume", "status", volumeStatus)
 
 		domainOptions = append(domainOptions, domainOption)
 		volumes = append(volumes, volumeStatus)

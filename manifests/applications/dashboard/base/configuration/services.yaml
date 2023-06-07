@@ -23,9 +23,20 @@
       href: https://grafana.dmann.xyz/
       ping: http://prometheus-grafana.monitoring.svc.cluster.local:3000
 
-- Group C:
-  - Service B:
-      href: http://localhost/
+- Home Automation:
+  - Home Assistant:
+      href: https://home-asistant.dmann.xyz
+  - ESPHome:
+      href: https://esphome.dmann.xyz
+  - AppDaemon:
+      href: https://appdaemon.dmann.xyz
+  - Zigbee2MQTT:
+      href: https://zigbee2mqtt.dmann.xyz
+  - Status:
+      href: https://status.dmann.xyz
+  - Gitea:
+      href: https://git.dmann.xyz
+
 - Media Management:
   - Bazarr:
       icon: bazarr.png
