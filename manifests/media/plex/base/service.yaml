@@ -17,6 +17,8 @@ spec:
   ports:
   - port: 443
     targetPort: webui
+  - port: 80
+    targetPort: webui
 
 ---
 
