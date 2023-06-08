@@ -89,7 +89,7 @@ spec:
         - name: plex-tls
           mountPath: /opt/plex-tls
         - name: p12
-          readonly: false
+          readOnly: false
           mountPath: /opt/plex-p12
         - name: plex-tls-pkcs12-password
           mountPath: /opt/plex-tls-pkcs12-password
