@@ -9,6 +9,9 @@ metadata:
     k8s.dmann.xyz/cloudflare-zone-dmann-dev: dmann.dev
 spec:
   ipFamilyPolicy: PreferDualStack
+  ipFamilies:
+  - IPv6
+  - IPv4
   selector:
     app: plex-server
   ports:
