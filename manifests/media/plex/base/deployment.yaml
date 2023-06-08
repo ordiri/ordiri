@@ -62,8 +62,8 @@ spec:
         args:
           - apt update && apt install openssl -y &&
             openssl pkcs12 -legacy -in /certs/keystore.p12 -passin file:/pkcs12-password/password -noenc -out /tmp/temp.pem &&
-            openssl pkcs12 -export -out /p12/keystore.p12 -passout file:/pkcs12-password/password -in /tmp/temp.pem &&
-            rm -f /tmp/temp.pem
+            openssl pkcs12 -export -out /p12/keystore.p12 -in /tmp/temp.pem &&
+            rm -f /tmp/temp.pem && chmod 0777 /p12/keystore.p12
         volumeMounts:
         - name: plex-tls
           mountPath: /certs
@@ -89,6 +89,7 @@ spec:
         - name: plex-tls
           mountPath: /opt/plex-tls
         - name: p12
+          readonly: false
           mountPath: /opt/plex-p12
         - name: plex-tls-pkcs12-password
           mountPath: /opt/plex-tls-pkcs12-password
