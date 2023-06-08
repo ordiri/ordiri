@@ -55,7 +55,7 @@ spec:
       - name: plex-server
         securityContext:
           privileged: true
-        image: lscr.io/linuxserver/plex:latest@sha256:71428379110c25712ec1f76c8398e3d4fc8eb36398daaf49b8500e606efcc684
+        image: lscr.io/linuxserver/plex:latest@sha256:fff32462fdc35da07655d5c5cbb37f0e12e8ab468a8c1f1816ac2b09efccb92c
         volumeMounts:
         - name: media-nfs
           mountPath: /media
