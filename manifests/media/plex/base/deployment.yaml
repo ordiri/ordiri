@@ -48,6 +48,9 @@ spec:
           path: /tmp/plex-transcoder
       - name: p12
         emptyDir: {}
+      - name: dev
+        hostPath:
+          path: /dev
       hostAliases:
       - ip: "127.0.0.1"
         hostnames:
@@ -93,13 +96,15 @@ spec:
           mountPath: /opt/plex-p12
         - name: plex-tls-pkcs12-password
           mountPath: /opt/plex-tls-pkcs12-password
+        - name: dev
+          mountPath: /dev
         env:
         - name: PUID
           value: "1000"
         - name: PGID
           value: "1000"
         - name: VERSION
-          value: "docker"
+          value: "latest"
         - name: ALLOWED_NETWORKS
           value: "10.0.0.0/8,192.168.0.0/16,172.16.0.0/12"
         - name: NVIDIA_VISIBLE_DEVICES
