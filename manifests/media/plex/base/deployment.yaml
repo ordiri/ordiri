@@ -66,7 +66,7 @@ spec:
           - apt update && apt install openssl -y &&
             openssl pkcs12 -legacy -in /certs/keystore.p12 -passin file:/pkcs12-password/password -noenc -out /tmp/temp.pem &&
             openssl pkcs12 -export -out /p12/keystore.p12 -passout file:/pkcs12-password/password -in /tmp/temp.pem &&
-            rm -f /tmp/temp.pem && chown 1000:1000 /p12/keystore.p12
+            rm -f /tmp/temp.pem && chown 1000:1000 /p12/keystore.p12; chmod 0777 /transcoder; chown 1000:1000 /transcoder
         volumeMounts:
         - name: plex-tls
           mountPath: /certs
@@ -77,6 +77,8 @@ spec:
         - name: plex-tls-pkcs12-password
           mountPath: /pkcs12-password
           readOnly: true
+        - name: transcode-storage
+          mountPath: /transcode
       containers:
       - name: plex-server
         securityContext:
