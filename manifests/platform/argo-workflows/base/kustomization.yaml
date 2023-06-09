@@ -4,7 +4,7 @@ kind: Kustomization
 helmCharts:
 - name: argo-workflows
   repo: https://argoproj.github.io/argo-helm
-  version: 0.29.2
+  version: 0.29.1
   releaseName: argo-workflows
   namespace: argo-workflows
   includeCRDs: true
@@ -16,24 +16,23 @@ helmCharts:
       - client
       - --auth-mode
       - sso
-      - --tls-certificate-secret-name
-      - argo-tls
-    sso:
-      rbac: 
+      sso:
         enabled: true
-      issuer: https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/default
-      clientId:
-        name: vault-argo-oidc-client-secret
-        key: client-id
-      clientSecret:
-        name: vault-argo-oidc-client-secret
-        key: client-secret
-      redirectUrl: https://argo.dmann.xyz/oauth2/callback
-      scopes:
-      - openid
-      - profile
-      - email
-      - groups
+        rbac: 
+          enabled: true
+        issuer: https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/default
+        clientId:
+          name: vault-argo-oidc-client-secret
+          key: client-id
+        clientSecret:
+          name: vault-argo-oidc-client-secret
+          key: client-secret
+        redirectUrl: https://argo.dmann.xyz/oauth2/callback
+        scopes:
+        - openid
+        - profile
+        - email
+        - groups
       volumes:
       - name: argo-oidc-creds
         csi:
