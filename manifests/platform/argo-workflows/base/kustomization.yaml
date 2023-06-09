@@ -16,22 +16,24 @@ helmCharts:
       - client
       - --auth-mode
       - sso
-      sso:
-        rbac: 
-          enabled: true
-        issuer: https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/default
-        clientId:
-          name: vault-argo-oidc-client-secret
-          key: client-id
-        clientSecret:
-          name: vault-argo-oidc-client-secret
-          key: client-secret
-        redirectUrl: https://argo.dmann.xyz/oauth2/callback
-        scopes:
-        - openid
-        - profile
-        - email
-        - groups
+      - --tls-certificate-secret-name
+      - argo-tls
+    sso:
+      rbac: 
+        enabled: true
+      issuer: https://vault.homelab.dmann.xyz:8200/v1/identity/oidc/provider/default
+      clientId:
+        name: vault-argo-oidc-client-secret
+        key: client-id
+      clientSecret:
+        name: vault-argo-oidc-client-secret
+        key: client-secret
+      redirectUrl: https://argo.dmann.xyz/oauth2/callback
+      scopes:
+      - openid
+      - profile
+      - email
+      - groups
       volumes:
       - name: argo-oidc-creds
         csi:
