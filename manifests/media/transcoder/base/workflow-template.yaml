@@ -39,7 +39,7 @@ spec:
     - name: config
       emptyDir: {}
     container:
-      image: docker.io/jlesage/makemkv:v23.03.1
+      image: docker.io/jlesage/makemkv:v23.06.1
       env:
       - name: BETA_KEY
         value: T-2KF3Fsx1NkAkuKtr3o47Fv4Bf4YoFgqnxEPqm9sTPIT1Ya70CTlIcRXbSPPzHIDq7z
@@ -78,7 +78,7 @@ spec:
         path: /homelab/media
         server: ceph.homelab.dmann.xyz
     container:
-      image: docker.io/alpine/k8s:1.27.1
+      image: docker.io/alpine/k8s:1.27.2
       command:
       - /bin/sh
       - -x
