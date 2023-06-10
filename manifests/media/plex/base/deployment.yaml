@@ -113,7 +113,18 @@ spec:
           value: all
         - name: NVIDIA_DRIVER_CAPABILITIES
           value: all
-
+        livenessProbe:
+          httpGet:
+            path: /web/index.html
+            port: webui
+            scheme: HTTPS
+            httpHeaders:
+            - name: Host
+              value: "plex.dmann.xyz"
+          initialDelaySeconds: 60
+          timeoutSeconds: 5
+          periodSeconds: 60
+          failureThreshold: 3
         ports:
         - name:  webui
           containerPort:  32400

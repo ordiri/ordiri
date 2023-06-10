@@ -98,12 +98,13 @@ spec:
           initialDelaySeconds: 30
           periodSeconds: 10
         livenessProbe:
-          httpGet:
-            path: /manifest.json
-            port: webui
-            scheme: HTTPS
-          initialDelaySeconds: 30
-          periodSeconds: 10
+          exec:
+            command:
+            - bash
+            - -c
+            - "nc -z postgres.home-assistant.svc.cluster.local 5432 && curl -XGET -k https://127.0.0.1:8123/manifest.json"
+          initialDelaySeconds: 5
+          periodSeconds: 5
       - name: mdns-tunnel
         image: docker.io/toxuin/mdns-tunneller
         resources:
