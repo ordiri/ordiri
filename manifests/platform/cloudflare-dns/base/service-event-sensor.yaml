@@ -11,6 +11,10 @@ spec:
     eventName: service-resource-updated
   triggers:
   - template:
+      name: log-trigger2
+      log:
+        intervalSeconds: 4
+  - template:
       name: service-routes-updated
       http:
         url: http://cloudflare-dns-updater-eventsource-svc:12000/annotation-updated
