@@ -114,6 +114,7 @@ patches:
     kind: Service
     metadata:
       name: argocd-server
+      namespace: argocd
       annotations:
         k8s.dmann.xyz/cloudflare-domain-dmann-xyz: argocd
         k8s.dmann.xyz/cloudflare-zone-dmann-xyz: dmann.xyz
@@ -127,6 +128,7 @@ patches:
     kind: Deployment
     metadata:
       name: argocd-server
+      namespace: argocd
     spec:
       template:
         spec:
@@ -159,6 +161,7 @@ patches:
     kind: Deployment
     metadata:
       name: argocd-server
+      namespace: argocd
     spec:
       template:
         spec:
@@ -171,6 +174,7 @@ patches:
     kind: Deployment
     metadata:
       name: argocd-repo-server
+      namespace: argocd
     spec:
       template:
         spec:
