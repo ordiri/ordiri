@@ -5,6 +5,9 @@ metadata:
 spec:
   entrypoint: main
   serviceAccountName: image-pipeline-wf-sa
+  ttlStrategy:
+    secondsAfterSuccess: 60
+    secondsAfterFailure: 3600
   arguments:
     parameters:
     - name: repository

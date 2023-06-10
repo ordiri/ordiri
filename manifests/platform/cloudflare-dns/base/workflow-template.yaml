@@ -7,6 +7,9 @@ metadata:
 spec:
   serviceAccountName: cloudflaredns-workflow-sa
   entrypoint: main
+  ttlStrategy:
+    secondsAfterSuccess: 60
+    secondsAfterFailure: 3600
   arguments:
     parameters:
       - name: kind
