@@ -2,7 +2,7 @@
   - Plex:
       icon: plex.png
       href: http://plex.dmann.xyz
-      ping: http://plex.plex.svc.cluster.local:443
+      ping: https://plex.plex.svc.cluster.local:443
       description: Movie management
       widget:
         type: plex
