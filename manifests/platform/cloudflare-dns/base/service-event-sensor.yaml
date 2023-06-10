@@ -37,6 +37,6 @@ spec:
           dest: name
         - src:
             dependencyName: service-event-dep
-            contextKey: type
+            dataKey: type
           dest: action
         method: POST

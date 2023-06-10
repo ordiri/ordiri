@@ -48,7 +48,7 @@ spec:
           dest: spec.arguments.parameters.2.value
         - src:
             dependencyName: dns-update-notify-dep
-            dataKey: body.action
+            dataTemplate: "{{ lower .Input.body.action }}"
           dest: spec.arguments.parameters.3.value
         source:
           resource:
