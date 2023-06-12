@@ -91,6 +91,8 @@ spec:
         env:
         - name: ZIGBEE2MQTT_DATA
           value: /opt/zigbee-nfs
+        - name: DEBUG
+          value: zigbee-herdsman*
         resources:
           requests:
             cpu: "50m"
