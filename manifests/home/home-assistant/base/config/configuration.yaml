@@ -13,6 +13,8 @@ recorder:
   exclude:
     entities:
     - sensor.washing_machine_remaining_time
+    - sensor.washing_machine_countdown_time
+    - sensor.washing_machine_initial_time
     - sensor.date
     - sensor.last_boot # Comes from 'systemmonitor' sensor platform
     - sun.sun # Don't record sun data
@@ -21,6 +23,7 @@ recorder:
     - weather.*
     - sensor.weather_*
     - sensor.codingninja_2_*
+    - update.*
   
 tts:
 - platform: google_translate
