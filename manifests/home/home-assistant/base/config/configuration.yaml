@@ -20,6 +20,7 @@ recorder:
     - sensor.sun*
     - weather.*
     - sensor.weather_*
+    - sensor.codingninja_2_*
   
 tts:
 - platform: google_translate
