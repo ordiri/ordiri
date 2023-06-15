@@ -2,6 +2,9 @@
 devices: devices.yaml
 groups: groups.yaml
 
+external_converters:
+  - ./custom-components/power-meter.js
+
 frontend:
   # Optional, default 8080
   port: 8080

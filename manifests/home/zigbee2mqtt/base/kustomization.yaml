@@ -5,6 +5,9 @@ configMapGenerator:
   - name: zigbee2mqtt-config
     files:
     - configuration.yaml=config/configuration.yaml
+  - name: zigbee2mqtt-custom-components
+    files:
+    - power-meter.js=components/esp-c6-power-meter.js
 resources:
 - statefulset.yaml
 - ingress.yaml

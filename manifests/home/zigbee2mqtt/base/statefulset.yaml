@@ -121,6 +121,8 @@ spec:
         - name: zigbee2mqtt-config
           mountPath: /opt/zigbee-nfs/configuration.yaml
           subPath: configuration.yaml
+        - name: zigbee2mqtt-custom-components
+          mountPath: /opt/zigbee-nfs/custom-components
       volumes:
       - name: nfs-volume
         nfs:
@@ -129,6 +131,9 @@ spec:
       - name: zigbee2mqtt-config
         configMap:
           name: zigbee2mqtt-config
+      - name: zigbee2mqtt-custom-components
+        configMap:
+          name: zigbee2mqtt-custom-components
       - name: zigbee2mqtt-tls
         secret:
           secretName: zigbee2mqtt-tls
