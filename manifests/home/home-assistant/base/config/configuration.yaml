@@ -24,6 +24,8 @@ recorder:
     - sensor.weather_*
     - sensor.codingninja_2_*
     - update.*
+    - remote.*
+    - media_player.*
   
 tts:
 - platform: google_translate
