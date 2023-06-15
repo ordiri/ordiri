@@ -15,15 +15,14 @@ const definition = {
     description: 'Power meter',
     fromZigbee: [fz.electrical_measurement],
     toZigbee: [],
-    exposes: [e.current(), e.power(), e.energy(), e.voltage()],
-    // configure: async (device, coordinatorEndpoint, logger) => {
-    //     const endpoint = device.getEndpoint(1);
-    //     await reporting.bind(endpoint, coordinatorEndpoint, ['genOnOff', 'haElectricalMeasurement']);
-    //     // await reporting.instantaneousDemand(endpoint);
-    //     // await reporting.currentSummDelivered(endpoint);
-    //     // //await reporting.currentSummReceived(endpoint);
-    //     // endpoint.saveClusterAttributeKeyValue('seMetering', { divisor: 10000, multiplier: 1 });
-    // },
+    exposes: [e.power(), e.energy(), e.voltage()],
+    configure: async (device, coordinatorEndpoint, logger) => {
+        const endpoint = device.getEndpoint(1);
+        await reporting.bind(endpoint, coordinatorEndpoint, ['haElectricalMeasurement']);
+        await reporting.rmsVoltage(endpoint);
+        await reporting.activePower(endpoint);
+        await reporting.powerFactor(endpoint);
+    },
 };
 
 module.exports = definition;
