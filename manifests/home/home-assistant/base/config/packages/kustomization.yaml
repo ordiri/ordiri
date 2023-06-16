@@ -6,4 +6,5 @@ configMapGenerator:
   files:
   - water_ph.yaml
   - homekit.yaml
+  - prometheus.yaml
   - washing_machine.yaml
