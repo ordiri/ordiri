@@ -23,6 +23,32 @@ helmCharts:
     prometheus:
       prometheusSpec:
         serviceMonitorSelectorNilUsesHelmValues: false
+        podMetadata:
+          annotations:
+            vault.hashicorp.com/agent-inject: 'true'
+            vault.hashicorp.com/agent-limits-cpu: 100m
+            vault.hashicorp.com/agent-requests-cpu: 50m
+            vault.hashicorp.com/agent-limits-mem: 128Mi
+            vault.hashicorp.com/agent-requests-mem: 64Mi
+            vault.hashicorp.com/agent-inject-secret-home-assistant-token: secret/data/prometheus/home-assistant-api
+            vault.hashicorp.com/agent-inject-template-home-assistant-token: |
+              {{- with secret "secret/data/prometheus/home-assistant-api" -}}
+              {{ .Data.data.token }}
+              {{- end -}}
+            vault.hashicorp.com/role: prometheus
+            
+        additionalScrapeConfigs: 
+        - job_name: home-assistant
+          scrape_interval: 60s
+          metrics_path: /api/prometheus
+
+          # Long-Lived Access Token
+          authorization:
+            credentials_file: /vault/secrets/home-assistant-token
+
+          scheme: https
+          static_configs:
+          - targets: ['home-assistant.home-assistant.svc.cluster.local:8123']
         storageSpec:
           volumeClaimTemplate:
             spec:

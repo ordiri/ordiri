@@ -10,3 +10,6 @@ subjects:
   - kind: ServiceAccount
     name: prometheus-grafana
     namespace: monitoring
+  - kind: ServiceAccount
+    name: prometheus-kube-prometheus-prometheus
+    namespace: monitoring
