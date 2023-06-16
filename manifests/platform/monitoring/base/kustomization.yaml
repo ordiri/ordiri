@@ -45,6 +45,9 @@ helmCharts:
           # Long-Lived Access Token
           authorization:
             credentials_file: /vault/secrets/home-assistant-token
+          tls_config: 
+            # insecure_skip_verify: true
+            server_name: home-assistant.dmann.xyz
 
           scheme: https
           static_configs:
