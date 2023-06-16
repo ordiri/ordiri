@@ -32,9 +32,9 @@ helmCharts:
             vault.hashicorp.com/agent-requests-mem: 64Mi
             vault.hashicorp.com/agent-inject-secret-home-assistant-token: secret/data/prometheus/home-assistant-api
             vault.hashicorp.com/agent-inject-template-home-assistant-token: |
-              {{- with secret "secret/data/prometheus/home-assistant-api" -}}
-              {{ .Data.data.token }}
-              {{- end -}}
+              {{ "{{" }}- with secret "secret/data/prometheus/home-assistant-api" -{{"}}"}}
+              {{ "{{" }} .Data.data.token {{"}}"}}
+              {{ "{{" }}- end -{{"}}"}}
             vault.hashicorp.com/role: prometheus
             
         additionalScrapeConfigs: 
