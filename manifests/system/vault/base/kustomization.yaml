@@ -18,11 +18,11 @@ helmCharts:
         repository: "harbor.dmann.dev/docker.io/hashicorp/vault-csi-provider"
     injector:
       enabled: true
+      failurePolicy: Fail
       image:
         repository: "harbor.dmann.dev/docker.io/hashicorp/vault-k8s"
       agentImage:
         repository: "harbor.dmann.dev/docker.io/hashicorp/vault"
-        failurePolicy: Fail
       resources:
         requests:
           memory: 128Mi
