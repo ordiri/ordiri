@@ -16,10 +16,10 @@ helmCharts:
       enabled: true
       image:
         repository: "harbor.dmann.dev/docker.io/hashicorp/vault-csi-provider"
-    webhook:
-      failurePolicy: Fail
     injector:
       enabled: true
+      webhook:
+        failurePolicy: Fail
       image:
         repository: "harbor.dmann.dev/docker.io/hashicorp/vault-k8s"
       agentImage:
