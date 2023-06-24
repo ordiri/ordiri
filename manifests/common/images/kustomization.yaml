@@ -54,6 +54,3 @@ images:
 - name: quay.io/oauth2-proxy/oauth2-proxy
   newName: harbor.dmann.dev/quay.io/oauth2-proxy/oauth2-proxy
   
-- name: ghcr.io/tautulli/tautulli:v2.11.0
-  # newName: harbor.dmann.dev/quay.io/ceph/ceph
-  
