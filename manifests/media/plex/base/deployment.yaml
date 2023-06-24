@@ -83,7 +83,7 @@ spec:
       - name: plex-server
         securityContext:
           privileged: true
-        image: lscr.io/linuxserver/plex:1.32.3
+        image: lscr.io/linuxserver/plex:1.32.4
         volumeMounts:
         - name: media-nfs
           mountPath: /media
