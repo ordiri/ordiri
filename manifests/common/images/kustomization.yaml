@@ -24,12 +24,14 @@ images:
   newName: harbor.dmann.dev/docker.io/jlesage/makemkv
 - name: docker.io/alpine/k8s
   newName: harbor.dmann.dev/docker.io/alpine/k8s
+  newTag: 1.25.5
+  
 - name: docker.io/grafana/grafana
   newName: harbor.dmann.dev/docker.io/grafana/grafana
 
 - name: docker.io/curlimages/curl
   newName: harbor.dmann.dev/docker.io/curlimages/curl
-  newTag: 1.25.5
+
 - name: quay.io/ceph/ceph
   newName: harbor.dmann.dev/quay.io/ceph/ceph
   
