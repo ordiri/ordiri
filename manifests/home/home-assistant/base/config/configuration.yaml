@@ -6,6 +6,14 @@ homeassistant:
   internal_url: "https://home-assistant.dmann.xyz:443"
   media_dirs: {}
   packages: !include_dir_merge_named packages/
+
+lovelace:
+  resources:
+  - url: /hacsfiles/mushroom-strategy/mushroom-strategy.js 
+    type: module 
+  - url: /hacsfiles/lovelace-mushroom/mushroom.js 
+    type: module 
+
   
 recorder:
   db_url: postgresql://admin:psltest@postgres.home-assistant.svc.cluster.local:5432/postgresdb
