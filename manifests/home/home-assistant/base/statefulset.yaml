@@ -58,6 +58,9 @@ spec:
         volumeMounts:
         - name: data
           mountPath: /config
+        - name: home-assistant-config
+          mountPath: /config
+          readOnly: true
         - name: nfs-volume
           mountPath: /media
         - name: nfs-volume
@@ -74,10 +77,6 @@ spec:
           subPath: home-assistant/secrets.yaml
         - name: home-assistant-packages
           mountPath: /config/packages
-        - name: home-assistant-config
-          mountPath: /config/configuration.yaml
-          subPath: configuration.yaml
-          readOnly: true
         - name: home-assistant-tls
           mountPath: /opt/home-assistant-tls
         ports:

@@ -3,6 +3,8 @@ kind: Kustomization
 
 configMapGenerator:
   - name: home-assistant-config
+    options:
+      disableNameSuffixHash: true
     files:
       - configuration.yaml=config/configuration.yaml
   - name: mdns-tunnel-config
