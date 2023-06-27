@@ -69,6 +69,9 @@ spec:
         - name: nfs-volume
           mountPath: /config/automations.yaml
           subPath: home-assistant/automations.yaml
+        - name: nfs-volume
+          mountPath: /config/secrets.yaml
+          subPath: home-assistant/secrets.yaml
         - name: home-assistant-packages
           mountPath: /config/packages
         - name: home-assistant-config
