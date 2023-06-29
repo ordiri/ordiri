@@ -35,11 +35,12 @@ helmCharts:
               {{ "{{" }}- with secret "secret/data/prometheus/home-assistant-api" -{{"}}"}}
               {{ "{{" }} .Data.data.token {{"}}"}}
               {{ "{{" }}- end -{{"}}"}}
+            vault.hashicorp.com/agent-inject-token: "true"
             vault.hashicorp.com/role: prometheus
             
         additionalScrapeConfigs: 
         - job_name: home-assistant
-          scrape_interval: 60s
+          scrape_interval: 10s
           metrics_path: /api/prometheus
 
           # Long-Lived Access Token
@@ -52,6 +53,17 @@ helmCharts:
           scheme: https
           static_configs:
           - targets: ['home-assistant.home-assistant.svc.cluster.local:8123']
+        - job_name: vault
+          scrape_interval: 10s
+          metrics_path: /v1/sys/metrics
+          params:
+            format: ['prometheus']
+          scheme: https
+          authorization:
+            credentials_file: /vault/secrets/token
+          static_configs:
+          - targets: ['vault.homelab.dmann.xyz:8200']
+
         storageSpec:
           volumeClaimTemplate:
             spec:
