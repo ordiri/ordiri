@@ -45,8 +45,10 @@ spec:
         - |
           
           function update_cfg() {
-            mkdir -p /config/
+            mkdir -p /config/packages
             cp -R /kube-config/*  /nfs-volume/home-assistant/*.y*ml  /config/.
+            cp -R /kube-packages/* /config/packages/.
+            
           }
           while ! nc -z postgres.home-assistant.svc.cluster.local 5432; do
             echo "Waiting for Postgres to boot";
@@ -67,9 +69,9 @@ spec:
           mountPath: /nfs-volume
 
         - name: home-assistant-packages
-          mountPath: /kube-config/packages
+          mountPath: /kube-packages
         - name: home-assistant-config
-          mountPath: /kube-config/configuration.yaml
+          mountPath: /kube-config
           readOnly: true
       containers:
       - name: config-reloader
@@ -79,8 +81,9 @@ spec:
         - -euc
         - |
           function update_cfg() {
-            mkdir -p /config/
+            mkdir -p /config/packages
             cp -R /kube-config/*  /nfs-volume/home-assistant/*.y*ml  /config/.
+            cp -R /kube-packages/* /config/packages/.
           }
           update_cfg
 
@@ -104,9 +107,9 @@ spec:
         - name: nfs-volume
           mountPath: /nfs-volume
         - name: home-assistant-packages
-          mountPath: /kube-config/packages
+          mountPath: /kube-packages
         - name: home-assistant-config
-          mountPath: /kube-config/configuration.yaml
+          mountPath: /kube-config
           readOnly: true
       - name: home-assistant
         image: ghcr.io/home-assistant/home-assistant:stable@sha256:8e069fcfddbd95c0acff88b9e515e3b208c2a5b4ad801a8f0cb8b55be417fc45
