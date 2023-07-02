@@ -37,7 +37,7 @@ spec:
         configMap:
           name: mdns-tunnel-config
       initContainers:
-      - name: alpine
+      - name: waiter
         image: docker.io/alpine/k8s:1.27.2
         command:
         - /bin/sh
@@ -46,7 +46,7 @@ spec:
           
           function update_cfg() {
             mkdir -p /config/new-config/
-            cp -R /kube-config/*  /nfs-volume/home-assistant/*  /config/new-config/.
+            cp -R /kube-config/*  /nfs-volume/home-assistant/*.y*ml  /config/new-config/.
           }
           while ! nc -z postgres.home-assistant.svc.cluster.local 5432; do
             echo "Waiting for Postgres to boot";
@@ -56,6 +56,9 @@ spec:
           echo "Postgres is ready"
           
           update_cfg
+
+          echo "Config was updated"
+          ls -alR /config/new-config
         volumeMounts:
         - name: data
           mountPath: /config
@@ -77,7 +80,7 @@ spec:
         - |
           function update_cfg() {
             mkdir -p /config/new-config/
-            cp -R /nfs-volume/home-assistant/* /kube-config/* /config/new-config/.
+            cp -R /kube-config/*  /nfs-volume/home-assistant/*.y*ml  /config/new-config/.
           }
           update_cfg
 
