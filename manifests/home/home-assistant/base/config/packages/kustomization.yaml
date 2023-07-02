@@ -3,6 +3,8 @@ kind: Kustomization
 
 configMapGenerator:
 - name: home-assistant-packages
+  options:
+    disableNameSuffixHash: true
   files:
   - fridge_temp.yaml
   - water_ph.yaml

@@ -38,17 +38,75 @@ spec:
           name: mdns-tunnel-config
       initContainers:
       - name: alpine
-        image: alpine
+        image: docker.io/alpine/k8s:1.27.2
         command:
         - /bin/sh
         - -euc
         - |
+          
+          function update_cfg() {
+            mkdir -p /config/new-config/
+            cp -R /kube-config/*  /nfs-volume/home-assistant/*  /config/new-config/.
+          }
           while ! nc -z postgres.home-assistant.svc.cluster.local 5432; do
             echo "Waiting for Postgres to boot";
             sleep 1;
           done;
+
           echo "Postgres is ready"
+          
+          update_cfg
+        volumeMounts:
+        - name: data
+          mountPath: /config
+
+        - name: nfs-volume
+          mountPath: /nfs-volume
+
+        - name: home-assistant-packages
+          mountPath: /kube-config/packages
+        - name: home-assistant-config
+          mountPath: /kube-config/configuration.yaml
+          readOnly: true
       containers:
+      - name: config-reloader
+        image: docker.io/alpine/k8s:1.27.2
+        command:
+        - /bin/sh
+        - -euc
+        - |
+          function update_cfg() {
+            mkdir -p /config/new-config/
+            cp -R /nfs-volume/home-assistant/* /kube-config/* /config/new-config/.
+          }
+          update_cfg
+
+          apk update && apk add inotify-tools;
+          inotifywait \
+              --event create --event delete \
+              --event modify --event move \
+              --format "%e %w%f" \
+              --monitor \
+              --syslog --quiet --recursive \
+              /kube-config /nfs-volume/home-assistant |
+          while read CHANGED;
+          do
+              echo "$CHANGED"
+              update_cfg
+          done
+          
+        volumeMounts:
+        - name: data
+          mountPath: /config
+
+        - name: nfs-volume
+          mountPath: /nfs-volume
+
+        - name: home-assistant-packages
+          mountPath: /kube-config/packages
+        - name: home-assistant-config
+          mountPath: /kube-config/configuration.yaml
+          readOnly: true
       - name: home-assistant
         image: ghcr.io/home-assistant/home-assistant:stable@sha256:8e069fcfddbd95c0acff88b9e515e3b208c2a5b4ad801a8f0cb8b55be417fc45
         securityContext:
@@ -66,18 +124,6 @@ spec:
         - name: nfs-volume
           mountPath: /config/custom_components
           subPath: home-assistant/custom_components
-        - name: nfs-volume
-          mountPath: /config/automations.yaml
-          subPath: home-assistant/automations.yaml
-        - name: nfs-volume
-          mountPath: /config/secrets.yaml
-          subPath: home-assistant/secrets.yaml
-        - name: home-assistant-packages
-          mountPath: /config/packages
-        - name: home-assistant-config
-          mountPath: /config/configuration.yaml
-          subPath: configuration.yaml
-          readOnly: true
         - name: home-assistant-tls
           mountPath: /opt/home-assistant-tls
         ports:
