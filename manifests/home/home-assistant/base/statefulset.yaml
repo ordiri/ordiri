@@ -38,7 +38,7 @@ spec:
           name: mdns-tunnel-config
       initContainers:
       - name: waiter
-        image: docker.io/alpine/k8s:1.27.2
+        image: docker.io/alpine/k8s:1.27.3
         command:
         - /bin/sh
         - -euc
@@ -75,7 +75,7 @@ spec:
           readOnly: true
       containers:
       - name: config-reloader
-        image: docker.io/alpine/k8s:1.27.2
+        image: docker.io/alpine/k8s:1.27.3
         command:
         - /bin/sh
         - -euc
