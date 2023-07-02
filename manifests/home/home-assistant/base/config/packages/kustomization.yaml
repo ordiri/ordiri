@@ -4,6 +4,7 @@ kind: Kustomization
 configMapGenerator:
 - name: home-assistant-packages
   files:
+  - fridge_temp.yaml
   - water_ph.yaml
   - homekit.yaml
   - prometheus.yaml
