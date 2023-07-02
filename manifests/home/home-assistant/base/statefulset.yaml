@@ -46,8 +46,8 @@ spec:
           
           function update_cfg() {
             mkdir -p /config/packages
-            cp -R /kube-config/*  /nfs-volume/home-assistant/*.y*ml  /config/.
-            cp -R /kube-packages/* /config/packages/.
+            cp -LR /kube-config/*  /nfs-volume/home-assistant/*.y*ml  /config/.
+            cp -LR /kube-packages/* /config/packages/.
             
           }
           while ! nc -z postgres.home-assistant.svc.cluster.local 5432; do
@@ -82,8 +82,8 @@ spec:
         - |
           function update_cfg() {
             mkdir -p /config/packages
-            cp -R /kube-config/*  /nfs-volume/home-assistant/*.y*ml  /config/.
-            cp -R /kube-packages/* /config/packages/.
+            cp -LR /kube-config/*  /nfs-volume/home-assistant/*.y*ml  /config/.
+            cp -LR /kube-packages/* /config/packages/.
           }
           update_cfg
 
