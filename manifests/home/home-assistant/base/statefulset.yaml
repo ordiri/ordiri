@@ -80,13 +80,16 @@ spec:
         - -euc
         - |
           function update_cfg() {
+            echo "Refreshing configuration from mounted volumes"
             mkdir -p /config/packages
             cp -LR /kube-config/*  /nfs-volume/home-assistant/*.y*ml  /config/.
             cp -LR /kube-packages/* /config/packages/.
           }
-          update_cfg
+
+          update_cfg;
 
           apk update && apk add inotify-tools;
+
           inotifywait \
               --event create --event delete \
               --event modify --event move \
@@ -96,8 +99,8 @@ spec:
               /kube-config /nfs-volume/home-assistant |
           while read CHANGED;
           do
-              echo "$CHANGED"
-              update_cfg
+              echo "$CHANGED";
+              update_cfg;
           done
         volumeMounts:
         - name: data
