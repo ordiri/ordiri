@@ -3,7 +3,7 @@ fridge_temp:
     - platform: derivative # will be positive for rising temperatures and negative for falling temperatures
       source: sensor.temperature
       unit_time: min
-      unique_id: fridge_temperature_derivative
+      # unique_id: fridge_temperature_derivative
       time_window: 00:05:00
   binary_sensor:
     - platform: threshold # will switch state not at 0°C/min but 0.1°C/min or -0.1°C/min depending on the current state of the sensor, respectively

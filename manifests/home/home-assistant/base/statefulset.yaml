@@ -60,7 +60,6 @@ spec:
           update_cfg
 
           echo "Config was updated"
-          ls -alR /config
         volumeMounts:
         - name: data
           mountPath: /config
@@ -100,7 +99,6 @@ spec:
               echo "$CHANGED"
               update_cfg
           done
-          
         volumeMounts:
         - name: data
           mountPath: /config
