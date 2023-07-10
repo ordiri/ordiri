@@ -4,7 +4,7 @@ fridge_temp:
       source: sensor.temperature
       unit_time: min
       # unique_id: fridge_temperature_derivative
-      time_window: 00:05:00
+      time_window: "1:00:00"
   binary_sensor:
     - platform: threshold # will switch state not at 0°C/min but 0.1°C/min or -0.1°C/min depending on the current state of the sensor, respectively
       entity_id: sensor.fridge_temperature_derivative
