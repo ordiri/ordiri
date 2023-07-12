@@ -22,12 +22,12 @@ func WithUuid(uuid string) DomainOption {
 		return nil
 	}
 }
+
 func WithBasicDefaults() DomainOption {
 	return func(domain *libvirtxml.Domain) error {
 		domain.Description = "Created by the golang scheduler"
 
 		if domain.Clock == nil {
-
 			domain.Clock = &libvirtxml.DomainClock{}
 		}
 
@@ -36,6 +36,7 @@ func WithBasicDefaults() DomainOption {
 		return nil
 	}
 }
+
 func WithBootDevice(bootDevice ...string) DomainOption {
 	return func(domain *libvirtxml.Domain) error {
 		if domain.OS == nil {
@@ -65,7 +66,6 @@ func WithBootDevice(bootDevice ...string) DomainOption {
 
 func WithConsole(targetPort uint, targetType string) DomainOption {
 	return func(domain *libvirtxml.Domain) error {
-
 		if domain.Devices == nil {
 			domain.Devices = &libvirtxml.DomainDeviceList{}
 		}
@@ -96,20 +96,26 @@ func WithCpu(cpus uint) DomainOption {
 		}
 		if domain.CPU == nil {
 			domain.CPU = &libvirtxml.DomainCPU{}
-			domain.CPU.Mode = "host-passthrough"
-			domain.CPU.Match = "exact"
-			domain.CPU.Check = "partial"
 		}
+		domain.CPU.Mode = "host-passthrough"
+		domain.CPU.Match = ""
+		domain.CPU.Check = ""
 		if domain.CPU.Model == nil {
 			domain.CPU.Model = &libvirtxml.DomainCPUModel{}
 			domain.CPU.Model.Fallback = "forbid"
 			domain.CPU.Model.Value = "qemu64"
-			domain.CPU.Features = append(domain.CPU.Features, libvirtxml.DomainCPUFeature{
-				Name:   "svm",
-				Policy: "disable",
-			})
-			// <feature name='svm' policy='disable'/>
-
+			hasSvm := false
+			for _, feat := range domain.CPU.Features {
+				if feat.Name == "svm" {
+					hasSvm = true
+				}
+			}
+			if !hasSvm {
+				domain.CPU.Features = append(domain.CPU.Features, libvirtxml.DomainCPUFeature{
+					Name:   "svm",
+					Policy: "disable",
+				})
+			}
 		}
 		domain.VCPU.Value = cpus
 
@@ -119,7 +125,6 @@ func WithCpu(cpus uint) DomainOption {
 
 func WithMemory(size uint) DomainOption {
 	return func(domain *libvirtxml.Domain) error {
-
 		if domain.Memory == nil {
 			domain.Memory = &libvirtxml.DomainMemory{}
 		}
@@ -253,6 +258,7 @@ func WithNetworkInterfaces(interfaces ...libvirtxml.DomainInterface) DomainOptio
 		return nil
 	}
 }
+
 func WithVnc() DomainOption {
 	return WithGraphics(libvirtxml.DomainGraphic{
 		VNC: &libvirtxml.DomainGraphicVNC{
@@ -264,6 +270,7 @@ func WithVnc() DomainOption {
 		},
 	})
 }
+
 func WithMetadata(ns, uri, key, value string) DomainOption {
 	return func(domain *libvirtxml.Domain) error {
 		if domain.Metadata == nil {
@@ -276,6 +283,7 @@ func WithMetadata(ns, uri, key, value string) DomainOption {
 		return nil
 	}
 }
+
 func WithGraphics(graphics ...libvirtxml.DomainGraphic) DomainOption {
 	return func(domain *libvirtxml.Domain) error {
 		if domain.Devices == nil {
@@ -306,6 +314,7 @@ func WithGraphics(graphics ...libvirtxml.DomainGraphic) DomainOption {
 		return nil
 	}
 }
+
 func WithBiosOemString(entries ...string) DomainOption {
 	return func(domain *libvirtxml.Domain) error {
 		if domain.OS == nil {

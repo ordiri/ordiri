@@ -197,7 +197,8 @@ func (r *NetworkReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 
 					// ipv6 isn't working yet
 					if !parsedIp.IP().Is4() {
-						if _, mac, err := eui64.ParseIP(parsedIp.IPNet().IP); err != nil || mac.String() == iface.Mac {
+						_, mac, err := eui64.ParseIP(parsedIp.IPNet().IP)
+						if err != nil || mac.String() != iface.Mac {
 							continue
 						}
 					}
