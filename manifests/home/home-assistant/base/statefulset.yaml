@@ -43,23 +43,23 @@ spec:
         - /bin/sh
         - -euc
         - |
-          
           function update_cfg() {
-            mkdir -p /config/packages
-            cp -LR /kube-config/*  /nfs-volume/home-assistant/*.y*ml  /config/.
-            cp -LR /kube-packages/* /config/packages/.
-            
+            echo "Refreshing configuration from mounted volumes";
+            mkdir -p /config/packages;
+            cp -LR /kube-config/*  /nfs-volume/home-assistant/*.y*ml  /config/.;
+            cp -LR /kube-packages/* /config/packages/.;
           }
+
           while ! nc -z postgres.home-assistant.svc.cluster.local 5432; do
             echo "Waiting for Postgres to boot";
             sleep 1;
           done;
 
-          echo "Postgres is ready"
+          echo "Postgres is ready";
           
-          update_cfg
+          update_cfg;
 
-          echo "Config was updated"
+          echo "Config was updated";
         volumeMounts:
         - name: data
           mountPath: /config
@@ -80,10 +80,10 @@ spec:
         - -euc
         - |
           function update_cfg() {
-            echo "Refreshing configuration from mounted volumes"
-            mkdir -p /config/packages
-            cp -LR /kube-config/*  /nfs-volume/home-assistant/*.y*ml  /config/.
-            cp -LR /kube-packages/* /config/packages/.
+            echo "Refreshing configuration from mounted volumes";
+            mkdir -p /config/packages;
+            cp -LR /kube-config/*  /nfs-volume/home-assistant/*.y*ml  /config/.;
+            cp -LR /kube-packages/* /config/packages/.;
           }
 
           update_cfg;
