@@ -5,6 +5,9 @@ namespace: tigera-operator
 resources:
 - namespace.yaml
 - bgp.yaml
+- felixconfiguration.yaml
+- metrics-svc.yaml
+- metrics-svc-monitor.yaml
 helmCharts:
 - name: tigera-operator
   repo: https://docs.projectcalico.org/charts
@@ -14,6 +17,7 @@ helmCharts:
   includeCRDs: true
   valuesInline:
     installation:
+      typhaMetricsPort: 9093
       calicoNetwork:
         # linuxDataplane: bpf
         ipPools:

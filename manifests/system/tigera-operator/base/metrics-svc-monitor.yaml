@@ -1,0 +1,13 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: calico
+  namespace: calico-system
+spec:
+  endpoints:
+  - port: metrics-port
+  selector:
+    matchExpressions:
+    - key: k8s-app
+      operator: In
+      values: [ "calico-node", "calico-typha","calico-kube-controllers" ]
