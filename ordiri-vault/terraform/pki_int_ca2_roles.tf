@@ -28,7 +28,7 @@ resource "vault_pki_secret_backend_role" "role-pki-ca2-node" {
  allow_any_name     = false
  allow_localhost    = false
  allowed_domains_template = true
- allowed_domains    = ["{{identity.entity.metadata.node}}.homelab.dmann.xyz"]
+ allowed_domains    = ["{{identity.entity.metadata.node}}.homelab.house.dmann.xyz"]
  allow_bare_domains = true
  allow_subdomains   = true
  server_flag        = true
@@ -48,7 +48,7 @@ resource "vault_pki_secret_backend_role" "role-pki-ca2-approle-node" {
  allow_any_name     = false
  allow_localhost    = false
  allowed_domains_template = true
- allowed_domains    = ["{{identity.entity.aliases.${vault_auth_backend.approle.accessor}.metadata.node}}.homelab.dmann.xyz"]
+ allowed_domains    = ["{{identity.entity.aliases.${vault_auth_backend.approle.accessor}.metadata.node}}.homelab.house.dmann.xyz"]
  allow_bare_domains = true
  allow_subdomains   = false
  allow_glob_domains = false

@@ -39,7 +39,7 @@ resource "vault_identity_group_member_entity_ids" "nodes" {
 
 resource "vault_identity_entity_alias" "node-cert" {
   for_each = vault_identity_entity.node
-  name            = "${each.key}.homelab.dmann.xyz"
+  name            = "${each.key}.homelab.house.dmann.xyz"
   mount_accessor  = vault_auth_backend.cert.accessor
   canonical_id    = each.value.id
 }
