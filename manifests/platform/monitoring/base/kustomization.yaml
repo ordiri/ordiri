@@ -87,6 +87,10 @@ helmCharts:
             gnetId: 14584
             revision: 1
             datasource: prometheus
+          felix:
+            gnetId: 12175
+            revision: 1
+            datasource: prometheus
       dashboardProviders:
         dashboardproviders.yaml:
           apiVersion: 1
