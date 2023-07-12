@@ -9,7 +9,7 @@ spec:
   clusterIP: None
   ports:
   - name: metrics-port
-    port: 9094
+    port: 9091
   selector:
     k8s-app: calico-typha
 ---
