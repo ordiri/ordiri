@@ -93,7 +93,7 @@ spec:
         - name: tautulli-tls
           mountPath: /opt/tautulli-tls
       - name: tautulli
-        image: ghcr.io/tautulli/tautulli:beta@sha256:d077defe4ea8b9cd55fc974a253e6461b6a46399827e1ffdd66e2cb2184e2868
+        image: ghcr.io/tautulli/tautulli:beta@sha256:b08b5bd37ed2eb96b1d982ef1109f2cf02cea5cfadf53b911363c849b49e3a17
         volumeMounts:
         - name: tautulli-config-data
           mountPath: /config
