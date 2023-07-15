@@ -3,7 +3,7 @@ kind: Kustomization
 helmCharts:
 - name: vault
   repo: https://helm.releases.hashicorp.com
-  version: 0.24.1
+  version: 0.25.0
   releaseName: vault
   namespace: vault
   includeCRDs: true
