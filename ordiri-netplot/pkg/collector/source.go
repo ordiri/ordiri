@@ -1,6 +1,7 @@
 package collector
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/davecgh/go-spew/spew"
@@ -25,6 +26,7 @@ type Packet struct {
 func watchSource(name string, source *gopacket.PacketSource, pc chan Packet) error {
 	packets := source.Packets()
 	for pkt := range packets {
+		fmt.Printf("handling packet")
 		id, err := identifierForPacket(pkt)
 		if err != nil {
 			spew.Dump("Error getting identifier", err, pkt)

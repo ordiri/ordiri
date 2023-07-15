@@ -108,6 +108,7 @@ to quickly create a Cobra application.`,
 		}
 
 		if err := s.Send(&netplotv1.StreamPacketRequest{
+			Machine: machineId,
 			Request: &netplotv1.StreamPacketRequest_IfaceConfig{
 				IfaceConfig: &netplotv1.StreamPacketRequest_InterfaceConfigurationRequest{
 					Ifaces: streamIfaces,
@@ -120,14 +121,21 @@ to quickly create a Cobra application.`,
 		for p := range pc.Packets {
 			fmt.Printf("packet: %v\n", p)
 
-			// s.Send(&netplotv1.StreamPacketRequest{
-			// 	Source: machineId,
-			// 	Packet: &netplotv1.Packet{
-			// 		Interface: p.InterfaceName,
-			// 		Time:      p.Time.UnixMicro(),
-			// 		Raw:       p.Packet.Data(),
-			// 	},
-			// })
+			s.Send(&netplotv1.StreamPacketRequest{
+				Machine: machineId,
+				Request: &netplotv1.StreamPacketRequest_Packets{
+					Packets: &netplotv1.StreamPacketRequest_PacketStream{
+						Packets: []*netplotv1.Packet{{
+							Interface:  p.InterfaceName,
+							Identifier: p.Identifier,
+							Src:        p.Src.String(),
+							Dst:        p.Dst.String(),
+							Time:       p.Time.UnixMicro(),
+							Raw:        p.Packet.Data(),
+						}},
+					},
+				},
+			})
 		}
 
 		fmt.Println("completed successfully")

@@ -30,10 +30,16 @@ func (c *Collector) Interface(iface string) *ifaceCollector {
 	c.l.Lock()
 	defer c.l.Unlock()
 	if _, ok := c.ifaces[iface]; !ok {
-		c.ifaces[iface] = &ifaceCollector{
+		coll := &ifaceCollector{
 			iface: iface,
 			c:     make(chan Packet),
 		}
+		c.ifaces[iface] = coll
+		go func() {
+			for pkt := range coll.c {
+				c.Packets <- pkt
+			}
+		}()
 	}
 
 	return c.ifaces[iface]
