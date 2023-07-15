@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package netplot.v1;
+
+
+// Pet represents a pet in the pet store.
+message Packet {
+  string interface = 1;
+  string identifier = 2;
+  int64 time = 3;
+  string src = 4;
+  string dst = 5;
+  bytes raw = 6;
+}
+
+message StreamPacketInterfaceConfiguration {
+  string interface = 1;
+  bool enabled = 2;
+  string filter = 3;
+}
+
+message StreamPacketRequest {
+  message InterfaceConfigurationRequest {
+    repeated StreamPacketInterfaceConfiguration ifaces = 1;
+  }
+  message PacketStream {
+    repeated Packet packets = 1;
+  }
+
+  string machine = 1;
+  
+  oneof request {
+    InterfaceConfigurationRequest ifaceConfig = 2;
+    PacketStream packets = 3;
+    string error = 4;
+  };
+}
+
+message StreamPacketResponse {
+  message InterfaceConfigurationResponse {
+    repeated StreamPacketInterfaceConfiguration ifaces = 1;
+  }
+  oneof response {
+    InterfaceConfigurationResponse ifaceConfig = 1;
+    string error = 2;
+  }
+}
+
+message ConfigureInterfaceRequest {
+  string machine = 1;
+  string interface = 2;
+  bool enabled = 3;
+  string filter = 4;
+}
+
+message ConfigureInterfaceResponse {
+  string machine = 1;
+  string interface = 2;
+  bool enabled = 3;
+  string filter = 4;
+  string error = 5;
+}
+
+service NetplotServerService {
+  rpc StreamPacket(stream StreamPacketRequest) returns (stream StreamPacketResponse) {}
+  rpc ConfigureInterface(ConfigureInterfaceRequest) returns (ConfigureInterfaceResponse) {}
+}
