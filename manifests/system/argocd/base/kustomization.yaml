@@ -45,7 +45,7 @@ helmCharts:
           # -- Enable a prometheus ServiceMonitor
           enabled: true
       name: repo-server
-      replicas: 2
+      replicas: 4
     configs:
       cm:
         # Argo CD's externally facing base URL (optional). Required when configuring SSO
