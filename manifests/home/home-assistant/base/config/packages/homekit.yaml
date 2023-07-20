@@ -11,6 +11,7 @@ homekit:
       - switch
       include_entity_globs:
       - binary_sensor.zone_*
+      - binary_sensor.*_contact
       include_entities:
       - sensor.calibrated_ph_value
       - binary_sensor.doorbell
