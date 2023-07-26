@@ -21,7 +21,7 @@ ST = NSW
 L = Sydney
 O = Ordiri
 OU = Cloud
-CN = vault.homelab.dmann.xyz
+CN = ${local_hostname}.homelab.house.dmann.xyz
 
 [v3_req]
 keyUsage = keyEncipherment, dataEncipherment
@@ -31,7 +31,7 @@ subjectAltName = @alt_names
 subjectAltName = @alt_names
 
 [alt_names]
-DNS.1 = ${local_hostname}.homelab.dmann.xyz
+DNS.1 = ${local_hostname}.homelab.house.dmann.xyz
 DNS.2 = ${local_hostname}.ordiri
 IP.1 = ${local_ip}" > /vault/root/vault-tls/vault.conf
     openssl req -x509 -nodes -days 730 -newkey rsa:4096 -keyout /vault/root/vault-tls/vault.key -out /vault/root/vault-tls/vault.crt -config /vault/root/vault-tls/vault.conf
