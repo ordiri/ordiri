@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -17,6 +18,7 @@ import (
 	"github.com/ordiri/ordiri-netplot/gen/proto/netplot/v1/netplotv1connect"
 	"github.com/ordiri/ordiri-netplot/pkg/aggregator"
 	"github.com/ordiri/ordiri-netplot/pkg/grpc"
+	"github.com/ordiri/ordiri-netplot/pkg/store"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
@@ -35,10 +37,39 @@ to quickly create a Cobra application.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := cmd.Context()
 		const address = "[::]:8096"
+		db, err := store.Client(true)
+
 		agg := aggregator.NewAggregator()
 
+		if err != nil {
+			return err
+		}
+		go func() {
+			for pkt := range agg.Packets {
+				log.Printf("Got packet %+v\n", pkt)
+				if err := db.PutPacket(ctx, pkt); err != nil {
+					log.Printf("Error putting packet: %v\n", err)
+					continue
+				}
+			}
+		}()
+
+		go func() {
+			ticker := time.NewTicker(5 * time.Second)
+			for {
+				select {
+				case <-ctx.Done():
+					return
+				case <-ticker.C:
+					if err := db.Flush(ctx); err != nil {
+						log.Printf("Error flushing db: %v\n", err)
+					}
+
+				}
+			}
+		}()
 		mux := http.NewServeMux()
-		aggsrv := grpc.NewNetServiceServer(agg)
+		aggsrv := grpc.NewNetServiceServer(agg, db)
 		compress1KB := connect.WithCompressMinBytes(1024)
 
 		mux.Handle(netplotv1connect.NewNetplotServerServiceHandler(aggsrv, compress1KB))
@@ -54,6 +85,28 @@ to quickly create a Cobra application.`,
 			grpcreflect.NewStaticReflector(netplotv1connect.NetplotServerServiceName),
 			compress1KB,
 		))
+		mux.Handle("/api", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			eps := []*store.Endpoint{}
+			err := db.NewSelect().Model(&eps).Relation("Sources").Relation("Targets").Scan(ctx)
+
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				w.Write([]byte(err.Error()))
+				return
+			}
+			w.Header().Set("Content-Type", "application/json")
+			b, err := json.Marshal(eps)
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				w.Write([]byte(err.Error()))
+				return
+			}
+			w.WriteHeader(200)
+			w.Write(b)
+		}))
 
 		signals := make(chan os.Signal, 1)
 		signal.Notify(signals, os.Interrupt, syscall.SIGTERM)

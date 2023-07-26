@@ -1,7 +1,9 @@
 package collector
 
 import (
+	"bytes"
 	"fmt"
+	"net"
 	"time"
 
 	"github.com/davecgh/go-spew/spew"
@@ -14,16 +16,22 @@ const (
 	defaultSnapLen = 262144
 )
 
+type PacketDirection int
+
+const (
+	PacketDirectionInbound PacketDirection = iota
+	PacketDirectionOutbound
+)
+
 type Packet struct {
 	InterfaceName string
 	Identifier    string
-	Src           gopacket.Endpoint
-	Dst           gopacket.Endpoint
+	Direction     PacketDirection
 	Time          time.Time
 	Packet        gopacket.Packet
 }
 
-func watchSource(name string, source *gopacket.PacketSource, pc chan Packet) error {
+func watchSource(name string, mac net.HardwareAddr, source *gopacket.PacketSource, pc chan Packet) error {
 	packets := source.Packets()
 	for pkt := range packets {
 		fmt.Printf("handling packet")
@@ -32,19 +40,24 @@ func watchSource(name string, source *gopacket.PacketSource, pc chan Packet) err
 			spew.Dump("Error getting identifier", err, pkt)
 			continue
 		}
-		src, dst, err := endpointsForPacket(pkt)
-		if err != nil {
-			spew.Dump("Error getting src/dst", err, pkt)
-			continue
+
+		dir := PacketDirectionInbound
+		if pkt.LinkLayer() != nil {
+			srcMac, _ := net.ParseMAC(pkt.LinkLayer().LinkFlow().Src().String())
+			if bytes.Equal(srcMac, mac) {
+				// This is an outbound packet.
+				dir = PacketDirectionOutbound
+			}
 		}
 
 		pc <- Packet{
 			InterfaceName: name,
 			Identifier:    id,
-			Src:           src,
-			Dst:           dst,
-			Time:          pkt.Metadata().Timestamp,
-			Packet:        pkt,
+			Direction:     dir,
+
+			Time: pkt.Metadata().Timestamp,
+
+			Packet: pkt,
 		}
 	}
 

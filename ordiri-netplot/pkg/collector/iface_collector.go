@@ -1,6 +1,7 @@
 package collector
 
 import (
+	"net"
 	"sync"
 
 	"github.com/google/gopacket"
@@ -37,15 +38,23 @@ func (ic *ifaceCollector) Start() error {
 	if ic.running {
 		return nil
 	}
+	iface, err := net.InterfaceByName(ic.iface)
+	if err != nil {
+		return err
+	}
+
 	handle, err := pcap.OpenLive(ic.iface, defaultSnapLen, true, pcap.BlockForever)
 	if err != nil {
 		return err
 	}
+
 	ic.handle = handle
+
+	// spew.Dump("got the handle link type ")
 
 	source := gopacket.NewPacketSource(handle, handle.LinkType())
 
-	go watchSource(ic.iface, source, ic.c)
+	go watchSource(ic.iface, iface.HardwareAddr, source, ic.c)
 
 	ic.running = true
 

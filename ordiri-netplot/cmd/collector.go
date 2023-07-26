@@ -81,6 +81,7 @@ to quickly create a Cobra application.`,
 				}
 				if msg.GetIfaceConfig() != nil && len(msg.GetIfaceConfig().GetIfaces()) > 0 {
 					for _, iface := range msg.GetIfaceConfig().GetIfaces() {
+						iface := iface
 						if iface.Enabled {
 							ifaceC := pc.Interface(iface.Interface)
 							if !ifaceC.Running() {
@@ -128,8 +129,7 @@ to quickly create a Cobra application.`,
 						Packets: []*netplotv1.Packet{{
 							Interface:  p.InterfaceName,
 							Identifier: p.Identifier,
-							Src:        p.Src.String(),
-							Dst:        p.Dst.String(),
+							Direction:  netplotv1.PacketDirection(p.Direction),
 							Time:       p.Time.UnixMicro(),
 							Raw:        p.Packet.Data(),
 						}},

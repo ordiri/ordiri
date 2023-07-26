@@ -2,15 +2,17 @@ syntax = "proto3";
 
 package netplot.v1;
 
-
+enum PacketDirection {
+  INBOUND = 0;
+  OUTBOUND = 1;
+}
 // Pet represents a pet in the pet store.
 message Packet {
   string interface = 1;
   string identifier = 2;
   int64 time = 3;
-  string src = 4;
-  string dst = 5;
-  bytes raw = 6;
+  PacketDirection direction = 4;
+  bytes raw = 5;
 }
 
 message StreamPacketInterfaceConfiguration {

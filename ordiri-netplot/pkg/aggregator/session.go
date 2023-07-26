@@ -2,8 +2,6 @@ package aggregator
 
 import (
 	"sync"
-
-	"github.com/ordiri/ordiri-netplot/pkg/collector"
 )
 
 type (
@@ -15,7 +13,7 @@ type (
 
 	AggregatorSession struct {
 		IfaceConfig []*AggregatorIfaceConfig
-		pc          chan collector.Packet
+		pc          chan AggregatedPacket
 		once        sync.Once
 	}
 )
@@ -26,6 +24,6 @@ func (as *AggregatorSession) Stop() {
 	})
 }
 
-func (as *AggregatorSession) Recorder() chan collector.Packet {
+func (as *AggregatorSession) Recorder() chan AggregatedPacket {
 	return as.pc
 }
