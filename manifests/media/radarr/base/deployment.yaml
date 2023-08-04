@@ -97,6 +97,6 @@ spec:
           containerPort:  7878
           protocol: TCP
         resources:
-        #   limits:
-        #     memory: "4Gi"
-        #     cpu: "4"
+          requests:
+            memory: "4Gi"
+            cpu: "4"

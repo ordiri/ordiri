@@ -46,7 +46,6 @@ spec:
       - name: transcode-storage # Idea being we would mount a dedicated ssd storage class pvc here
         emptyDir:
           medium: Memory
-
         # hostPath:
         #   path: /tmp/plex-transcoder
       - name: p12
