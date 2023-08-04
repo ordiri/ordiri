@@ -13,6 +13,18 @@ spec:
       labels:
         app: home-assistant
     spec:
+      affinity:
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - postgres
+                topologyKey: "kubernetes.io/hostname"
       hostNetwork: false
       dnsConfig:
         options:
