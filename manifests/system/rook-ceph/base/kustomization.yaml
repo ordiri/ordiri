@@ -14,13 +14,6 @@ helmCharts:
   namespace: rook-ceph
   includeCRDs: true
   valuesInline:
-    resources:
-      limits:
-        cpu: 200m
-        memory: 512Mi
-      requests:
-        cpu: 100m
-        memory: 128Mi
     csi:
       enableCephfsDriver: false
       enableGrpcMetrics: false
@@ -38,63 +31,6 @@ helmCharts:
       enablePluginSelinuxHostMount: false
       # set to true to enable Ceph CSI pvc encryption support.
       enableCSIEncryption: false
-      csiRBDProvisionerResource: |
-        - name : csi-provisioner
-          resource:
-            requests:
-              memory: 128Mi
-              cpu: 100m
-            limits:
-              memory: 256Mi
-              cpu: 100m
-        - name : csi-resizer
-          resource:
-            requests:
-              memory: 128Mi
-              cpu: 100m
-            limits:
-              memory: 256Mi
-              cpu: 100m
-        - name : csi-attacher
-          resource:
-            requests:
-              memory: 128Mi
-              cpu: 100m
-            limits:
-              memory: 256Mi
-              cpu: 100m
-        - name : csi-snapshotter
-          resource:
-            requests:
-              memory: 128Mi
-              cpu: 100m
-            limits:
-              memory: 256Mi
-              cpu: 200m
-        - name : csi-rbdplugin
-          resource:
-            requests:
-              memory: 256Mi
-              cpu: 200m
-            limits:
-              memory: 512Mi
-              cpu: 200m
-        - name : csi-omap-generator
-          resource:
-            requests:
-              memory: 256Mi
-              cpu: 200m
-            limits:
-              memory: 512Mi
-              cpu: 200m
-        - name : liveness-prometheus
-          resource:
-            requests:
-              memory: 128Mi
-              cpu: 50m
-            limits:
-              memory: 256Mi
-              cpu: 100m
 # - name: rook-ceph-cluster
 #   repo: https://charts.rook.io/release
 #   version: v1.10.4
