@@ -3,7 +3,7 @@ kind: VirtualMachineDeployment
 metadata:
   name: kube-workers
 spec:
-  replicas: 5
+  replicas: 6
   template:
     metadata:
       creationTimestamp: null
@@ -18,7 +18,7 @@ spec:
       - network
       resources:
         cpu: 6
-        memory: 16Gi
+        memory: 32Gi
       networkInterfaces:
       - mac: ""
         network: kubevms
