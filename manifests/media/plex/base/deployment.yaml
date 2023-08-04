@@ -44,8 +44,11 @@ spec:
         persistentVolumeClaim:
           claimName: plex-config-data
       - name: transcode-storage # Idea being we would mount a dedicated ssd storage class pvc here
-        hostPath:
-          path: /tmp/plex-transcoder
+        emptyDir:
+          medium: Memory
+
+        # hostPath:
+        #   path: /tmp/plex-transcoder
       - name: p12
         emptyDir: {}
       - name: dev
