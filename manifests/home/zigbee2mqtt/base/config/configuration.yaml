@@ -35,4 +35,4 @@ mqtt:
 serial:
   adapter: deconz
   # Location of CC2531 USB sniffer
-  port: "tcp://raspberrypi.homelab.house.dmann.xyz:20108"
+  port: "tcp://mothership.homelab.house.dmann.xyz:20108"
