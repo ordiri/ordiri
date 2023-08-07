@@ -87,7 +87,7 @@ spec:
         #   successThreshold: 2
         #   periodSeconds: 10
       - name: zigbee2mqtt
-        image: docker.io/koenkk/zigbee2mqtt:latest@sha256:c83d22dc6bfdfbf20b40454efdfb30ec80787eae09d784d1c1f770d5e371e298
+        image: docker.io/koenkk/zigbee2mqtt:latest@sha256:8350fc84ce67a7c905b7513253d6fe76d177624d1e7d77df07669845e1d8b841
         env:
         - name: ZIGBEE2MQTT_DATA
           value: /opt/zigbee-nfs
