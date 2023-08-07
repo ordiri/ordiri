@@ -66,7 +66,7 @@ spec:
           protocol: TCP
         resources:
       - name: overseer
-        image: lscr.io/linuxserver/overseerr:latest@sha256:524eecc06df102148f504a2e84dbbbaad2e9bfe0ffdc98d840ba9965def235fb
+        image: lscr.io/linuxserver/overseerr:latest@sha256:3fd325e3a4fda4581827cc36cee11c5148af3f95666b8418caba2bb0048c8e14
         volumeMounts:
         - name: media-nfs
           mountPath: /media
