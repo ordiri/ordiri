@@ -100,7 +100,7 @@ spec:
           mountPath: /app/config
       containers:
       - name: dashboard
-        image: ghcr.io/benphelps/homepage:latest@sha256:c418e72e5c1c8f7ec60b790cb816477a5661adb0003ff390b05afb02fe0fab12
+        image: ghcr.io/benphelps/homepage:latest@sha256:5bfe5825ba6714778cdf6fb1d1dd67ee06d7579ac446f9da562f70c78e880c62
         volumeMounts:
         - name: dashboard-config
           mountPath: /app/config
