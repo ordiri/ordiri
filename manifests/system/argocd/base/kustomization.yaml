@@ -17,7 +17,7 @@ configMapGenerator:
 helmCharts:
 - name: argo-cd
   repo: https://argoproj.github.io/argo-helm
-  version: 5.42.2
+  version: 5.43.4
   releaseName: argocd
   namespace: argocd
   includeCRDs: true
