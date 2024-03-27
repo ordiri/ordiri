@@ -80,7 +80,7 @@ spec:
         - name: esphome-tls
           mountPath: /opt/esphome-tls
       - name: esphome
-        image: docker.io/esphome/esphome:latest@sha256:f3956e2a4f5ef2516d2986d29840272e24f367e23ffb4b2aa81eee036defd31d
+        image: docker.io/esphome/esphome:latest@sha256:dac184a98fbb60d048d9d9d21c9fd6f3c2b7124d7630965db70b5c36336b0722
         volumeMounts:
         - name: nfs-volume
           mountPath: /config
