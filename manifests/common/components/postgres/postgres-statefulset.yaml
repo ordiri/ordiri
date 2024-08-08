@@ -19,7 +19,7 @@ spec:
           value: "1"
       containers:
       - name: postgres
-        image: postgres:15.3 # Sets Image
+        image: postgres:15.8 # Sets Image
         ports:
         - containerPort: 5432
           name: postgres
