@@ -76,7 +76,7 @@ spec:
         - name: sonarr-tls
           mountPath: /opt/sonarr-tls
       - name: sonarr
-        image: lscr.io/linuxserver/sonarr:develop@sha256:4f628108e840d356cbeb5a6cc104811a950f15e38a799f1c904514aa60b4afa3
+        image: lscr.io/linuxserver/sonarr:develop@sha256:eacd44a731dc31b913f2f0911ecc79cc1ebd1120747d38d6ca23d0da089ca76b
         volumeMounts:
         - name: media-nfs
           mountPath: /media
