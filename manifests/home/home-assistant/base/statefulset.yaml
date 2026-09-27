@@ -125,7 +125,7 @@ spec:
           mountPath: /kube-config
           readOnly: true
       - name: home-assistant
-        image: ghcr.io/home-assistant/home-assistant:stable@sha256:aa6ed476b0da1dd38be99c59d8566fc9937d9bc0f1e416b3cdcb011749f667e0
+        image: ghcr.io/home-assistant/home-assistant:stable@sha256:3e6710a7ab2a61311d9d899b719f6c3657791c63e8f4942cec4ebc42401d6b76
         securityContext:
           capabilities:
             add:
